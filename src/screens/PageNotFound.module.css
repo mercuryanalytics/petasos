@@ -1,0 +1,15 @@
+.container {
+  margin: 2rem auto 0 auto;
+  text-align: center;
+}
+
+.info {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.move {
+  display: block;
+  font-weight: bold;
+}
