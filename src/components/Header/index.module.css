@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 80px;
+  padding: 0 30px;
+}
+
+.logo {
+  height: 52px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.controls > :not(:last-child) {
+  margin-right: 10px;
+}

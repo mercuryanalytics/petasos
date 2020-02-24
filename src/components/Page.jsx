@@ -1,16 +1,24 @@
 import React from 'react';
 import styles from './Page.module.css';
 import Header from './Header';
+import SideMenu from './SideMenu';
 
 const Page = props => {
-  // @TODO Handle auth with 'private' pages
+  if (props.private) {
+    // @TODO Verify auth
+  }
   return (
     <div className={styles.container}>
       <div className={styles.head}>
         <Header />
       </div>
       <div className={styles.body}>
-        {props.children}
+        <div className={styles.side}>
+          <SideMenu />
+        </div>
+        <div className={styles.content}>
+          {props.children}
+        </div>
       </div>
     </div>
   );

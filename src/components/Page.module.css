@@ -1,3 +1,23 @@
 .container {
-  /**/
+  overflow: visible;
+}
+
+.head {
+  height: 80px;
+  box-sizing: content-box;
+  border-bottom: 1px solid #B9B9B9;
+}
+
+.body {
+  display: flex;
+}
+
+.body .side {
+  width: 250px;
+  height: calc(100vh - 81px);
+  border-right: 1px solid #B9B9B9;
+}
+
+.body .content {
+  flex-grow: 1;
 }

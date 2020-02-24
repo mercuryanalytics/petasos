@@ -1,0 +1,20 @@
+.container {}
+
+.title {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #fff;
+  color: #535353;
+  cursor: pointer;
+}
+
+.title .icon {
+  margin: 2px 8px 2px 33px;
+  font-size: 20px;
+  color: #7E7F7E;
+}
+
+.title .name {
+  font-size: 1rem;
+}

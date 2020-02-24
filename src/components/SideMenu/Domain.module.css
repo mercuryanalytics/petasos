@@ -1,0 +1,33 @@
+.container {}
+
+.title {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid #B9B9B9;
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+.title .arrow {
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+.title .arrow.open {
+  transform: rotate(90deg);
+}
+
+.title .logo {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+}
+
+.title .name {
+  font-size: 1rem;
+}
+
+.content {
+  border-bottom: 1px solid #B9B9B9;
+}

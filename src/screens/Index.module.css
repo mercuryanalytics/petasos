@@ -2,6 +2,37 @@
   /**/
 }
 
-.head {}
+.item {}
 
-.body {}
+.item .header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 35px;
+  border-bottom: 1px solid #B9B9B9;
+  background-color: #CFCFCF;
+}
+
+.item .header .titles .tag {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  background-color: #000;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: bold;
+  line-height: 1.4rem;
+}
+
+.item .header .titles .name {
+  display: block;
+  font-size: 1.3rem;
+  color: #262626;
+  font-weight: bold;
+}
+
+.item .header .controls {}
+
+.item .content {
+  padding: 20px 35px;
+}

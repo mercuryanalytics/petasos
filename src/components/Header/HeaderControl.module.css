@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 15px;
+}
+
+.container.link {
+  font-size: 1rem;
+  color: #444;
+  text-decoration: none;
+}
+
+.container:hover, .container.active {
+  cursor: pointer;
+  background-color: #DDDDDD;
+}

@@ -1,0 +1,21 @@
+.container {
+  padding: 10px;
+  border-bottom: 1px solid #B9B9B9;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 10px;
+  box-sizing: border-box;
+  border: 1px solid #B9B9B9;
+  outline: none;
+  font-size: .8rem;
+  color: #A9A9A9;
+}
+
+.input::placeholder {
+  color: #B9B9B9;
+}
+.input::-ms-input-placeholder {
+  color: #B9B9B9;
+}
