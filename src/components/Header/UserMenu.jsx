@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import styles from './UserMenu.module.css';
+import Routes from '../../utils/routes';
 import HeaderControl from './HeaderControl';
 import Avatar from '../Avatar';
 
-const UserMenu = () => {
-  const avatar = null;
-  const name = 'MercuryUser';
+const UserMenu = props => {
+  const { user } = props;
+  const avatar = user.picture;
+  const name = user.nickname || user.name;
+
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -23,7 +26,7 @@ const UserMenu = () => {
       </span>
       {isOpen && (
         <div className={styles.menu}>
-          UserMenuContent
+          <a href={Routes.Logout}>Logout</a>
         </div>
       )}
     </HeaderControl>

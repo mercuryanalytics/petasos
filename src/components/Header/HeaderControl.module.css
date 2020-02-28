@@ -13,5 +13,5 @@
 
 .container:hover, .container.active {
   cursor: pointer;
-  background-color: #DDDDDD;
+  background-color: #F0F0F0;
 }

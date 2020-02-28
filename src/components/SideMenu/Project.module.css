@@ -10,21 +10,28 @@
 }
 
 .title .arrow {
+  margin-right: .5rem;
   font-size: 1.2rem;
-  margin-right: 8px;
+  color: #535353;
 }
 .title .arrow.open {
   transform: rotate(90deg);
 }
 
 .title .icon {
-  margin: 2px 8px 2px 0;
-  font-size: 26px;
+  margin: .125rem .5rem .125rem 0;
+  font-size: 1.6rem;
   color: #7E7F7E;
 }
 
 .title .name {
-  font-size: 1rem;
+  font-size: .85rem;
+  font-weight: bold;
+  color: #262626;
+}
+
+.title:hover {
+  background-color: #F0F0F0;
 }
 
 .content {}

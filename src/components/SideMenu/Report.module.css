@@ -10,11 +10,16 @@
 }
 
 .title .icon {
-  margin: 2px 8px 2px 33px;
-  font-size: 20px;
+  margin: .325rem .5rem .325rem 2.1rem;
+  font-size: 1.2rem;
   color: #7E7F7E;
 }
 
 .title .name {
-  font-size: 1rem;
+  font-size: .85rem;
+  color: #262626;
+}
+
+.title:hover {
+  background-color: #F0F0F0;
 }

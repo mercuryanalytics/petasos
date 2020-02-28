@@ -4,12 +4,12 @@ import logo from '../../static/images/logo.png';
 import UserMenu from './UserMenu';
 import Logout from './Logout';
 
-const Header = () => {
+const Header = props => {
   return (
     <div className={styles.container}>
-      <img src={logo} className={styles.logo} />
+      <img src={logo} alt='' className={styles.logo} />
       <div className={styles.controls}>
-        <UserMenu />
+        <UserMenu user={props.user} />
         <Logout />
       </div>
     </div>

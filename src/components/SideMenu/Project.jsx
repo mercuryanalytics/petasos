@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './Project.module.css';
 import { MdPlayArrow, MdFolder } from 'react-icons/md';
 import Report from './Report';
+import ReportAdd from './ReportAdd';
 
 const Project = props => {
   const name = 'project-name';
@@ -11,8 +12,8 @@ const Project = props => {
     event.stopPropagation();
   };
   return (
-    <div className={styles.container} onClick={handleClick}>
-      <div className={styles.title}>
+    <div className={styles.container}>
+      <div className={styles.title} onClick={handleClick}>
         <MdPlayArrow className={`${styles.arrow} ${isOpen ? styles.open : ''}`} />
         <MdFolder className={styles.icon} />
         <span className={styles.name}>{name}</span>
@@ -20,6 +21,8 @@ const Project = props => {
       {isOpen && (
         <div className={styles.content}>
           <Report />
+          <Report />
+          <ReportAdd />
         </div>
       )}
     </div>

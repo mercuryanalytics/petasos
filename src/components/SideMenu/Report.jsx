@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './Report.module.css';
 import { MdInsertDriveFile } from 'react-icons/md';
 
-const Report = props => {
+const Report = () => {
   const name = 'report-name.ext';
   const handleClick = (event) => {
     event.stopPropagation();

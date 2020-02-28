@@ -1,0 +1,29 @@
+.container {
+  background-color: #fff;
+}
+
+.container:hover {
+  background-color: #F0F0F0;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  margin: 0 .6rem;
+  padding: 5px;
+  border-top: 1px dashed #BBBBBB;
+  color: #000;
+  cursor: pointer;
+}
+
+.icon {
+  margin: .125rem .5rem .125rem 1.1rem;
+  font-size: 1.6rem;
+  color: #BBBBBB;
+}
+
+.name {
+  font-size: .85rem;
+  font-weight: bold;
+  color: #262626;
+}

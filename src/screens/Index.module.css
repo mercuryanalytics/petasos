@@ -7,7 +7,6 @@
 .item .header {
   display: flex;
   justify-content: space-between;
-  width: 100%;
   padding: 20px 35px;
   border-bottom: 1px solid #B9B9B9;
   background-color: #CFCFCF;

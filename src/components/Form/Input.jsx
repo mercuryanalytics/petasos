@@ -1,13 +1,13 @@
 import React from 'react';
-import styles from './Button.module.css';
+import styles from './Input.module.css';
 
-const Button = props => {
+const Input = props => {
   const baseClasses = `
     ${styles.container}
     ${props.transparent ? styles.transparent : ''}
     ${props.className || ''}
   `;
-  return props.link ? (
+  return !props.link ? (
     <a className={`${baseClasses} ${styles.link}`} href={props.link}>
       {props.children}
     </a>
@@ -18,4 +18,4 @@ const Button = props => {
   );
 };
 
-export default Button;
+export default Input;

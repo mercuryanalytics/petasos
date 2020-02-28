@@ -11,21 +11,21 @@
 }
 
 .title .arrow {
+  margin-right: .5rem;
   font-size: 1.2rem;
-  margin-right: 8px;
 }
 .title .arrow.open {
   transform: rotate(90deg);
 }
 
 .title .logo {
-  width: 28px;
-  height: 28px;
-  margin-right: 8px;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: .5rem;
 }
 
 .title .name {
-  font-size: 1rem;
+  font-size: .9rem;
 }
 
 .content {
