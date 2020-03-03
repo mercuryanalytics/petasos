@@ -6,7 +6,7 @@ const prod = {
 };
 
 const dev = {
-  APP_URL: 'http://localhost:3003',
+  APP_URL: 'https://mercury-analytics-frontend.herokuapp.com',
   API_URL: 'http://localhost:3002',
 };
 
