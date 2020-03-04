@@ -1,3 +1,57 @@
 .container {
-  /**/
+  background-color: #EFF0F4;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+}
+
+.header .breadcrumbs {
+  font-size: .9rem;
+  font-weight: bold;
+}
+
+.header .controls {
+  display: flex;
+  align-items: center;
+}
+
+.header .controls > :not(:last-child) {
+  margin-right: .5rem;
+}
+
+.header .controls .deleteIcon {
+  font-size: 2rem;
+}
+
+.body {
+  display: flex;
+  margin: .5rem 2rem;
+  border: 1px solid #B9B9B9;
+  background-color: #fff;
+}
+
+.body .section {
+  width: calc(50% - .5px);
+  padding: 2rem;
+}
+
+.body .section:not(:last-child) {
+  border-right: 1px solid #B9B9B9;
+}
+
+.body .section .title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.body .section .title .icon {
+  margin-right: .5rem;
+  font-size: 1.5rem;
 }

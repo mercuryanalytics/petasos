@@ -19,10 +19,13 @@ export const getClientsFailure = (error) => ({
   payload: error,
 });
 
-export const getClient = (id) => ({
-  type: 'GET_CLIENT',
-  payload: {},
-});
+export function getClient(id) {
+  return dispatch => {
+    apiCall('GET', `${Constants.API_URL}/clients/${id}`)
+      .then(res => dispatch(getClientSuccess(res)))
+      .catch(err => dispatch(getClientFailure(err)));
+  };
+}
 
 export const getClientSuccess = (client) => ({
   type: 'GET_CLIENT_SUCCESS',

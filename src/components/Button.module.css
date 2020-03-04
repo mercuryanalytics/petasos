@@ -6,7 +6,8 @@
   cursor: pointer;
   background-color: #000;
   color: #fff;
-  font-size: .9rem;
+  font-size: .85rem;
+  font-weight: bold;
   outline: none;
 }
 
@@ -15,10 +16,15 @@
 }
 
 .container.transparent {
+  border: 0;
   background-color: transparent;
-  color: #000;
+  color: #333;
 }
 
 .container:not(.transparent):hover {
-  opacity: .86;
+  opacity: .85;
+}
+
+.container.transparent:hover {
+  color: #000;
 }

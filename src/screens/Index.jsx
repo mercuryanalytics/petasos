@@ -26,25 +26,13 @@ const Index = props => {
   return (
     <Screen private>
       <div className={styles.container}>
-        <div className={styles.item}>
-          <div className={styles.header}>
-            <div className={styles.titles}>
-              <span className={styles.tag}>ItemTag</span>
-              <span className={styles.name}>ItemPath... / ItemName</span>
-            </div>
-            <div className={styles.controls}>
-            </div>
-          </div>
-          <div className={styles.content}>
-            {(content === ContentTypes.Account && <Account />) ||
-            (content === ContentTypes.CreateClient && <ClientCreate />) ||
-            (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
-            (content === ContentTypes.CreateProject && <ProjectCreate />) ||
-            (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
-            (content === ContentTypes.CreateReport && <ReportCreate />) ||
-            (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
-          </div>
-        </div>
+        {(content === ContentTypes.Account && <Account />) ||
+          (content === ContentTypes.CreateClient && <ClientCreate />) ||
+          (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
+          (content === ContentTypes.CreateProject && <ProjectCreate />) ||
+          (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
+          (content === ContentTypes.CreateReport && <ReportCreate />) ||
+          (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
       </div>
     </Screen>
   );

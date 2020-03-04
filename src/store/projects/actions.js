@@ -2,8 +2,9 @@ import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
 export function getProjects(clientId) {
+  const queryString = clientId ? `?client_id=${clientId}` : '';
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/projects`)
+    apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
       .then(res => dispatch(getProjectsSuccess(res)))
       .catch(err => dispatch(getProjectsFailure(err)));
   };
@@ -19,10 +20,13 @@ export const getProjectsFailure = (error) => ({
   payload: error,
 });
 
-export const getProject = (clientId, id) => ({
-  type: 'GET_PROJECT',
-  payload: {},
-});
+export function getProject(id) {
+  return dispatch => {
+    apiCall('GET', `${Constants.API_URL}/projects/${id}`)
+      .then(res => dispatch(getProjectSuccess(res)))
+      .catch(err => dispatch(getProjectFailure(err)));
+  };
+}
 
 export const getProjectSuccess = (project) => ({
   type: 'GET_PROJECT_SUCCESS',

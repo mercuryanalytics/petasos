@@ -1,5 +1,6 @@
 .container {
   overflow: visible;
+  background-color: #fff;
 }
 
 .head {
@@ -25,4 +26,5 @@
 
 .body .content {
   flex-grow: 1;
+  background-color: #EFF0F4;
 }

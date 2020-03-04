@@ -26,6 +26,12 @@ const Client = props => {
     }
   };
 
+  useEffect(() => {
+    if (props.active) {
+      setIsOpen(true);
+    }
+  }, []);
+
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
       <div className={styles.title} onClick={toggleOpen}>
