@@ -26,12 +26,6 @@ const Client = props => {
     }
   };
 
-  // useEffect(() => {
-  //   if (props.active) {
-  //     setIsOpen(true);
-  //   }
-  // }, []);
-
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
       <div className={styles.title} onClick={toggleOpen}>
@@ -45,7 +39,7 @@ const Client = props => {
             <Project
               key={`project-btn-${project.id}`}
               data={project}
-              reports={reports.filter(r => r.domain_id === project.id)}
+              reports={reports.filter(r => r.project_id === project.id)}
               open={!!projectsOpen[project.id]}
               active={props.activeProject === project.id}
               activeReport={props.activeReport}
