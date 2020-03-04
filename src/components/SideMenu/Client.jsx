@@ -45,7 +45,7 @@ const Client = props => {
             <Project
               key={`project-btn-${project.id}`}
               data={project}
-              reports={reports.filter(p => r.domain_id === project.id)}
+              reports={reports.filter(r => r.domain_id === project.id)}
               open={!!projectsOpen[project.id]}
               active={props.activeProject === project.id}
               activeReport={props.activeReport}
