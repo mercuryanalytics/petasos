@@ -26,11 +26,11 @@ const Client = props => {
     }
   };
 
-  useEffect(() => {
-    if (props.active) {
-      setIsOpen(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (props.active) {
+  //     setIsOpen(true);
+  //   }
+  // }, []);
 
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
@@ -45,7 +45,7 @@ const Client = props => {
             <Project
               key={`project-btn-${project.id}`}
               data={project}
-              reports={reports}
+              reports={reports.filter(p => r.domain_id === project.id)}
               open={!!projectsOpen[project.id]}
               active={props.activeProject === project.id}
               activeReport={props.activeReport}

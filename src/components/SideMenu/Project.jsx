@@ -19,11 +19,11 @@ const Project = props => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (props.active) {
-      setIsOpen(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (props.active) {
+  //     setIsOpen(true);
+  //   }
+  // }, []);
 
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
