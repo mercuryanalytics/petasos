@@ -50,7 +50,7 @@ const SideMenu = () => {
         <Client
           key={`client-btn-${client.id}`}
           data={client}
-          projects={projects.filter(p => p.clientId === client.id)}
+          projects={projects.filter(p => p.domain_id === client.id)}
           projectsOpen={projectsOpen}
           // @TODO Filter reports by client
           reports={reports}
