@@ -3,11 +3,17 @@
   border-bottom: 1px solid #B9B9B9;
 }
 
+.search {
+  display: flex;
+  align-items: center;
+  border: 1px solid #B9B9B9;
+}
+
 .input {
-  width: 100%;
+  flex-grow: 1;
   padding: 12px 10px;
   box-sizing: border-box;
-  border: 1px solid #B9B9B9;
+  border: none;
   outline: none;
   font-size: .8rem;
   color: #A9A9A9;
@@ -18,4 +24,10 @@
 }
 .input::-ms-input-placeholder {
   color: #B9B9B9;
+}
+
+.icon {
+  font-size: 1.8rem;
+  color: #E0E0E0;
+  margin-right: 5px;
 }

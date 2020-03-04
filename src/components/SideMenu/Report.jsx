@@ -1,19 +1,22 @@
 import React from 'react';
 import styles from './Report.module.css';
+import Routes from '../../utils/routes';
+import { Link } from 'react-router-dom';
 import { MdInsertDriveFile } from 'react-icons/md';
 
-const Report = () => {
-  const name = 'report-name.ext';
-  const handleClick = (event) => {
-    event.stopPropagation();
-  };
+const Report = props => {
+  const { data } = props;
+
   return (
-    <div className={styles.container} onClick={handleClick}>
+    <Link
+      className={`${styles.container} ${props.active ? styles.active : ''}`}
+      to={Routes.ManageReport.replace(':id', data.id)}
+    >
       <div className={styles.title}>
         <MdInsertDriveFile className={styles.icon} />
-        <span className={styles.name}>{name}</span>
+        <span className={styles.name}>{data.name}</span>
       </div>
-    </div>
+    </Link>
   );
 };
 

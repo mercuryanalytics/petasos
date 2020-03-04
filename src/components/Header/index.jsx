@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './index.module.css';
 import logo from '../../static/images/logo.png';
 import UserMenu from './UserMenu';
-import Logout from './Logout';
 
 const Header = props => {
   return (
@@ -10,7 +9,6 @@ const Header = props => {
       <img src={logo} alt='' className={styles.logo} />
       <div className={styles.controls}>
         <UserMenu user={props.user} />
-        <Logout />
       </div>
     </div>
   );

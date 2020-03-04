@@ -1,9 +1,11 @@
-.container {}
+.container {
+  text-decoration: none !important;
+}
 
 .title {
   display: flex;
   align-items: center;
-  padding: 5px;
+  padding: .3125rem;
   background-color: #fff;
   color: #535353;
   cursor: pointer;
@@ -20,6 +22,10 @@
   color: #262626;
 }
 
-.title:hover {
+.container:not(.active) .title:hover {
+  background-color: #F0F0F0;
+}
+
+.container.active .title {
   background-color: #F0F0F0;
 }

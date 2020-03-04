@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import './static/base.css';
 import history from './utils/history';
 import Constants from './utils/constants';
@@ -6,19 +7,31 @@ import Routes from './utils/routes';
 import authConfig from './auth_config.json';
 import { Route, Switch } from 'react-router-dom';
 import { Auth0Provider } from './react-auth0-spa';
+import { setLocationData } from './store/location/actions';
 import Loader from './components/Loader';
-import Index from './screens/Index';
+import Index, { ContentTypes } from './screens/Index';
 import Login from './screens/Login';
 import Logout from './screens/Logout';
 import PageNotFound from './screens/PageNotFound';
 
-const onAuth0RedirectCallback = appState => {
-  if (appState) {
-    history.push(appState.targetUrl || Constants.APP_URL);
-  }
-};
-
 const App = () => {
+  const dispatch = useDispatch();
+
+  const onAuth0RedirectCallback = (appState) => {
+    if (appState) {
+      history.push(appState.targetUrl || Constants.APP_URL);
+    }
+  };
+
+  const handleNavigation = () => {
+    dispatch(setLocationData({}));
+  };
+
+  useEffect(() => {
+    handleNavigation(history.location);
+    history.listen(location => handleNavigation(location));
+  }, []);
+
   return (
     <Auth0Provider
       domain={authConfig.domain}
@@ -27,9 +40,35 @@ const App = () => {
       onRedirectCallback={onAuth0RedirectCallback}
     >
       <Switch>
-        <Route exact path={'/home'} component={Index} />
-        <Route exact path={'/api/v1/projects'} render={() => ''} />
         <Route exact path={Routes.Home} component={Index} />
+        <Route
+          path={Routes.CreateClient}
+          render={p => <Index {...p} content={ContentTypes.CreateClient} />}
+        />
+        <Route
+          path={Routes.ManageClient}
+          render={p => <Index {...p} content={ContentTypes.ManageClient} />}
+        />
+        <Route
+          path={Routes.CreateProject}
+          render={p => <Index {...p} content={ContentTypes.CreateProject} />}
+        />
+        <Route
+          path={Routes.ManageProject}
+          render={p => <Index {...p} content={ContentTypes.ManageProject} />}
+        />
+        <Route
+          path={Routes.CreateReport}
+          render={p => <Index {...p} content={ContentTypes.CreateReport} />}
+        />
+        <Route
+          path={Routes.ManageReport}
+          render={p => <Index {...p} content={ContentTypes.ManageReport} />}
+        />
+        <Route
+          path={Routes.Account}
+          render={p => <Index {...p} content={ContentTypes.Account} />}
+        />
         <Route path={Routes.Login} component={Login} />
         <Route path={Routes.LoginCallback} component={Loader} />
         <Route path={Routes.Logout} component={Logout} />

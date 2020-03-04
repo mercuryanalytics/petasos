@@ -1,11 +1,12 @@
 import React from 'react';
 import styles from './HeaderControl.module.css';
+import { Link } from 'react-router-dom';
 
 const HeaderControl = props => {
   return !!props.link ? (
-    <a className={`${styles.container} ${styles.link} ${props.className}`} href={props.link}>
+    <Link className={`${styles.container} ${styles.link} ${props.className}`} to={props.link}>
       {props.children}
-    </a>
+    </Link>
   ) : (
     <div
       className={`${styles.container} ${props.active ? styles.active : ''} ${props.className}`}
