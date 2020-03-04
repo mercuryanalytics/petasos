@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Button.module.css';
+import { Link } from 'react-router-dom';
 
 const Button = props => {
   const baseClasses = `
@@ -8,9 +9,9 @@ const Button = props => {
     ${props.className || ''}
   `;
   return props.link ? (
-    <a className={`${baseClasses} ${styles.link}`} href={props.link}>
+    <Link className={`${baseClasses} ${styles.link}`} to={props.link}>
       {props.children}
-    </a>
+    </Link>
   ) : (
     <button type={props.type || 'button'} className={`${baseClasses}`} onClick={props.onClick}>
       {props.children}

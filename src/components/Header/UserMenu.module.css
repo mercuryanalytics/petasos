@@ -36,7 +36,20 @@
   top: 100%;
   width: 100%;
   margin-top: 10px;
-  padding: 10px;
+  padding: 10px 0;
   box-sizing: border-box;
-  background-color: #dedede;
+  border: 1px solid #C9C9C9;
+  background-color: #fafafa;
+}
+
+.menuLink {
+  display: block;
+  padding: 10px 15px;
+  color: #333 !important;
+  text-decoration: none !important;
+}
+
+.menuLink:hover {
+  color: #000;
+  background-color: #fff;
 }

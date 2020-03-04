@@ -3,6 +3,7 @@ import styles from './UserMenu.module.css';
 import Routes from '../../utils/routes';
 import HeaderControl from './HeaderControl';
 import Avatar from '../Avatar';
+import { Link } from 'react-router-dom';
 
 const UserMenu = props => {
   const { user } = props;
@@ -26,7 +27,8 @@ const UserMenu = props => {
       </span>
       {isOpen && (
         <div className={styles.menu}>
-          <a href={Routes.Logout}>Logout</a>
+          <Link className={styles.menuLink} to={Routes.Account}>My account</Link>
+          <Link className={styles.menuLink} to={Routes.Logout}>Log out</Link>
         </div>
       )}
     </HeaderControl>
