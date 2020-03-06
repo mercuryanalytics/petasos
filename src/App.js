@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import './static/base.css';
-import history from './utils/history';
+import { useHistory } from 'react-router-dom';
 import Constants from './utils/constants';
 import Routes from './utils/routes';
 import authConfig from './auth_config.json';
@@ -16,21 +16,13 @@ import PageNotFound from './screens/PageNotFound';
 
 const App = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onAuth0RedirectCallback = (appState) => {
     if (appState) {
       history.push(appState.targetUrl || Constants.APP_URL);
     }
   };
-
-  const handleNavigation = () => {
-    dispatch(setLocationData({}));
-  };
-
-  useEffect(() => {
-    handleNavigation(history.location);
-    history.listen(location => handleNavigation(location));
-  }, []);
 
   return (
     <Auth0Provider
@@ -39,6 +31,12 @@ const App = () => {
       redirect_uri={`${Constants.APP_URL}${Routes.LoginCallback}`}
       onRedirectCallback={onAuth0RedirectCallback}
     >
+      <Route
+        path="*"
+        render={() => {
+          dispatch(setLocationData({}));
+        }}
+      />
       <Switch>
         <Route exact path={Routes.Home} component={Index} />
         <Route

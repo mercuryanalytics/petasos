@@ -1,4 +1,6 @@
-.container {}
+.container {
+  user-select: none;
+}
 
 .add {
   display: flex;

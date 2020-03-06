@@ -1,6 +1,8 @@
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
+let pending = {};
+
 export function getProjects(clientId) {
   const queryString = clientId ? `?client_id=${clientId}` : '';
   return dispatch => {
@@ -22,18 +24,27 @@ export const getProjectsFailure = (error) => ({
 
 export function getProject(id) {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/projects/${id}`)
-      .then(res => dispatch(getProjectSuccess(res)))
-      .catch(err => dispatch(getProjectFailure(err)));
+    if (!pending[id]) {
+      pending[id] = true;
+      apiCall('GET', `${Constants.API_URL}/projects/${id}`)
+        .then(res => dispatch(getProjectSuccess(res)))
+        .catch(err => dispatch(getProjectFailure(err, id)));
+    }
   };
 }
 
-export const getProjectSuccess = (project) => ({
-  type: 'GET_PROJECT_SUCCESS',
-  payload: project,
-});
+export const getProjectSuccess = (project) => {
+  pending[project.id] = false;
+  return {
+    type: 'GET_PROJECT_SUCCESS',
+    payload: project,
+  }
+};
 
-export const getProjectFailure = (error) => ({
-  type: 'GET_PROJECT_FAILURE',
-  payload: error,
-});
+export const getProjectFailure = (error, projectId) => {
+  pending[projectId] = false;
+  return {
+    type: 'GET_PROJECT_FAILURE',
+    payload: error,
+  }
+};

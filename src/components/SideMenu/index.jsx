@@ -1,47 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './index.module.css';
-import { getClients } from '../../store/clients/actions';
-import { getProjects } from '../../store/projects/actions';
-import { getReports } from '../../store/reports/actions';
+import { getClient, getClients } from '../../store/clients/actions';
+import { getProject, getProjects } from '../../store/projects/actions';
+import { getReport, getReports } from '../../store/reports/actions';
 import Search from '../Search';
 import Client from './Client';
 import ClientAdd from './ClientAdd';
 
+const TaskTypes = {
+  ShowReport: 'show-report',
+  OpenProject: 'open-project',
+  // ShowProject: 'show-project',
+  OpenClient: 'open-client',
+  // ShowClient: 'show-client',
+};
 
 const SideMenu = () => {
   const dispatch = useDispatch();
+  const [task, setTask] = useState(null);
   const clients = useSelector(state => state.clientsReducer.clients);
   const projects = useSelector(state => state.projectsReducer.projects);
   const reports = useSelector(state => state.reportsReducer.reports);
   const activeClient = useSelector(state => state.locationReducer.data.client);
   const activeProject = useSelector(state => state.locationReducer.data.project);
   const activeReport = useSelector(state => state.locationReducer.data.report);
-  const [clientsOpen, setClientsOpen] = useState({});
-  const [projectsOpen, setProjectsOpen] = useState({});
+  const [openClients, setOpenClients] = useState({});
+  const [openProjects, setOpenProjects] = useState({});
 
   useEffect(() => {
     dispatch(getClients());
+    dispatch(getProjects());
   }, []);
 
   const onSearch = (event) => {
     // @TODO Search what ?
-  }
+  };
 
   const onClientOpen = (client) => {
-    if (!clientsOpen[client.id]) {
+    if (!openClients[client.id]) {
       dispatch(getProjects(client.id));
-      setClientsOpen({ ...clientsOpen, [client.id]: true });
-      clientsOpen[client.id] = true;
+      setOpenClients({ ...openClients, [client.id]: true });
     }
   };
 
   const onProjectOpen = (project) => {
-    if (!projectsOpen[project.id]) {
+    if (!openProjects[project.id]) {
       dispatch(getReports(project.id));
-      setProjectsOpen({ ...projectsOpen, [project.id]: true });
+      setOpenProjects({ ...openProjects, [project.id]: true });
     }
   };
+
+  useEffect(() => {
+    if (activeReport !== null) {
+      setTask({ type: TaskTypes.ShowReport, target: activeReport });
+    } else if (activeProject !== null) {
+      setTask({ type: TaskTypes.OpenProject, target: activeProject });
+    } else if (activeClient !== null) {
+      setTask({ type: TaskTypes.OpenClient, target: activeClient });
+    }
+  }, [activeClient, activeProject, activeReport]);
+
+  useEffect(() => {
+    if (task) {
+      if (task.type === TaskTypes.ShowReport) {
+        let r = reports.filter(r => r.id === task.target)[0];
+        if (r) {
+          setTask({ type: TaskTypes.OpenProject, target: r.project_id });
+        } else {
+          dispatch(getReport(task.target));
+        }
+      } else if (task.type === TaskTypes.OpenProject) {
+        let p = projects.filter(p => p.id === task.target)[0];
+        if (p) {
+          setOpenProjects({ ...openProjects, [p.id]: true });
+          setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
+          dispatch(getReports(task.target));
+        } else {
+          dispatch(getProject(task.target));
+        }
+      } else if (task.type === TaskTypes.OpenClient) {
+        let c = clients.filter(c => c.id === task.target)[0];
+        if (c) {
+          setOpenClients({ ...openClients, [c.id]: true});
+          setTask(null);
+          dispatch(getProjects(task.target))
+        } else {
+          dispatch(getClient(task.target));;
+        }
+      }
+    }
+  }, [task, reports, projects, clients]);
 
   return (
     <div className={styles.container}>
@@ -51,10 +100,9 @@ const SideMenu = () => {
           key={`client-btn-${client.id}`}
           data={client}
           projects={projects.filter(p => p.domain_id === client.id)}
-          projectsOpen={projectsOpen}
-          // @TODO Filter reports by client
-          reports={reports}
-          open={!!clientsOpen[client.id]}
+          openProjects={openProjects}
+          reports={reports}// @TODO Filter reports by client / client+project
+          open={!!openClients[client.id]}
           active={activeClient === client.id}
           activeProject={activeProject}
           activeReport={activeReport}

@@ -19,6 +19,12 @@ const Project = props => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (props.open !== isOpen) {
+      setIsOpen(props.open);
+    }
+  }, [props.open]);
+
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
       <div className={styles.title} onClick={toggleOpen}>

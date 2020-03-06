@@ -6,8 +6,9 @@ import Project from './Project';
 import ProjectAdd from './ProjectAdd';
 
 const Client = props => {
-  const { data, projects, projectsOpen, reports } = props;
+  const { data, projects, reports } = props;
   const [isOpen, setIsOpen] = useState(!!props.open);
+  const [openProjects, setOpenProjects] = useState(props.openProjects || {});
 
   const toggleOpen = (event) => {
     setIsOpen(!isOpen);
@@ -20,11 +21,21 @@ const Client = props => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (props.open !== isOpen) {
+      setIsOpen(props.open);
+    }
+  }, [props.open]);
+
   const onProjectOpen = (project) => {
     if (props.onProjectOpen) {
       props.onProjectOpen(project);
     }
   };
+
+  useEffect(() => {
+    setOpenProjects({ ...props.openProjects });
+  }, [props.openProjects]);
 
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
@@ -40,7 +51,7 @@ const Client = props => {
               key={`project-btn-${project.id}`}
               data={project}
               reports={reports.filter(r => r.project_id === project.id)}
-              open={!!projectsOpen[project.id]}
+              open={!!openProjects[project.id]}
               active={props.activeProject === project.id}
               activeReport={props.activeReport}
               onOpen={onProjectOpen}

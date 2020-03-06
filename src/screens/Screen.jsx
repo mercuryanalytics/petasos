@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
-import history from '../utils/history';
+import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import { setUser, setAuthKey } from '../store/auth/actions';
 import { useAuth0 } from '../react-auth0-spa';
@@ -12,6 +12,7 @@ import Loader from '../components/Loader';
 
 const Screen = props => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { loading, isAuthenticated, user, getIdTokenClaims } = useAuth0();
   const activeUser = useSelector(state => state.authReducer.user);
   const [loaded, setLoaded] = useState(false);

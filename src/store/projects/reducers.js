@@ -11,17 +11,21 @@ const projectsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_PROJECT_SUCCESS': {
-      let modified;
-      for (let i, len = state.projects.length; i < len; i++) {
-        if (+state.projects[i].id === +action.payload.id) {
-          state.projects[i] = action.payload;
+      let modified, projects = state.projects;
+      for (let i = 0, len = projects.length; i < len; i++) {
+        if (projects[i].id === action.payload.id) {
+          projects[i] = action.payload;
           modified = true;
           break;
         }
       }
       if (!modified) {
-        state.projects.push(action.payload);
+        projects.push(action.payload);
       }
+      return {
+        ...state,
+        projects: [ ...projects ],
+      };
     }
     default: {
       return state;

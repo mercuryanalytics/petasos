@@ -11,18 +11,21 @@ const reportsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_REPORT_SUCCESS': {
-      let modified;
-      for (let i = 0, len = state.reports.length; i < len; i++) {
-        if (state.reports[i].id === action.payload.id) {
-          state.reports[i] = action.payload;
+      let modified, reports = state.reports;
+      for (let i = 0, len = reports.length; i < len; i++) {
+        if (reports[i].id === action.payload.id) {
+          reports[i] = action.payload;
           modified = true;
           break;
         }
       }
       if (!modified) {
-        state.reports.push(action.payload);
+        reports.push(action.payload);
       }
-      return state;
+      return {
+        ...state,
+        reports: [ ...reports ],
+      };
     }
     default: {
       return state;

@@ -7,6 +7,7 @@ import Loader from '../components/Loader';
 
 const Logout = () => {
   const { loading, isAuthenticated, logout } = useAuth0();
+
   if (!loading) {
     if (isAuthenticated) {
       logout({
@@ -16,6 +17,7 @@ const Logout = () => {
       return <Redirect to={Routes.Login} />;
     }
   }
+
   return <Loader />;
 };
 

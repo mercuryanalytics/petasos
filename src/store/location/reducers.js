@@ -1,6 +1,6 @@
 const initialState = {
   data: {
-    user: null,
+    account: null,
     client: null,
     project: null,
     report: null,

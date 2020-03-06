@@ -11,17 +11,21 @@ const clientsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_CLIENT_SUCCESS': {
-      let modified;
-      for (let i, len = state.clients.length; i < len; i++) {
-        if (+state.clients[i].id === +action.payload.id) {
-          state.clients[i] = action.payload;
+      let modified, clients = state.clients;
+      for (let i = 0, len = clients.length; i < len; i++) {
+        if (clients[i].id === action.payload.id) {
+          clients[i] = action.payload;
           modified = true;
           break;
         }
       }
       if (!modified) {
-        state.clients.push(action.payload);
+        clients.push(action.payload);
       }
+      return {
+        ...state,
+        clients: [ ...clients ],
+      };
     }
     default: {
       return state;

@@ -21,7 +21,7 @@ export const ContentTypes = {
 
 const Index = props => {
   const { content } = props;
-  const resId = props.match.params.id;
+  const resId = +props.match.params.id;
 
   return (
     <Screen private>
