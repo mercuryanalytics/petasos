@@ -1,6 +1,4 @@
-const env = process.env.NODE_ENV;
-
-console.log('constants.js', JSON.stringify(process));
+import { ENV } from './env';
 
 const prod = {
   APP_URL: 'https://mercury-analytics-frontend.herokuapp.com',
@@ -8,10 +6,10 @@ const prod = {
 };
 
 const dev = {
-  APP_URL: 'https://mercury-analytics-frontend.herokuapp.com',
+  APP_URL: 'http://localhost:3000',
   API_URL: 'https://mercury-analytics-api.herokuapp.com/api/v1',
 };
 
-const Constants = env !== 'development' ? prod : dev;
+const Constants = ENV !== 'development' ? prod : dev;
 
 export default Constants;

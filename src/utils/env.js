@@ -1,0 +1,1 @@
+export const ENV = window.location.hostname.match(/localhost/) ? 'development' : 'production';
