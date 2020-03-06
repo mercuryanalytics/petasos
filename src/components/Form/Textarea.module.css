@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  padding: 12px 15px;
+  padding: 10px 15px;
   box-sizing: border-box;
   border: 1px solid #B9B9B9;
   outline: none;
@@ -10,7 +10,6 @@
 .container:hover {
   border-color: #000;
 }
-
 .container:focus {
   border-color: #000;
 }

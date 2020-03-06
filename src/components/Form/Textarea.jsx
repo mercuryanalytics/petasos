@@ -1,15 +1,14 @@
 import React from 'react';
-import styles from './Input.module.css';
+import styles from './Textarea.module.css';
 import { Field } from 'redux-form';
 
-const Input = props => {
+const Textarea = props => {
   const classes = `${styles.container} ${props.className}`;
 
   return (
     <Field
       className={classes}
-      component="input"
-      type={props.type || 'text'}
+      component="textarea"
       name={props.name}
       placeholder={props.placeholder}
       value={props.value}
@@ -17,4 +16,4 @@ const Input = props => {
   );
 };
 
-export default Input;
+export default Textarea;

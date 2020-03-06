@@ -2,6 +2,11 @@
   user-select: none;
 }
 
+.search {
+  padding: 10px;
+  border-bottom: 1px solid #B9B9B9;
+}
+
 .add {
   display: flex;
   justify-content: center;

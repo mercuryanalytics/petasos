@@ -1,22 +1,23 @@
 .container {
-  padding: 10px;
-  border-bottom: 1px solid #B9B9B9;
-}
-
-.search {
-  display: flex;
-  align-items: center;
-  border: 1px solid #B9B9B9;
+  position: relative;
 }
 
 .input {
-  flex-grow: 1;
-  padding: 12px 10px;
+  width: 100%;
+  padding: 12px 2.6rem 12px 15px;
   box-sizing: border-box;
-  border: none;
+  border: 1px solid #B9B9B9;
   outline: none;
   font-size: .8rem;
   color: #A9A9A9;
+}
+
+.input:hover {
+  border-color: #000;
+}
+
+.input:focus {
+  border-color: #000;
 }
 
 .input::placeholder {
@@ -27,7 +28,11 @@
 }
 
 .icon {
+  position: absolute;
+  z-index: 1;
+  right: .4rem;
+  top: 50%;
+  margin-top: -.9rem;
   font-size: 1.8rem;
   color: #E0E0E0;
-  margin-right: 5px;
 }

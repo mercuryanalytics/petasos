@@ -94,7 +94,9 @@ const SideMenu = () => {
 
   return (
     <div className={styles.container}>
-      <Search onSearch={onSearch} />
+      <div className={styles.search}>
+        <Search placeholder="Search by project" onSearch={onSearch} />
+      </div>
       {clients && !!clients.length && clients.map(client => (
         <Client
           key={`client-btn-${client.id}`}
