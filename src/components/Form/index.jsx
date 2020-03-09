@@ -8,10 +8,10 @@ const Form = props => {
   const { pristine, reset, submitting, initialize } = props;
 
   useEffect(() => {
-    if (props.formValues && initialize) {
-      initialize(props.formValues);
+    if (initialize) {
+      initialize(props.formValues || {});
     }
-  }, [props.values, initialize]);
+  }, [props.formValues, initialize]);
 
   useEffect(() => {
     if (props.onInit) {

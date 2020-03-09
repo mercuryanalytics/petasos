@@ -13,6 +13,10 @@ const UserPermissions = props => {
     setOpenGroups({ ...openGroups, [id]: !openGroups[id] });
   };
 
+  const toggleGroupSettings = (id, event) => {
+    event.stopPropagation();
+  };
+
   const onSearch = () => {
     // @TODO
   };
@@ -30,7 +34,10 @@ const UserPermissions = props => {
                 <MdPlayArrow className={`${styles.arrow} ${false ? styles.open : ''}`} />
                 <span className={styles.groupName}>{client.name}</span>
               </div>
-              <MdSettings className={styles.groupSettings} />
+              <MdSettings
+                className={styles.groupSettings}
+                onClick={e => toggleGroupSettings(client.id, e)}
+              />
             </div>
             {!!openGroups[client.id] && (
               <div className={styles.items}>

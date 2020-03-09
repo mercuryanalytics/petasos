@@ -5,6 +5,19 @@ import Button from './Button';
 import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
 import Form, { Input, Textarea } from './Form';
 
+const ProjectTypes = {
+  CommercialTest: 'Commercial Test',
+  ConsumerTest: 'Consumer Test',
+  CoverTest: 'Cover Test',
+  MessagingTest: 'Messaging Test',
+  PoliticalAdTest: 'Political Ad Test',
+  PrintAdTest: 'Print Ad Test',
+  TrailerTest: 'Trailer Test',
+  VideoTest: 'Video Test',
+  WebsiteEvaluationTest: 'Website Evaluation Test',
+  CustomTest: 'Custom Test',
+};
+
 const ProjectManage = props => {
   const { data } = props;
   const [form, setForm] = useState(null);
