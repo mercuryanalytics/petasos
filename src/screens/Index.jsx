@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './Index.module.css';
+import { setLocationData } from '../store/location/actions';
+import { getClient } from '../store/clients/actions';
+import { getProject } from '../store/projects/actions';
+import { getReport } from '../store/reports/actions';
 import Screen from './Screen';
-import Account from '../components/Account';
-import ClientCreate from '../components/ClientCreate';
+import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
-import ProjectCreate from '../components/ProjectCreate';
 import ProjectManage from '../components/ProjectManage';
-import ReportCreate from '../components/ReportCreate';
 import ReportManage from '../components/ReportManage';
 
 export const ContentTypes = {
-  Account: 'account',
   CreateClient: 'create-client',
   ManageClient: 'manage-client',
   CreateProject: 'create-project',
@@ -19,20 +20,88 @@ export const ContentTypes = {
   ManageReport: 'manage-report',
 };
 
+const LocationTitles = {
+  [ContentTypes.CreateClient]: 'Create client',
+  [ContentTypes.CreateProject]: 'Create project',
+  [ContentTypes.CreateReport]: 'Create report',
+};
+
 const Index = props => {
   const { content } = props;
   const resId = +props.match.params.id;
+  const dispatch = useDispatch();
+  const [loaded, setLoaded] = useState(false);
+  const [reportId, setReportId] = useState(null);
+  const [projectId, setProjectId] = useState(null);
+  const [clientId, setClientId] = useState(null);
+  const report = useSelector(state =>
+    reportId !== null ? state.reportsReducer.reports.filter(r => r.id === reportId)[0] : null);
+  const project = useSelector(state =>
+    projectId !== null || report ?
+      state.projectsReducer.projects.filter(p => p.id === (report ? report.project_id : projectId))[0]
+      : null);
+  const client = useSelector(state =>
+    clientId !== null || project ?
+      state.clientsReducer.clients.filter(c => c.id === (project ? project.domain_id : clientId))[0]
+      : null);
+
+  useEffect(() => {
+    if (loaded) {
+      switch (content) {
+        case ContentTypes.ManageClient:
+          dispatch(setLocationData({ client: resId }));
+          setClientId(resId);
+          break;
+        case ContentTypes.ManageProject:
+          dispatch(setLocationData({ project: resId }));
+          setProjectId(resId);
+          break;
+        case ContentTypes.ManageReport:
+          dispatch(setLocationData({ report: resId }));
+          setReportId(resId);
+          break;
+        default:
+          setClientId(null);
+          setProjectId(null);
+          setReportId(null);
+      }
+    }
+  }, [content, loaded]);
+
+  useEffect(() => {
+    if (clientId !== null || project) {
+      dispatch(getClient(project ? project.domain_id : clientId));
+    }
+  }, [clientId, project]);
+
+  useEffect(() => {
+    if (projectId !== null || report) {
+      dispatch(getProject(report ? report.project_id : projectId));
+    }
+  }, [projectId, report]);
+
+  useEffect(() => {
+    if (reportId !== null) {
+      dispatch(getReport(reportId));
+    }
+  }, [reportId]);
 
   return (
-    <Screen private>
+    <Screen private onLoad={() => setLoaded(true)}>
       <div className={styles.container}>
-        {(content === ContentTypes.Account && <Account />) ||
-          (content === ContentTypes.CreateClient && <ClientCreate />) ||
-          (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
-          (content === ContentTypes.CreateProject && <ProjectCreate />) ||
-          (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
-          (content === ContentTypes.CreateReport && <ReportCreate />) ||
-          (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
+        <div className={styles.header}>
+          {!isNaN(resId) ? (
+            <Breadcrumbs client={client} project={project} report={report} />
+          ) : (
+            <Breadcrumbs value={LocationTitles[content]} />
+          )}
+        </div>
+        {(content === ContentTypes.CreateClient && <ClientManage />) ||
+          (content === ContentTypes.ManageClient && <ClientManage data={client} />) ||
+          (content === ContentTypes.CreateProject && <ProjectManage />) ||
+          (content === ContentTypes.ManageProject && <ProjectManage data={project} />) ||
+          (content === ContentTypes.CreateReport && <ReportManage />) ||
+          (content === ContentTypes.ManageReport && <ReportManage data={report} />)}
       </div>
     </Screen>
   );

@@ -1,57 +1,28 @@
 .container {
-  background-color: #EFF0F4;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem;
-}
-
-.header .breadcrumbs {
-  font-size: .9rem;
-  font-weight: bold;
-}
-
-.header .controls {
-  display: flex;
-  align-items: center;
-}
-
-.header .controls > :not(:last-child) {
-  margin-right: .5rem;
-}
-
-.header .controls .deleteIcon {
-  font-size: 2rem;
-}
-
-.body {
   display: flex;
   margin: .5rem 2rem;
   border: 1px solid #B9B9B9;
   background-color: #fff;
 }
 
-.body .section {
+.section {
   padding: 2rem;
   box-sizing: border-box;
 }
 
-.body .section.left {
+.section.left {
   flex-grow: 1;
 }
 
-.body .section.right {
+.section.right {
   width: 400px;
 }
 
-.body .section:not(:last-child) {
+.section:not(:last-child) {
   border-right: 1px solid #B9B9B9;
 }
 
-.body .section .title {
+.section .title {
   display: flex;
   align-items: center;
   margin-bottom: 2rem;
@@ -59,31 +30,21 @@
   font-weight: bold;
 }
 
-.body .section .title .icon {
+.section .title .icon {
   margin-right: .5rem;
   font-size: 1.5rem;
 }
 
-.body .section .form .formControl {
+.section .form .formControl {
   margin-bottom: 1rem;
 }
 
-.body .section .form textarea.formControl {
+.section .form textarea {
   height: 120px;
 }
 
-.body .section .form .formButtons {
+.section .form .formButtons {
   display: flex;
   justify-content: center;
   margin-top: 1rem;
 }
-
-.body .section .search {
-  margin-bottom: 1rem;
-}
-
-.body .section .permissions {}
-.body .section .permissions .group {}
-.body .section .permissions .group .groupTitle {}
-.body .section .permissions .group .groupItems {}
-.body .section .permissions .group .groupItem {}

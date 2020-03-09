@@ -1,3 +1,7 @@
 .container {
-  /**/
+  display: flex;
+  margin: .5rem 2rem;
+  border: 1px solid #B9B9B9;
+  background-color: #fff;
+  padding: 2rem;
 }

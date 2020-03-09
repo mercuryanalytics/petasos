@@ -6,14 +6,21 @@ const Input = props => {
   const classes = `${styles.container} ${props.className}`;
 
   return (
-    <Field
-      className={classes}
-      component="input"
-      type={props.type || 'text'}
-      name={props.name}
-      placeholder={props.placeholder}
-      value={props.value}
-    />
+    <div className={classes}>
+      {!!props.label && (
+        <label>{props.label}</label>
+      )}
+      <Field
+        className={styles.control}
+        component="input"
+        type={props.type || 'text'}
+        name={props.name}
+        placeholder={props.placeholder}
+      />
+      {!!props.errors && props.errors.map(error => (
+        <div className={styles.error}>{error}</div>
+      ))}
+    </div>
   );
 };
 

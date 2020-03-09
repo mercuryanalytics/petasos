@@ -1,3 +1,50 @@
 .container {
-  /**/
+  display: flex;
+  margin: .5rem 2rem;
+  border: 1px solid #B9B9B9;
+  background-color: #fff;
+}
+
+.section {
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.section.left {
+  flex-grow: 1;
+}
+
+.section.right {
+  width: 400px;
+}
+
+.section:not(:last-child) {
+  border-right: 1px solid #B9B9B9;
+}
+
+.section .title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.section .title .icon {
+  margin-right: .5rem;
+  font-size: 1.5rem;
+}
+
+.section .form .formControl {
+  margin-bottom: 1rem;
+}
+
+.section .form textarea {
+  height: 120px;
+}
+
+.section .form .formButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }

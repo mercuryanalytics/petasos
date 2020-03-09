@@ -1,22 +1,39 @@
 .container {
   width: 100%;
-  padding: 10px 15px;
+}
+
+.container label {
+  display: block;
+  margin-bottom: .4rem;
+  font-size: .8rem;
+}
+
+.control {
+  width: 100%;
+  padding: 12px 15px;
   box-sizing: border-box;
   border: 1px solid #B9B9B9;
   outline: none;
   font-size: .8rem;
 }
 
-.container:hover {
-  border-color: #000;
-}
-.container:focus {
+.control:hover {
   border-color: #000;
 }
 
-.container::placeholder {
+.control:focus {
+  border-color: #000;
+}
+
+.control::placeholder {
   color: #B9B9B9;
 }
-.container::-ms-input-placeholder {
+.control::-ms-input-placeholder {
   color: #B9B9B9;
+}
+
+.error {
+  margin-top: .3rem;
+  color: #B60010;
+  font-size: .8rem;
 }

@@ -10,6 +10,7 @@ import { Auth0Provider } from './react-auth0-spa';
 import { setLocationData } from './store/location/actions';
 import Loader from './components/Loader';
 import Index, { ContentTypes } from './screens/Index';
+import Account from './screens/Account';
 import Login from './screens/Login';
 import Logout from './screens/Logout';
 import PageNotFound from './screens/PageNotFound';
@@ -63,10 +64,7 @@ const App = () => {
           path={Routes.ManageReport}
           render={p => <Index {...p} content={ContentTypes.ManageReport} />}
         />
-        <Route
-          path={Routes.Account}
-          render={p => <Index {...p} content={ContentTypes.Account} />}
-        />
+        <Route path={Routes.Account} component={Account} />
         <Route path={Routes.Login} component={Login} />
         <Route path={Routes.LoginCallback} component={Loader} />
         <Route path={Routes.Logout} component={Logout} />

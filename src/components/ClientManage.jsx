@@ -1,24 +1,16 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
 import styles from './ClientManage.module.css';
-import { setLocationData } from '../store/location/actions';
-import { getClient } from '../store/clients/actions';
+import UserPermissions from './UserPermissions';
+import Button from './Button';
+import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
+import Form, { Input, Textarea } from './Form';
 
 const ClientManage = props => {
-  const dispatch = useDispatch();
-  const client = useSelector(state =>
-    state.clientsReducer.clients.filter(c => c.id === props.id));
-
-  useEffect(() => {
-    dispatch(setLocationData({ client: props.id }));
-    if (!client || props.id !== client.id) {
-      dispatch(getClient(props.id));
-    }
-  }, [props.id]);
+  const { data } = props;
 
   return (
     <div className={styles.container}>
-      [ClientManage-{props.id}]
+      [ClientManage]
     </div>
   );
 };

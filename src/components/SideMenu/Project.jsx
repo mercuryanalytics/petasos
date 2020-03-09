@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Project.module.css';
+import Routes from '../../utils/routes';
+import { Link } from 'react-router-dom';
 import { MdPlayArrow, MdFolder } from 'react-icons/md';
 import Report from './Report';
 import ReportAdd from './ReportAdd';
@@ -11,6 +13,7 @@ const Project = props => {
   const toggleOpen = (event) => {
     setIsOpen(!isOpen);
     event.stopPropagation();
+    event.preventDefault();
   };
 
   useEffect(() => {
@@ -27,11 +30,14 @@ const Project = props => {
 
   return (
     <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
-      <div className={styles.title} onClick={toggleOpen}>
-        <MdPlayArrow className={`${styles.arrow} ${isOpen ? styles.open : ''}`} />
+      <Link className={styles.title} to={Routes.ManageProject.replace(':id', data.id)}>
+        <MdPlayArrow
+          className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
+          onClick={toggleOpen}
+        />
         <MdFolder className={styles.icon} />
         <span className={styles.name}>{data.name}</span>
-      </div>
+      </Link>
       {isOpen && (
         <div className={styles.content}>
           {reports && !!reports.length && reports.map(report => (

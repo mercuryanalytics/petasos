@@ -6,13 +6,20 @@ const Textarea = props => {
   const classes = `${styles.container} ${props.className}`;
 
   return (
-    <Field
-      className={classes}
-      component="textarea"
-      name={props.name}
-      placeholder={props.placeholder}
-      value={props.value}
-    />
+    <div className={classes}>
+      {!!props.label && (
+        <label>{props.label}</label>
+      )}
+      <Field
+        className={styles.control}
+        component="textarea"
+        name={props.name}
+        placeholder={props.placeholder}
+      />
+      {!!props.errors && props.errors.map(error => (
+        <div className={styles.error}>{error}</div>
+      ))}
+    </div>
   );
 };
 
