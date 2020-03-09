@@ -8,3 +8,17 @@
   justify-content: space-between;
   padding: 2rem;
 }
+
+.header .controls {
+  display: flex;
+  align-items: center;
+}
+
+.header .controls > :not(:last-child) {
+  margin-right: .5rem;
+}
+
+.header .controls .deleteIcon {
+  font-size: 2rem;
+  margin-right: .2rem;
+}

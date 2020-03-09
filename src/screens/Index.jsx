@@ -10,6 +10,8 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
+import Button from '../components/Button';
+import { MdDelete } from 'react-icons/md';
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -24,6 +26,12 @@ const LocationTitles = {
   [ContentTypes.CreateClient]: 'Create client',
   [ContentTypes.CreateProject]: 'Create project',
   [ContentTypes.CreateReport]: 'Create report',
+};
+
+const ContentTypesToDeleteActionText = {
+  [ContentTypes.ManageClient]: 'Delete client',
+  [ContentTypes.ManageProject]: 'Delete project',
+  [ContentTypes.ManageReport]: 'Delete report',
 };
 
 const Index = props => {
@@ -91,7 +99,20 @@ const Index = props => {
       <div className={styles.container}>
         <div className={styles.header}>
           {!isNaN(resId) ? (
-            <Breadcrumbs client={client} project={project} report={report} />
+            <>
+              <Breadcrumbs client={client} project={project} report={report} />
+              <div className={styles.controls}>
+                {!!ContentTypesToDeleteActionText[content] && (
+                  <Button transparent>
+                    <MdDelete className={styles.deleteIcon} />
+                    <span>{ContentTypesToDeleteActionText[content]}</span>
+                  </Button>
+                )}
+                {content === ContentTypes.ManageReport && (
+                  <Button>View report</Button>
+                )}
+              </div>
+            </>
           ) : (
             <Breadcrumbs value={LocationTitles[content]} />
           )}
