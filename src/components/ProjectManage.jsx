@@ -19,7 +19,7 @@ const ProjectTypes = {
 };
 
 const ProjectManage = props => {
-  const { data } = props;
+  const { data, clientId } = props;
   const [form, setForm] = useState(null);
   const [status, setStatus] = useState(null);
   const [errors, setErrors] = useState(null);
@@ -35,7 +35,7 @@ const ProjectManage = props => {
   };
 
   const handlePermissionsChange = () => {
-    // @TODO
+    // @TODO Waiting for UserPermissions
   };
 
   const handleSubmit = () => {
@@ -120,7 +120,9 @@ const ProjectManage = props => {
             errors={errors && errors.modified_on}
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={status && status.submitting}>Update</Button>
+            <Button type="submit" disabled={status && status.submitting}>
+              <span>{data ? 'Update' : 'Create'}</span>
+            </Button>
           </div>
         </Form>
       </div>

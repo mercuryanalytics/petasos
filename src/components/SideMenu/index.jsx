@@ -11,9 +11,7 @@ import ClientAdd from './ClientAdd';
 const TaskTypes = {
   ShowReport: 'show-report',
   OpenProject: 'open-project',
-  // ShowProject: 'show-project',
   OpenClient: 'open-client',
-  // ShowClient: 'show-client',
 };
 
 const SideMenu = () => {
@@ -33,8 +31,8 @@ const SideMenu = () => {
     dispatch(getProjects());
   }, []);
 
-  const onSearch = (event) => {
-    // @TODO Search what ?
+  const onSearch = (value) => {
+    // @TODO Implement search
   };
 
   const onClientOpen = (client) => {
@@ -103,7 +101,7 @@ const SideMenu = () => {
           data={client}
           projects={projects.filter(p => p.domain_id === client.id)}
           openProjects={openProjects}
-          reports={reports}// @TODO Filter reports by client / client+project
+          reports={reports}
           open={!!openClients[client.id]}
           active={activeClient === client.id}
           activeProject={activeProject}

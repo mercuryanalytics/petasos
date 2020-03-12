@@ -17,8 +17,8 @@ const UserPermissions = props => {
     event.stopPropagation();
   };
 
-  const onSearch = () => {
-    // @TODO
+  const onSearch = (value) => {
+    // @TODO Implement search
   };
 
   return (

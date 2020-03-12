@@ -21,7 +21,7 @@ const Form = props => {
 
   useEffect(() => {
     if (props.onStatusChange) {
-      props.onStatusChange({ pristine, submitting })
+      props.onStatusChange({ pristine, submitting });
     }
   }, [pristine, submitting]); 
 

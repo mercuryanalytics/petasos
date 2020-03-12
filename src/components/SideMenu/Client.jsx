@@ -63,7 +63,7 @@ const Client = props => {
               onOpen={onProjectOpen}
             />
           ))}
-          <ProjectAdd />
+          <ProjectAdd clientId={data.id} />
         </div>
       )}
     </div>

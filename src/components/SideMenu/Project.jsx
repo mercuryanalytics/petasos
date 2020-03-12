@@ -47,7 +47,7 @@ const Project = props => {
               active={props.activeReport === report.id}
             />
           ))}
-          <ReportAdd />
+          <ReportAdd projectId={data.id} />
         </div>
       )}
     </div>
