@@ -7,6 +7,7 @@
 }
 
 .section {
+  flex-grow: 1;
   padding: 2rem;
   box-sizing: border-box;
 }
@@ -14,9 +15,13 @@
 .section .title {
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: bold;
+}
+
+.section .form .formSection {
+  margin-bottom: 2rem;
 }
 
 .section .form .formControl {
@@ -27,4 +32,13 @@
   display: flex;
   justify-content: center;
   margin-top: 1rem;
+}
+
+.section .form .controlsGroup {
+  display: flex;
+  justify-content: space-between;
+}
+
+.section .form .controlsGroup > * {
+  width: calc(50% - 10px);
 }
