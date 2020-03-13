@@ -35,3 +35,10 @@
 .content {
   border-bottom: 1px solid #B9B9B9;
 }
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+  margin: 5px 0 !important;
+}

@@ -47,3 +47,70 @@ export const getClientFailure = (error, clientId) => {
     payload: error,
   }
 };
+
+export function createClient(data) {
+  return dispatch => {
+    apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
+      .then(res => dispatch(createClientSuccess(res)))
+      .catch(err => dispatch(createClientFailure(err)));
+  };
+}
+
+export const createClientSuccess = (client) => {
+  return {
+    type: 'CREATE_CLIENT_SUCCESS',
+    payload: client,
+  }
+};
+
+export const createClientFailure = (error) => {
+  return {
+    type: 'CREATE_CLIENT_FAILURE',
+    payload: error,
+  }
+};
+
+export function updateClient(id, data) {
+  return dispatch => {
+    apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
+      .then(res => dispatch(updateClientSuccess(res)))
+      .catch(err => dispatch(updateClientFailure(err, id)));
+  };
+}
+
+export const updateClientSuccess = (client) => {
+  return {
+    type: 'UPDATE_CLIENT_SUCCESS',
+    payload: client,
+  }
+};
+
+export const updateClientFailure = (error, clientId) => {
+  return {
+    type: 'UPDATE_CLIENT_FAILURE',
+    payload: error,
+  }
+};
+
+export function deleteClient(id) {
+  return dispatch => {
+    apiCall('DELETE', `${Constants.API_URL}/clients/${id}`)
+      .then(res => dispatch(deleteClientSuccess(id)))
+      .catch(err => dispatch(deleteClientFailure(err, id)));
+  };
+}
+
+export const deleteClientSuccess = (clientId) => {
+  return {
+    type: 'DELETE_CLIENT_SUCCESS',
+    clientId: clientId,
+  }
+};
+
+export const deleteClientFailure = (error, clientId) => {
+  return {
+    type: 'DELETE_CLIENT_FAILURE',
+    payload: error,
+    clientId: clientId,
+  }
+};

@@ -3,6 +3,7 @@ import styles from './Client.module.css';
 import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
 import { MdPlayArrow } from 'react-icons/md';
+import Loader from '../Loader';
 import Avatar from '../Avatar';
 import Project from './Project';
 import ProjectAdd from './ProjectAdd';
@@ -52,17 +53,21 @@ const Client = props => {
       </Link>
       {isOpen && (
         <div className={styles.content}>
-          {projects && !!projects.length && projects.map(project => (
-            <Project
-              key={`project-btn-${project.id}`}
-              data={project}
-              reports={reports.filter(r => r.project_id === project.id)}
-              open={!!openProjects[project.id]}
-              active={props.activeProject === project.id}
-              activeReport={props.activeReport}
-              onOpen={onProjectOpen}
-            />
-          ))}
+          {!!projects && !!projects.length ? (
+            projects.map(project => (
+              <Project
+                key={`project-btn-${project.id}`}
+                data={project}
+                reports={reports.filter(r => r.project_id === project.id)}
+                open={!!openProjects[project.id]}
+                active={props.activeProject === project.id}
+                activeReport={props.activeReport}
+                onOpen={onProjectOpen}
+              />
+            ))
+          ) : (
+            <Loader inline className={styles.loader} />
+          )}
           <ProjectAdd clientId={data.id} />
         </div>
       )}

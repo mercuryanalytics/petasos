@@ -1,37 +1,6 @@
-import React, { useEffect } from 'react';
-import { reduxForm } from 'redux-form';
-
 export { default as Input } from './Input';
 export { default as Textarea } from './Textarea';
+export { default as Datepicker } from './Datepicker';
+export { default as Select } from './Select';
 
-const Form = props => {
-  const { pristine, reset, submitting, initialize } = props;
-
-  useEffect(() => {
-    if (initialize) {
-      initialize(props.formValues || {});
-    }
-  }, [props.formValues, initialize]);
-
-  useEffect(() => {
-    if (props.onInit) {
-      props.onInit({ reset });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (props.onStatusChange) {
-      props.onStatusChange({ pristine, submitting });
-    }
-  }, [pristine, submitting]); 
-
-  return (
-    <form onSubmit={props.onSubmit} className={props.className}>
-      {props.children}
-    </form>
-  );
-};
-
-export default reduxForm({
-  form: 'default',
-})(Form);
+export default null;

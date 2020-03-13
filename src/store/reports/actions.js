@@ -49,3 +49,70 @@ export const getReportFailure = (error, reportId) => {
     payload: error,
   }
 };
+
+export function createReport(data) {
+  return dispatch => {
+    apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
+      .then(res => dispatch(createReportSuccess(res)))
+      .catch(err => dispatch(createReportFailure(err)));
+  };
+}
+
+export const createReportSuccess = (report) => {
+  return {
+    type: 'CREATE_REPORT_SUCCESS',
+    payload: report,
+  }
+};
+
+export const createReportFailure = (error) => {
+  return {
+    type: 'CREATE_REPORT_FAILURE',
+    payload: error,
+  }
+};
+
+export function updateReport(id, data) {
+  return dispatch => {
+    apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
+      .then(res => dispatch(updateReportSuccess(res)))
+      .catch(err => dispatch(updateReportFailure(err, id)));
+  };
+}
+
+export const updateReportSuccess = (report) => {
+  return {
+    type: 'UPDATE_REPORT_SUCCESS',
+    payload: report,
+  }
+};
+
+export const updateReportFailure = (error, reportId) => {
+  return {
+    type: 'UPDATE_REPORT_FAILURE',
+    payload: error,
+  }
+};
+
+export function deleteReport(id) {
+  return dispatch => {
+    apiCall('DELETE', `${Constants.API_URL}/reports/${id}`)
+      .then(res => {dispatch(deleteReportSuccess(id))})
+      .catch(err => dispatch(deleteReportFailure(err, id)));
+  };
+}
+
+export const deleteReportSuccess = (reportId) => {
+  return {
+    type: 'DELETE_REPORT_SUCCESS',
+    reportId: reportId,
+  }
+};
+
+export const deleteReportFailure = (error, reportId) => {
+  return {
+    type: 'DELETE_REPORT_FAILURE',
+    payload: error,
+    reportId: reportId,
+  }
+};

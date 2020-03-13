@@ -5,3 +5,26 @@
   background-color: #fff;
   padding: 2rem;
 }
+
+.section {
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.section .title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.section .form .formControl {
+  margin-bottom: 1rem;
+}
+
+.section .form .formButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}

@@ -5,6 +5,7 @@ import { getClient, getClients } from '../../store/clients/actions';
 import { getProject, getProjects } from '../../store/projects/actions';
 import { getReport, getReports } from '../../store/reports/actions';
 import Search from '../Search';
+import Loader from '../Loader';
 import Client from './Client';
 import ClientAdd from './ClientAdd';
 
@@ -95,21 +96,25 @@ const SideMenu = () => {
       <div className={styles.search}>
         <Search placeholder="Search by project" onSearch={onSearch} />
       </div>
-      {clients && !!clients.length && clients.map(client => (
-        <Client
-          key={`client-btn-${client.id}`}
-          data={client}
-          projects={projects.filter(p => p.domain_id === client.id)}
-          openProjects={openProjects}
-          reports={reports}
-          open={!!openClients[client.id]}
-          active={activeClient === client.id}
-          activeProject={activeProject}
-          activeReport={activeReport}
-          onOpen={onClientOpen}
-          onProjectOpen={onProjectOpen}
-        />
-      ))}
+      {clients && !!clients.length ? (
+        clients.map(client => (
+          <Client
+            key={`client-btn-${client.id}`}
+            data={client}
+            projects={projects.filter(p => p.domain_id === client.id)}
+            openProjects={openProjects}
+            reports={reports}
+            open={!!openClients[client.id]}
+            active={activeClient === client.id}
+            activeProject={activeProject}
+            activeReport={activeReport}
+            onOpen={onClientOpen}
+            onProjectOpen={onProjectOpen}
+          />
+        ))
+      ) : (
+        <Loader inline className={styles.loader} />
+      )}
       <div className={styles.add}>
         <ClientAdd />
       </div>

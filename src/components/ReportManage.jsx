@@ -1,32 +1,63 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import styles from './ReportManage.module.css';
 import UserPermissions from './UserPermissions';
 import Button from './Button';
 import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
-import Form, { Input, Textarea } from './Form';
+import { useForm, useField } from 'react-final-form-hooks';
+import { Input, Textarea, Datepicker } from './Form';
+import { createReport, updateReport } from '../store/reports/actions';
 
 const ReportManage = props => {
   const { data, projectId } = props;
-  const [form, setForm] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [errors, setErrors] = useState(null);
+  const dispatch = useDispatch();
 
-  const handleRequiredControlChange = (name, event) => {
-    // @TODO Improve
-    let value = event.target.value;
-    let err = [];
-    if (!String(value).length) {
-      err.push('Field value is required.');
-    }
-    setErrors({ ...errors, [name]: err });
-  };
+  const { form, handleSubmit, pristine, submitting } = useForm({
+    initialValues: data ? {
+      name: data.name || '',
+      url: data.url || '',
+      description: data.description || '',
+      presented_on: data.presented_on || '',
+      modified_on: data.modified_on || '',
+    } : {},
+    validate: (values) => {
+      let errors = {};
+      ['name', 'modified_on'].forEach(key => {
+        if (!values[key]) {
+          errors[key] = 'Field value is required.'
+        }
+      });
+      return errors;
+    },
+    onSubmit: (values) => {
+      const result = {
+        name: values.name,
+        url: values.url,
+        description: values.description,
+        presented_on: values.presented_on ?
+          (new Date(values.presented_on)).toISOString()
+          : '',
+        modified_on: values.presented_on ?
+          (new Date(values.modified_on)).toISOString()
+          : '',
+        project_id: projectId,
+      };
+      if (data) {
+        dispatch(updateReport(data.id, result));
+      } else {
+        dispatch(createReport(result));
+      }
+    },
+  });
+
+  const name = useField('name', form);
+  const url = useField('url', form);
+  const description = useField('description', form);
+  const presented_on = useField('presented_on', form);
+  const modified_on = useField('modified_on', form);
 
   const handlePermissionsChange = () => {
     // @TODO Waiting for UserPermissions
-  };
-
-  const handleSubmit = () => {
-    // @TODO
   };
 
   return (
@@ -36,54 +67,38 @@ const ReportManage = props => {
           <MdInfoOutline className={styles.icon} />
           <span>Report details</span>
         </div>
-        <Form
-          className={styles.form}
-          onInit={form => setForm(form)}
-          onStatusChange={status => setStatus(status)}
-          onSubmit={handleSubmit}
-          formValues={data}
-        >
+        <form className={styles.form} onSubmit={handleSubmit}>
           <Input
             className={styles.formControl}
-            name="name"
-            label="Report name"
-            onChange={e => handleRequiredControlChange('name', e)}
-            errors={errors && errors.name}
+            field={name}
+            label="Report name *"
           />
           <Input
             className={styles.formControl}
-            name="url"
+            field={url}
             label="URL"
-            onChange={e => handleRequiredControlChange('url', e)}
-            errors={errors && errors.url}
           />
           <Textarea
             className={styles.formControl}
-            name="description"
+            field={description}
             label="Description"
-            onChange={e => handleRequiredControlChange('description', e)}
-            errors={errors && errors.description}
           />
-          <Input
+          <Datepicker
             className={styles.formControl}
-            name="presented_on"
+            field={presented_on}
             label="Last presented on"
-            onChange={e => handleRequiredControlChange('presented_on', e)}
-            errors={errors && errors.presented_on}
           />
-          <Input
+          <Datepicker
             className={styles.formControl}
-            name="modified_on"
-            label="Last modified on"
-            onChange={e => handleRequiredControlChange('modified_on', e)}
-            errors={errors && errors.modified_on}
+            field={modified_on}
+            label="Last modified on *"
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={status && status.submitting}>
-              <span>{data ? 'Update' : 'Create'}</span>
+            <Button type="submit" disabled={submitting}>
+              <span>{!!data ? 'Update' : 'Create'}</span>
             </Button>
           </div>
-        </Form>
+        </form>
       </div>
       <div className={`${styles.section} ${styles.right}`}>
         <div className={styles.title}>

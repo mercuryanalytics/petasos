@@ -3,6 +3,7 @@ import styles from './Project.module.css';
 import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
 import { MdPlayArrow, MdFolder } from 'react-icons/md';
+import Loader from '../Loader';
 import Report from './Report';
 import ReportAdd from './ReportAdd';
 
@@ -40,13 +41,17 @@ const Project = props => {
       </Link>
       {isOpen && (
         <div className={styles.content}>
-          {reports && !!reports.length && reports.map(report => (
-            <Report
-              key={`report-btn-${report.id}`}
-              data={report}
-              active={props.activeReport === report.id}
-            />
-          ))}
+          {!!reports && !!reports.length ? (
+            reports.map(report => (
+              <Report
+                key={`report-btn-${report.id}`}
+                data={report}
+                active={props.activeReport === report.id}
+              />
+            ))
+          ) : (
+            <Loader inline className={styles.loader} />
+          )}
           <ReportAdd projectId={data.id} />
         </div>
       )}

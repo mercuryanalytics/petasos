@@ -20,11 +20,12 @@
   padding-bottom: 1rem;
   box-sizing: border-box;
   border-right: 1px solid #B9B9B9;
+  background-color: #fff;
   overflow-x: visible;
   overflow-y: auto;
 }
 
 .body .content {
   flex-grow: 1;
-  background-color: #EFF0F4;
+  padding-bottom: 1rem;
 }

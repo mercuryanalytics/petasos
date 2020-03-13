@@ -8,8 +8,8 @@ const Button = props => {
     ${props.transparent ? styles.transparent : ''}
     ${props.className || ''}
   `;
-  return props.link ? (
-    <Link className={`${baseClasses} ${styles.link}`} to={props.link}>
+  return !!props.link ? (
+    <Link className={`${baseClasses} ${styles.link}`} to={props.link} target={props.target || '_self'}>
       {props.children}
     </Link>
   ) : (

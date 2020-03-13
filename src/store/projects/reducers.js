@@ -27,6 +27,21 @@ const projectsReducer = (state = initialState, action) => {
         projects: [ ...projects ],
       };
     }
+    case 'CREATE_PROJECT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
+    case 'UPDATE_PROJECT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
+    case 'DELETE_PROJECT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
     default: {
       return state;
     }

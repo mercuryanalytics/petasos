@@ -46,7 +46,7 @@ const Screen = props => {
 
   return loaded ? (
     !props.blank ? (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>
           <Header user={activeUser} />
         </div>

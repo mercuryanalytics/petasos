@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './Input.module.css';
-import { Field } from 'redux-form';
 
 const Input = props => {
+  const { field } = props;
   const classes = `${styles.container} ${props.className}`;
 
   return (
@@ -10,16 +10,15 @@ const Input = props => {
       {!!props.label && (
         <label>{props.label}</label>
       )}
-      <Field
+      <input
+        {...field.input}
         className={styles.control}
-        component="input"
         type={props.type || 'text'}
-        name={props.name}
         placeholder={props.placeholder}
       />
-      {!!props.errors && props.errors.map(error => (
-        <div className={styles.error}>{error}</div>
-      ))}
+      {field.meta.touched && field.meta.error && (
+        <div className={styles.error}>{field.meta.error}</div>
+      )}
     </div>
   );
 };

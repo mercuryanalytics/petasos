@@ -41,3 +41,10 @@
 }
 
 .content {}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+  margin: 5px 0 !important;
+}

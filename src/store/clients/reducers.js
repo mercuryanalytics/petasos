@@ -27,6 +27,21 @@ const clientsReducer = (state = initialState, action) => {
         clients: [ ...clients ],
       };
     }
+    case 'CREATE_CLIENT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
+    case 'UPDATE_CLIENT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
+    case 'DELETE_CLIENT_SUCCESS': {
+      return {
+        ...state,
+      };
+    }
     default: {
       return state;
     }

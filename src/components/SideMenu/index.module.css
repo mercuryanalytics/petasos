@@ -1,5 +1,6 @@
 .container {
   user-select: none;
+  background-color: #fff;
 }
 
 .search {
@@ -10,4 +11,11 @@
 .add {
   display: flex;
   justify-content: center;
+}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+  margin-top: 10px !important;
 }

@@ -48,3 +48,70 @@ export const getProjectFailure = (error, projectId) => {
     payload: error,
   }
 };
+
+export function createProject(data) {
+  return dispatch => {
+    apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
+      .then(res => dispatch(createProjectSuccess(res)))
+      .catch(err => dispatch(createProjectFailure(err)));
+  };
+}
+
+export const createProjectSuccess = (project) => {
+  return {
+    type: 'CREATE_PROJECT_SUCCESS',
+    payload: project,
+  }
+};
+
+export const createProjectFailure = (error) => {
+  return {
+    type: 'CREATE_PROJECT_FAILURE',
+    payload: error,
+  }
+};
+
+export function updateProject(id, data) {
+  return dispatch => {
+    apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
+      .then(res => dispatch(updateProjectSuccess(res)))
+      .catch(err => dispatch(updateProjectFailure(err, id)));
+  };
+}
+
+export const updateProjectSuccess = (project) => {
+  return {
+    type: 'UPDATE_PROJECT_SUCCESS',
+    payload: project,
+  }
+};
+
+export const updateProjectFailure = (error, projectId) => {
+  return {
+    type: 'UPDATE_PROJECT_FAILURE',
+    payload: error,
+  }
+};
+
+export function deleteProject(id) {
+  return dispatch => {
+    apiCall('DELETE', `${Constants.API_URL}/projects/${id}`)
+      .then(res => dispatch(deleteProjectSuccess(id)))
+      .catch(err => dispatch(deleteProjectFailure(err, id)));
+  };
+}
+
+export const deleteProjectSuccess = (projectId) => {
+  return {
+    type: 'DELETE_PROJECT_SUCCESS',
+    projectId: projectId,
+  }
+};
+
+export const deleteProjectFailure = (error, projectId) => {
+  return {
+    type: 'DELETE_PROJECT_FAILURE',
+    payload: error,
+    projectId: projectId,
+  }
+};

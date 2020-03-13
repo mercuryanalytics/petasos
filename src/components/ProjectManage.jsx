@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styles from './ProjectManage.module.css';
 import UserPermissions from './UserPermissions';
 import Button from './Button';
 import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
-import Form, { Input, Textarea } from './Form';
+import { useForm, useField } from 'react-final-form-hooks';
+import { Input, Textarea, Datepicker, Select } from './Form';
+import { createProject, updateProject } from '../store/projects/actions';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -18,28 +21,92 @@ const ProjectTypes = {
   CustomTest: 'Custom Test',
 };
 
-const ProjectManage = props => {
-  const { data, clientId } = props;
-  const [form, setForm] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [errors, setErrors] = useState(null);
+const projectTypesOptions = Object.keys(ProjectTypes).map(key => ({
+  value: ProjectTypes[key],
+  text: ProjectTypes[key],
+}));
 
-  const handleRequiredControlChange = (name, event) => {
-    // @TODO Improve
-    let value = event.target.value;
-    let err = [];
-    if (!String(value).length) {
-      err.push('Field value is required.');
+const ProjectManage = props => {
+  // @TODO Pass 'contacts'
+  const { data, clientId, domains, contacts } = props;
+  const dispatch = useDispatch();
+
+  const { form, handleSubmit, pristine, submitting } = useForm({
+    initialValues: data ? {
+      name: data.name || '',
+      project_number: data.project_number || '',
+      domain_id: data.domain_id || '',
+      project_type: data.project_type || '',
+      description: data.description || '',
+      contact: data.contact || '',
+      phone: data.phone || '',
+      email: data.email || '',
+      modified_on: data.modified_on || '',
+    } : {},
+    validate: (values) => {
+      let errors = {};
+      ['name', 'modified_on'].forEach(key => {
+        if (!values[key]) {
+          errors[key] = 'Field value is required.'
+        }
+      });
+      return errors;
+    },
+    onSubmit: (values) => {
+      const result = {
+        name: values.name,
+        project_number: values.project_number,
+        domain_id: values.domain_id,
+        project_type: values.project_type,
+        description: values.description,
+        contact: values.contact,
+        phone: values.phone,
+        email: values.email,
+        modified_on: values.presented_on ?
+          (new Date(values.modified_on)).toISOString()
+          : '',
+      };
+      if (data) {
+        dispatch(createProject(data.id, result));
+      } else {
+        dispatch(updateProject(result));
+      }
+    },
+  });
+
+  const name = useField('name', form);
+  const project_number = useField('project_number', form);
+  const domain_id = useField('domain_id', form);
+  const project_type = useField('project_type', form);
+  const description = useField('description', form);
+  const contact = useField('contact', form);
+  const phone = useField('phone', form);
+  const email = useField('email', form);
+  const modified_on = useField('modified_on', form);
+
+  const [domainsOptions, setDomainsOptions] = useState([]);
+  const [contactsOptions, setContactsOptions] = useState([]);
+
+  useEffect(() => {
+    if (domains) {
+      setDomainsOptions(domains.map(domain => ({
+        value: domain.id,
+        text: domain.name,
+      })));
     }
-    setErrors({ ...errors, [name]: err });
-  };
+  }, [domains]);
+
+  useEffect(() => {
+    if (contacts) {
+      setContactsOptions(contacts.map(contact => ({
+        value: contact.id,
+        text: contact.name,
+      })));
+    }
+  }, [contact]);
 
   const handlePermissionsChange = () => {
     // @TODO Waiting for UserPermissions
-  };
-
-  const handleSubmit = () => {
-    // @TODO
   };
 
   return (
@@ -49,82 +116,64 @@ const ProjectManage = props => {
           <MdInfoOutline className={styles.icon} />
           <span>Project details</span>
         </div>
-        <Form
-          className={styles.form}
-          onInit={form => setForm(form)}
-          onStatusChange={status => setStatus(status)}
-          onSubmit={handleSubmit}
-          formValues={data}
-        >
+        <form className={styles.form} onSubmit={handleSubmit}>
           <Input
             className={styles.formControl}
-            name="name"
-            label="Project name"
-            onChange={e => handleRequiredControlChange('name', e)}
-            errors={errors && errors.name}
+            field={name}
+            label="Project name *"
           />
           <Input
             className={styles.formControl}
-            name="id"
+            field={project_number}
             label="Project #"
-            onChange={e => handleRequiredControlChange('id', e)}
-            errors={errors && errors.id}
           />
-          <Input
+          <Select
             className={styles.formControl}
-            name="domain_id"
+            field={domain_id}
+            options={domainsOptions}
+            placeholder="Select a domain..."
             label="Associated domain"
-            onChange={e => handleRequiredControlChange('domain_id', e)}
-            errors={errors && errors.domain_id}
           />
-          <Input
+          <Select
             className={styles.formControl}
-            name="type"
+            field={project_type}
+            options={projectTypesOptions}
+            placeholder={!!data ? 'UNASSIGNED' : 'Select a project type...'}
             label="Project type"
-            onChange={e => handleRequiredControlChange('type', e)}
-            errors={errors && errors.type}
           />
           <Textarea
             className={styles.formControl}
-            name="description"
+            field={description}
             label="Description"
-            onChange={e => handleRequiredControlChange('description', e)}
-            errors={errors && errors.description}
           />
-          <Input
+          <Select
             className={styles.formControl}
-            name="contact"
+            field={contact}
+            options={contactsOptions}
+            placeholder={!!data ? 'UNASSIGNED' : 'Select a research contact...'}
             label="Research contact"
-            onChange={e => handleRequiredControlChange('contact', e)}
-            errors={errors && errors.contact}
           />
           <Input
             className={styles.formControl}
-            name="phone"
+            field={phone}
             label="Phone"
-            onChange={e => handleRequiredControlChange('phone', e)}
-            errors={errors && errors.phone}
           />
           <Input
             className={styles.formControl}
-            name="email"
+            field={email}
             label="Email"
-            onChange={e => handleRequiredControlChange('email', e)}
-            errors={errors && errors.email}
           />
-          <Input
+          <Datepicker
             className={styles.formControl}
-            name="modified_on"
-            label="Last modified on"
-            onChange={e => handleRequiredControlChange('modified_on', e)}
-            errors={errors && errors.modified_on}
+            field={modified_on}
+            label="Last modified on *"
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={status && status.submitting}>
-              <span>{data ? 'Update' : 'Create'}</span>
+            <Button type="submit" disabled={submitting}>
+              <span>{!!data ? 'Update' : 'Create'}</span>
             </Button>
           </div>
-        </Form>
+        </form>
       </div>
       <div className={`${styles.section} ${styles.right}`}>
         <div className={styles.title}>
