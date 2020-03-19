@@ -1,9 +1,9 @@
-import React from 'react';
+import React  from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './ClientManage.module.css';
 import Button from './Button';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Select } from './Form';
+import { Input, Select, Checkbox } from './FormFields';
 import { createClient, updateClient } from '../store/clients/actions';
 
 const ClientTypes = {
@@ -21,6 +21,7 @@ const ClientManage = props => {
   const { data } = props;
   const dispatch = useDispatch();
 
+  // @TODO Form initial values, validation
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
@@ -55,6 +56,17 @@ const ClientManage = props => {
   const contact_phone = useField('contact_phone', form);
   const contact_fax = useField('contact_fax', form);
   const contact_email = useField('contact_email', form);
+
+  const mailing_address = useField('mailing_address', form);
+  const mailing_city = useField('mailing_city', form);
+  const mailing_zip = useField('mailing_zip', form);
+  const mailing_country = useField('mailing_country', form);
+
+  const billing_as_mailing = useField('billing_as_mailing', form);
+  const billing_address = useField('billing_address', form);
+  const billing_city = useField('billing_city', form);
+  const billing_zip = useField('billing_zip', form);
+  const billing_country = useField('billing_country', form);
 
   return (
     <div className={styles.container}>
@@ -121,14 +133,63 @@ const ClientManage = props => {
           <div className={styles.formSection}>
             <div className={styles.controlsGroup}>
               <div>
-                <div className={styles.title}>
+                <div className={`${styles.title} ${styles.mailing}`}>
                   <span>Mailing address</span>
                 </div>
+                <Input
+                  className={styles.formControl}
+                  field={mailing_address}
+                  label="Address *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={mailing_city}
+                  label="City *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={mailing_zip}
+                  label="Zip code *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={mailing_country}
+                  label="Country"
+                />
               </div>
               <div>
                 <div className={styles.title}>
                   <span>Billing address</span>
                 </div>
+                <Checkbox
+                  className={styles.formControl}
+                  field={billing_as_mailing}
+                  label="Same as the mailing address"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={billing_address}
+                  disabled={!!billing_as_mailing.input.value}
+                  label="Address *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={billing_city}
+                  disabled={!!billing_as_mailing.input.value}
+                  label="City *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={billing_zip}
+                  disabled={!!billing_as_mailing.input.value}
+                  label="Zip code *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={billing_country}
+                  disabled={!!billing_as_mailing.input.value}
+                  label="Country"
+                />
               </div>
             </div>
           </div>

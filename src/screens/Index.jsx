@@ -77,6 +77,10 @@ const Index = props => {
           setProjectId(null);
           setReportId(null);
       }
+    } else {
+      if (!content) {
+        setReady(true);
+      }
     }
   }, [content, loaded, params]);
 
@@ -169,7 +173,9 @@ const Index = props => {
         )) ||
         (content === ContentTypes.ManageReport && (
           !!report && <ReportManage data={report} projectId={report.project_id} />
-        ))
+        )) || (
+          <div></div>
+        )
       ) : (
         <Loader inline className={styles.loader} />
       )}

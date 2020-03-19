@@ -5,13 +5,20 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FaRegCalendarAlt } from 'react-icons/fa'
 
 const Datepicker = props => {
-  const { field } = props;
+  const { field, label, disabled, placeholder } = props;
   const [value, setValue] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
-  const classes = `${styles.container} ${props.className} ${isOpen ? styles.open : ''}`;
+  const classes = `
+    ${styles.container}
+    ${props.className}
+    ${isOpen ? styles.open : ''}
+    ${disabled ? styles.disabled : ''}
+  `;
 
   const togglePicker = (event) => {
-    setIsOpen(!isOpen);
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
     event.stopPropagation();
   };
 
@@ -33,8 +40,8 @@ const Datepicker = props => {
 
   return (
     <div className={classes}>
-      {!!props.label && (
-        <label>{props.label}</label>
+      {!!label && (
+        <label>{label}</label>
       )}
       <div className={styles.controlWrapper}>
         <DatePicker
@@ -45,11 +52,13 @@ const Datepicker = props => {
           customInput={
             <input
               {...field.input}
-              placeholder={props.placeholder}
+              disabled={!!disabled}
+              placeholder={placeholder}
             />
           }
           selected={value}
           dateFormat={'EEEE, MMMM dd, yyyy'}
+          disabled={!!disabled}
           open={isOpen}
           onChange={handleChange}
           onFocus={() => setIsOpen(true)}

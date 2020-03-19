@@ -1,0 +1,56 @@
+.container {
+  width: 100%;
+}
+
+.container label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.container:not(.disabled) label {
+  cursor: pointer;
+}
+
+.control {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1px solid #B9B9B9;
+}
+
+.toggle .mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -.5rem;
+  margin-left: -.5rem;
+  font-size: 1rem;
+}
+
+.container:not(.disabled):hover .toggle,
+.container:not(.disabled) input:checked ~ .toggle {
+  border-color: #000;
+  color: #000;
+}
+
+.label {
+  display: inline-block;
+  margin-left: 15px;
+  font-size: .8rem;
+}
+
+.error {
+  margin-top: .3rem;
+  color: #B60010;
+  font-size: .8rem;
+}

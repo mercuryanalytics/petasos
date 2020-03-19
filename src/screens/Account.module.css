@@ -1,3 +1,19 @@
 .container {
-  /**/
+  background-color: #EFF0F4 !important;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 104px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+  margin: 40px 0 !important;
 }

@@ -16,6 +16,9 @@
   display: flex;
   justify-content: space-between;
   padding: 12px 15px;
+}
+
+.container:not(.disabled) .trigger {
   cursor: pointer;
 }
 
@@ -29,6 +32,10 @@
 
 .container.open .trigger .triggerIcon {
   transform: rotate(180deg);
+}
+
+.trigger .placeholder {
+  /* color: #B9B9B9; */
 }
 
 .options {
@@ -67,19 +74,9 @@
   font-size: .8rem;
 }
 
-.container.open .control, .control:hover {
+.container.open .control,
+.container:not(.disabled) .control:hover {
   border-color: #000;
-}
-
-.control:focus {
-  border-color: #000;
-}
-
-.control::placeholder {
-  color: #B9B9B9;
-}
-.control::-ms-input-placeholder {
-  color: #B9B9B9;
 }
 
 .error {

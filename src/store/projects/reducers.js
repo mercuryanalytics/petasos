@@ -38,8 +38,16 @@ const projectsReducer = (state = initialState, action) => {
       };
     }
     case 'DELETE_PROJECT_SUCCESS': {
+      let projects = state.projects;
+      for (let i = 0, len = projects.length; i < len; i++) {
+        if (projects[i].id === action.projectId) {
+          projects.splice(i, 1);
+          break;
+        }
+      }
       return {
         ...state,
+        projects: [ ...projects ],
       };
     }
     default: {

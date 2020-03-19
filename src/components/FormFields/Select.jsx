@@ -3,10 +3,15 @@ import styles from './Select.module.css';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 const Select = props => {
-  const { field, options } = props;
+  const { field, options, label, disabled, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const classes = `${styles.container} ${props.className} ${isOpen ? styles.open : ''}`;
+  const classes = `
+    ${styles.container}
+    ${props.className}
+    ${isOpen ? styles.open : ''}
+    ${disabled ? styles.disabled : ''}
+  `;
 
   useEffect(() => {
     if (field) {
@@ -20,6 +25,12 @@ const Select = props => {
     setSelectedOption(null);
   }, [field]);
 
+  const handleToggle = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   const handleChange = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
@@ -30,18 +41,22 @@ const Select = props => {
 
   return (
     <div className={classes}>
-      {!!props.label && (
-        <label>{props.label}</label>
+      {!!label && (
+        <label>{label}</label>
       )}
       <div className={styles.controlWrapper}>
-        <select {...field.input} style={{ display: 'none' }}>
+        <select {...field.input} disabled={!!disabled} style={{ display: 'none' }}>
           {!!options && !!options.length && options.map((option, i) => (
             <option key={i} value={option.value}/>
           ))}
         </select>
         <div className={styles.control}>
-          <div className={styles.trigger} onClick={() => setIsOpen(!isOpen)}>
-            <span>{!!selectedOption ? selectedOption.text : (props.placeholder || 'Select...')}</span>
+          <div className={styles.trigger} onClick={handleToggle}>
+            {!!selectedOption ? (
+              <span>{selectedOption.text}</span>
+            ) : (
+              <span className={styles.placeholder}>{placeholder || 'Select...'}</span>
+            )}
             <MdKeyboardArrowDown className={styles.triggerIcon} />
           </div>
           {isOpen && !!options && !!options.length && (

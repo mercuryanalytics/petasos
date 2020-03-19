@@ -2,19 +2,24 @@ import React from 'react';
 import styles from './Input.module.css';
 
 const Input = props => {
-  const { field } = props;
-  const classes = `${styles.container} ${props.className}`;
+  const { field, label, type, disabled, placeholder } = props;
+  const classes = `
+    ${styles.container}
+    ${props.className}
+    ${disabled ? styles.disabled : ''}
+  `;
 
   return (
     <div className={classes}>
-      {!!props.label && (
-        <label>{props.label}</label>
+      {!!label && (
+        <label>{label}</label>
       )}
       <input
         {...field.input}
         className={styles.control}
-        type={props.type || 'text'}
-        placeholder={props.placeholder}
+        type={type || 'text'}
+        disabled={!!disabled}
+        placeholder={placeholder}
       />
       {field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>

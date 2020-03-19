@@ -2,18 +2,23 @@ import React from 'react';
 import styles from './Textarea.module.css';
 
 const Textarea = props => {
-  const { field } = props;
-  const classes = `${styles.container} ${props.className}`;
+  const { field, label, disabled, placeholder } = props;
+  const classes = `
+    ${styles.container}
+    ${props.className}
+    ${disabled ? styles.disabled : ''}
+  `;
 
   return (
     <div className={classes}>
-      {!!props.label && (
-        <label>{props.label}</label>
+      {!!label && (
+        <label>{label}</label>
       )}
       <textarea
         {...field.input}
         className={styles.control}
-        placeholder={props.placeholder}
+        disabled={!!disabled}
+        placeholder={placeholder}
       />
       {field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>

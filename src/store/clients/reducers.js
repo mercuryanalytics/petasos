@@ -38,8 +38,16 @@ const clientsReducer = (state = initialState, action) => {
       };
     }
     case 'DELETE_CLIENT_SUCCESS': {
+      let clients = state.clients;
+      for (let i = 0, len = clients.length; i < len; i++) {
+        if (clients[i].id === action.clientId) {
+          clients.splice(i, 1);
+          break;
+        }
+      }
       return {
         ...state,
+        clients: [ ...clients ],
       };
     }
     default: {

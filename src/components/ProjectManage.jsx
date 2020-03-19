@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './ProjectManage.module.css';
-import UserPermissions from './UserPermissions';
+import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
 import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Textarea, Datepicker, Select } from './Form';
+import { Input, Textarea, Datepicker, Select } from './FormFields';
 import { createProject, updateProject } from '../store/projects/actions';
 
 const ProjectTypes = {
@@ -105,10 +105,6 @@ const ProjectManage = props => {
     }
   }, [contact]);
 
-  const handlePermissionsChange = () => {
-    // @TODO Waiting for UserPermissions
-  };
-
   return (
     <div className={styles.container}>
       <div className={`${styles.section} ${styles.left}`}>
@@ -180,7 +176,7 @@ const ProjectManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Project permissions</span>
         </div>
-        <UserPermissions onChange={handlePermissionsChange} />
+        <PermissionsGranter />
       </div>
     </div>
   );

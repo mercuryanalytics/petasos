@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './ReportManage.module.css';
-import UserPermissions from './UserPermissions';
+import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
 import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Textarea, Datepicker } from './Form';
+import { Input, Textarea, Datepicker } from './FormFields';
 import { createReport, updateReport } from '../store/reports/actions';
 
 const ReportManage = props => {
@@ -56,10 +56,6 @@ const ReportManage = props => {
   const presented_on = useField('presented_on', form);
   const modified_on = useField('modified_on', form);
 
-  const handlePermissionsChange = () => {
-    // @TODO Waiting for UserPermissions
-  };
-
   return (
     <div className={styles.container}>
       <div className={`${styles.section} ${styles.left}`}>
@@ -105,7 +101,7 @@ const ReportManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Report permissions</span>
         </div>
-        <UserPermissions onChange={handlePermissionsChange} />
+        <PermissionsGranter />
       </div>
     </div>
   );

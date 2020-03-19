@@ -27,6 +27,9 @@
   top: 50%;
   right: 19px;
   transform: translate(50%, -50%);
+}
+
+.container:not(.disabled) .controlIcon {
   cursor: pointer;
 }
 
@@ -39,11 +42,12 @@
   font-size: .8rem;
 }
 
-.control:hover {
+.container:not(.disabled) .control:hover {
   border-color: #000;
 }
 
-.container.open .control, .control:focus {
+.container.open .control,
+.container:not(.disabled) .control:focus {
   border-color: #000;
 }
 

@@ -17,11 +17,11 @@
   font-size: .8rem;
 }
 
-.control:hover {
+.container:not(.disabled) .control:hover {
   border-color: #000;
 }
 
-.control:focus {
+.container:not(.disabled) .control:focus {
   border-color: #000;
 }
 

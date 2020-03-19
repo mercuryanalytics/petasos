@@ -47,7 +47,6 @@ const reportsReducer = (state = initialState, action) => {
       };
     }
     case 'DELETE_REPORT_SUCCESS': {
-      console.log(111)
       let reports = state.reports;
       for (let i = 0, len = reports.length; i < len; i++) {
         if (reports[i].id === action.reportId) {
