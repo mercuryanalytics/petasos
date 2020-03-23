@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './ClientManage.module.css';
 import Button from './Button';
+import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
-import { createClient, updateClient } from '../store/clients/actions';
+import { createClient, updateClient, deleteClient } from '../store/clients/actions';
 
 const ClientTypes = {
   Client: 'Client',
@@ -76,8 +77,16 @@ const ClientManage = props => {
 
   const [activeTab, setActiveTab] = useState(ContentTabs.Details);
 
+  const handleDelete = () => {};
+
   return (
     <div className={styles.container}>
+      <div className={styles.actions}>
+        <Button transparent onClick={handleDelete}>
+          <MdDelete className={styles.deleteIcon} />
+          <span>Delete client</span>
+        </Button>
+      </div>
       <div className={styles.tabs}>
         <div
           className={`${styles.tab} ${activeTab === ContentTabs.Details ? styles.active : ''}`}

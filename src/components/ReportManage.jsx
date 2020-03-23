@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux';
 import styles from './ReportManage.module.css';
 import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
-import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
+import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
-import { createReport, updateReport } from '../store/reports/actions';
+import { createReport, updateReport, deleteReport } from '../store/reports/actions';
 
 const ReportManage = props => {
   const { data, projectId } = props;
@@ -56,8 +56,34 @@ const ReportManage = props => {
   const presented_on = useField('presented_on', form);
   const modified_on = useField('modified_on', form);
 
+  // const performDelete = () => {
+  //   switch (content) {
+  //     case ContentTypes.ManageClient:
+  //         dispatch(deleteClient(resId));
+  //       break;
+  //     case ContentTypes.ManageProject:
+  //         dispatch(deleteProject(resId));
+  //       break;
+  //     case ContentTypes.ManageReport:
+  //       dispatch(deleteReport(resId));
+  //       break;
+  //   }
+  // };
+  const handleDelete = () => {
+    dispatch(deleteReport(data.id));
+  };
+
   return (
     <div className={styles.container}>
+      <div className={styles.actions}>
+        <Button transparent onClick={handleDelete}>
+          <MdDelete className={styles.deleteIcon} />
+          <span>Delete report</span>
+        </Button>
+        <a className={styles.view} href={data ? data.url : '#'} target="_blank">
+          <Button>View report</Button>
+        </a>
+      </div>
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <MdInfoOutline className={styles.icon} />

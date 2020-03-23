@@ -12,24 +12,6 @@
   box-sizing: border-box;
 }
 
-.header .controls {
-  display: flex;
-  align-items: center;
-}
-
-.header .controls > :not(:last-child) {
-  margin-right: .5rem;
-}
-
-.header .controls .deleteIcon {
-  font-size: 2rem;
-  margin-right: .2rem;
-}
-
-.header .viewReport {
-  text-decoration: none !important;
-}
-
 .loader {
   display: flex !important;
   justify-content: center;

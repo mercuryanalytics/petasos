@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Index.module.css';
 import { setLocationData } from '../store/location/actions';
-import { getClients, deleteClient } from '../store/clients/actions';
-import { getProject, deleteProject } from '../store/projects/actions';
-import { getReport, deleteReport } from '../store/reports/actions';
+import { getClients } from '../store/clients/actions';
+import { getProject } from '../store/projects/actions';
+import { getReport } from '../store/reports/actions';
 import Screen from './Screen';
 import Loader from '../components/Loader';
 import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
-import Button from '../components/Button';
-import { MdDelete } from 'react-icons/md';
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -27,12 +25,6 @@ const LocationTitles = {
   [ContentTypes.CreateClient]: 'Create client',
   [ContentTypes.CreateProject]: 'Create project',
   [ContentTypes.CreateReport]: 'Create report',
-};
-
-const ContentTypesToDeleteActionText = {
-  [ContentTypes.ManageClient]: 'Delete client',
-  [ContentTypes.ManageProject]: 'Delete project',
-  [ContentTypes.ManageReport]: 'Delete report',
 };
 
 const Index = props => {
@@ -117,40 +109,11 @@ const Index = props => {
     }
   }, [reportId]);
 
-  const performDelete = () => {
-    switch (content) {
-      case ContentTypes.ManageClient:
-          dispatch(deleteClient(resId));
-        break;
-      case ContentTypes.ManageProject:
-          dispatch(deleteProject(resId));
-        break;
-      case ContentTypes.ManageReport:
-        dispatch(deleteReport(resId));
-        break;
-    }
-  };
-
   return (
     <Screen className={styles.container} private onLoad={() => setLoaded(true)}>
       <div className={styles.header}>
         {!isNaN(resId) ? (
-          <>
-            <Breadcrumbs client={client} project={project} report={report} />
-            <div className={styles.controls}>
-              {!!ContentTypesToDeleteActionText[content] && (
-                <Button transparent onClick={performDelete}>
-                  <MdDelete className={styles.deleteIcon} />
-                  <span>{ContentTypesToDeleteActionText[content]}</span>
-                </Button>
-              )}
-              {content === ContentTypes.ManageReport && (
-                <a className={styles.viewReport} href={report ? report.url : '#'} target="_blank">
-                  <Button>View report</Button>
-                </a>
-              )}
-            </div>
-          </>
+          <Breadcrumbs client={client} project={project} report={report} />
         ) : (
           <Breadcrumbs value={LocationTitles[content]} />
         )}

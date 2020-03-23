@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux';
 import styles from './ProjectManage.module.css';
 import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
-import { MdInfoOutline, MdSupervisorAccount } from 'react-icons/md';
+import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
-import { createProject, updateProject } from '../store/projects/actions';
+import { createProject, updateProject, deleteProject } from '../store/projects/actions';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -105,8 +105,16 @@ const ProjectManage = props => {
     }
   }, [contact]);
 
+  const handleDelete = () => {};
+
   return (
     <div className={styles.container}>
+      <div className={styles.actions}>
+        <Button transparent onClick={handleDelete}>
+          <MdDelete className={styles.deleteIcon} />
+          <span>Delete project</span>
+        </Button>
+      </div>
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <MdInfoOutline className={styles.icon} />
