@@ -1,3 +1,5 @@
+import { pushToStack } from '../index';
+
 const initialState = {
   reports: [],
 };
@@ -5,9 +7,10 @@ const initialState = {
 const reportsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_REPORTS_SUCCESS': {
+      const reports = pushToStack(state.reports, action.payload);
       return {
         ...state,
-        reports: action.payload,
+        reports: [ ...reports ],
       };
     }
     case 'GET_REPORT_SUCCESS': {

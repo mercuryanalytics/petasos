@@ -67,9 +67,9 @@ const ProjectManage = props => {
           : '',
       };
       if (data) {
-        dispatch(createProject(data.id, result));
+        dispatch(updateProject(data.id, result));
       } else {
-        dispatch(updateProject(result));
+        dispatch(createProject(result));
       }
     },
   });
