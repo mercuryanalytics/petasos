@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './ClientManage.module.css';
 import Button from './Button';
@@ -16,6 +16,12 @@ const clientTypesOptions = Object.keys(ClientTypes).map(key => ({
   value: ClientTypes[key],
   text: ClientTypes[key],
 }));
+
+const ContentTabs = {
+  Details: 1,
+  Accounts: 2,
+  Defaults: 3,
+};
 
 const ClientManage = props => {
   const { data } = props;
@@ -68,9 +74,31 @@ const ClientManage = props => {
   const billing_zip = useField('billing_zip', form);
   const billing_country = useField('billing_country', form);
 
+  const [activeTab, setActiveTab] = useState(ContentTabs.Details);
+
   return (
     <div className={styles.container}>
-      <div className={styles.section}>
+      <div className={styles.tabs}>
+        <div
+          className={`${styles.tab} ${activeTab === ContentTabs.Details ? styles.active : ''}`}
+          onClick={() => setActiveTab(ContentTabs.Details)}
+        >
+          <span>Client details</span>
+        </div>
+        <div
+          className={`${styles.tab} ${activeTab === ContentTabs.Accounts ? styles.active : ''}`}
+          onClick={() => setActiveTab(ContentTabs.Accounts)}
+        >
+          <span>Accounts</span>
+        </div>
+        <div
+          className={`${styles.tab} ${activeTab === ContentTabs.Defaults ? styles.active : ''}`}
+          onClick={() => setActiveTab(ContentTabs.Defaults)}
+        >
+          <span>Defaults</span>
+        </div>
+      </div>
+      <div className={`${styles.section}`}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formSection}>
             <div className={styles.title}>

@@ -173,9 +173,7 @@ const Index = props => {
         )) ||
         (content === ContentTypes.ManageReport && (
           !!report && <ReportManage data={report} projectId={report.project_id} />
-        )) || (
-          <div></div>
-        )
+        ))
       ) : (
         <Loader inline className={styles.loader} />
       )}
