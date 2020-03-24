@@ -19,7 +19,9 @@ const apiCall = (method, url, options) => {
       cached[url] = url;
     }
     if (block) {
-      return (new Promise((resolve, reject) => {}));
+      return (new Promise((resolve, reject) => {
+        resolve([]);
+      }));
     }
   }
   options = options || {};
