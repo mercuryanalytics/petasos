@@ -4,7 +4,7 @@ import Constants from '../../utils/constants';
 export function getProjects(clientId) {
   const queryString = clientId ? `?client_id=${clientId}` : '';
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
+    return apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
       .then(res => dispatch(getProjectsSuccess(res)))
       .catch(err => dispatch(getProjectsFailure(err)));
   };
@@ -22,7 +22,7 @@ export const getProjectsFailure = (error) => ({
 
 export function getProject(id) {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/projects/${id}`)
+    return apiCall('GET', `${Constants.API_URL}/projects/${id}`)
       .then(res => dispatch(getProjectSuccess(res)))
       .catch(err => dispatch(getProjectFailure(err, id)));
   };
@@ -44,7 +44,7 @@ export const getProjectFailure = (error, projectId) => {
 
 export function createProject(data) {
   return dispatch => {
-    apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
       .then(res => dispatch(createProjectSuccess(res)))
       .catch(err => dispatch(createProjectFailure(err)));
   };
@@ -66,7 +66,7 @@ export const createProjectFailure = (error) => {
 
 export function updateProject(id, data) {
   return dispatch => {
-    apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
       .then(res => dispatch(updateProjectSuccess(res)))
       .catch(err => dispatch(updateProjectFailure(err, id)));
   };
@@ -88,7 +88,7 @@ export const updateProjectFailure = (error, projectId) => {
 
 export function deleteProject(id) {
   return dispatch => {
-    apiCall('DELETE', `${Constants.API_URL}/projects/${id}`)
+    return apiCall('DELETE', `${Constants.API_URL}/projects/${id}`)
       .then(res => dispatch(deleteProjectSuccess(id)))
       .catch(err => dispatch(deleteProjectFailure(err, id)));
   };

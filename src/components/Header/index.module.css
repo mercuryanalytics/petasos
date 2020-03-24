@@ -6,6 +6,7 @@
   height: 80px;
   padding: 0 2rem;
   background-color: #fff;
+  user-select: none;
 }
 
 .logo {

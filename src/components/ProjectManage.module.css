@@ -70,3 +70,9 @@
   justify-content: center;
   margin-top: 1rem;
 }
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}

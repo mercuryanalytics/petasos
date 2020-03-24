@@ -3,7 +3,7 @@ import Constants from '../../utils/constants';
 
 export function getClients() {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/clients`)
+    return apiCall('GET', `${Constants.API_URL}/clients`)
       .then(res => dispatch(getClientsSuccess(res)))
       .catch(err => dispatch(getClientsFailure(err)));
   };
@@ -21,7 +21,7 @@ export const getClientsFailure = (error) => ({
 
 export function getClient(id) {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/clients/${id}`)
+    return apiCall('GET', `${Constants.API_URL}/clients/${id}`)
       .then(res => dispatch(getClientSuccess(res)))
       .catch(err => dispatch(getClientFailure(err, id))); 
   };
@@ -43,7 +43,7 @@ export const getClientFailure = (error, clientId) => {
 
 export function createClient(data) {
   return dispatch => {
-    apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
       .then(res => dispatch(createClientSuccess(res)))
       .catch(err => dispatch(createClientFailure(err)));
   };
@@ -65,7 +65,7 @@ export const createClientFailure = (error) => {
 
 export function updateClient(id, data) {
   return dispatch => {
-    apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
       .then(res => dispatch(updateClientSuccess(res)))
       .catch(err => dispatch(updateClientFailure(err, id)));
   };
@@ -87,7 +87,7 @@ export const updateClientFailure = (error, clientId) => {
 
 export function deleteClient(id) {
   return dispatch => {
-    apiCall('DELETE', `${Constants.API_URL}/clients/${id}`)
+    return apiCall('DELETE', `${Constants.API_URL}/clients/${id}`)
       .then(res => dispatch(deleteClientSuccess(id)))
       .catch(err => dispatch(deleteClientFailure(err, id)));
   };

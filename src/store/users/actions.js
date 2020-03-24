@@ -1,11 +1,9 @@
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
-let pending = {};
-
 export function getUsers() {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/users`)
+    return apiCall('GET', `${Constants.API_URL}/users`)
       .then(res => dispatch(getUsersSuccess(res)))
       .catch(err => dispatch(getUsersFailure(err)));
   };
@@ -23,17 +21,13 @@ export const getUsersFailure = (error) => ({
 
 export function getUser(id) {
   return dispatch => {
-    if (!pending[id]) {
-      pending[id] = true;
-      apiCall('GET', `${Constants.API_URL}/users/${id}`)
-        .then(res => dispatch(getUserSuccess(res)))
-        .catch(err => dispatch(getUserFailure(err, id)));
-    }
+    return apiCall('GET', `${Constants.API_URL}/users/${id}`)
+      .then(res => dispatch(getUserSuccess(res)))
+      .catch(err => dispatch(getUserFailure(err, id)));
   };
 }
 
 export const getUserSuccess = (user) => {
-  pending[user.id] = false;
   return {
     type: 'GET_USER_SUCCESS',
     payload: user,
@@ -41,7 +35,6 @@ export const getUserSuccess = (user) => {
 };
 
 export const getUserFailure = (error, userId) => {
-  pending[userId] = false;
   return {
     type: 'GET_USER_FAILURE',
     payload: error,
@@ -50,7 +43,7 @@ export const getUserFailure = (error, userId) => {
 
 export function createUser(data) {
   return dispatch => {
-    apiCall('POST', `${Constants.API_URL}/users`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/users`, { body: JSON.stringify(data) })
       .then(res => dispatch(createUserSuccess(res)))
       .catch(err => dispatch(createUserFailure(err)));
   };
@@ -72,7 +65,7 @@ export const createUserFailure = (error) => {
 
 export function updateUser(id, data) {
   return dispatch => {
-    apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body: JSON.stringify(data) })
       .then(res => dispatch(updateUserSuccess(res)))
       .catch(err => dispatch(updateUserFailure(err, id)));
   };
@@ -94,8 +87,8 @@ export const updateUserFailure = (error, userId) => {
 
 export function deleteUser(id) {
   return dispatch => {
-    apiCall('DELETE', `${Constants.API_URL}/users/${id}`)
-      .then(res => {dispatch(deleteUserSuccess(id))})
+    return apiCall('DELETE', `${Constants.API_URL}/users/${id}`)
+      .then(res => dispatch(deleteUserSuccess(id)))
       .catch(err => dispatch(deleteUserFailure(err, id)));
   };
 }

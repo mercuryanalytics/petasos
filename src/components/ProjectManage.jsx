@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProjectManage.module.css';
+import { useHistory } from 'react-router-dom';
+import Routes from '../utils/routes';
 import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
+import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
-import { createProject, updateProject, deleteProject } from '../store/projects/actions';
+import { getClients } from '../store/clients/actions';
+import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -27,9 +31,25 @@ const projectTypesOptions = Object.keys(ProjectTypes).map(key => ({
 }));
 
 const ProjectManage = props => {
-  // @TODO Pass 'contacts'
-  const { data, clientId, domains, contacts } = props;
+  const { id, clientId } = props;
   const dispatch = useDispatch();
+  const history = useHistory();
+  const editMode = !isNaN(id);
+  const data = useSelector(state =>
+    editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
+  const clients = useSelector(state => state.clientsReducer.clients);
+  // @TODO Fill 'contacts'
+  const contacts = null;
+
+  useEffect(() => {
+    dispatch(getClients());
+  }, []);
+
+  useEffect(() => {
+    if (!isNaN(id)) {
+      dispatch(getProject(id));
+    }
+  }, [id]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -88,13 +108,13 @@ const ProjectManage = props => {
   const [contactsOptions, setContactsOptions] = useState([]);
 
   useEffect(() => {
-    if (domains) {
-      setDomainsOptions(domains.map(domain => ({
+    if (clients) {
+      setDomainsOptions(clients.map(domain => ({
         value: domain.id,
         text: domain.name,
       })));
     }
-  }, [domains]);
+  }, [clients]);
 
   useEffect(() => {
     if (contacts) {
@@ -103,11 +123,16 @@ const ProjectManage = props => {
         text: contact.name,
       })));
     }
-  }, [contact]);
+  }, [contacts]);
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    const parent = data.domain_id;
+    dispatch(deleteProject(data.id)).then(() => {
+      history.push(Routes.ManageClient.replace(':id', parent));
+    });;
+  };
 
-  return (
+  return (!editMode || (editMode && data)) && clients ? (
     <div className={styles.container}>
       <div className={styles.actions}>
         <Button transparent onClick={handleDelete}>
@@ -142,7 +167,7 @@ const ProjectManage = props => {
             className={styles.formControl}
             field={project_type}
             options={projectTypesOptions}
-            placeholder={!!data ? 'UNASSIGNED' : 'Select a project type...'}
+            placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
             label="Project type"
           />
           <Textarea
@@ -154,7 +179,7 @@ const ProjectManage = props => {
             className={styles.formControl}
             field={contact}
             options={contactsOptions}
-            placeholder={!!data ? 'UNASSIGNED' : 'Select a research contact...'}
+            placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
             label="Research contact"
           />
           <Input
@@ -174,7 +199,7 @@ const ProjectManage = props => {
           />
           <div className={styles.formButtons}>
             <Button type="submit" disabled={submitting}>
-              <span>{!!data ? 'Update' : 'Create'}</span>
+              <span>{editMode ? 'Update' : 'Create'}</span>
             </Button>
           </div>
         </form>
@@ -187,6 +212,8 @@ const ProjectManage = props => {
         <PermissionsGranter />
       </div>
     </div>
+  ) : (
+    <Loader inline className={styles.loader} />
   );
 };
 

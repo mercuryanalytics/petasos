@@ -5,7 +5,7 @@ export function getReports(projectId, clientId) {
   const queryString = projectId ? `?project_id=${projectId}` :
     (clientId ? `?client_id=${clientId}` : '');
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/reports${queryString}`)
+    return apiCall('GET', `${Constants.API_URL}/reports${queryString}`)
       .then(res => dispatch(getReportsSuccess(res)))
       .catch(err => dispatch(getReportsFailure(err)));
   };
@@ -23,7 +23,7 @@ export const getReportsFailure = (error) => ({
 
 export function getReport(id) {
   return dispatch => {
-    apiCall('GET', `${Constants.API_URL}/reports/${id}`)
+    return apiCall('GET', `${Constants.API_URL}/reports/${id}`)
       .then(res => dispatch(getReportSuccess(res)))
       .catch(err => dispatch(getReportFailure(err, id)));
   };
@@ -45,7 +45,7 @@ export const getReportFailure = (error, reportId) => {
 
 export function createReport(data) {
   return dispatch => {
-    apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
       .then(res => dispatch(createReportSuccess(res)))
       .catch(err => dispatch(createReportFailure(err)));
   };
@@ -67,7 +67,7 @@ export const createReportFailure = (error) => {
 
 export function updateReport(id, data) {
   return dispatch => {
-    apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
       .then(res => dispatch(updateReportSuccess(res)))
       .catch(err => dispatch(updateReportFailure(err, id)));
   };
@@ -89,8 +89,8 @@ export const updateReportFailure = (error, reportId) => {
 
 export function deleteReport(id) {
   return dispatch => {
-    apiCall('DELETE', `${Constants.API_URL}/reports/${id}`)
-      .then(res => {dispatch(deleteReportSuccess(id))})
+    return apiCall('DELETE', `${Constants.API_URL}/reports/${id}`)
+      .then(res => dispatch(deleteReportSuccess(id)))
       .catch(err => dispatch(deleteReportFailure(err, id)));
   };
 }

@@ -25,7 +25,7 @@ const Account = () => {
   return (
     <Screen className={styles.container} private onLoad={() => setReady(true)}>
       <div className={styles.header}>
-        <Breadcrumbs value="My account" />
+        <Breadcrumbs data={['My account']} />
       </div>
       {ready && user ? (
         <UserManage data={user} />

@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Index.module.css';
 import { setLocationData } from '../store/location/actions';
-import { getClients } from '../store/clients/actions';
-import { getProject } from '../store/projects/actions';
-import { getReport } from '../store/reports/actions';
 import Screen from './Screen';
-import Loader from '../components/Loader';
 import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
@@ -21,33 +17,27 @@ export const ContentTypes = {
   ManageReport: 'manage-report',
 };
 
-const LocationTitles = {
-  [ContentTypes.CreateClient]: 'Create client',
-  [ContentTypes.CreateProject]: 'Create project',
-  [ContentTypes.CreateReport]: 'Create report',
-};
-
 const Index = props => {
   const { content } = props;
   const params = props.match.params;
   const resId = +params.id;
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [reportId, setReportId] = useState(null);
-  const [projectId, setProjectId] = useState(null);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [clientId, setClientId] = useState(null);
+  const [projectId, setProjectId] = useState(null);
+  const [reportId, setReportId] = useState(null);
+
   const report = useSelector(state =>
     reportId !== null ? state.reportsReducer.reports.filter(r => r.id === reportId)[0] : null);
-  const project = useSelector(state =>
-    projectId !== null || report ?
-      state.projectsReducer.projects.filter(p => p.id === (report ? report.project_id : projectId))[0]
-      : null);
-  const clients = useSelector(state => state.clientsReducer.clients);
-  const client = useSelector(state =>
-    clientId !== null || project ?
-      state.clientsReducer.clients.filter(c => c.id === (project ? project.domain_id : clientId))[0]
-      : null);
+  const project = useSelector(state => {
+    const id = projectId !== null ? projectId : (report ? report.project_id : null);
+    return id !== null ? state.projectsReducer.projects.filter(r => r.id === id)[0] : null;
+  });
+  const client = useSelector(state => {
+    const id = clientId !== null ? clientId : (project ? project.domain_id : null);
+    return id !== null ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null;
+  });
 
   useEffect(() => {
     if (loaded) {
@@ -56,90 +46,70 @@ const Index = props => {
           dispatch(setLocationData({ client: resId }));
           setClientId(resId);
           break;
+        case ContentTypes.CreateProject:
+          dispatch(setLocationData({ client: +params.clientId }));
+          setClientId(+params.clientId);
+          break;
         case ContentTypes.ManageProject:
           dispatch(setLocationData({ project: resId }));
           setProjectId(resId);
+          break;
+        case ContentTypes.CreateReport:
+          dispatch(setLocationData({ project: +params.projectId }));
+          setProjectId(+params.projectId);
           break;
         case ContentTypes.ManageReport:
           dispatch(setLocationData({ report: resId }));
           setReportId(resId);
           break;
-        default:
-          setClientId(null);
-          setProjectId(null);
-          setReportId(null);
-      }
-    } else {
-      if (!content) {
-        setReady(true);
       }
     }
   }, [content, loaded, params]);
 
   useEffect(() => {
-    if (
-      (content === ContentTypes.ManageClient && client) ||
-      (content === ContentTypes.ManageProject && project) ||
-      (content === ContentTypes.ManageReport && report) ||
-      [
-        ContentTypes.CreateClient,
-        ContentTypes.CreateProject,
-        ContentTypes.CreateReport,
-      ].includes(content)
-    ) {
-      setReady(true);
+    switch (content) {
+      case ContentTypes.CreateClient:
+        setBreadcrumbs(['Create client']);
+        break;
+      case ContentTypes.ManageClient:
+        if (client) {
+          setBreadcrumbs([client.name]);
+        }
+        break;
+      case ContentTypes.CreateProject:
+        if (client) {
+          setBreadcrumbs([client.name, 'Create project']);
+        }
+        break;
+      case ContentTypes.ManageProject:
+        if (client && project) {
+          setBreadcrumbs([client.name, project.name]);
+        }
+        break;
+      case ContentTypes.CreateReport:
+        if (client && project) {
+          setBreadcrumbs([client.name, project.name, 'Create report']);
+        }
+        break;
+      case ContentTypes.ManageReport:
+        if (client && project && report) {
+          setBreadcrumbs([client.name, project.name, report.name]);
+        }
+        break;
     }
   }, [content, client, project, report]);
-
-  useEffect(() => {
-    if (clientId !== null || project) {
-      dispatch(getClients());
-    }
-  }, [clientId, project]);
-
-  useEffect(() => {
-    if (projectId !== null || report) {
-      dispatch(getProject(report ? report.project_id : projectId));
-    }
-  }, [projectId, report]);
-
-  useEffect(() => {
-    if (reportId !== null) {
-      dispatch(getReport(reportId));
-    }
-  }, [reportId]);
 
   return (
     <Screen className={styles.container} private onLoad={() => setLoaded(true)}>
       <div className={styles.header}>
-        {!isNaN(resId) ? (
-          <Breadcrumbs client={client} project={project} report={report} />
-        ) : (
-          <Breadcrumbs value={LocationTitles[content]} />
-        )}
+        <Breadcrumbs data={breadcrumbs} />
       </div>
-      {ready ? (
-        (content === ContentTypes.CreateClient && (
-          <ClientManage />
-        )) ||
-        (content === ContentTypes.ManageClient && (
-          !!client && <ClientManage data={client} />
-        )) ||
-        (content === ContentTypes.CreateProject && (
-          <ProjectManage clientId={params.clientId} domains={clients} />
-        )) ||
-        (content === ContentTypes.ManageProject && (
-          !!project && <ProjectManage data={project} clientId={project.domain_id} domains={clients} />
-        )) ||
-        (content === ContentTypes.CreateReport && (
-          <ReportManage projectId={params.projectId} />
-        )) ||
-        (content === ContentTypes.ManageReport && (
-          !!report && <ReportManage data={report} projectId={report.project_id} />
-        ))
-      ) : (
-        <Loader inline className={styles.loader} />
-      )}
+      {(content === ContentTypes.CreateClient && <ClientManage />) ||
+      (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
+      (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
+      (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
+      (content === ContentTypes.CreateReport && <ReportManage projectId={params.projectId} />) ||
+      (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
     </Screen>
   );
 };

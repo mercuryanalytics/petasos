@@ -42,3 +42,11 @@
   width: 100% !important;
   margin: 5px 0 !important;
 }
+
+.noResults {
+  display: block;
+  padding: 10px 5px;
+  text-align: center;
+  font-size: .85rem;
+  color: #A9A9A9;
+}

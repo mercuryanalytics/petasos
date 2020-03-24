@@ -1,3 +1,5 @@
+import { pushToStack } from '../index';
+
 const initialState = {
   projects: [],
 };
@@ -5,49 +7,39 @@ const initialState = {
 const projectsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_PROJECTS_SUCCESS': {
+      const projects = pushToStack(state.projects, action.payload);
       return {
         ...state,
-        projects: action.payload,
+        projects: projects,
       };
     }
     case 'GET_PROJECT_SUCCESS': {
-      let modified, projects = state.projects;
-      for (let i = 0, len = projects.length; i < len; i++) {
-        if (projects[i].id === action.payload.id) {
-          projects[i] = action.payload;
-          modified = true;
-          break;
-        }
-      }
-      if (!modified) {
-        projects.push(action.payload);
-      }
+      const projects = pushToStack(state.projects, action.payload);
       return {
         ...state,
-        projects: [ ...projects ],
+        projects: projects,
       };
     }
     case 'CREATE_PROJECT_SUCCESS': {
+      const projects = pushToStack(state.projects, action.payload);
       return {
         ...state,
+        projects: projects,
       };
     }
     case 'UPDATE_PROJECT_SUCCESS': {
+      const projects = pushToStack(state.projects, action.payload, { updateOnly: true });
       return {
         ...state,
+        projects: projects,
       };
     }
     case 'DELETE_PROJECT_SUCCESS': {
-      let projects = state.projects;
-      for (let i = 0, len = projects.length; i < len; i++) {
-        if (projects[i].id === action.projectId) {
-          projects.splice(i, 1);
-          break;
-        }
-      }
+      const fakeRes = { id: action.projectId };
+      const projects = pushToStack(state.projects, fakeRes, { deleteOnly: true });
       return {
         ...state,
-        projects: [ ...projects ],
+        projects: projects,
       };
     }
     default: {

@@ -1,3 +1,5 @@
+import { pushToStack } from '../index';
+
 const initialState = {
   users: [],
 };
@@ -5,58 +7,39 @@ const initialState = {
 const usersReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_USERS_SUCCESS': {
+      const users = pushToStack(state.users, action.payload);
       return {
         ...state,
-        users: action.payload,
+        users: users,
       };
     }
     case 'GET_USER_SUCCESS': {
-      let modified, users = state.users;
-      for (let i = 0, len = users.length; i < len; i++) {
-        if (users[i].id === action.payload.id) {
-          users[i] = action.payload;
-          modified = true;
-          break;
-        }
-      }
-      if (!modified) {
-        users.push(action.payload);
-      }
+      const users = pushToStack(state.users, action.payload);
       return {
         ...state,
-        users: [ ...users ],
+        users: users,
       };
     }
     case 'CREATE_USER_SUCCESS': {
+      const users = pushToStack(state.users, action.payload);
       return {
         ...state,
-        users: [ ...state.users, action.payload ],
+        users: users,
       };
     }
     case 'UPDATE_USER_SUCCESS': {
-      let users = state.users;
-      for (let i = 0, len = users.length; i < len; i++) {
-        if (users[i].id === action.payload.id) {
-          users[i] = action.payload;
-          break;
-        }
-      }
+      const users = pushToStack(state.users, action.payload, { updateOnly: true });
       return {
         ...state,
-        users: [ ...users ],
+        users: users,
       };
     }
     case 'DELETE_USER_SUCCESS': {
-      let users = state.users;
-      for (let i = 0, len = users.length; i < len; i++) {
-        if (users[i].id === action.userId) {
-          users.splice(i, 1);
-          break;
-        }
-      }
+      const fakeRes = { id: action.userId };
+      const users = pushToStack(state.users, fakeRes, { deleteOnly: true });
       return {
         ...state,
-        users: [ ...users ],
+        users: users,
       };
     }
     default: {

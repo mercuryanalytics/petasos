@@ -25,7 +25,9 @@ const SideMenu = () => {
   const activeProject = useSelector(state => state.locationReducer.data.project);
   const activeReport = useSelector(state => state.locationReducer.data.report);
   const [openClients, setOpenClients] = useState({});
+  const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
+  const [loadedProjects, setLoadedProjects] = useState({});
 
   useEffect(() => {
     dispatch(getClients());
@@ -38,14 +40,16 @@ const SideMenu = () => {
 
   const onClientOpen = (client) => {
     if (!openClients[client.id]) {
-      dispatch(getProjects(client.id));
+      dispatch(getProjects(client.id))
+        .then(() => setLoadedClients({ ...loadedClients, [client.id]: true }));
       setOpenClients({ ...openClients, [client.id]: true });
     }
   };
 
   const onProjectOpen = (project) => {
     if (!openProjects[project.id]) {
-      dispatch(getReports(project.id));
+      dispatch(getReports(project.id))
+        .then(() => setLoadedProjects({ ...loadedProjects, [project.id]: true }));
       setOpenProjects({ ...openProjects, [project.id]: true });
     }
   };
@@ -74,7 +78,8 @@ const SideMenu = () => {
         if (p) {
           setOpenProjects({ ...openProjects, [p.id]: true });
           setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
-          dispatch(getReports(task.target));
+          dispatch(getReports(task.target))
+            .then(() => setLoadedProjects({ ...loadedProjects, [p.id]: true }));
         } else {
           dispatch(getProject(task.target));
         }
@@ -84,8 +89,9 @@ const SideMenu = () => {
           setOpenClients({ ...openClients, [c.id]: true});
           setTask(null);
           dispatch(getProjects(task.target))
+            .then(() => setLoadedClients({ ...loadedClients, [c.id]: true }));
         } else {
-          dispatch(getClient(task.target));;
+          dispatch(getClient(task.target));
         }
       }
     }
@@ -103,8 +109,10 @@ const SideMenu = () => {
             data={client}
             projects={projects.filter(p => p.domain_id === client.id)}
             openProjects={openProjects}
+            loadedProjects={loadedProjects}
             reports={reports}
             open={!!openClients[client.id]}
+            loaded={!!loadedClients[client.id]}
             active={activeClient === client.id}
             activeProject={activeProject}
             activeReport={activeReport}

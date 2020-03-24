@@ -9,7 +9,7 @@ import Project from './Project';
 import ProjectAdd from './ProjectAdd';
 
 const Client = props => {
-  const { data, projects, reports } = props;
+  const { data, projects, reports, loaded, loadedProjects } = props;
   const [isOpen, setIsOpen] = useState(!!props.open);
   const [openProjects, setOpenProjects] = useState(props.openProjects || {});
 
@@ -23,7 +23,7 @@ const Client = props => {
     if (isOpen && props.onOpen) {
       props.onOpen(data);
     }
-  }, [isOpen]);
+  }, [isOpen, props.onOpen]);
 
   useEffect(() => {
     if (props.open !== isOpen) {
@@ -60,13 +60,18 @@ const Client = props => {
                 data={project}
                 reports={reports.filter(r => r.project_id === project.id)}
                 open={!!openProjects[project.id]}
+                loaded={!!loadedProjects[project.id]}
                 active={props.activeProject === project.id}
                 activeReport={props.activeReport}
                 onOpen={onProjectOpen}
               />
             ))
           ) : (
-            <Loader inline className={styles.loader} />
+            !loaded ? (
+              <Loader inline className={styles.loader} />
+            ) : (
+              <span className={styles.noResults}>No results</span>
+            )
           )}
           <ProjectAdd clientId={data.id} />
         </div>

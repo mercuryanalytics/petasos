@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './ClientManage.module.css';
+import { useHistory } from 'react-router-dom';
+import Routes from '../utils/routes';
 import Button from './Button';
+import Loader from './Loader';
 import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
-import { createClient, updateClient, deleteClient } from '../store/clients/actions';
+import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
 
 const ClientTypes = {
   Client: 'Client',
@@ -25,8 +28,18 @@ const ContentTabs = {
 };
 
 const ClientManage = props => {
-  const { data } = props;
+  const { id } = props;
   const dispatch = useDispatch();
+  const history = useHistory();
+  const editMode = !isNaN(id);
+  const data = useSelector(state =>
+    editMode ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null);
+
+  useEffect(() => {
+    if (!isNaN(id)) {
+      dispatch(getClient(id));
+    }
+  }, [id]);
 
   // @TODO Form initial values, validation
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -77,9 +90,15 @@ const ClientManage = props => {
 
   const [activeTab, setActiveTab] = useState(ContentTabs.Details);
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    dispatch(deleteClient(data.id)).then(() => {
+      // @TODO Move to sibling project ?
+      // history.push(Routes.ManageClient.replace(':id', id));
+      history.push(Routes.Home);
+    });
+  };
 
-  return (
+  return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       <div className={styles.actions}>
         <Button transparent onClick={handleDelete}>
@@ -129,7 +148,7 @@ const ClientManage = props => {
               className={styles.formControl}
               field={type}
               options={clientTypesOptions}
-              placeholder={!!data ? 'UNASSIGNED' : 'Contact type...'}
+              placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
               label="Client type *"
             />
           </div>
@@ -232,12 +251,14 @@ const ClientManage = props => {
           </div>
           <div className={styles.formButtons}>
             <Button type="submit" disabled={submitting}>
-              <span>{!!data ? 'Update' : 'Create'}</span>
+              <span>{editMode ? 'Update' : 'Create'}</span>
             </Button>
           </div>
         </form>
       </div>
     </div>
+  ) : (
+    <Loader inline className={styles.loader} />
   );
 };
 

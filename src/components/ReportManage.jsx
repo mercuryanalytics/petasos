@@ -1,16 +1,29 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './ReportManage.module.css';
+import { useHistory } from 'react-router-dom';
+import Routes from '../utils/routes';
 import PermissionsGranter from './PermissionsGranter';
 import Button from './Button';
+import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
-import { createReport, updateReport, deleteReport } from '../store/reports/actions';
+import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 
 const ReportManage = props => {
-  const { data, projectId } = props;
+  const { id, projectId } = props;
   const dispatch = useDispatch();
+  const history = useHistory();
+  const editMode = !isNaN(id);
+  const data = useSelector(state =>
+    editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
+
+  useEffect(() => {
+    if (!isNaN(id)) {
+      dispatch(getReport(id));
+    }
+  }, [id]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -40,7 +53,7 @@ const ReportManage = props => {
         modified_on: values.presented_on ?
           (new Date(values.modified_on)).toISOString()
           : '',
-        project_id: projectId,
+        project_id: data ? data.project_id : projectId,
       };
       if (data) {
         dispatch(updateReport(data.id, result));
@@ -56,33 +69,25 @@ const ReportManage = props => {
   const presented_on = useField('presented_on', form);
   const modified_on = useField('modified_on', form);
 
-  // const performDelete = () => {
-  //   switch (content) {
-  //     case ContentTypes.ManageClient:
-  //         dispatch(deleteClient(resId));
-  //       break;
-  //     case ContentTypes.ManageProject:
-  //         dispatch(deleteProject(resId));
-  //       break;
-  //     case ContentTypes.ManageReport:
-  //       dispatch(deleteReport(resId));
-  //       break;
-  //   }
-  // };
   const handleDelete = () => {
-    dispatch(deleteReport(data.id));
+    const parent = data.project_id;
+    dispatch(deleteReport(data.id)).then(() => {
+      history.push(Routes.ManageProject.replace(':id', parent));
+    });
   };
 
-  return (
+  return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       <div className={styles.actions}>
         <Button transparent onClick={handleDelete}>
           <MdDelete className={styles.deleteIcon} />
           <span>Delete report</span>
         </Button>
-        <a className={styles.view} href={data ? data.url : '#'} target="_blank">
-          <Button>View report</Button>
-        </a>
+        {editMode && (
+          <a className={styles.view} href={data.url} target="_blank">
+            <Button>View report</Button>
+          </a>
+        )}
       </div>
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
@@ -117,7 +122,7 @@ const ReportManage = props => {
           />
           <div className={styles.formButtons}>
             <Button type="submit" disabled={submitting}>
-              <span>{!!data ? 'Update' : 'Create'}</span>
+              <span>{editMode ? 'Update' : 'Create'}</span>
             </Button>
           </div>
         </form>
@@ -130,6 +135,8 @@ const ReportManage = props => {
         <PermissionsGranter />
       </div>
     </div>
+  ) : (
+    <Loader inline className={styles.loader} />
   );
 };
 

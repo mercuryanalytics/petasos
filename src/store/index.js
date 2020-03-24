@@ -7,9 +7,14 @@ import projectsReducer from './projects/reducers';
 import reportsReducer from './reports/reducers';
 import locationReducer from './location/reducers';
 
-export const pushToStack = (stack, data) => {
+export const pushToStack = (stack, data, options) => {
   data = Array.isArray(data) ? data : [data];
+  options = Object.assign({}, {
+    updateOnly: false,
+    deleteOnly: false,
+  }, options);
 
+  const restricted = options.updateOnly || options.deleteOnly;
   const resIdToStackIndex = {};
 
   stack.forEach((stackRes, index) => {
@@ -19,9 +24,14 @@ export const pushToStack = (stack, data) => {
   data.forEach(res => {
     if (resIdToStackIndex.hasOwnProperty(res.id)) {
       const index = resIdToStackIndex[res.id];
-      stack[index] = res;
-    } else {
-      stack.push(res);
+      if (options.deleteOnly) {
+        stack = [ ...stack ];
+        stack.splice(index, 1);
+      } else {
+        stack[index] = { ...stack[index], ...res };
+      }
+    } else if (!restricted) {
+      stack = [ ...stack, { ...res } ];
     }
   });
 

@@ -1,3 +1,5 @@
+import { pushToStack } from '../index';
+
 const initialState = {
   clients: [],
 };
@@ -5,49 +7,39 @@ const initialState = {
 const clientsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_CLIENTS_SUCCESS': {
+      const clients = pushToStack(state.clients, action.payload);
       return {
         ...state,
-        clients: action.payload,
+        clients: clients,
       };
     }
     case 'GET_CLIENT_SUCCESS': {
-      let modified, clients = state.clients;
-      for (let i = 0, len = clients.length; i < len; i++) {
-        if (clients[i].id === action.payload.id) {
-          clients[i] = action.payload;
-          modified = true;
-          break;
-        }
-      }
-      if (!modified) {
-        clients.push(action.payload);
-      }
+      const clients = pushToStack(state.clients, action.payload);
       return {
         ...state,
-        clients: [ ...clients ],
+        clients: clients,
       };
     }
     case 'CREATE_CLIENT_SUCCESS': {
+      const clients = pushToStack(state.clients, action.payload);
       return {
         ...state,
+        clients: clients,
       };
     }
     case 'UPDATE_CLIENT_SUCCESS': {
+      const clients = pushToStack(state.clients, action.payload, { updateOnly: true });
       return {
         ...state,
+        clients: clients,
       };
     }
     case 'DELETE_CLIENT_SUCCESS': {
-      let clients = state.clients;
-      for (let i = 0, len = clients.length; i < len; i++) {
-        if (clients[i].id === action.clientId) {
-          clients.splice(i, 1);
-          break;
-        }
-      }
+      const fakeRes = { id: action.clientId };
+      const clients = pushToStack(state.clients, fakeRes, { deleteOnly: true });
       return {
         ...state,
-        clients: [ ...clients ],
+        clients: clients,
       };
     }
     default: {

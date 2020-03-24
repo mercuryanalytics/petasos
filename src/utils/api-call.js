@@ -34,8 +34,14 @@ const apiCall = (method, url, options) => {
     finalOptions.body = options.body;
   }
   return fetch(url, finalOptions)
-    .then(res => res.json())
-    .then(res => res.data);
+    .then(res => res.text())
+    .then(res => {
+      try {
+        return JSON.parse(res).data;
+      } catch (e) {
+        return '';
+      }
+    });
 };
 
 export default apiCall;

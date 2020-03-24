@@ -8,7 +8,7 @@ import Report from './Report';
 import ReportAdd from './ReportAdd';
 
 const Project = props => {
-  const { data, reports } = props;
+  const { data, reports, loaded } = props;
   const [isOpen, setIsOpen] = useState(!!props.open);
 
   const toggleOpen = (event) => {
@@ -50,7 +50,11 @@ const Project = props => {
               />
             ))
           ) : (
-            <Loader inline className={styles.loader} />
+            !loaded ? (
+              <Loader inline className={styles.loader} />
+            ) : (
+              <span className={styles.noResults}>No results</span>
+            )
           )}
           <ReportAdd projectId={data.id} />
         </div>
