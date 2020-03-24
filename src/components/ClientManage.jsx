@@ -41,10 +41,24 @@ const ClientManage = props => {
     }
   }, [id]);
 
-  // @TODO Form initial values, validation
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
+      company_name: data.company_name || '',
+      contact_type: data.contact_type || '',
+      contact_name: data.contact_name || '',
+      contact_title: data.contact_title || '',
+      contact_phone: data.contact_phone || '',
+      contact_fax: data.contact_fax || '',
+      contact_email: data.contact_email || '',
+      mailing_address_1: data.mailing_address_1 || '',
+      mailing_city: data.mailing_city || '',
+      mailing_state: data.mailing_state || '',
+      mailing_zip: data.mailing_zip || '',
+      billing_address_1: data.billing_address_1 || '',
+      billing_city: data.billing_city || '',
+      billing_state: data.billing_state || '',
+      billing_zip: data.billing_zip || '',
     } : {},
     validate: (values) => {
       let errors = {};
@@ -56,8 +70,24 @@ const ClientManage = props => {
       return errors;
     },
     onSubmit: (values) => {
+      const useBilling = !values.billing_as_mailing;
       const result = {
         name: values.name,
+        company_name: values.company_name,
+        contact_type: values.contact_type,
+        contact_name: values.contact_name,
+        contact_title: values.contact_title,
+        contact_phone: values.contact_phone,
+        contact_fax: values.contact_fax,
+        contact_email: values.contact_email,
+        mailing_address_1: values.mailing_address_1,
+        mailing_city: values.mailing_city,
+        mailing_state: values.mailing_state,
+        mailing_zip: values.mailing_zip,
+        billing_address_1: useBilling ? values.billing_address_1 : values.mailing_address_1,
+        billing_city: useBilling ? values.billing_city : values.mailing_city,
+        billing_state: useBilling ? values.billing_state : values.mailing_state,
+        billing_zip: useBilling ? values.billing_zip : values.mailing_zip,
       };
       if (data) {
         dispatch(updateClient(data.id, result));
@@ -69,7 +99,7 @@ const ClientManage = props => {
 
   const name = useField('name', form);
   const company_name = useField('company_name', form);
-  const type = useField('type', form);
+  const contact_type = useField('contact_type', form);
 
   const contact_name = useField('contact_name', form);
   const contact_title = useField('contact_title', form);
@@ -77,16 +107,16 @@ const ClientManage = props => {
   const contact_fax = useField('contact_fax', form);
   const contact_email = useField('contact_email', form);
 
-  const mailing_address = useField('mailing_address', form);
+  const mailing_address_1 = useField('mailing_address_1', form);
   const mailing_city = useField('mailing_city', form);
   const mailing_zip = useField('mailing_zip', form);
-  const mailing_country = useField('mailing_country', form);
+  const mailing_state = useField('mailing_state', form);
 
   const billing_as_mailing = useField('billing_as_mailing', form);
-  const billing_address = useField('billing_address', form);
+  const billing_address_1 = useField('billing_address_1', form);
   const billing_city = useField('billing_city', form);
   const billing_zip = useField('billing_zip', form);
-  const billing_country = useField('billing_country', form);
+  const billing_state = useField('billing_state', form);
 
   const [activeTab, setActiveTab] = useState(ContentTabs.Details);
 
@@ -146,7 +176,7 @@ const ClientManage = props => {
             </div>
             <Select
               className={styles.formControl}
-              field={type}
+              field={contact_type}
               options={clientTypesOptions}
               placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
               label="Client type *"
@@ -194,7 +224,7 @@ const ClientManage = props => {
                 </div>
                 <Input
                   className={styles.formControl}
-                  field={mailing_address}
+                  field={mailing_address_1}
                   label="Address *"
                 />
                 <Input
@@ -209,7 +239,7 @@ const ClientManage = props => {
                 />
                 <Input
                   className={styles.formControl}
-                  field={mailing_country}
+                  field={mailing_state}
                   label="Country"
                 />
               </div>
@@ -224,7 +254,7 @@ const ClientManage = props => {
                 />
                 <Input
                   className={styles.formControl}
-                  field={billing_address}
+                  field={billing_address_1}
                   disabled={!!billing_as_mailing.input.value}
                   label="Address *"
                 />
@@ -242,7 +272,7 @@ const ClientManage = props => {
                 />
                 <Input
                   className={styles.formControl}
-                  field={billing_country}
+                  field={billing_state}
                   disabled={!!billing_as_mailing.input.value}
                   label="Country"
                 />
