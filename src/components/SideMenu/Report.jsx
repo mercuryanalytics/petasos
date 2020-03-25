@@ -11,6 +11,7 @@ const Report = props => {
     <Link
       className={`${styles.container} ${props.active ? styles.active : ''}`}
       to={Routes.ManageReport.replace(':id', data.id)}
+      title={data.name}
     >
       <div className={styles.title}>
         <MdInsertDriveFile className={styles.icon} />
