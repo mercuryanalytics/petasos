@@ -142,11 +142,10 @@ const ProjectManage = props => {
     const parent = data.domain_id;
     dispatch(deleteProject(data.id)).then(() => {
       history.push(Routes.ManageClient.replace(':id', parent));
-    });;
+    });
   };
 
   useEffect(() => {
-    console.log('update')
     let c = contacts.filter(c => c.id === +account_id.input.value)[0];
     setContact(c || null);
   }, [contacts, account_id.input.value, form]);
