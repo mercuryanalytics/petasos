@@ -6,7 +6,7 @@ import { MdInsertDriveFile } from 'react-icons/md';
 
 const ReportAdd = props => {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
       <Link to={Routes.CreateReport.replace(':projectId', props.projectId)}>
         <div className={styles.button}>
           <MdInsertDriveFile className={styles.icon} />

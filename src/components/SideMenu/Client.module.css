@@ -29,8 +29,12 @@
   font-size: .9rem;
 }
 
-.container:not(.active) .title:hover {}
-.container.active .title {}
+.container:not(.active) .title:hover {
+  background-color: #333;
+}
+.container.active .title {
+  background-color: #333;
+}
 
 .content {
   border-bottom: 1px solid #B9B9B9;

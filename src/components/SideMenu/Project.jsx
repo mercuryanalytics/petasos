@@ -8,8 +8,26 @@ import Report from './Report';
 import ReportAdd from './ReportAdd';
 
 const Project = props => {
-  const { data, reports, loaded } = props;
-  const [isOpen, setIsOpen] = useState(!!props.open);
+  const { data, reports, open, loaded } = props;
+  const [isTouched, setIsTouched] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!open);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (props.onOpen) {
+        setIsTouched(true);
+        props.onOpen(data);
+      }
+    } else if (props.onClose && isTouched) {
+      props.onClose(data);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!!open !== isOpen) {
+      setIsOpen(!!open);
+    }
+  }, [open]);
 
   const toggleOpen = (event) => {
     setIsOpen(!isOpen);
@@ -17,20 +35,14 @@ const Project = props => {
     event.preventDefault();
   };
 
-  useEffect(() => {
-    if (isOpen && props.onOpen) {
-      props.onOpen(data);
-    }
-  }, [isOpen]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    if (props.open !== isOpen) {
-      setIsOpen(props.open);
-    }
-  }, [props.open]);
+    setIsAdding(props.isActiveAddLink && props.active);
+  }, [props.active, props.isActiveAddLink]);
 
   return (
-    <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
+    <div className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}>
       <Link className={styles.title} to={Routes.ManageProject.replace(':id', data.id)}>
         <MdPlayArrow
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
@@ -56,7 +68,7 @@ const Project = props => {
               <span className={styles.noResults}>No results</span>
             )
           )}
-          <ReportAdd projectId={data.id} />
+          <ReportAdd projectId={data.id} active={isAdding} />
         </div>
       )}
     </div>

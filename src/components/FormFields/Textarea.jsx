@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './Textarea.module.css';
 
 const Textarea = props => {
@@ -8,6 +8,14 @@ const Textarea = props => {
     ${props.className}
     ${disabled ? styles.disabled : ''}
   `;
+
+  useEffect(() => {
+    if (typeof props.value !== 'undefined') {
+      try {
+        field.input.onChange(props.value);
+      } catch (e) {}
+    }
+  }, [props.value]);
 
   return (
     <div className={classes}>

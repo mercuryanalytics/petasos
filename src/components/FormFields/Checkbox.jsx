@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './Checkbox.module.css';
 import { MdCheck } from 'react-icons/md';
 
@@ -9,6 +9,12 @@ const Checkbox = props => {
     ${props.className}
     ${disabled ? styles.disabled : ''}
   `;
+
+  useEffect(() => {
+    if (field && typeof props.value !== 'undefined') {
+      field.input.onChange(props.value);
+    }
+  }, [props.value]);
 
   return (
     <div className={classes}>

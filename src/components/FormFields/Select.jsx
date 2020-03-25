@@ -14,6 +14,14 @@ const Select = props => {
   `;
 
   useEffect(() => {
+    if (typeof props.value !== 'undefined') {
+      try {
+        field.input.onChange(props.value);
+      } catch (e) {}
+    }
+  }, [props.value]);
+
+  useEffect(() => {
     if (field) {
       for (let i = 0; i < options.length; i++) {
         if (options[i].value === field.input.value) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './Input.module.css';
 
 const Input = props => {
@@ -8,6 +8,14 @@ const Input = props => {
     ${props.className}
     ${disabled ? styles.disabled : ''}
   `;
+
+  useEffect(() => {
+    if (typeof props.value !== 'undefined') {
+      try {
+        field.input.onChange(props.value);
+      } catch (e) {}
+    }
+  }, [props.value]);
 
   return (
     <div className={classes}>

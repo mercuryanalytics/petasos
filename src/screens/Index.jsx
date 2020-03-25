@@ -47,7 +47,7 @@ const Index = props => {
           setClientId(resId);
           break;
         case ContentTypes.CreateProject:
-          dispatch(setLocationData({ client: +params.clientId }));
+          dispatch(setLocationData({ client: +params.clientId, create: true }));
           setClientId(+params.clientId);
           break;
         case ContentTypes.ManageProject:
@@ -55,7 +55,7 @@ const Index = props => {
           setProjectId(resId);
           break;
         case ContentTypes.CreateReport:
-          dispatch(setLocationData({ project: +params.projectId }));
+          dispatch(setLocationData({ project: +params.projectId, create: true }));
           setProjectId(+params.projectId);
           break;
         case ContentTypes.ManageReport:
@@ -96,6 +96,8 @@ const Index = props => {
           setBreadcrumbs([client.name, project.name, report.name]);
         }
         break;
+      default:
+        setBreadcrumbs([]);
     }
   }, [content, client, project, report]);
 

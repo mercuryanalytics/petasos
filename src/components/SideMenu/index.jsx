@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './index.module.css';
-import { getClient, getClients } from '../../store/clients/actions';
+import { getClients } from '../../store/clients/actions';
 import { getProject, getProjects } from '../../store/projects/actions';
 import { getReport, getReports } from '../../store/reports/actions';
 import Search from '../Search';
@@ -24,6 +24,7 @@ const SideMenu = () => {
   const activeClient = useSelector(state => state.locationReducer.data.client);
   const activeProject = useSelector(state => state.locationReducer.data.project);
   const activeReport = useSelector(state => state.locationReducer.data.report);
+  const isActiveAddLink = useSelector(state => state.locationReducer.data.create);
   const [openClients, setOpenClients] = useState({});
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
@@ -31,26 +32,37 @@ const SideMenu = () => {
 
   useEffect(() => {
     dispatch(getClients());
-    dispatch(getProjects());
   }, []);
 
-  const onSearch = (value) => {
-    // @TODO Implement search
-  };
-
-  const onClientOpen = (client) => {
+  const handleClientOpen = (client) => {
     if (!openClients[client.id]) {
-      dispatch(getProjects(client.id))
-        .then(() => setLoadedClients({ ...loadedClients, [client.id]: true }));
       setOpenClients({ ...openClients, [client.id]: true });
+      if (!loadedClients[client.id]) {
+        dispatch(getProjects(client.id))
+          .then(() => setLoadedClients({ ...loadedClients, [client.id]: true }));
+      }
     }
   };
 
-  const onProjectOpen = (project) => {
+  const handleClientClose = (client) => {
+    if (openClients[client.id]) {
+      setOpenClients({ ...openClients, [client.id]: false });
+    }
+  };
+
+  const handleProjectOpen = (project) => {
     if (!openProjects[project.id]) {
-      dispatch(getReports(project.id))
-        .then(() => setLoadedProjects({ ...loadedProjects, [project.id]: true }));
       setOpenProjects({ ...openProjects, [project.id]: true });
+      if (!loadedProjects[project.id]) {
+        dispatch(getReports(project.id))
+          .then(() => setLoadedProjects({ ...loadedProjects, [project.id]: true }));
+      }
+    }
+  };
+
+  const handleProjectClose = (project) => {
+    if (openProjects[project.id]) {
+      setOpenProjects({ ...openProjects, [project.id]: false });
     }
   };
 
@@ -66,36 +78,43 @@ const SideMenu = () => {
 
   useEffect(() => {
     if (task) {
-      if (task.type === TaskTypes.ShowReport) {
-        let r = reports.filter(r => r.id === task.target)[0];
-        if (r) {
-          setTask({ type: TaskTypes.OpenProject, target: r.project_id });
-        } else {
-          dispatch(getReport(task.target));
-        }
-      } else if (task.type === TaskTypes.OpenProject) {
-        let p = projects.filter(p => p.id === task.target)[0];
-        if (p) {
-          setOpenProjects({ ...openProjects, [p.id]: true });
-          setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
-          dispatch(getReports(task.target))
-            .then(() => setLoadedProjects({ ...loadedProjects, [p.id]: true }));
-        } else {
-          dispatch(getProject(task.target));
-        }
-      } else if (task.type === TaskTypes.OpenClient) {
-        let c = clients.filter(c => c.id === task.target)[0];
-        if (c) {
-          setOpenClients({ ...openClients, [c.id]: true});
-          setTask(null);
-          dispatch(getProjects(task.target))
-            .then(() => setLoadedClients({ ...loadedClients, [c.id]: true }));
-        } else {
-          dispatch(getClient(task.target));
-        }
+      switch (task.type) {
+        case TaskTypes.ShowReport:
+          let r = reports.filter(r => r.id === task.target)[0];
+          if (r) {
+            setTask({ type: TaskTypes.OpenProject, target: r.project_id });
+          } else {
+            dispatch(getReport(task.target));
+          }
+          break;
+        case TaskTypes.OpenProject:
+          let p = projects.filter(p => p.id === task.target)[0];
+          if (p) {
+            handleProjectOpen(p);
+            setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
+          } else {
+            dispatch(getProject(task.target));
+          }
+          break;
+        case TaskTypes.OpenClient:
+          let c = clients.filter(c => c.id === task.target)[0];
+          if (c) {
+            handleClientOpen(c);
+            setTask(null);
+          }
+          break;
+      }
+    } else if (activeProject !== null) {
+      let p = projects.filter(p => p.id === activeProject)[0];
+      if (p && !openClients[p.domain_id]) {
+        setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
       }
     }
   }, [task, reports, projects, clients]);
+
+  const onSearch = (value) => {
+    // @TODO Implement search
+  };
 
   return (
     <div className={styles.container}>
@@ -116,8 +135,11 @@ const SideMenu = () => {
             active={activeClient === client.id}
             activeProject={activeProject}
             activeReport={activeReport}
-            onOpen={onClientOpen}
-            onProjectOpen={onProjectOpen}
+            isActiveAddLink={isActiveAddLink}
+            onOpen={handleClientOpen}
+            onClose={handleClientClose}
+            onProjectOpen={handleProjectOpen}
+            onProjectClose={handleProjectClose}
           />
         ))
       ) : (

@@ -2,7 +2,11 @@
   background-color: #fff;
 }
 
-.container:hover {
+.container:not(.active):hover {
+  background-color: #F0F0F0;
+}
+
+.container.active {
   background-color: #F0F0F0;
 }
 

@@ -16,10 +16,16 @@ const Screen = props => {
   const { loading, isAuthenticated, user, getIdTokenClaims } = useAuth0();
   const activeUser = useSelector(state => state.authReducer.user);
   const [loaded, setLoaded] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (loaded && props.onLoad) {
-      props.onLoad();
+    if (loaded) {
+      if (props.onLoad) {
+        props.onLoad();
+      }
+      setReady(true);
+    } else {
+      setReady(false);
     }
   }, [loaded]);
 
@@ -44,7 +50,7 @@ const Screen = props => {
     setLoaded(true);
   }
 
-  return loaded ? (
+  return ready ? (
     !props.blank ? (
       <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>

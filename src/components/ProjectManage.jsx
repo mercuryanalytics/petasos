@@ -11,6 +11,8 @@ import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
+import { getResearchers } from '../store/users/actions';
+import { format } from 'date-fns';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -35,14 +37,15 @@ const ProjectManage = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const editMode = !isNaN(id);
+  const [isBusy, setIsBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
   const clients = useSelector(state => state.clientsReducer.clients);
-  // @TODO Fill 'contacts'
-  const contacts = null;
+  const contacts = useSelector(state => state.usersReducer.researchers);
 
   useEffect(() => {
     dispatch(getClients());
+    dispatch(getResearchers());
   }, []);
 
   useEffect(() => {
@@ -73,6 +76,7 @@ const ProjectManage = props => {
       return errors;
     },
     onSubmit: (values) => {
+      setIsBusy(true);
       const result = {
         name: values.name,
         project_number: values.project_number,
@@ -82,14 +86,22 @@ const ProjectManage = props => {
         contact: values.contact,
         phone: values.phone,
         email: values.email,
-        modified_on: values.presented_on ?
-          (new Date(values.modified_on)).toISOString()
+        modified_on: values.modified_on ?
+          format(new Date(values.modified_on), 'yyyy-MM-dd')
           : '',
       };
       if (data) {
-        dispatch(updateProject(data.id, result));
+        dispatch(updateProject(data.id, result)).then(() => {
+          form.reset();
+          setIsBusy(false);
+        });
       } else {
-        dispatch(createProject(result));
+        dispatch(createProject(result)).then(action => {
+          setIsBusy(false);
+          if (action.payload) {
+            history.push(Routes.ManageProject.replace(':id', action.payload.id));
+          }
+        });
       }
     },
   });
@@ -120,7 +132,7 @@ const ProjectManage = props => {
     if (contacts) {
       setContactsOptions(contacts.map(contact => ({
         value: contact.id,
-        text: contact.name,
+        text: contact.email,
       })));
     }
   }, [contacts]);
@@ -149,17 +161,20 @@ const ProjectManage = props => {
           <Input
             className={styles.formControl}
             field={name}
+            disabled={isBusy}
             label="Project name *"
           />
           <Input
             className={styles.formControl}
             field={project_number}
+            disabled={isBusy}
             label="Project #"
           />
           <Select
             className={styles.formControl}
             field={domain_id}
             options={domainsOptions}
+            disabled={isBusy}
             placeholder="Select a domain..."
             label="Associated domain"
           />
@@ -167,39 +182,46 @@ const ProjectManage = props => {
             className={styles.formControl}
             field={project_type}
             options={projectTypesOptions}
+            disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
             label="Project type"
           />
           <Textarea
             className={styles.formControl}
             field={description}
+            disabled={isBusy}
             label="Description"
           />
           <Select
             className={styles.formControl}
             field={contact}
             options={contactsOptions}
+            disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
             label="Research contact"
           />
           <Input
             className={styles.formControl}
             field={phone}
+            disabled={isBusy}
             label="Phone"
           />
           <Input
             className={styles.formControl}
             field={email}
+            disabled={isBusy}
             label="Email"
           />
           <Datepicker
             className={styles.formControl}
             field={modified_on}
+            disabled={isBusy}
             label="Last modified on *"
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting}>
-              <span>{editMode ? 'Update' : 'Create'}</span>
+            <Button type="submit" disabled={submitting || isBusy}>
+              <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
+              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
             </Button>
           </div>
         </form>

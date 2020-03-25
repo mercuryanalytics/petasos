@@ -6,6 +6,7 @@ const Button = props => {
   const baseClasses = `
     ${styles.container}
     ${props.transparent ? styles.transparent : ''}
+    ${props.disabled ? styles.disabled : ''}
     ${props.className || ''}
   `;
   return !!props.link ? (
@@ -13,7 +14,7 @@ const Button = props => {
       {props.children}
     </Link>
   ) : (
-    <button type={props.type || 'button'} className={`${baseClasses}`} onClick={props.onClick}>
+    <button type={props.type || 'button'} disabled={!!props.disabled} className={`${baseClasses}`} onClick={props.onClick}>
       {props.children}
     </button>
   );

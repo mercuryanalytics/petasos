@@ -9,9 +9,26 @@ import Project from './Project';
 import ProjectAdd from './ProjectAdd';
 
 const Client = props => {
-  const { data, projects, reports, loaded, loadedProjects } = props;
-  const [isOpen, setIsOpen] = useState(!!props.open);
-  const [openProjects, setOpenProjects] = useState(props.openProjects || {});
+  const { data, projects, reports, open, loaded, openProjects, loadedProjects } = props;
+  const [isTouched, setIsTouched] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!open);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (props.onOpen) {
+        setIsTouched(true);
+        props.onOpen(data);
+      }
+    } else if (props.onClose && isTouched) {
+      props.onClose(data);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!!open !== isOpen) {
+      setIsOpen(!!open);
+    }
+  }, [open]);
 
   const toggleOpen = (event) => {
     setIsOpen(!isOpen);
@@ -19,30 +36,26 @@ const Client = props => {
     event.preventDefault();
   };
 
-  useEffect(() => {
-    if (isOpen && props.onOpen) {
-      props.onOpen(data);
-    }
-  }, [isOpen, props.onOpen]);
-
-  useEffect(() => {
-    if (props.open !== isOpen) {
-      setIsOpen(props.open);
-    }
-  }, [props.open]);
-
-  useEffect(() => {
-    setOpenProjects({ ...props.openProjects });
-  }, [props.openProjects]);
-
   const onProjectOpen = (project) => {
     if (props.onProjectOpen) {
       props.onProjectOpen(project);
     }
   };
 
+  const onProjectClose = (project) => {
+    if (props.onProjectClose) {
+      props.onProjectClose(project);
+    }
+  };
+
+  const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    setIsAdding(props.isActiveAddLink && props.active);
+  }, [props.active, props.isActiveAddLink]);
+
   return (
-    <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
+    <div className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}>
       <Link className={styles.title} to={Routes.ManageClient.replace(':id', data.id)}>
         <MdPlayArrow
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
@@ -63,7 +76,9 @@ const Client = props => {
                 loaded={!!loadedProjects[project.id]}
                 active={props.activeProject === project.id}
                 activeReport={props.activeReport}
+                isActiveAddLink={props.isActiveAddLink}
                 onOpen={onProjectOpen}
+                onClose={onProjectClose}
               />
             ))
           ) : (
@@ -73,7 +88,7 @@ const Client = props => {
               <span className={styles.noResults}>No results</span>
             )
           )}
-          <ProjectAdd clientId={data.id} />
+          <ProjectAdd clientId={data.id} active={isAdding} />
         </div>
       )}
     </div>

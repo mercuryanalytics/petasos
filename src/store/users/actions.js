@@ -107,3 +107,21 @@ export const deleteUserFailure = (error, userId) => {
     userId: userId,
   }
 };
+
+export function getResearchers() {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/users/researchers`)
+      .then(res => dispatch(getResearchersSuccess(res)))
+      .catch(err => dispatch(getResearchersFailure(err)));
+  };
+}
+
+export const getResearchersSuccess = (users) => ({
+  type: 'GET_RESEARCHERS_SUCCESS',
+  payload: users,
+});
+
+export const getResearchersFailure = (error) => ({
+  type: 'GET_RESEARCHERS_FAILURE',
+  payload: error,
+});

@@ -2,6 +2,7 @@ import { pushToStack } from '../index';
 
 const initialState = {
   users: [],
+  researchers: [],
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -40,6 +41,13 @@ const usersReducer = (state = initialState, action) => {
       return {
         ...state,
         users: users,
+      };
+    }
+    case 'GET_RESEARCHERS_SUCCESS': {
+      const researchers = pushToStack(state.researchers, action.payload);
+      return {
+        ...state,
+        researchers: researchers,
       };
     }
     default: {

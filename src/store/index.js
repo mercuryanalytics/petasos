@@ -28,6 +28,7 @@ export const pushToStack = (stack, data, options) => {
         stack = [ ...stack ];
         stack.splice(index, 1);
       } else {
+        stack = [ ...stack ];
         stack[index] = { ...stack[index], ...res };
       }
     } else if (!restricted) {

@@ -2,10 +2,17 @@ import React from 'react';
 import styles from './Loader.module.css';
 
 const Loader = props => {
+  const size = props.size || 5;
+  const segments = [];
+
+  for (let i = 0; i < size; i++) {
+    segments.push(i+1);
+  }
+
   return (
     <div className={`${styles.container} ${props.className || ''} ${!!props.inline && styles.inline}`}>
       <div className={styles.loader}>
-        {[1,2,3,4,5].map(n => <div key={n} className={styles[`r${n}`]}></div>)}
+        {segments.map(n => <div key={n} className={styles[`r${n}`]}></div>)}
       </div>
     </div>
   );

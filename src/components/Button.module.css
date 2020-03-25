@@ -12,6 +12,11 @@
   font-size: .85rem;
   font-weight: bold;
   outline: none;
+  user-select: none;
+}
+
+.container.disabled {
+  cursor: default !important;
 }
 
 .container.link {
@@ -24,10 +29,10 @@
   color: #333;
 }
 
-.container:not(.transparent):hover {
+.container:not(.disabled):not(.transparent):hover {
   opacity: .85;
 }
 
-.container.transparent:hover {
+.container:not(.disabled).transparent:hover {
   color: #000;
 }

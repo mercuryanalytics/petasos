@@ -32,6 +32,9 @@ const ClientManage = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const editMode = !isNaN(id);
+  const [isBusy, setIsBusy] = useState(false);
+  const clients = useSelector(state =>
+    editMode ? state.clientsReducer.clients : null);
   const data = useSelector(state =>
     editMode ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null);
 
@@ -53,16 +56,23 @@ const ClientManage = props => {
       contact_email: data.contact_email || '',
       mailing_address_1: data.mailing_address_1 || '',
       mailing_city: data.mailing_city || '',
-      mailing_state: data.mailing_state || '',
       mailing_zip: data.mailing_zip || '',
+      mailing_state: data.mailing_state || '',
+      mailing_country: data.mailing_country || '',
       billing_address_1: data.billing_address_1 || '',
       billing_city: data.billing_city || '',
-      billing_state: data.billing_state || '',
       billing_zip: data.billing_zip || '',
+      billing_state: data.billing_state || '',
+      billing_country: data.billing_country || '',
     } : {},
     validate: (values) => {
       let errors = {};
-      ['name'].forEach(key => {
+      [
+        'name', 'company_name', 'contact_type',
+        'contact_name', 'contact_phone', 'contact_email',
+        'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
+        'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
+      ].forEach(key => {
         if (!values[key]) {
           errors[key] = 'Field value is required.'
         }
@@ -70,7 +80,7 @@ const ClientManage = props => {
       return errors;
     },
     onSubmit: (values) => {
-      const useBilling = !values.billing_as_mailing;
+      setIsBusy(true);
       const result = {
         name: values.name,
         company_name: values.company_name,
@@ -82,17 +92,27 @@ const ClientManage = props => {
         contact_email: values.contact_email,
         mailing_address_1: values.mailing_address_1,
         mailing_city: values.mailing_city,
-        mailing_state: values.mailing_state,
         mailing_zip: values.mailing_zip,
-        billing_address_1: useBilling ? values.billing_address_1 : values.mailing_address_1,
-        billing_city: useBilling ? values.billing_city : values.mailing_city,
-        billing_state: useBilling ? values.billing_state : values.mailing_state,
-        billing_zip: useBilling ? values.billing_zip : values.mailing_zip,
+        mailing_state: values.mailing_state,
+        mailing_country: values.mailing_country,
+        billing_address_1: values.billing_address_1,
+        billing_city: values.billing_city,
+        billing_zip: values.billing_zip,
+        billing_state: values.billing_state,
+        billing_country: values.billing_country,
       };
       if (data) {
-        dispatch(updateClient(data.id, result));
+        dispatch(updateClient(data.id, result)).then(() => {
+          form.reset();
+          setIsBusy(false);
+        });
       } else {
-        dispatch(createClient(result));
+        dispatch(createClient(result)).then(action => {
+          setIsBusy(false);
+          if (action.payload) {
+            history.push(Routes.ManageClient.replace(':id', action.payload.id));
+          }
+        });
       }
     },
   });
@@ -111,20 +131,59 @@ const ClientManage = props => {
   const mailing_city = useField('mailing_city', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_state = useField('mailing_state', form);
+  const mailing_country = useField('mailing_country', form);
 
   const billing_as_mailing = useField('billing_as_mailing', form);
   const billing_address_1 = useField('billing_address_1', form);
   const billing_city = useField('billing_city', form);
   const billing_zip = useField('billing_zip', form);
   const billing_state = useField('billing_state', form);
+  const billing_country = useField('billing_country', form);
+
+  const [billingAsMailing, setBillingAsMailing] = useState(false);
+  const [billingDefaults, setBillingDefaults] = useState({});
+  
+  useEffect(() => {
+    setBillingDefaults(data ? {
+      billing_address_1: data.billing_address_1 || '',
+      billing_city: data.billing_city || '',
+      billing_zip: data.billing_zip || '',
+      billing_state: data.billing_state || '',
+      billing_country: data.billing_country || '',
+    } : {});
+  }, [data]);
+
+  useEffect(() => {
+    const status = billing_as_mailing.input.value;
+    if (status) {
+      setBillingDefaults({
+        billing_address_1: billing_address_1.input.value,
+        billing_city: billing_city.input.value,
+        billing_zip: billing_zip.input.value,
+        billing_state: billing_state.input.value,
+        billing_country: billing_country.input.value,
+      });
+    }
+    setBillingAsMailing(!!status);
+  }, [billing_as_mailing.input.value]);
 
   const [activeTab, setActiveTab] = useState(ContentTabs.Details);
 
   const handleDelete = () => {
+    let redirectToId;
+    if (clients.length > 1) {
+      for (let i = 0; i < clients.length; i++) {
+        if (clients[i].id === data.id) {
+          redirectToId = clients[i > 0 ? i-1 : i+1].id;
+        }
+      }
+    }
     dispatch(deleteClient(data.id)).then(() => {
-      // @TODO Move to sibling project ?
-      // history.push(Routes.ManageClient.replace(':id', id));
-      history.push(Routes.Home);
+      if (redirectToId) {
+        history.push(Routes.ManageClient.replace(':id', redirectToId));
+      } else {
+        history.push(Routes.CreateClient);
+      }
     });
   };
 
@@ -166,11 +225,13 @@ const ClientManage = props => {
               <Input
                 className={styles.formControl}
                 field={name}
+                disabled={isBusy}
                 label="Client name *"
               />
               <Input
                 className={styles.formControl}
                 field={company_name}
+                disabled={isBusy}
                 label="Company name *"
               />
             </div>
@@ -178,6 +239,7 @@ const ClientManage = props => {
               className={styles.formControl}
               field={contact_type}
               options={clientTypesOptions}
+              disabled={isBusy}
               placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
               label="Client type *"
             />
@@ -190,11 +252,13 @@ const ClientManage = props => {
               <Input
                 className={styles.formControl}
                 field={contact_name}
+                disabled={isBusy}
                 label="Name *"
               />
               <Input
                 className={styles.formControl}
                 field={contact_title}
+                disabled={isBusy}
                 label="Title"
               />
             </div>
@@ -202,17 +266,20 @@ const ClientManage = props => {
               <Input
                 className={styles.formControl}
                 field={contact_phone}
+                disabled={isBusy}
                 label="Phone number *"
               />
               <Input
                 className={styles.formControl}
                 field={contact_fax}
+                disabled={isBusy}
                 label="Fax number"
               />
             </div>
             <Input
               className={styles.formControl}
               field={contact_email}
+              disabled={isBusy}
               label="Email *"
             />
           </div>
@@ -225,21 +292,31 @@ const ClientManage = props => {
                 <Input
                   className={styles.formControl}
                   field={mailing_address_1}
+                  disabled={isBusy}
                   label="Address *"
                 />
                 <Input
                   className={styles.formControl}
                   field={mailing_city}
+                  disabled={isBusy}
                   label="City *"
                 />
                 <Input
                   className={styles.formControl}
+                  field={mailing_state}
+                  disabled={isBusy}
+                  label="State *"
+                />
+                <Input
+                  className={styles.formControl}
                   field={mailing_zip}
+                  disabled={isBusy}
                   label="Zip code *"
                 />
                 <Input
                   className={styles.formControl}
-                  field={mailing_state}
+                  field={mailing_country}
+                  disabled={isBusy}
                   label="Country"
                 />
               </div>
@@ -250,38 +327,51 @@ const ClientManage = props => {
                 <Checkbox
                   className={styles.formControl}
                   field={billing_as_mailing}
+                  disabled={isBusy}
                   label="Same as the mailing address"
                 />
                 <Input
                   className={styles.formControl}
                   field={billing_address_1}
-                  disabled={!!billing_as_mailing.input.value}
+                  disabled={isBusy || billingAsMailing}
+                  value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
                   label="Address *"
                 />
                 <Input
                   className={styles.formControl}
                   field={billing_city}
-                  disabled={!!billing_as_mailing.input.value}
+                  disabled={isBusy || billingAsMailing}
+                  value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
                   label="City *"
                 />
                 <Input
                   className={styles.formControl}
+                  field={billing_state}
+                  disabled={isBusy || billingAsMailing}
+                  value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
+                  label="State *"
+                />
+                <Input
+                  className={styles.formControl}
                   field={billing_zip}
-                  disabled={!!billing_as_mailing.input.value}
+                  disabled={isBusy || billingAsMailing}
+                  value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
                   label="Zip code *"
                 />
                 <Input
                   className={styles.formControl}
-                  field={billing_state}
-                  disabled={!!billing_as_mailing.input.value}
+                  field={billing_country}
+                  disabled={isBusy || billingAsMailing}
+                  value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
                   label="Country"
                 />
               </div>
             </div>
           </div>
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting}>
-              <span>{editMode ? 'Update' : 'Create'}</span>
+            <Button type="submit" disabled={submitting || isBusy}>
+              <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
+              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
             </Button>
           </div>
         </form>

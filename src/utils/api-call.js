@@ -10,10 +10,12 @@ const apiCall = (method, url, options) => {
   if (method.toUpperCase() === 'GET') {
     let block = !!cached[url];
     if (!block) {
-      for (let cachedUrl in cached) {
-        if (url.indexOf(cachedUrl) === 0) {
-          block = true;
-          break;
+      if (url.indexOf('/researchers') === -1) {
+        for (let cachedUrl in cached) {
+          if (url.indexOf(cachedUrl) === 0) {
+            block = true;
+            break;
+          }
         }
       }
       cached[url] = url;

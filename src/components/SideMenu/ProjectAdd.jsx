@@ -6,7 +6,7 @@ import { MdFolder } from 'react-icons/md';
 
 const ProjectAdd = props => {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.active ? styles.active : ''}`}>
       <Link to={Routes.CreateProject.replace(':clientId', props.clientId)}>
         <div className={styles.button}>
           <MdFolder className={styles.icon} />

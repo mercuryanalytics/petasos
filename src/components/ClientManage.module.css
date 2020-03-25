@@ -95,3 +95,15 @@
   justify-content: center;
   width: 100% !important;
 }
+
+.busyLoader {
+  margin-left: 10px !important;
+}
+
+.busyLoader, .busyLoader > div {
+  height: 25px !important;
+}
+
+.busyLoader > div > div {
+  background-color: #fff !important;
+}

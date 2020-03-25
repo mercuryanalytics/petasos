@@ -1,5 +1,6 @@
 const initialState = {
   data: {
+    create: false,
     account: null,
     client: null,
     project: null,
