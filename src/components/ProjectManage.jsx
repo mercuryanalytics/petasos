@@ -42,6 +42,7 @@ const ProjectManage = props => {
     editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
   const clients = useSelector(state => state.clientsReducer.clients);
   const contacts = useSelector(state => state.usersReducer.researchers);
+  const [contact, setContact] = useState(null);
 
   useEffect(() => {
     dispatch(getClients());
@@ -61,9 +62,9 @@ const ProjectManage = props => {
       domain_id: data.domain_id || '',
       project_type: data.project_type || '',
       description: data.description || '',
-      contact: data.contact || '',
-      phone: data.phone || '',
-      email: data.email || '',
+      account_id: +data.account_id || '',
+      phone: contact ? (contact.contact_phone || '') : '',
+      email: contact ? (contact.email || '') : '',
       modified_on: data.modified_on || '',
     } : {},
     validate: (values) => {
@@ -83,7 +84,7 @@ const ProjectManage = props => {
         domain_id: values.domain_id,
         project_type: values.project_type,
         description: values.description,
-        contact: values.contact,
+        account_id: values.account_id,
         phone: values.phone,
         email: values.email,
         modified_on: values.modified_on ?
@@ -111,7 +112,7 @@ const ProjectManage = props => {
   const domain_id = useField('domain_id', form);
   const project_type = useField('project_type', form);
   const description = useField('description', form);
-  const contact = useField('contact', form);
+  const account_id = useField('account_id', form);
   const phone = useField('phone', form);
   const email = useField('email', form);
   const modified_on = useField('modified_on', form);
@@ -143,6 +144,12 @@ const ProjectManage = props => {
       history.push(Routes.ManageClient.replace(':id', parent));
     });;
   };
+
+  useEffect(() => {
+    console.log('update')
+    let c = contacts.filter(c => c.id === +account_id.input.value)[0];
+    setContact(c || null);
+  }, [contacts, account_id.input.value, form]);
 
   return (!editMode || (editMode && data)) && clients ? (
     <div className={styles.container}>
@@ -194,7 +201,7 @@ const ProjectManage = props => {
           />
           <Select
             className={styles.formControl}
-            field={contact}
+            field={account_id}
             options={contactsOptions}
             disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
@@ -203,13 +210,15 @@ const ProjectManage = props => {
           <Input
             className={styles.formControl}
             field={phone}
-            disabled={isBusy}
+            disabled={true}
+            value={!!contact ? contact.contact_phone : ''}
             label="Phone"
           />
           <Input
             className={styles.formControl}
             field={email}
-            disabled={isBusy}
+            disabled={true}
+            value={!!contact ? contact.email : ''}
             label="Email"
           />
           <Datepicker
