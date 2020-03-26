@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './PermissionsGranter.module.css';
 import { getClients } from '../store/clients/actions';
-import { getUsers } from '../store/users/actions';
+import { getUsers, updateUser } from '../store/users/actions';
 import Search from './Search';
 import { MdPlayArrow, MdSettings, MdDelete } from 'react-icons/md';
 import Toggle from './Toggle';
-import { Link } from 'react-router-dom';
 
 export const PermissionsGranterModes = {
   Grant: 'grant',
@@ -75,7 +74,7 @@ const PermissionsGranter = props => {
         setStatesBackup({ ...openGroups });
       }
       const f = filter.toLowerCase();
-      const result = users.filter(u => u.email.toLowerCase().includes(f));
+      const result = users.filter(u => u.contact_name.toLowerCase().includes(f));
       let cids = {};
       result.forEach(u => cids[u.id] = true);
       setFilteredClients(clients.filter(c => !!cids[c.id]));
@@ -128,15 +127,14 @@ const PermissionsGranter = props => {
                   className={styles.groupDelete}
                   onClick={e => handleGroupDelete(client.id, e)}
                 />
-              ))
-              }
+              ))}
             </div>
             {!!openGroups[client.id] && (
               <div className={styles.items}>
                 {/* @TODO Filter users by domain_id when available */}
                 {(isSearching ? filteredUsers : users).map(user => (
                   <div className={styles.item} key={`grant-user-${user.id}`}>
-                    <span className={styles.itemName}>{user.email}</span>
+                    <span className={styles.itemName}>{user.contact_name}</span>
                     {(mode === PermissionsGranterModes.Grant && (
                       <Toggle
                         id={`user-toggle-${client.id}-${user.id}`}
