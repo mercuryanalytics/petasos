@@ -9,6 +9,7 @@ import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
+import { getProject } from '../store/projects/actions';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { format } from 'date-fns';
 
@@ -20,12 +21,22 @@ const ReportManage = props => {
   const [isBusy, setIsBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
+  const [clientId, setClientId] = useState(null);
 
   useEffect(() => {
     if (!isNaN(id)) {
       dispatch(getReport(id));
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!clientId) {
+      let pid = typeof projectId !== 'undefined' ? projectId : (data ? data.project_id : null);
+      if (pid !== null) {
+        // dispatch(getProject(pid));
+      }
+    }
+  }, [data]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -149,7 +160,7 @@ const ReportManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Report permissions</span>
         </div>
-        <PermissionsGranter mode={PermissionsGranterModes.Grant} />
+        <PermissionsGranter mode={PermissionsGranterModes.Grant} clientId={clientId} />
       </div>
     </div>
   ) : (

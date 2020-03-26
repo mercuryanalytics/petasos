@@ -384,7 +384,7 @@ const ClientManage = props => {
           <div className={`${styles.title} ${styles.big}`}>
             <span>Users</span>
           </div>
-          <PermissionsGranter mode={PermissionsGranterModes.Manage} />
+          <PermissionsGranter mode={PermissionsGranterModes.Manage} clientId={data.id} />
         </div>
       )) ||
       (activeTab === ContentTabs.Defaults && (
