@@ -51,16 +51,22 @@
   flex-grow: 1;
   border: 1px solid #B9B9B9;
   background-color: #fff;
+  margin-top: -1px;
   padding: 2rem;
   box-sizing: border-box;
 }
 
 .section .title {
   display: flex;
-  align-items: center;
   margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: bold;
+}
+
+.section .title.big {
+  display: flex;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .section .title.mailing {

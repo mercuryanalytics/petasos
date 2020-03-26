@@ -4,10 +4,17 @@ import styles from './PermissionsGranter.module.css';
 import { getClients } from '../store/clients/actions';
 import { getUsers } from '../store/users/actions';
 import Search from './Search';
-import { MdPlayArrow, MdSettings } from 'react-icons/md';
+import { MdPlayArrow, MdSettings, MdDelete } from 'react-icons/md';
 import Toggle from './Toggle';
+import { Link } from 'react-router-dom';
 
-const PermissionsGranter = () => {
+export const PermissionsGranterModes = {
+  Grant: 'grant',
+  Manage: 'manage',
+}
+
+const PermissionsGranter = props => {
+  const { mode } = props;
   const dispatch = useDispatch();
   const clients = useSelector(state => state.clientsReducer.clients);
   const users = useSelector(state => state.usersReducer.users);
@@ -33,8 +40,9 @@ const PermissionsGranter = () => {
     event.stopPropagation();
   };
 
-  const onSearch = (value) => {
-    // @TODO Implement search
+  const handleGroupDelete = (id, event) => {
+    // @TODO Delete group
+    event.stopPropagation();
   };
 
   const handleItemActiveChange = (id, status) => {
@@ -42,11 +50,25 @@ const PermissionsGranter = () => {
     // @TODO Update ... ?
   };
 
+  const handleItemDelete = (id, event) => {
+    // @TODO Delete item
+  };
+
+  const handleSearch = (value) => {
+    // @TODO Implement search
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.search}>
-        <Search placeholder="Search user" />
+        <Search placeholder="Search user" onSearch={handleSearch} />
       </div>
+      {mode === PermissionsGranterModes.Manage && (
+        <div className={styles.adders}>
+          <button>+ Add user</button>
+          <button>+ Add domain</button>
+        </div>
+      )}
       <div className={styles.permissions}>
         {!!clients && clients.map(client => (
           <div className={styles.group} key={`permissions-group-${client.id}`}>
@@ -55,10 +77,19 @@ const PermissionsGranter = () => {
                 <MdPlayArrow className={`${styles.arrow} ${!!openGroups[client.id] ? styles.open : ''}`} />
                 <span className={styles.groupName}>{client.name}</span>
               </div>
-              <MdSettings
-                className={styles.groupSettings}
-                onClick={e => toggleGroupSettings(client.id, e)}
-              />
+              {(mode === PermissionsGranterModes.Grant && (
+                <MdSettings
+                  className={styles.groupSettings}
+                  onClick={e => toggleGroupSettings(client.id, e)}
+                />
+              )) ||
+              (mode === PermissionsGranterModes.Manage && (
+                <MdDelete
+                  className={styles.groupDelete}
+                  onClick={e => handleGroupDelete(client.id, e)}
+                />
+              ))
+              }
             </div>
             {!!openGroups[client.id] && (
               <div className={styles.items}>
@@ -66,12 +97,20 @@ const PermissionsGranter = () => {
                 {users.map(user => (
                   <div className={styles.item} key={`grant-user-${user.id}`}>
                     <span className={styles.itemName}>{user.email}</span>
-                    <Toggle
-                      id={`user-toggle-${user.id}`}
-                      className={styles.itemToggle}
-                      active={!!activeItems[user.id]}
-                      onChange={status => handleItemActiveChange(user.id, status)}
-                    />
+                    {(mode === PermissionsGranterModes.Grant && (
+                      <Toggle
+                        id={`user-toggle-${client.id}-${user.id}`}
+                        className={styles.itemToggle}
+                        active={!!activeItems[user.id]}
+                        onChange={status => handleItemActiveChange(user.id, status)}
+                      />
+                    )) ||
+                    (mode === PermissionsGranterModes.Manage && (
+                      <MdDelete
+                        className={styles.itemDelete}
+                        onClick={e => handleItemDelete(client.id, e)}
+                      />
+                    ))}
                   </div>
                 ))}
               </div>

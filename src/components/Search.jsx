@@ -60,7 +60,7 @@ const Search = props => {
           onMouseOver={() => setOverTargets(true)}
           onMouseOut={() => setOverTargets(false)}
         >
-          <span className={styles.title}>Search for...</span>
+          <span className={styles.title}>Search for</span>
           {targetsList.map((targetName, i) => (
             <label
               key={`search-target-${i}`}

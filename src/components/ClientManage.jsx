@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import Button from './Button';
 import Loader from './Loader';
+import PermissionsGranter, { PermissionsGranterModes } from './PermissionsGranter';
 import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
@@ -215,167 +216,180 @@ const ClientManage = props => {
           <span>Defaults</span>
         </div>
       </div>
-      <div className={`${styles.section}`}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.formSection}>
-            <div className={styles.title}>
-              <span>Name and type</span>
-            </div>
-            <div className={styles.controlsGroup}>
-              <Input
-                className={styles.formControl}
-                field={name}
-                disabled={isBusy}
-                label="Client name *"
-              />
-              <Input
-                className={styles.formControl}
-                field={company_name}
-                disabled={isBusy}
-                label="Company name *"
-              />
-            </div>
-            <Select
-              className={styles.formControl}
-              field={contact_type}
-              options={clientTypesOptions}
-              disabled={isBusy}
-              placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
-              label="Client type *"
-            />
-          </div>
-          <div className={styles.formSection}>
-            <div className={styles.title}>
-              <span>Primary contact</span>
-            </div>
-            <div className={styles.controlsGroup}>
-              <Input
-                className={styles.formControl}
-                field={contact_name}
-                disabled={isBusy}
-                label="Name *"
-              />
-              <Input
-                className={styles.formControl}
-                field={contact_title}
-                disabled={isBusy}
-                label="Title"
-              />
-            </div>
-            <div className={styles.controlsGroup}>
-              <Input
-                className={styles.formControl}
-                field={contact_phone}
-                disabled={isBusy}
-                label="Phone number *"
-              />
-              <Input
-                className={styles.formControl}
-                field={contact_fax}
-                disabled={isBusy}
-                label="Fax number"
-              />
-            </div>
-            <Input
-              className={styles.formControl}
-              field={contact_email}
-              disabled={isBusy}
-              label="Email *"
-            />
-          </div>
-          <div className={styles.formSection}>
-            <div className={styles.controlsGroup}>
-              <div>
-                <div className={`${styles.title} ${styles.mailing}`}>
-                  <span>Mailing address</span>
-                </div>
+      {(activeTab === ContentTabs.Details && (
+        <div className={`${styles.section}`}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.formSection}>
+              <div className={styles.title}>
+                <span>Name and type</span>
+              </div>
+              <div className={styles.controlsGroup}>
                 <Input
                   className={styles.formControl}
-                  field={mailing_address_1}
+                  field={name}
                   disabled={isBusy}
-                  label="Address *"
+                  label="Client name *"
                 />
                 <Input
                   className={styles.formControl}
-                  field={mailing_city}
+                  field={company_name}
                   disabled={isBusy}
-                  label="City *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={mailing_state}
-                  disabled={isBusy}
-                  label="State *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={mailing_zip}
-                  disabled={isBusy}
-                  label="Zip code *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={mailing_country}
-                  disabled={isBusy}
-                  label="Country"
+                  label="Company name *"
                 />
               </div>
-              <div>
-                <div className={styles.title}>
-                  <span>Billing address</span>
-                </div>
-                <Checkbox
+              <Select
+                className={styles.formControl}
+                field={contact_type}
+                options={clientTypesOptions}
+                disabled={isBusy}
+                placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
+                label="Client type *"
+              />
+            </div>
+            <div className={styles.formSection}>
+              <div className={styles.title}>
+                <span>Primary contact</span>
+              </div>
+              <div className={styles.controlsGroup}>
+                <Input
                   className={styles.formControl}
-                  field={billing_as_mailing}
+                  field={contact_name}
                   disabled={isBusy}
-                  label="Same as the mailing address"
+                  label="Name *"
                 />
                 <Input
                   className={styles.formControl}
-                  field={billing_address_1}
-                  disabled={isBusy || billingAsMailing}
-                  value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
-                  label="Address *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={billing_city}
-                  disabled={isBusy || billingAsMailing}
-                  value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
-                  label="City *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={billing_state}
-                  disabled={isBusy || billingAsMailing}
-                  value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
-                  label="State *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={billing_zip}
-                  disabled={isBusy || billingAsMailing}
-                  value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
-                  label="Zip code *"
-                />
-                <Input
-                  className={styles.formControl}
-                  field={billing_country}
-                  disabled={isBusy || billingAsMailing}
-                  value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
-                  label="Country"
+                  field={contact_title}
+                  disabled={isBusy}
+                  label="Title"
                 />
               </div>
+              <div className={styles.controlsGroup}>
+                <Input
+                  className={styles.formControl}
+                  field={contact_phone}
+                  disabled={isBusy}
+                  label="Phone number *"
+                />
+                <Input
+                  className={styles.formControl}
+                  field={contact_fax}
+                  disabled={isBusy}
+                  label="Fax number"
+                />
+              </div>
+              <Input
+                className={styles.formControl}
+                field={contact_email}
+                disabled={isBusy}
+                label="Email *"
+              />
             </div>
+            <div className={styles.formSection}>
+              <div className={styles.controlsGroup}>
+                <div>
+                  <div className={`${styles.title} ${styles.mailing}`}>
+                    <span>Mailing address</span>
+                  </div>
+                  <Input
+                    className={styles.formControl}
+                    field={mailing_address_1}
+                    disabled={isBusy}
+                    label="Address *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={mailing_city}
+                    disabled={isBusy}
+                    label="City *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={mailing_state}
+                    disabled={isBusy}
+                    label="State *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={mailing_zip}
+                    disabled={isBusy}
+                    label="Zip code *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={mailing_country}
+                    disabled={isBusy}
+                    label="Country"
+                  />
+                </div>
+                <div>
+                  <div className={styles.title}>
+                    <span>Billing address</span>
+                  </div>
+                  <Checkbox
+                    className={styles.formControl}
+                    field={billing_as_mailing}
+                    disabled={isBusy}
+                    label="Same as the mailing address"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={billing_address_1}
+                    disabled={isBusy || billingAsMailing}
+                    value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
+                    label="Address *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={billing_city}
+                    disabled={isBusy || billingAsMailing}
+                    value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
+                    label="City *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={billing_state}
+                    disabled={isBusy || billingAsMailing}
+                    value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
+                    label="State *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={billing_zip}
+                    disabled={isBusy || billingAsMailing}
+                    value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
+                    label="Zip code *"
+                  />
+                  <Input
+                    className={styles.formControl}
+                    field={billing_country}
+                    disabled={isBusy || billingAsMailing}
+                    value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
+                    label="Country"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className={styles.formButtons}>
+              <Button type="submit" disabled={submitting || isBusy}>
+                <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
+                {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+              </Button>
+            </div>
+          </form>
+        </div>
+      )) ||
+      (activeTab === ContentTabs.Accounts && (
+        <div className={`${styles.section}`}>
+          <div className={`${styles.title} ${styles.big}`}>
+            <span>Users</span>
           </div>
-          <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting || isBusy}>
-              <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
-              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
-            </Button>
-          </div>
-        </form>
-      </div>
+          <PermissionsGranter mode={PermissionsGranterModes.Manage} />
+        </div>
+      )) ||
+      (activeTab === ContentTabs.Defaults && (
+        <div className={`${styles.section}`}>ClientDefaults</div>
+      ))}
     </div>
   ) : (
     <Loader inline className={styles.loader} />

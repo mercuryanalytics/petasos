@@ -6,6 +6,24 @@
   margin-bottom: 1rem;
 }
 
+.adders {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.adders button {
+  padding: 0;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  font-size: .9rem;
+  font-weight: bold;
+}
+
 .permissions {
   user-select: none;
 }
@@ -20,17 +38,31 @@
   cursor: pointer;
 }
 
-.permissions .group .groupTitle > :first-child {
+.permissions .group .groupTitle > div {
   display: flex;
   align-items: center;
   flex-grow: 1;
-  padding: 10px;
+  padding: 10px 10px 10px 0;
   font-size: .9rem;
   font-weight: bold;
 }
 
+.permissions .group .groupTitle span {
+  flex-grow: 1;
+  width: 1px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .permissions .group .groupTitle .groupSettings {
   font-size: 1.1rem;
+}
+
+.permissions .group .groupTitle .groupDelete,
+.permissions .group .items .item .itemDelete {
+  font-size: 1.5rem;
 }
 
 .permissions .group .groupTitle .arrow {

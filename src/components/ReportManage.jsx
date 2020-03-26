@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './ReportManage.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import PermissionsGranter from './PermissionsGranter';
+import PermissionsGranter, { PermissionsGranterModes } from './PermissionsGranter';
 import Button from './Button';
 import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
@@ -149,7 +149,7 @@ const ReportManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Report permissions</span>
         </div>
-        <PermissionsGranter />
+        <PermissionsGranter mode={PermissionsGranterModes.Grant} />
       </div>
     </div>
   ) : (
