@@ -18,6 +18,12 @@ const PermissionsGranter = props => {
   const dispatch = useDispatch();
   const clients = useSelector(state => state.clientsReducer.clients);
   const users = useSelector(state => state.usersReducer.users);
+  const [isSearching, setIsSearching] = useState(false);
+  const [filter, setFilter] = useState(null);
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [openGroups, setOpenGroups] = useState({});
+  const [activeItems, setActiveItems] = useState({});
 
   useEffect(() => {
     if (!clients.length) {
@@ -27,9 +33,6 @@ const PermissionsGranter = props => {
       dispatch(getUsers());
     }
   }, [clients, users]);
-
-  const [openGroups, setOpenGroups] = useState({});
-  const [activeItems, setActiveItems] = useState({});
 
   const toggleGroupOpen = (id) => {
     setOpenGroups({ ...openGroups, [id]: !openGroups[id] });
@@ -55,8 +58,45 @@ const PermissionsGranter = props => {
   };
 
   const handleSearch = (value) => {
-    // @TODO Implement search
+    if (!!value.length) {
+      setIsSearching(true);
+      setFilter(value);
+    } else {
+      setIsSearching(false);
+      setFilter(null);
+    }
   };
+
+  const [statesBackup, setStatesBackup] = useState(null);
+
+  useEffect(() => {
+    if (isSearching) {
+      if (!statesBackup) {
+        setStatesBackup({ ...openGroups });
+      }
+      const f = filter.toLowerCase();
+      const result = users.filter(u => u.email.toLowerCase().includes(f));
+      let cids = {};
+      result.forEach(u => cids[u.id] = true);
+      setFilteredClients(clients.filter(c => !!cids[c.id]));
+      setFilteredUsers(result);
+    } else {
+      if (statesBackup) {
+        setFilteredClients([]);
+        setFilteredUsers([]);
+        setOpenGroups(statesBackup ? { ...statesBackup } : {});
+        setStatesBackup(null);
+      }
+    }
+  }, [isSearching, filter]);
+
+  useEffect(() => {
+    if (isSearching && filteredClients.length) {
+      let states = {};
+      filteredClients.forEach(c => states[c.id] = true);
+      setOpenGroups(states);
+    }
+  }, [isSearching, filteredClients]);
 
   return (
     <div className={styles.container}>
@@ -70,7 +110,7 @@ const PermissionsGranter = props => {
         </div>
       )}
       <div className={styles.permissions}>
-        {!!clients && clients.map(client => (
+        {(isSearching ? filteredClients : clients).map(client => (
           <div className={styles.group} key={`permissions-group-${client.id}`}>
             <div className={styles.groupTitle} onClick={e => toggleGroupOpen(client.id, e)}>
               <div>
@@ -94,7 +134,7 @@ const PermissionsGranter = props => {
             {!!openGroups[client.id] && (
               <div className={styles.items}>
                 {/* @TODO Filter users by domain_id when available */}
-                {users.map(user => (
+                {(isSearching ? filteredUsers : users).map(user => (
                   <div className={styles.item} key={`grant-user-${user.id}`}>
                     <span className={styles.itemName}>{user.email}</span>
                     {(mode === PermissionsGranterModes.Grant && (

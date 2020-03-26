@@ -162,13 +162,13 @@ const SideMenu = React.memo(() => {
   };
 
   useEffect(() => {
-    if (isLoadedSearchData) {
+    if (isSearching && isLoadedSearchData) {
       if (clientsFilter) {
         setFilteredClients(filterStack(clients, clientsFilter));
       } else if (projectsFilter) {
         const result = filterStack(projects, projectsFilter);
         let ids = {};
-        result.forEach(r => ids[r.domain_id] = true);
+        result.forEach(p => ids[p.domain_id] = true);
         setFilteredClients(clients.filter(c => !!ids[c.id]));
         setFilteredProjects(result);
       } else if (reportsFilter) {
@@ -186,46 +186,47 @@ const SideMenu = React.memo(() => {
         setFilteredReports(result);
       }
     }
-  }, [clientsFilter, projectsFilter, reportsFilter, isLoadedSearchData]);
-
-  useEffect(() => {
-    if (filteredClients.length) {
-      let states = {}, state = projectsFilter || reportsFilter;
-      filteredClients.forEach(c => states[c.id] = state || (c.id === activeClient));
-      setOpenClients(states);
-      if (state) {
-        setLoadedClients(states);
-      }
-    }
-    if (filteredProjects.length) {
-      let states = {}, state = !!reportsFilter;
-      filteredProjects.forEach(p => states[p.id] = state || (p.id === activeProject));
-      setOpenProjects(states);
-      if (state) {
-        setLoadedProjects(states);
-      }
-    }
-  }, [filteredClients, filteredProjects]);
-
-  const statesBackupDefaults = {
-    clients: { open: {}, loaded: {} },
-    projects: { open: {}, loaded: {} },
-  };
-
-  const [statesBackup, setStatesBackup] = useState(statesBackupDefaults);
+  }, [clientsFilter, projectsFilter, reportsFilter, isSearching, isLoadedSearchData]);
 
   useEffect(() => {
     if (isSearching) {
-      setStatesBackup({
-        clients: { open: { ...openClients }, loaded: { ...loadedClients } },
-        projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
-      })
+      if (filteredClients.length) {
+        let states = {}, state = projectsFilter || reportsFilter;
+        filteredClients.forEach(c => states[c.id] = state || (c.id === activeClient));
+        setOpenClients(states);
+        if (state) {
+          setLoadedClients(states);
+        }
+      }
+      if (filteredProjects.length) {
+        let states = {}, state = !!reportsFilter;
+        filteredProjects.forEach(p => states[p.id] = state || (p.id === activeProject));
+        setOpenProjects(states);
+        if (state) {
+          setLoadedProjects(states);
+        }
+      }
+    }
+  }, [isSearching, filteredClients, filteredProjects]);
+
+  const [statesBackup, setStatesBackup] = useState(null);
+
+  useEffect(() => {
+    if (isSearching) {
+      if (!statesBackup) {
+        setStatesBackup({
+          clients: { open: { ...openClients }, loaded: { ...loadedClients } },
+          projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
+        });
+      }
     } else if (isLoadedSearchData) {
-      setOpenClients(statesBackup.clients.open);
-      setLoadedClients(statesBackup.clients.loaded);
-      setOpenProjects(statesBackup.projects.open);
-      setLoadedProjects(statesBackup.projects.loaded);
-      setStatesBackup(statesBackupDefaults);
+      if (statesBackup) {
+        setOpenClients(statesBackup.clients.open);
+        setLoadedClients(statesBackup.clients.loaded);
+        setOpenProjects(statesBackup.projects.open);
+        setLoadedProjects(statesBackup.projects.loaded);
+        setStatesBackup(null);
+      }
     }
   }, [isSearching, isLoadedSearchData]);
 
