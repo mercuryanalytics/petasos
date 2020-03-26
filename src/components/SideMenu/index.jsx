@@ -15,7 +15,17 @@ const TaskTypes = {
   OpenClient: 'open-client',
 };
 
-const SideMenu = () => {
+const SearchTargets = {
+  Clients: 'Clients',
+  Projects: 'Projects',
+  Reports: 'Reports',
+};
+
+const searchComponentTargets = {};
+Object.keys(SearchTargets).forEach(key =>
+  searchComponentTargets[SearchTargets[key]] = false);
+
+const SideMenu = React.memo(() => {
   const dispatch = useDispatch();
   const [task, setTask] = useState(null);
   const clients = useSelector(state => state.clientsReducer.clients);
@@ -29,6 +39,14 @@ const SideMenu = () => {
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
+  const [clientsFilter, setClientsFilter] = useState(null);
+  const [projectsFilter, setProjectsFilter] = useState(null);
+  const [reportsFilter, setReportsFilter] = useState(null);
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLoadedSearchData, setIsLoadedSearchData] = useState(false);
 
   useEffect(() => {
     dispatch(getClients());
@@ -37,10 +55,10 @@ const SideMenu = () => {
   const handleClientOpen = (client) => {
     if (!openClients[client.id]) {
       setOpenClients({ ...openClients, [client.id]: true });
-      if (!loadedClients[client.id]) {
-        dispatch(getProjects(client.id))
-          .then(() => setLoadedClients({ ...loadedClients, [client.id]: true }));
-      }
+    }
+    if (!loadedClients[client.id]) {
+      dispatch(getProjects(client.id))
+        .then(() => setLoadedClients({ ...loadedClients, [client.id]: true }));
     }
   };
 
@@ -53,10 +71,10 @@ const SideMenu = () => {
   const handleProjectOpen = (project) => {
     if (!openProjects[project.id]) {
       setOpenProjects({ ...openProjects, [project.id]: true });
-      if (!loadedProjects[project.id]) {
-        dispatch(getReports(project.id))
-          .then(() => setLoadedProjects({ ...loadedProjects, [project.id]: true }));
-      }
+    }
+    if (!loadedProjects[project.id]) {
+      dispatch(getReports(project.id))
+        .then(() => setLoadedProjects({ ...loadedProjects, [project.id]: true }));
     }
   };
 
@@ -112,24 +130,124 @@ const SideMenu = () => {
     }
   }, [task, reports, projects, clients]);
 
-  const onSearch = (value) => {
-    // @TODO Implement search
+  const handleSearch = (value, target) => {
+    if (!isLoadedSearchData) {
+      dispatch(getProjects()).then(() => {
+        dispatch(getReports()).then(() => {
+          setIsLoadedSearchData(true);
+        });
+      });
+    }
+    let filters = {
+      [SearchTargets.Clients]: null,
+      [SearchTargets.Projects]: null,
+      [SearchTargets.Reports]: null,
+    };
+    if (!!value.length) {
+      setIsSearching(true);
+      if (filters.hasOwnProperty(target)) {
+        filters[target] = value;
+      }
+    } else {
+      setIsSearching(false);
+    }
+    setClientsFilter(filters[SearchTargets.Clients]);
+    setProjectsFilter(filters[SearchTargets.Projects]);
+    setReportsFilter(filters[SearchTargets.Reports]);
   };
+
+  const filterStack = (stack, filter) => {
+    filter = filter.toLowerCase();
+    return stack.filter(i => i.name.toLowerCase().includes(filter));
+  };
+
+  useEffect(() => {
+    if (isLoadedSearchData) {
+      if (clientsFilter) {
+        setFilteredClients(filterStack(clients, clientsFilter));
+      } else if (projectsFilter) {
+        const result = filterStack(projects, projectsFilter);
+        let ids = {};
+        result.forEach(r => ids[r.domain_id] = true);
+        setFilteredClients(clients.filter(c => !!ids[c.id]));
+        setFilteredProjects(result);
+      } else if (reportsFilter) {
+        const result = filterStack(reports, reportsFilter);
+        let projectsResult = [], pids = {}, cids = {};
+        result.forEach(r => pids[r.project_id] = true);
+        projects.forEach(p => {
+          if (!!pids[p.id]) {
+            projectsResult.push(p);
+            cids[p.domain_id] = true;
+          }
+        });
+        setFilteredClients(clients.filter(c => !!cids[c.id]));
+        setFilteredProjects(projectsResult);
+        setFilteredReports(result);
+      }
+    }
+  }, [clientsFilter, projectsFilter, reportsFilter, isLoadedSearchData]);
+
+  useEffect(() => {
+    if (filteredClients.length) {
+      let states = {}, state = projectsFilter || reportsFilter;
+      filteredClients.forEach(c => states[c.id] = state || (c.id === activeClient));
+      setOpenClients(states);
+      if (state) {
+        setLoadedClients(states);
+      }
+    }
+    if (filteredProjects.length) {
+      let states = {}, state = !!reportsFilter;
+      filteredProjects.forEach(p => states[p.id] = state || (p.id === activeProject));
+      setOpenProjects(states);
+      if (state) {
+        setLoadedProjects(states);
+      }
+    }
+  }, [filteredClients, filteredProjects]);
+
+  const statesBackupDefaults = {
+    clients: { open: {}, loaded: {} },
+    projects: { open: {}, loaded: {} },
+  };
+
+  const [statesBackup, setStatesBackup] = useState(statesBackupDefaults);
+
+  useEffect(() => {
+    if (isSearching) {
+      setStatesBackup({
+        clients: { open: { ...openClients }, loaded: { ...loadedClients } },
+        projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
+      })
+    } else if (isLoadedSearchData) {
+      setOpenClients(statesBackup.clients.open);
+      setLoadedClients(statesBackup.clients.loaded);
+      setOpenProjects(statesBackup.projects.open);
+      setLoadedProjects(statesBackup.projects.loaded);
+      setStatesBackup(statesBackupDefaults);
+    }
+  }, [isSearching, isLoadedSearchData]);
 
   return (
     <div className={styles.container}>
       <div className={styles.search}>
-        <Search placeholder="Search by project" onSearch={onSearch} />
+        <Search
+          placeholder="Search"
+          targets={searchComponentTargets}
+          defaultTarget={SearchTargets.Clients}
+          onSearch={handleSearch}
+        />
       </div>
       {clients && !!clients.length ? (
-        clients.map(client => (
+        (isSearching ? filteredClients : clients).map(client => (
           <Client
             key={`client-btn-${client.id}`}
             data={client}
-            projects={projects.filter(p => p.domain_id === client.id)}
+            projects={(isSearching ? filteredProjects : projects).filter(p => p.domain_id === client.id)}
             openProjects={openProjects}
             loadedProjects={loadedProjects}
-            reports={reports}
+            reports={(isSearching ? filteredReports : reports)}
             open={!!openClients[client.id]}
             loaded={!!loadedClients[client.id]}
             active={activeClient === client.id}
@@ -150,6 +268,6 @@ const SideMenu = () => {
       </div>
     </div>
   );
-};
+});
 
 export default SideMenu;

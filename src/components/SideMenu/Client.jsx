@@ -77,6 +77,7 @@ const Client = props => {
                 active={props.activeProject === project.id}
                 activeReport={props.activeReport}
                 isActiveAddLink={props.isActiveAddLink}
+                isFiltered={props.isFiltered}
                 onOpen={onProjectOpen}
                 onClose={onProjectClose}
               />

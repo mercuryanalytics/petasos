@@ -8,15 +8,17 @@
   box-sizing: border-box;
   border: 1px solid #B9B9B9;
   outline: none;
+  background-color: #fff;
   font-size: .8rem;
-  color: #A9A9A9;
+  color: #000;
 }
 
 .input:hover {
   border-color: #000;
 }
 
-.input:focus {
+input.active,
+.input:not(.active):focus {
   border-color: #000;
 }
 
@@ -35,4 +37,44 @@
   margin-top: -.9rem;
   font-size: 1.8rem;
   color: #E0E0E0;
+}
+
+.targets {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #000;
+  background-color: #fff;
+}
+
+.targets .title {
+  display: block;
+  padding: 10px;
+  font-size: .85rem;
+  color: #000;
+  font-weight: bold;
+}
+
+.targets label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.targets label:not(.checked):hover,
+.targets label.checked {
+  background-color: #F0F0F0;
+}
+
+.targets label span {
+  font-size: .85rem;
+}
+
+.targets label svg {
+  font-size: 1rem;
 }
