@@ -9,6 +9,7 @@ import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
+import { getClient } from '../store/clients/actions';
 import { getProject } from '../store/projects/actions';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { format } from 'date-fns';
@@ -21,7 +22,13 @@ const ReportManage = props => {
   const [isBusy, setIsBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
+  const activeProject = useSelector(state => {
+    let pid = typeof projectId !== 'undefined' ? projectId : (data ? data.project_id : null);
+    return pid !== null ? state.projectsReducer.projects.filter(p => p.id = pid)[0] : null;
+  });
   const [clientId, setClientId] = useState(null);
+  const client = useSelector(state =>
+    clientId !== null ? state.clientsReducer.clients.filter(c => c.id === clientId)[0] : null);
 
   useEffect(() => {
     if (!isNaN(id)) {
@@ -30,13 +37,12 @@ const ReportManage = props => {
   }, [id]);
 
   useEffect(() => {
-    if (!clientId) {
-      let pid = typeof projectId !== 'undefined' ? projectId : (data ? data.project_id : null);
-      if (pid !== null) {
-        // dispatch(getProject(pid));
-      }
+    if (activeProject && activeProject.domain_id !== clientId) {
+      setClientId(activeProject.domain_id)
+    } else {
+      setClientId(null);
     }
-  }, [data]);
+  }, [activeProject]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -160,7 +166,7 @@ const ReportManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Report permissions</span>
         </div>
-        <PermissionsGranter mode={PermissionsGranterModes.Grant} clientId={clientId} />
+        <PermissionsGranter mode={PermissionsGranterModes.Grant} clientId={client ? client.id : null} />
       </div>
     </div>
   ) : (
