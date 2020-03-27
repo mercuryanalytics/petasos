@@ -104,14 +104,12 @@ const PermissionsGranter = props => {
         setStatesBackup({ ...openGroups });
       }
       const f = filter.toLowerCase();
-      const result = users.filter(u => u.contact_name.toLowerCase().includes(f));
+      const result = users.filter(u => (u.contact_name || '').toLowerCase().includes(f));
       let cids = {};
       result.forEach(u => cids[u.client_id] = true);
-      setHasResults(!!result.length);
       setFilteredClients(clients.filter(c => !!cids[c.id]));
       setFilteredUsers(result);
     } else {
-      setHasResults(!!users.length);
       if (statesBackup) {
         setFilteredClients([]);
         setFilteredUsers([]);
@@ -128,6 +126,14 @@ const PermissionsGranter = props => {
       setOpenGroups(states);
     }
   }, [isSearching, filteredClients]);
+
+  useEffect(() => {
+    if (isSearching) {
+      setHasResults(!!filteredUsers.length);
+    } else {
+      setHasResults(!!users.length);
+    }
+  }, [isSearching, filteredUsers, users]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: { add_user_email: '' },

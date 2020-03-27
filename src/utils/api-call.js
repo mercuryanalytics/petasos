@@ -13,7 +13,6 @@ const apiCall = (method, url, options) => {
     if (!block) {
       if (url.indexOf('/researchers') === -1) {
         if (url.indexOf('?') > -1) {
-          console.log(url, urlNoQs, !!cached[urlNoQs]);
           if (!!cached[urlNoQs]) {
             block = true;
           }

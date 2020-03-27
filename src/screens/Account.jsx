@@ -28,7 +28,7 @@ const Account = () => {
         <Breadcrumbs data={['My account']} />
       </div>
       {ready && user ? (
-        <UserManage data={user} />
+        <UserManage id={user.id} />
       ) : (
         <Loader inline className={styles.loader} />
       )}

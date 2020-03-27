@@ -46,3 +46,15 @@
 .section .form .controlsGroup > * {
   width: calc(50% - 10px);
 }
+
+.busyLoader {
+  margin-left: 10px !important;
+}
+
+.busyLoader, .busyLoader > div {
+  height: 25px !important;
+}
+
+.busyLoader > div > div {
+  background-color: #fff !important;
+}
