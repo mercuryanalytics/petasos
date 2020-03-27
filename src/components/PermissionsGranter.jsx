@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './PermissionsGranter.module.css';
 import { getClients } from '../store/clients/actions';
-import { getUsers } from '../store/users/actions';
+import { getUsers, createUser, deleteUser } from '../store/users/actions';
+import { useForm, useField } from 'react-final-form-hooks';
+import Loader from './Loader';
 import Search from './Search';
 import { MdPlayArrow, MdMoreHoriz, MdDelete } from 'react-icons/md';
 import Toggle from './Toggle';
+import Modal from './Modal';
+import Button from './Button';
+import { Input } from './FormFields';
 
 export const PermissionsGranterModes = {
   Grant: 'grant',
@@ -30,12 +35,14 @@ const PermissionsGranter = props => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [openGroups, setOpenGroups] = useState({});
   const [activeItems, setActiveItems] = useState({});
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     const id = typeof clientId !== 'undefined' ? clientId : null;
     setCurrentClientId(id);
     if (id !== null) {
-      setOpenGroups({ ...openGroups, [id]: true });
+      setOpenGroups({ [id]: true });
     }
   }, [clientId]);
 
@@ -65,7 +72,7 @@ const PermissionsGranter = props => {
   };
 
   const handleGroupDelete = (id, event) => {
-    // @TODO Delete group
+    // @TODO Delete group... all child users ?
     event.stopPropagation();
   };
 
@@ -74,8 +81,8 @@ const PermissionsGranter = props => {
     // @TODO Update ... ?
   };
 
-  const handleItemDelete = (id, event) => {
-    // @TODO Delete item
+  const handleItemDelete = (id) => {
+    dispatch(deleteUser(id)).then(() => {});
   };
 
   const handleSearch = (value) => {
@@ -119,17 +126,80 @@ const PermissionsGranter = props => {
     }
   }, [isSearching, filteredClients]);
 
+  const { form, handleSubmit, pristine, submitting } = useForm({
+    initialValues: { add_user_email: '' },
+    validate: (values) => {
+      let err, email = values.add_user_email;
+      if (!email) {
+        err = 'Field value is required.';
+      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        err = 'Field value must be a valid email format.'
+      }
+      return err ? { add_user_email: err } : {};
+    },
+    onSubmit: (values) => {
+      setIsBusy(true);
+      const result = {
+        email: values.add_user_email,
+        client_id: clientId,
+        company_name: null,
+        contact_name: null,
+        contact_title: null,
+        contact_phone: null,
+        contact_fax: null,
+        contact_email: null,
+        mailing_address_1: null,
+        mailing_address_2: null,
+        mailing_city: null,
+        mailing_state: null,
+        mailing_zip: null,
+      };
+      dispatch(createUser(result)).then(() => {
+        setIsBusy(false);
+      });
+    },
+  });
+
+  const addUserField = useField('add_user_email', form);
+
   return (
     <div className={styles.container}>
       <div className={styles.search}>
         <Search placeholder="Search user" onSearch={handleSearch} />
       </div>
-      {mode === PermissionsGranterModes.Manage && (
+      {/* @TODO Keep this way ? */}
+      {/* {mode === PermissionsGranterModes.Manage && ( */}
         <div className={styles.adders}>
-          <button>+ Add user</button>
+          <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
           <button>+ Add domain</button>
         </div>
-      )}
+        <Modal
+          className={styles.modal}
+          title="Invite new user"
+          open={isAddUserOpen}
+          onClose={() => setIsAddUserOpen(false)}
+        >
+          <div className={styles.modalText}>
+            Enter an email address for which to send an invitation.
+          </div>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <Input
+              className={styles.modalInput}
+              field={addUserField}
+              label="Email"
+            />
+            <div className={styles.modalButtons}>
+              <Button type="submit" disabled={isBusy || submitting}>
+                <span>{!isBusy ? 'Invite new user' : 'Inviting new user'}</span>
+                {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+              </Button>
+              <Button transparent onClick={() => setIsAddUserOpen(false)}>
+                <span>Cancel</span>
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      {/* )} */}
       <div className={styles.permissions}>
         {(isSearching ? filteredClients : clients.filter(c => !!allowedClientIds[c.id])).map(client => (
           <div className={styles.group} key={`permissions-group-${client.id}`}>
@@ -153,9 +223,14 @@ const PermissionsGranter = props => {
             </div>
             {!!openGroups[client.id] && (
               <div className={styles.items}>
-                {(isSearching ? filteredUsers : users).map(user => (
-                  <div className={styles.item} key={`grant-user-${user.id}`}>
+                {(isSearching ? filteredUsers : users).filter(u => u.client_id === client.id).map(user => (
+                  <label
+                    key={`grant-user-${user.id}`}
+                    className={styles.item}
+                    htmlFor={`user-toggle-${client.id}-${user.id}`}
+                  >
                     <span className={styles.itemName}>{user.contact_name}</span>
+                    {/* @TODO Pending status */}
                     {(mode === PermissionsGranterModes.Grant && (
                       <Toggle
                         id={`user-toggle-${client.id}-${user.id}`}
@@ -170,7 +245,7 @@ const PermissionsGranter = props => {
                         onClick={e => handleItemDelete(client.id, e)}
                       />
                     ))}
-                  </div>
+                  </label>
                 ))}
               </div>
             )}

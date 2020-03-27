@@ -24,7 +24,7 @@ const ReportManage = props => {
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
   const activeProject = useSelector(state => {
     let pid = typeof projectId !== 'undefined' ? projectId : (data ? data.project_id : null);
-    return pid !== null ? state.projectsReducer.projects.filter(p => p.id = pid)[0] : null;
+    return pid !== null ? state.projectsReducer.projects.filter(p => p.id === pid)[0] : null;
   });
   const [clientId, setClientId] = useState(null);
   const client = useSelector(state =>

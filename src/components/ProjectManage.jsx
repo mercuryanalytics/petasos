@@ -181,14 +181,15 @@ const ProjectManage = props => {
             field={domain_id}
             options={domainsOptions}
             disabled={isBusy}
-            placeholder="Select a domain..."
-            label="Associated domain"
+            placeholder="Select a client..."
+            label="Associated client"
           />
           <Select
             className={styles.formControl}
             field={project_type}
             options={projectTypesOptions}
             disabled={isBusy}
+            value={ProjectTypes.CommercialTest}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
             label="Project type"
           />

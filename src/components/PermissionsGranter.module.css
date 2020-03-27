@@ -67,7 +67,6 @@
 
 .permissions .group .groupTitle .groupDelete,
 .permissions .group .items .item .itemDelete {
-  cursor: pointer;
   font-size: 1.5rem;
 }
 
@@ -90,6 +89,7 @@
   align-items: center;
   margin-left: 1.7rem;
   padding: 0 10px;
+  cursor: pointer;
 }
 
 .permissions .group .items .item:hover {
@@ -110,4 +110,31 @@
 
 .permissions .group .items .item .itemStatus.success {
   color: #1EBE5A;
+}
+
+.modal {
+  width: 320px;
+}
+
+.modalText {
+  margin-bottom: 25px;
+  font-size: .85rem;
+}
+
+.modalInput {
+  margin-bottom: 25px;
+}
+
+.modalButtons {}
+
+.busyLoader {
+  margin-left: 10px !important;
+}
+
+.busyLoader, .busyLoader > div {
+  height: 25px !important;
+}
+
+.busyLoader > div > div {
+  background-color: #fff !important;
 }
