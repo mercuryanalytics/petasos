@@ -18,7 +18,7 @@ const apiCall = (method, url, options) => {
           }
         }
       }
-      cached[url] = url;
+      cached[url] = true;
     }
     if (block) {
       return (new Promise((resolve, reject) => {

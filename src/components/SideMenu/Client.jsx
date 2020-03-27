@@ -15,8 +15,9 @@ const Client = props => {
 
   useEffect(() => {
     if (isOpen) {
-      if (props.onOpen) {
+      if (!isTouched) {
         setIsTouched(true);
+      } else if (props.onOpen) {
         props.onOpen(data);
       }
     } else if (props.onClose && isTouched) {
@@ -31,6 +32,7 @@ const Client = props => {
   }, [open]);
 
   const toggleOpen = (event) => {
+    setIsTouched(true);
     setIsOpen(!isOpen);
     event.stopPropagation();
     event.preventDefault();

@@ -192,7 +192,7 @@ const ProjectManage = props => {
             options={projectTypesOptions}
             disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
-            label="Project type"
+            label="Project type *"
           />
           <Textarea
             className={styles.formControl}

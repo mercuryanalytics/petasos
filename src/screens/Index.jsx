@@ -41,28 +41,34 @@ const Index = props => {
 
   useEffect(() => {
     if (loaded) {
+      let newClientId = null;
+      let newProjectId = null;
+      let newReportId = null;
       switch (content) {
         case ContentTypes.ManageClient:
           dispatch(setLocationData({ client: resId }));
-          setClientId(resId);
+          newClientId = resId;
           break;
         case ContentTypes.CreateProject:
           dispatch(setLocationData({ client: +params.clientId, create: true }));
-          setClientId(+params.clientId);
+          newClientId = +params.clientId;
           break;
         case ContentTypes.ManageProject:
           dispatch(setLocationData({ project: resId }));
-          setProjectId(resId);
+          newProjectId = resId;
           break;
         case ContentTypes.CreateReport:
           dispatch(setLocationData({ project: +params.projectId, create: true }));
-          setProjectId(+params.projectId);
+          newProjectId = +params.projectId;
           break;
         case ContentTypes.ManageReport:
           dispatch(setLocationData({ report: resId }));
-          setReportId(resId);
+          newReportId = resId;
           break;
       }
+      setClientId(newClientId);
+      setProjectId(newProjectId);
+      setReportId(newReportId);
     }
   }, [content, loaded, params]);
 
