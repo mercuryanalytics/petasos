@@ -66,7 +66,9 @@ const ProjectManage = props => {
       phone: contact ? (contact.contact_phone || '') : '',
       email: contact ? (contact.email || '') : '',
       modified_on: data.modified_on || '',
-    } : {},
+    } : {
+      project_type: ProjectTypes.CommercialTest,
+    },
     validate: (values) => {
       let errors = {};
       ['name', 'modified_on'].forEach(key => {
@@ -189,7 +191,6 @@ const ProjectManage = props => {
             field={project_type}
             options={projectTypesOptions}
             disabled={isBusy}
-            value={ProjectTypes.CommercialTest}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
             label="Project type"
           />
