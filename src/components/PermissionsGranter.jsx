@@ -254,9 +254,9 @@ const PermissionsGranter = props => {
             )}
           </div>
         ))}
-        {!hasResults && (
+        {/* {!hasResults && (
           <span className={styles.noResults}>No results</span>
-        )}
+        )} */}
       </div>
     </div>
   );
