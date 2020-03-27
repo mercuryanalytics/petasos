@@ -37,6 +37,7 @@ const PermissionsGranter = props => {
   const [activeItems, setActiveItems] = useState({});
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  const [hasResults, setHasResults] = useState(false);
 
   useEffect(() => {
     const id = typeof clientId !== 'undefined' ? clientId : null;
@@ -106,9 +107,11 @@ const PermissionsGranter = props => {
       const result = users.filter(u => u.contact_name.toLowerCase().includes(f));
       let cids = {};
       result.forEach(u => cids[u.client_id] = true);
+      setHasResults(!!result.length);
       setFilteredClients(clients.filter(c => !!cids[c.id]));
       setFilteredUsers(result);
     } else {
+      setHasResults(!!users.length);
       if (statesBackup) {
         setFilteredClients([]);
         setFilteredUsers([]);
@@ -251,6 +254,9 @@ const PermissionsGranter = props => {
             )}
           </div>
         ))}
+        {!hasResults && (
+          <span className={styles.noResults}>No results</span>
+        )}
       </div>
     </div>
   );

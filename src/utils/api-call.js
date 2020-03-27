@@ -8,22 +8,30 @@ const apiCall = (method, url, options) => {
     return;
   }
   if (method.toUpperCase() === 'GET') {
+    const urlNoQs = url.split('?')[0];
     let block = !!cached[url];
     if (!block) {
       if (url.indexOf('/researchers') === -1) {
-        for (let cachedUrl in cached) {
-          if (url.indexOf(cachedUrl) === 0) {
+        if (url.indexOf('?') > -1) {
+          if (!!cached[urlNoQs]) {
             block = true;
-            break;
+          }
+        }
+        if (!block) {
+          for (let cachedUrl in cached) {
+            if (url.indexOf(cachedUrl) === 0) {
+              block = true;
+              break;
+            }
           }
         }
       }
       cached[url] = true;
     }
     if (block) {
-      return (new Promise((resolve, reject) => {
-        resolve([]);
-      }));
+      // return (new Promise((resolve, reject) => {
+      //   resolve([]);
+      // }));
     }
   }
   options = options || {};
