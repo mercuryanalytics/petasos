@@ -13,11 +13,11 @@ const apiCall = (method, url, options) => {
     if (!block) {
       if (url.indexOf('/researchers') === -1) {
         if (url.indexOf('?') > -1) {
+          console.log(url, urlNoQs, !!cached[urlNoQs]);
           if (!!cached[urlNoQs]) {
             block = true;
           }
-        }
-        if (!block) {
+        } else {
           for (let cachedUrl in cached) {
             if (url.indexOf(cachedUrl) === 0) {
               block = true;
@@ -29,9 +29,9 @@ const apiCall = (method, url, options) => {
       cached[url] = true;
     }
     if (block) {
-      // return (new Promise((resolve, reject) => {
-      //   resolve([]);
-      // }));
+      return (new Promise((resolve, reject) => {
+        resolve([]);
+      }));
     }
   }
   options = options || {};
