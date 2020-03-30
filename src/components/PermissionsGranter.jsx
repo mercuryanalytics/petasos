@@ -23,7 +23,7 @@ const PermissionsGranter = props => {
   const [currentClientId, setCurrentClientId] = useState(null);
   const clients = useSelector(state => {
     let c = state.clientsReducer.clients;
-    return currentClientId !== null && mode === PermissionsGranterModes.Manage ?
+    return mode === PermissionsGranterModes.Manage && currentClientId !== null ?
       c.filter(c => c.id === currentClientId)
       : c;
   });
@@ -36,6 +36,7 @@ const PermissionsGranter = props => {
   const [openGroups, setOpenGroups] = useState({});
   const [activeItems, setActiveItems] = useState({});
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [hasResults, setHasResults] = useState(false);
 
@@ -57,6 +58,7 @@ const PermissionsGranter = props => {
       for (let i in allowedClientIds) {
         return;
       }
+      setIsReady(true);
       let ids = {};
       users.forEach(u => ids[u.client_id] = true);
       setAllowedClientIds(ids);
@@ -164,7 +166,9 @@ const PermissionsGranter = props => {
         mailing_zip: null,
       };
       dispatch(createUser(result)).then(() => {
+        form.reset();
         setIsBusy(false);
+        setIsAddUserOpen(false);
       });
     },
   });
@@ -260,9 +264,11 @@ const PermissionsGranter = props => {
             )}
           </div>
         ))}
-        {/* {!hasResults && (
+        {!isReady ? (
+          <Loader inline className={styles.loader} />
+        ) : !(isSearching ? filteredClients : clients.filter(c => !!allowedClientIds[c.id])).length && (
           <span className={styles.noResults}>No results</span>
-        )} */}
+        )}
       </div>
     </div>
   );

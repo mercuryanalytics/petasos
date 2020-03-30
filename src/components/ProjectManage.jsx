@@ -152,7 +152,7 @@ const ProjectManage = props => {
     setContact(c || null);
   }, [contacts, account_id.input.value, form]);
 
-  return (!editMode || (editMode && data)) && clients ? (
+  return (!editMode || (editMode && data)) && !!clients.length ? (
     <div className={styles.container}>
       <div className={styles.actions}>
         <Button transparent onClick={handleDelete}>

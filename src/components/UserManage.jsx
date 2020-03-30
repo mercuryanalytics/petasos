@@ -6,7 +6,6 @@ import Button from './Button';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
-import { da } from 'date-fns/esm/locale';
 
 const UserManage = props => {
   const { id } = props;

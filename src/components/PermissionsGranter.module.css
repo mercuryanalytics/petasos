@@ -127,6 +127,12 @@
 
 .modalButtons {}
 
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}
+
 .busyLoader {
   margin-left: 10px !important;
 }
@@ -137,4 +143,12 @@
 
 .busyLoader > div > div {
   background-color: #fff !important;
+}
+
+.noResults {
+  display: block;
+  padding: 10px 5px;
+  text-align: center;
+  font-size: .85rem;
+  color: #A9A9A9;
 }
