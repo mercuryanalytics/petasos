@@ -92,12 +92,20 @@
   cursor: pointer;
 }
 
+.permissions .group .items .item.noIndent {
+  margin-left: 0 !important;
+}
+
 .permissions .group .items .item:hover {
   background-color: #F0F0F0;
 }
 
 .permissions .group .items .item .itemName {
   flex-grow: 1;
+  width: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: .9rem;
   padding: .6rem .6rem .6rem 0;
 }
@@ -138,10 +146,11 @@
 }
 
 .busyLoader, .busyLoader > div {
+  width: 25px !important;
   height: 25px !important;
 }
 
-.busyLoader > div > div {
+.busyLoader.whiteLoader > div > div {
   background-color: #fff !important;
 }
 

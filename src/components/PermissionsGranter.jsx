@@ -21,49 +21,76 @@ const PermissionsGranter = props => {
   const { mode, clientId } = props;
   const dispatch = useDispatch();
   const [currentClientId, setCurrentClientId] = useState(null);
-  const clients = useSelector(state => {
-    let c = state.clientsReducer.clients;
-    return mode === PermissionsGranterModes.Manage && currentClientId !== null ?
-      c.filter(c => c.id === currentClientId)
-      : c;
-  });
-  const users = useSelector(state => state.usersReducer.users);
-  const [allowedClientIds, setAllowedClientIds] = useState({});
   const [isSearching, setIsSearching] = useState(false);
   const [filter, setFilter] = useState(null);
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [openGroups, setOpenGroups] = useState({});
   const [activeItems, setActiveItems] = useState({});
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
-  const [hasResults, setHasResults] = useState(false);
+  const [isDeleteBusy, setIsDeleteBusy] = useState(false);
+  const users = useSelector(state => state.usersReducer.users);
+  const clients = useSelector(state => state.clientsReducer.clients);
+  const [didLoadUsers, setDidLoadUsers] = useState(false);
+  const [didLoadClients, setDidLoadClients] = useState(false);
+  const [visibleUsers, setVisibleUsers] = useState([]);
+  const [visibleClients, setVisibleClients] = useState([]);
+  const [statesBackup, setStatesBackup] = useState(null);
+
+  useEffect(() => {
+    dispatch(getUsers()).then(() => setDidLoadUsers(true));
+    dispatch(getClients()).then(() => setDidLoadClients(true));
+  }, []);
+
+  useEffect(() => {
+    if (didLoadUsers && didLoadClients) {
+      setIsReady(true);
+    }
+  }, [didLoadUsers, didLoadClients]);
 
   useEffect(() => {
     const id = typeof clientId !== 'undefined' ? clientId : null;
-    setCurrentClientId(id);
-    if (id !== null) {
+    if (id !== currentClientId) {
+      setCurrentClientId(id);
       setOpenGroups({ [id]: true });
     }
-  }, [clientId]);
-
-  useEffect(() => {
-    if (!clients.length) {
-      dispatch(getClients());
-    }
-    if (!users.length) {
-      dispatch(getUsers());
-    } else {
-      for (let i in allowedClientIds) {
-        return;
+    if (isReady && id !== null) {
+      let vu = [], vc = [], vcids = {}, f = null;
+      if (isSearching) {
+        f = filter.toLowerCase();
+        if (!statesBackup) {
+          setStatesBackup({ ...openGroups });
+        }
       }
-      setIsReady(true);
-      let ids = {};
-      users.forEach(u => ids[u.client_id] = true);
-      setAllowedClientIds(ids);
+      users.forEach(u => {
+        if (
+          (!isSearching || (u.contact_name || u.email || '').toLowerCase().includes(f)) &&
+          u.membership_ids.length
+        ) {
+          if (mode === PermissionsGranterModes.Manage) {
+            if (id !== null && u.membership_ids.indexOf(id) > -1) {
+              vu.push(u);
+              vcids[id] = true;
+            }
+          } else {
+            vu.push(u);
+            u.membership_ids.forEach(mid => vcids[mid] = true);
+          }
+        }
+      });
+      clients.forEach(c => {
+        !!vcids[c.id] && vc.push(c);
+      });
+      setVisibleUsers(vu);
+      setVisibleClients(vc);
+      if (isSearching) {
+        setOpenGroups(vcids);
+      } else if (statesBackup) {
+        setOpenGroups(statesBackup);
+        setStatesBackup(null);
+      }
     }
-  }, [clients, users]);
+  }, [users, clients, clientId, isReady, isSearching, filter]);
 
   const toggleGroupOpen = (id) => {
     setOpenGroups({ ...openGroups, [id]: !openGroups[id] });
@@ -74,18 +101,15 @@ const PermissionsGranter = props => {
     event.stopPropagation();
   };
 
-  const handleGroupDelete = (id, event) => {
-    // @TODO Delete group... all child users ?
-    event.stopPropagation();
-  };
-
   const handleItemActiveChange = (id, status) => {
     setActiveItems({ ...activeItems, [id]: status});
     // @TODO Update ... ?
   };
 
   const handleItemDelete = (id) => {
-    dispatch(deleteUser(id)).then(() => {});
+    setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
+    dispatch(deleteUser(id)).then(() =>
+      setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
   };
 
   const handleSearch = (value) => {
@@ -97,45 +121,6 @@ const PermissionsGranter = props => {
       setFilter(null);
     }
   };
-
-  const [statesBackup, setStatesBackup] = useState(null);
-
-  useEffect(() => {
-    if (isSearching) {
-      if (!statesBackup) {
-        setStatesBackup({ ...openGroups });
-      }
-      const f = filter.toLowerCase();
-      const result = users.filter(u => (u.contact_name || '').toLowerCase().includes(f));
-      let cids = {};
-      result.forEach(u => cids[u.client_id] = true);
-      setFilteredClients(clients.filter(c => !!cids[c.id]));
-      setFilteredUsers(result);
-    } else {
-      if (statesBackup) {
-        setFilteredClients([]);
-        setFilteredUsers([]);
-        setOpenGroups(statesBackup ? { ...statesBackup } : {});
-        setStatesBackup(null);
-      }
-    }
-  }, [isSearching, filter]);
-
-  useEffect(() => {
-    if (isSearching && filteredClients.length) {
-      let states = {};
-      filteredClients.forEach(c => states[c.id] = true);
-      setOpenGroups(states);
-    }
-  }, [isSearching, filteredClients]);
-
-  useEffect(() => {
-    if (isSearching) {
-      setHasResults(!!filteredUsers.length);
-    } else {
-      setHasResults(!!users.length);
-    }
-  }, [isSearching, filteredUsers, users]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: { add_user_email: '' },
@@ -166,6 +151,7 @@ const PermissionsGranter = props => {
         mailing_zip: null,
       };
       dispatch(createUser(result)).then(() => {
+        dispatch(getUsers());
         form.reset();
         setIsBusy(false);
         setIsAddUserOpen(false);
@@ -180,69 +166,65 @@ const PermissionsGranter = props => {
       <div className={styles.search}>
         <Search placeholder="Search user" onSearch={handleSearch} />
       </div>
-      {/* @TODO Keep this way ? */}
-      {/* {mode === PermissionsGranterModes.Manage && ( */}
-        <div className={styles.adders}>
-          <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
-          <button>+ Add domain</button>
+      <div className={styles.adders}>
+        <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
+        <button>+ Add domain</button>
+      </div>
+      <Modal
+        className={styles.modal}
+        title="Invite new user"
+        open={isAddUserOpen}
+        onClose={() => setIsAddUserOpen(false)}
+      >
+        <div className={styles.modalText}>
+          Enter an email address for which to send an invitation.
         </div>
-        <Modal
-          className={styles.modal}
-          title="Invite new user"
-          open={isAddUserOpen}
-          onClose={() => setIsAddUserOpen(false)}
-        >
-          <div className={styles.modalText}>
-            Enter an email address for which to send an invitation.
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <Input
+            className={styles.modalInput}
+            field={addUserField}
+            label="Email"
+          />
+          <div className={styles.modalButtons}>
+            <Button type="submit" disabled={isBusy || submitting}>
+              <span>{!isBusy ? 'Invite new user' : 'Inviting new user'}</span>
+              {isBusy && <Loader inline size={3} className={`${styles.busyLoader} ${styles.whiteLoader}`} />}
+            </Button>
+            <Button transparent onClick={() => setIsAddUserOpen(false)}>
+              <span>Cancel</span>
+            </Button>
           </div>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <Input
-              className={styles.modalInput}
-              field={addUserField}
-              label="Email"
-            />
-            <div className={styles.modalButtons}>
-              <Button type="submit" disabled={isBusy || submitting}>
-                <span>{!isBusy ? 'Invite new user' : 'Inviting new user'}</span>
-                {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
-              </Button>
-              <Button transparent onClick={() => setIsAddUserOpen(false)}>
-                <span>Cancel</span>
-              </Button>
-            </div>
-          </form>
-        </Modal>
-      {/* )} */}
+        </form>
+      </Modal>
       <div className={styles.permissions}>
-        {(isSearching ? filteredClients : clients.filter(c => !!allowedClientIds[c.id])).map(client => (
+        {visibleClients.map(client => (
           <div className={styles.group} key={`permissions-group-${client.id}`}>
-            <div className={styles.groupTitle} onClick={e => toggleGroupOpen(client.id, e)}>
-              <div>
-                <MdPlayArrow className={`${styles.arrow} ${!!openGroups[client.id] ? styles.open : ''}`} />
-                <span className={styles.groupName}>{client.name}</span>
-              </div>
-              {(mode === PermissionsGranterModes.Grant && (
+            {mode === PermissionsGranterModes.Grant && (
+              <div
+                className={styles.groupTitle}
+                onClick={e => toggleGroupOpen(client.id, e)} title={client.name}
+              >
+                <div>
+                  <MdPlayArrow className={`${styles.arrow} ${!!openGroups[client.id] ? styles.open : ''}`} />
+                  <span className={styles.groupName}>{client.name}</span>
+                </div>
                 <MdMoreHoriz
                   className={styles.groupSettings}
                   onClick={e => toggleGroupSettings(client.id, e)}
                 />
-              )) ||
-              (mode === PermissionsGranterModes.Manage && (
-                <MdDelete
-                  className={styles.groupDelete}
-                  onClick={e => handleGroupDelete(client.id, e)}
-                />
-              ))}
-            </div>
+              </div>
+            )}
             {!!openGroups[client.id] && (
               <div className={styles.items}>
-                {(isSearching ? filteredUsers : users).filter(u => u.client_id === client.id).map(user => (
+                {visibleUsers.filter(u => u.membership_ids.indexOf(client.id) > -1).map(user => (
                   <label
                     key={`grant-user-${user.id}`}
-                    className={styles.item}
+                    className={`${styles.item} ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}`}
                     htmlFor={`user-toggle-${client.id}-${user.id}`}
                   >
-                    <span className={styles.itemName}>{user.contact_name}</span>
+                    <span className={styles.itemName} title={user.name}>
+                      {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
+                    </span>
                     {/* @TODO Pending status */}
                     {(mode === PermissionsGranterModes.Grant && (
                       <Toggle
@@ -253,10 +235,14 @@ const PermissionsGranter = props => {
                       />
                     )) ||
                     (mode === PermissionsGranterModes.Manage && (
-                      <MdDelete
-                        className={styles.itemDelete}
-                        onClick={e => handleItemDelete(client.id, e)}
-                      />
+                      !!isDeleteBusy[user.id] ? (
+                        <Loader inline size={3} className={styles.busyLoader} />
+                      ) : (
+                        <MdDelete
+                          className={styles.itemDelete}
+                          onClick={e => handleItemDelete(user.id, e)}
+                        />
+                      )
                     ))}
                   </label>
                 ))}
@@ -266,9 +252,9 @@ const PermissionsGranter = props => {
         ))}
         {!isReady ? (
           <Loader inline className={styles.loader} />
-        ) : !(isSearching ? filteredClients : clients.filter(c => !!allowedClientIds[c.id])).length && (
+        ) : (!visibleClients.length && (
           <span className={styles.noResults}>No results</span>
-        )}
+        ))}
       </div>
     </div>
   );
