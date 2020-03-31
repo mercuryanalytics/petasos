@@ -241,7 +241,11 @@ const ProjectManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Project permissions</span>
         </div>
-        <PermissionsGranter mode={PermissionsGranterModes.Grant} clientId={data ? data.domain_id : clientId} />
+        <PermissionsGranter
+          mode={PermissionsGranterModes.Grant}
+          clientId={data ? data.domain_id : clientId}
+          projectId={data ? data.id : null}
+        />
       </div>
     </div>
   ) : (

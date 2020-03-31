@@ -96,7 +96,11 @@
   margin-left: 0 !important;
 }
 
-.permissions .group .items .item:hover {
+.permissions .group .items .item.selectedItem {
+  background-color: #F0F0F0;
+}
+
+.permissions .group .items .item:not(.selectedItem):hover {
   background-color: #F0F0F0;
 }
 

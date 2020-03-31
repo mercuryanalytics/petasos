@@ -8,7 +8,7 @@ import { Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
 
 const UserManage = props => {
-  const { id } = props;
+  const { id, embeded, preview } = props;
   const dispatch = useDispatch();
   const editMode = !isNaN(id);
   const [isBusy, setIsBusy] = useState(false);
@@ -21,28 +21,26 @@ const UserManage = props => {
     }
   }, [id]);
 
-  // @TODO account_name, company_name
-
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
-      account_name: data.email || '',
       email: data.email || '',
-      company_name: data.company_name || '',
+      // company_name: data.company_name || '',
       contact_name: data.contact_name || '',
       contact_title: data.contact_title || '',
       contact_phone: data.contact_phone || '',
       contact_fax: data.contact_fax || '',
-      // contact_email: data.contact_email || '', //@TODO Use ?
+      contact_email: data.contact_email || '',
       mailing_address_1: data.mailing_address_1 || '',
       mailing_city: data.mailing_city || '',
+      mailing_state: data.mailing_state || '',
       mailing_zip: data.mailing_zip || '',
-      mailing_country: data.mailing_state || '', //@TODO Add mailing_state ?
+      mailing_country: data.mailing_country || '',
     } : {},
     validate: (values) => {
       let errors = {};
       [
-        'contact_name', 'contact_phone', 'email',
-        'mailing_address_1', 'mailing_city', 'mailing_zip'
+        'email', 'contact_name', 'contact_phone', 'contact_email',
+        'mailing_address_1', 'mailing_city', 'mailing_state', 'mailing_zip',
       ].forEach(key => {
         if (!values[key]) {
           errors[key] = 'Field value is required.'
@@ -54,17 +52,17 @@ const UserManage = props => {
       setIsBusy(true);
       const result = {
         email: values.email,
-        company_name: values.company_name,
+        // company_name: values.company_name,
         contact_name: values.contact_name,
         contact_title: values.contact_title,
         contact_phone: values.contact_phone,
         contact_fax: values.contact_fax,
-        // contact_email: data.contact_email || '', //@TODO Use ?
+        contact_email: values.contact_email,
         mailing_address_1: values.mailing_address_1,
         mailing_city: values.mailing_city,
-        //@TODO Add mailing_state ?
+        mailing_state: values.mailing_state,
         mailing_zip: values.mailing_zip,
-        mailing_country: data.mailing_country,
+        mailing_country: values.mailing_country,
       };
       if (data) {
         dispatch(updateUser(data.id, result)).then(() => {
@@ -72,25 +70,27 @@ const UserManage = props => {
           setIsBusy(false);
         });
       } else {
+        // @TODO get Client id
         // dispatch(createUser(result));
       }
     },
   });
 
   const email = useField('email', form);
-  const account_name = useField('account_name', form); //@TODO Use?
-  const company_name = useField('company_name', form);
+  // const company_name = useField('company_name', form);
   const contact_name = useField('contact_name', form);
   const contact_title = useField('contact_title', form);
   const contact_phone = useField('contact_phone', form);
   const contact_fax = useField('contact_fax', form);
+  const contact_email = useField('contact_email', form);
   const mailing_address_1 = useField('mailing_address_1', form);
   const mailing_city = useField('mailing_city', form);
+  const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_country = useField('mailing_country', form);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
       <div className={styles.section}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formSection}>
@@ -100,16 +100,15 @@ const UserManage = props => {
             <div className={styles.controlsGroup}>
               <Input
                 className={styles.formControl}
-                field={account_name}
-                disabled={true}
-                label="Account name"
+                field={email}
+                label="Account name *"
               />
-              <Input
+              {/* <Input
                 className={styles.formControl}
                 field={company_name}
                 disabled={true}
                 label="Company name"
-              />
+              /> */}
             </div>
           </div>
           <div className={styles.formSection}>
@@ -142,7 +141,7 @@ const UserManage = props => {
             </div>
             <Input
               className={styles.formControl}
-              field={email}
+              field={contact_email}
               label="Email *"
             />
             <div className={styles.controlsGroup}>
@@ -160,9 +159,16 @@ const UserManage = props => {
             <div className={styles.controlsGroup}>
               <Input
                 className={styles.formControl}
+                field={mailing_state}
+                label="State *"
+              />
+              <Input
+                className={styles.formControl}
                 field={mailing_zip}
                 label="Zip code *"
               />
+            </div>
+            <div className={styles.controlsGroup}>
               <Input
                 className={styles.formControl}
                 field={mailing_country}
@@ -170,12 +176,14 @@ const UserManage = props => {
               />
             </div>
           </div>
-          <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting}>
-              <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
-              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
-            </Button>
-          </div>
+          {!preview && (
+            <div className={styles.formButtons}>
+              <Button type="submit" disabled={submitting}>
+                <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
+                {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </div>

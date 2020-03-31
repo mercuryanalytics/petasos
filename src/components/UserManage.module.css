@@ -3,7 +3,24 @@
   margin: .5rem 2rem;
   border: 1px solid #B9B9B9;
   background-color: #fff;
-  padding: 2rem;
+}
+
+.container.embed {
+  margin: 0;
+  border: 0;
+}
+
+.container.embed .section {
+  padding: 0;
+}
+
+.container.embed .section .title {
+  margin-bottom: 1rem;
+  font-size: .95rem;
+}
+
+.container.embed .section .form .formSection {
+  margin-bottom: .5rem;
 }
 
 .section {
@@ -18,10 +35,6 @@
   margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: bold;
-}
-
-.section .title.mailing {
-  margin-bottom: 3.75rem;
 }
 
 .section .form .formSection {

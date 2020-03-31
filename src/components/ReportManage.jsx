@@ -9,8 +9,6 @@ import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
-import { getClient } from '../store/clients/actions';
-import { getProject } from '../store/projects/actions';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { format } from 'date-fns';
 
@@ -166,7 +164,11 @@ const ReportManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Report permissions</span>
         </div>
-        <PermissionsGranter mode={PermissionsGranterModes.Grant} clientId={client ? client.id : null} />
+        <PermissionsGranter
+          mode={PermissionsGranterModes.Grant}
+          clientId={client ? client.id : null}
+          reportId={data ? data.id : null}
+        />
       </div>
     </div>
   ) : (

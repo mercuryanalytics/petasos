@@ -16,7 +16,7 @@
 .body .side {
   width: 250px;
   min-width: 250px;
-  min-height: calc(100vh - 81px);
+  height: calc(100vh - 81px);
   padding-bottom: 1rem;
   box-sizing: border-box;
   border-right: 1px solid #B9B9B9;
@@ -27,5 +27,8 @@
 
 .body .content {
   flex-grow: 1;
+  height: calc(100vh - 81px);
   padding-bottom: 1rem;
+  box-sizing: border-box;
+  overflow: auto;
 }

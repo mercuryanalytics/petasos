@@ -15,16 +15,17 @@ import { Input } from './FormFields';
 export const PermissionsGranterModes = {
   Grant: 'grant',
   Manage: 'manage',
-}
+};
 
 const PermissionsGranter = props => {
-  const { mode, clientId } = props;
+  const { mode, clientId, projectId, reportId } = props;
   const dispatch = useDispatch();
   const [currentClientId, setCurrentClientId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [filter, setFilter] = useState(null);
   const [openGroups, setOpenGroups] = useState({});
   const [activeItems, setActiveItems] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
@@ -101,9 +102,24 @@ const PermissionsGranter = props => {
     event.stopPropagation();
   };
 
+  const handleItemSelect = (id) => {
+    if (mode === PermissionsGranterModes.Manage) {
+      setSelectedItem(id);
+      if (props.onUserSelect) {
+        props.onUserSelect(id);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (mode === PermissionsGranterModes.Manage && selectedItem === null && visibleUsers.length) {
+      handleItemSelect(visibleUsers[0].id);
+    }
+  }, [selectedItem, visibleUsers]);
+
   const handleItemActiveChange = (id, status) => {
     setActiveItems({ ...activeItems, [id]: status});
-    // @TODO Update ... ?
+    // @TODO Update
   };
 
   const handleItemDelete = (id) => {
@@ -150,6 +166,11 @@ const PermissionsGranter = props => {
         mailing_state: null,
         mailing_zip: null,
       };
+      if (!isNaN(projectId)) {
+        result.project_id = projectId;
+      } else if (!isNaN(reportId)) {
+        result.report_id = reportId;
+      }
       dispatch(createUser(result)).then(() => {
         dispatch(getUsers());
         form.reset();
@@ -219,10 +240,16 @@ const PermissionsGranter = props => {
                 {visibleUsers.filter(u => u.membership_ids.indexOf(client.id) > -1).map(user => (
                   <label
                     key={`grant-user-${user.id}`}
-                    className={`${styles.item} ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}`}
+                    className={`
+                      ${styles.item}
+                      ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}
+                      ${selectedItem === user.id ? styles.selectedItem : ''}
+                    `}
                     htmlFor={`user-toggle-${client.id}-${user.id}`}
+                    title={user.name || user.email}
+                    onClick={() => handleItemSelect(user.id)}
                   >
-                    <span className={styles.itemName} title={user.name}>
+                    <span className={styles.itemName}>
                       {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
                     </span>
                     {/* @TODO Pending status */}

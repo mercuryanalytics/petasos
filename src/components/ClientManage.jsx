@@ -6,6 +6,7 @@ import Routes from '../utils/routes';
 import Button from './Button';
 import Loader from './Loader';
 import PermissionsGranter, { PermissionsGranterModes } from './PermissionsGranter';
+import UserManage from './UserManage';
 import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
@@ -28,6 +29,11 @@ const ContentTabs = {
   Defaults: 3,
 };
 
+const AccountsTabs = {
+  Info: 1,
+  Permissions: 2,
+};
+
 const ClientManage = props => {
   const { id } = props;
   const dispatch = useDispatch();
@@ -38,6 +44,9 @@ const ClientManage = props => {
     editMode ? state.clientsReducer.clients : null);
   const data = useSelector(state =>
     editMode ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null);
+  const [tab, setTab] = useState(ContentTabs.Details);
+  const [accountsTab, setAccountsTab] = useState(AccountsTabs.Info);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     if (!isNaN(id)) {
@@ -168,8 +177,6 @@ const ClientManage = props => {
     setBillingAsMailing(!!status);
   }, [billing_as_mailing.input.value]);
 
-  const [activeTab, setActiveTab] = useState(ContentTabs.Details);
-
   const handleDelete = () => {
     let redirectToId;
     if (clients.length > 1) {
@@ -198,25 +205,25 @@ const ClientManage = props => {
       </div>
       <div className={styles.tabs}>
         <div
-          className={`${styles.tab} ${activeTab === ContentTabs.Details ? styles.active : ''}`}
-          onClick={() => setActiveTab(ContentTabs.Details)}
+          className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
+          onClick={() => setTab(ContentTabs.Details)}
         >
           <span>Client details</span>
         </div>
         <div
-          className={`${styles.tab} ${activeTab === ContentTabs.Accounts ? styles.active : ''}`}
-          onClick={() => setActiveTab(ContentTabs.Accounts)}
+          className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
+          onClick={() => setTab(ContentTabs.Accounts)}
         >
           <span>Accounts</span>
         </div>
         <div
-          className={`${styles.tab} ${activeTab === ContentTabs.Defaults ? styles.active : ''}`}
-          onClick={() => setActiveTab(ContentTabs.Defaults)}
+          className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
+          onClick={() => setTab(ContentTabs.Defaults)}
         >
           <span>Defaults</span>
         </div>
       </div>
-      {(activeTab === ContentTabs.Details && (
+      {(tab === ContentTabs.Details && (
         <div className={`${styles.section}`}>
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formSection}>
@@ -379,16 +386,50 @@ const ClientManage = props => {
           </form>
         </div>
       )) ||
-      (activeTab === ContentTabs.Accounts && (
-        <div className={`${styles.section}`}>
-          <div className={`${styles.title} ${styles.big}`}>
-            <span>Users</span>
+      (tab === ContentTabs.Accounts && (
+        <div className={`${styles.section} ${styles.accounts}`}>
+          <div className={styles.userList}>
+            <div className={`${styles.title} ${styles.big}`}>
+              <span>Users</span>
+            </div>
+            <PermissionsGranter
+              mode={PermissionsGranterModes.Manage}
+              clientId={data && data.id}
+              onUserSelect={id => setSelectedUserId(id)}
+            />
           </div>
-          <PermissionsGranter mode={PermissionsGranterModes.Manage} clientId={data.id} />
+          <div className={styles.userActions}>
+            <div className={styles.innerTabs}>
+              <div
+                className={`${styles.innerTab} ${accountsTab === AccountsTabs.Info ? styles.active : ''}`}
+                onClick={() => setAccountsTab(AccountsTabs.Info)}
+              >
+                <span>User info</span>
+              </div>
+              <div
+                className={`${styles.innerTab} ${accountsTab === AccountsTabs.Permissions ? styles.active : ''}`}
+                onClick={() => setAccountsTab(AccountsTabs.Permissions)}
+              >
+                <span>Access and Permissions</span>
+              </div>
+            </div>
+            <div className={styles.innerContent}>
+              {(accountsTab === AccountsTabs.Info && (
+                selectedUserId !== null && (
+                  <UserManage id={selectedUserId} preview={true} embeded={true} />
+                )
+              )) ||
+              (accountsTab === AccountsTabs.Permissions && (
+                <div>AccessAndPermissions</div>
+              ))}
+            </div>
+          </div>
         </div>
       )) ||
-      (activeTab === ContentTabs.Defaults && (
-        <div className={`${styles.section}`}>ClientDefaults</div>
+      (tab === ContentTabs.Defaults && (
+        <div className={`${styles.section}`}>
+          ClientDefaults
+        </div>
       ))}
     </div>
   ) : (
