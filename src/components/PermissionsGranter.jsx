@@ -54,7 +54,11 @@ const PermissionsGranter = props => {
       dispatch(getAuthorizedUsers(clientId, options)).then(action => {
         let states = {};
         if (Array.isArray(action.payload)) {
-          action.payload.forEach(u => states[u.id] = u.authorized);
+          action.payload.forEach(u => {
+            u.client_ids.forEach(cid => {
+              states[`${cid}-${u.id}`] = u.authorized;
+            });
+          });
         }
         setActiveItems({ ...states });
       });
@@ -135,8 +139,9 @@ const PermissionsGranter = props => {
     }
   }, [selectedItem, visibleUsers]);
 
-  const handleItemActiveChange = (id, status) => {
-    if (status !== !!activeItems[id]) {
+  const handleItemActiveChange = (groupId, id, status) => {
+    const key = `${groupId}-${id}`;
+    if (status !== !!activeItems[key]) {
       let options = {};
       if (projectId) {
         options.projectId = projectId;
@@ -144,7 +149,7 @@ const PermissionsGranter = props => {
         options.reportId = reportId;
       }
       dispatch(authorizeUser(id, clientId, options));
-      setActiveItems({ ...activeItems, [id]: status });
+      setActiveItems({ ...activeItems, [key]: status });
     }
   };
 
@@ -283,8 +288,8 @@ const PermissionsGranter = props => {
                       <Toggle
                         id={`user-toggle-${client.id}-${user.id}`}
                         className={styles.itemToggle}
-                        active={!!activeItems[user.id]}
-                        onChange={status => handleItemActiveChange(user.id, status)}
+                        active={!!activeItems[`${client.id}-${user.id}`]}
+                        onChange={status => handleItemActiveChange(client.id, user.id, status)}
                       />
                     )) ||
                     (mode === PermissionsGranterModes.Manage && (

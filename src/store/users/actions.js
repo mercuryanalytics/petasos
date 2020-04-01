@@ -128,10 +128,10 @@ export const getResearchersFailure = (error) => ({
 
 export function getAuthorizedUsers(clientId, { projectId, reportId }) {
   let resPath = 'clients', resId = clientId;
-  if (!isNaN(projectId)) {
+  if (!!projectId) {
     resPath = 'projects';
     resId = projectId;
-  } else if (!isNaN(reportId)) {
+  } else if (!!reportId) {
     resPath = 'reports';
     resId = reportId;
   }
@@ -155,10 +155,10 @@ export const getAuthorizedUsersFailure = (error) => ({
 
 export function authorizeUser(id, clientId, { projectId, reportId }) {
   let resPath = 'clients', resId = clientId;
-  if (!isNaN(projectId)) {
+  if (!!projectId) {
     resPath = 'projects';
     resId = projectId;
-  } else if (!isNaN(reportId)) {
+  } else if (!!reportId) {
     resPath = 'reports';
     resId = reportId;
   }

@@ -38,6 +38,7 @@
 
 .section.right {
   width: 400px;
+  min-width: 400px;
 }
 
 .section:not(:last-child) {

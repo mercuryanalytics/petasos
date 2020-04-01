@@ -59,6 +59,7 @@
 
 .section .title {
   display: flex;
+  align-items: center;
   margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: bold;
@@ -68,6 +69,11 @@
   display: flex;
   margin-bottom: 1.5rem;
   font-size: 1.2rem;
+}
+
+.section .title .icon {
+  margin-right: .5rem;
+  font-size: 1.5rem;
 }
 
 .section .title.mailing {
@@ -101,6 +107,24 @@
   display: flex !important;
   justify-content: center;
   width: 100% !important;
+}
+
+.section.details {
+  display: flex;
+  padding: 0;
+}
+
+.section.details .editor {
+  flex-grow: 1;
+  padding: 2rem;
+  border-right: 1px solid #B9B9B9;
+}
+
+.section.details .grant {
+  width: 400px;
+  min-width: 400px;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
 .section.accounts {

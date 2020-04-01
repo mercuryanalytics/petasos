@@ -11,7 +11,7 @@ import { getUser, createUser, updateUser } from '../store/users/actions';
 const UserManage = props => {
   const { id, embeded, preview, clientId } = props;
   const dispatch = useDispatch();
-  const editMode = !isNaN(id);
+  const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isEditClicked, setIsEditClicked] = useState(false);
   const data = useSelector(state =>
@@ -19,7 +19,7 @@ const UserManage = props => {
 
   useEffect(() => {
     setIsEditClicked(false);
-    if (!isNaN(id)) {
+    if (!!id) {
       dispatch(getUser(id));
     }
   }, [id]);

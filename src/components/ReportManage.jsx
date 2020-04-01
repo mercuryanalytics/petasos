@@ -16,7 +16,7 @@ const ReportManage = props => {
   const { id, projectId } = props;
   const dispatch = useDispatch();
   const history = useHistory();
-  const editMode = !isNaN(id);
+  const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
@@ -30,7 +30,7 @@ const ReportManage = props => {
     clientId !== null ? state.clientsReducer.clients.filter(c => c.id === clientId)[0] : null);
 
   useEffect(() => {
-    if (!isNaN(id)) {
+    if (!!id) {
       dispatch(getReport(id));
     }
   }, [id]);
@@ -164,7 +164,7 @@ const ReportManage = props => {
       <div className={`${styles.section} ${styles.right}`}>
         <div className={styles.title}>
           <MdSupervisorAccount className={styles.icon} />
-          <span>Report permissions</span>
+          <span>Report access</span>
         </div>
         <PermissionsGranter
           mode={PermissionsGranterModes.Grant}
