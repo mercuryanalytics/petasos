@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './PermissionsGranter.module.css';
 import { getClients } from '../store/clients/actions';
-import { getUsers, createUser, deleteUser } from '../store/users/actions';
+import { getUsers, createUser, deleteUser, getAuthorizedUsers, authorizeUser } from '../store/users/actions';
 import { useForm, useField } from 'react-final-form-hooks';
 import Loader from './Loader';
 import Search from './Search';
@@ -44,6 +44,24 @@ const PermissionsGranter = props => {
   }, []);
 
   useEffect(() => {
+    if (clientId) {
+      const options = {};
+      if (projectId) {
+        options.projectId = projectId;
+      } else if (reportId) {
+        options.reportId = reportId;
+      }
+      dispatch(getAuthorizedUsers(clientId, options)).then(action => {
+        let states = {};
+        if (Array.isArray(action.payload)) {
+          action.payload.forEach(u => states[u.id] = u.authorized);
+        }
+        setActiveItems({ ...states });
+      });
+    }
+  }, [clientId, projectId, reportId]);
+
+  useEffect(() => {
     if (didLoadUsers && didLoadClients) {
       setIsReady(true);
     }
@@ -51,11 +69,11 @@ const PermissionsGranter = props => {
 
   useEffect(() => {
     const id = typeof clientId !== 'undefined' ? clientId : null;
-    if (id !== currentClientId) {
-      setCurrentClientId(id);
-      setOpenGroups({ [id]: true });
-    }
     if (isReady && id !== null) {
+      if (id !== currentClientId) {
+        setCurrentClientId(id);
+        setOpenGroups({ [id]: true });
+      }
       let vu = [], vc = [], vcids = {}, f = null;
       if (isSearching) {
         f = filter.toLowerCase();
@@ -66,16 +84,16 @@ const PermissionsGranter = props => {
       users.forEach(u => {
         if (
           (!isSearching || (u.contact_name || u.email || '').toLowerCase().includes(f)) &&
-          u.membership_ids.length
+          u.client_ids.length
         ) {
           if (mode === PermissionsGranterModes.Manage) {
-            if (id !== null && u.membership_ids.indexOf(id) > -1) {
+            if (id !== null && u.client_ids.indexOf(id) > -1) {
               vu.push(u);
               vcids[id] = true;
             }
           } else {
             vu.push(u);
-            u.membership_ids.forEach(mid => vcids[mid] = true);
+            u.client_ids.forEach(mid => vcids[mid] = true);
           }
         }
       });
@@ -91,7 +109,7 @@ const PermissionsGranter = props => {
         setStatesBackup(null);
       }
     }
-  }, [users, clients, clientId, isReady, isSearching, filter]);
+  }, [users, clients, clientId, projectId, reportId, isReady, isSearching, filter]);
 
   const toggleGroupOpen = (id) => {
     setOpenGroups({ ...openGroups, [id]: !openGroups[id] });
@@ -118,7 +136,16 @@ const PermissionsGranter = props => {
   }, [selectedItem, visibleUsers]);
 
   const handleItemActiveChange = (id, status) => {
-    setActiveItems({ ...activeItems, [id]: status});
+    if (status !== !!activeItems[id]) {
+      let options = {};
+      if (projectId) {
+        options.projectId = projectId;
+      } else if (reportId) {
+        options.reportId = reportId;
+      }
+      dispatch(authorizeUser(id, clientId, options));
+      setActiveItems({ ...activeItems, [id]: status });
+    }
   };
 
   const handleItemDelete = (id) => {
@@ -165,9 +192,9 @@ const PermissionsGranter = props => {
         mailing_state: null,
         mailing_zip: null,
       };
-      if (!isNaN(projectId)) {
+      if (projectId) {
         result.project_id = projectId;
-      } else if (!isNaN(reportId)) {
+      } else if (reportId) {
         result.report_id = reportId;
       }
       dispatch(createUser(result)).then(() => {
@@ -236,7 +263,7 @@ const PermissionsGranter = props => {
             )}
             {!!openGroups[client.id] && (
               <div className={styles.items}>
-                {visibleUsers.filter(u => u.membership_ids.indexOf(client.id) > -1).map(user => (
+                {visibleUsers.filter(u => u.client_ids.indexOf(client.id) > -1).map(user => (
                   <label
                     key={`grant-user-${user.id}`}
                     className={`

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Toggle.module.css';
 
 const Toggle = props => {
   const { id, active } = props;
-  const [status, setStatus] = useState(!!active);
+  const [status, setStatus] = useState(false);
+
+  useEffect(() => {
+    setStatus(!!active);
+  }, [active]);
 
   const handleChange = (event) => {
     let newStatus = !!event.target.checked;

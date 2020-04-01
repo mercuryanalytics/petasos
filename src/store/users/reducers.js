@@ -3,6 +3,7 @@ import { pushToStack } from '../index';
 const initialState = {
   users: [],
   researchers: [],
+  authorizedUsers: [],
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -49,6 +50,12 @@ const usersReducer = (state = initialState, action) => {
         ...state,
         researchers: researchers,
       };
+    }
+    case 'GET_AUTHORIZED_USERS_SUCCESS': {
+      return state;
+    }
+    case 'AUTHORIZE_USER_SUCCESS': {
+      return state;
     }
     default: {
       return state;

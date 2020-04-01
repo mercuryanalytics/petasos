@@ -125,3 +125,60 @@ export const getResearchersFailure = (error) => ({
   type: 'GET_RESEARCHERS_FAILURE',
   payload: error,
 });
+
+export function getAuthorizedUsers(clientId, { projectId, reportId }) {
+  let resPath = 'clients', resId = clientId;
+  if (!isNaN(projectId)) {
+    resPath = 'projects';
+    resId = projectId;
+  } else if (!isNaN(reportId)) {
+    resPath = 'reports';
+    resId = reportId;
+  }
+  const queryString = `?client_id=${clientId}`;
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
+      .then(res => dispatch(getAuthorizedUsersSuccess(res)))
+      .catch(err => dispatch(getAuthorizedUsersFailure(err)));
+  };
+}
+
+export const getAuthorizedUsersSuccess = (data) => ({
+  type: 'GET_AUTHORIZED_USERS_SUCCESS',
+  payload: data,
+});
+
+export const getAuthorizedUsersFailure = (error) => ({
+  type: 'GET_AUTHORIZED_USERS_FAILURE',
+  payload: error,
+});
+
+export function authorizeUser(id, clientId, { projectId, reportId }) {
+  let resPath = 'clients', resId = clientId;
+  if (!isNaN(projectId)) {
+    resPath = 'projects';
+    resId = projectId;
+  } else if (!isNaN(reportId)) {
+    resPath = 'reports';
+    resId = reportId;
+  }
+  const data = {
+    user_id: id,
+    client_id: clientId,
+  };
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
+      .then(res => dispatch(authorizeUserSuccess(res)))
+      .catch(err => dispatch(authorizeUserFailure(err)));
+  };
+}
+
+export const authorizeUserSuccess = (data) => ({
+  type: 'AUTHORIZE_USER_SUCCESS',
+  payload: data,
+});
+
+export const authorizeUserFailure = (error) => ({
+  type: 'AUTHORIZE_USER_FAILURE',
+  payload: error,
+});

@@ -9,9 +9,9 @@ const apiCall = (method, url, options) => {
   }
   if (method.toUpperCase() === 'GET') {
     const urlNoQs = url.split('?')[0];
-    let block = !!cached[url];
+    let block = cached.hasOwnProperty(url);
     if (!block) {
-      if (url.indexOf('/researchers') === -1) {
+      if (url.indexOf('/researchers') === -1 && url.indexOf('/authorize') === -1) {
         if (url.indexOf('?') > -1) {
           if (!!cached[urlNoQs]) {
             block = true;
@@ -24,8 +24,8 @@ const apiCall = (method, url, options) => {
             }
           }
         }
+        cached[url] = true;
       }
-      cached[url] = true;
     }
     if (block) {
       return (new Promise((resolve, reject) => {

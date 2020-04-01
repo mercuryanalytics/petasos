@@ -36,8 +36,8 @@ const ReportManage = props => {
   }, [id]);
 
   useEffect(() => {
-    if (activeProject && activeProject.domain_id !== clientId) {
-      setClientId(activeProject.domain_id)
+    if (activeProject) {
+      setClientId(activeProject.domain_id);
     } else {
       setClientId(null);
     }
