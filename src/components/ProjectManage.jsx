@@ -38,6 +38,7 @@ const ProjectManage = props => {
   const history = useHistory();
   const editMode = !isNaN(id);
   const [isBusy, setIsBusy] = useState(false);
+  const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
   const clients = useSelector(state => state.clientsReducer.clients);
@@ -93,8 +94,8 @@ const ProjectManage = props => {
           format(new Date(values.modified_on), 'yyyy-MM-dd')
           : '',
       };
-      if (data) {
-        dispatch(updateProject(data.id, result)).then(() => {
+      if (editMode) {
+        data && dispatch(updateProject(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
         });
@@ -140,24 +141,26 @@ const ProjectManage = props => {
     }
   }, [contacts]);
 
-  const handleDelete = () => {
-    const parent = data.domain_id;
-    dispatch(deleteProject(data.id)).then(() => {
-      history.push(Routes.ManageClient.replace(':id', parent));
-    });
-  };
-
   useEffect(() => {
     let c = contacts.filter(c => c.id === +account_id.input.value)[0];
     setContact(c || null);
   }, [contacts, account_id.input.value, form]);
 
+  const handleDelete = () => {
+    setIsDeleteBusy(true);
+    const parent = data.domain_id;
+    dispatch(deleteProject(data.id)).then(() => {
+      setIsDeleteBusy(false);
+      history.push(Routes.ManageClient.replace(':id', parent));
+    });
+  };
+
   return (!editMode || (editMode && data)) && !!clients.length ? (
     <div className={styles.container}>
       <div className={styles.actions}>
-        <Button transparent onClick={handleDelete}>
+        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
           <MdDelete className={styles.deleteIcon} />
-          <span>Delete project</span>
+          <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
         </Button>
       </div>
       <div className={`${styles.section} ${styles.left}`}>
@@ -229,9 +232,8 @@ const ProjectManage = props => {
             label="Last modified on *"
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting || isBusy}>
-              <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
-              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+            <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+              {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
             </Button>
           </div>
         </form>

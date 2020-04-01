@@ -36,3 +36,20 @@
 .container:not(.disabled).transparent:hover {
   color: #000;
 }
+
+.loader {
+  margin-left: 10px !important;
+}
+
+.loader, .loader > div {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.loader > div > div {
+  background-color: #fff !important;
+}
+
+.container.transparent .loader > div > div {
+  background-color: #000 !important;
+}

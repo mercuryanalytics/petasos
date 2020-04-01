@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Datepicker.module.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaRegCalendarAlt } from 'react-icons/fa'
+import { FaRegCalendarAlt } from 'react-icons/fa';
 
 const Datepicker = props => {
   const { field, label, disabled, placeholder } = props;

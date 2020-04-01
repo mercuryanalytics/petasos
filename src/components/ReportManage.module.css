@@ -9,7 +9,7 @@
 .actions {
   position: absolute;
   right: 0;
-  top: -80px;
+  top: -70px;
   display: flex;
   align-items: center;
 }
@@ -75,16 +75,4 @@
   display: flex !important;
   justify-content: center;
   width: 100% !important;
-}
-
-.busyLoader {
-  margin-left: 10px !important;
-}
-
-.busyLoader, .busyLoader > div {
-  height: 25px !important;
-}
-
-.busyLoader > div > div {
-  background-color: #fff !important;
 }

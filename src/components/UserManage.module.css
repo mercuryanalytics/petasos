@@ -1,4 +1,5 @@
 .container {
+  position: relative;
   display: flex;
   margin: .5rem 2rem;
   border: 1px solid #B9B9B9;
@@ -20,7 +21,22 @@
 }
 
 .container.embed .section .form .formSection {
-  margin-bottom: .5rem;
+  margin-bottom: 1.6rem;
+}
+
+.editButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  min-width: auto !important;
+  margin-top: -.8rem !important;
+  padding: 0 !important;
+  font-size: .95rem !important;
+}
+
+.editButton svg {
+  margin-left: 5px;
+  font-size: 1.1rem;
 }
 
 .section {
@@ -58,16 +74,4 @@
 
 .section .form .controlsGroup > * {
   width: calc(50% - 10px);
-}
-
-.busyLoader {
-  margin-left: 10px !important;
-}
-
-.busyLoader, .busyLoader > div {
-  height: 25px !important;
-}
-
-.busyLoader > div > div {
-  background-color: #fff !important;
 }

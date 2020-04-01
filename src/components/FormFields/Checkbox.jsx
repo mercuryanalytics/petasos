@@ -28,7 +28,9 @@ const Checkbox = props => {
         <span className={styles.toggle}>
           {!!field.input.value && <MdCheck className={styles.mark} />}
         </span>
-        <span className={styles.label}>{!!label && label}</span>
+        <span className={styles.label}>
+          {!!label && label}
+        </span>
       </label>
       {field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>

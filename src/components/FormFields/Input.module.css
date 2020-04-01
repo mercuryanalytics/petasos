@@ -6,6 +6,7 @@
   display: block;
   margin-bottom: .4rem;
   font-size: .8rem;
+  font-weight: bold;
 }
 
 .control {
@@ -30,6 +31,11 @@
 }
 .control::-ms-input-placeholder {
   color: #B9B9B9;
+}
+
+.preview {
+  font-size: .85rem;
+  color: #333;
 }
 
 .error {

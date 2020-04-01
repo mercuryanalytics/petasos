@@ -6,7 +6,7 @@
 .actions {
   position: absolute;
   right: 0;
-  top: -80px;
+  top: -70px;
   display: flex;
   align-items: center;
 }
@@ -28,6 +28,7 @@
   display: inline-flex;
   border: 1px solid #B9B9B9;
   border-bottom-width: 0;
+  user-select: none;
 }
 
 .tab {
@@ -102,38 +103,28 @@
   width: 100% !important;
 }
 
-.busyLoader {
-  margin-left: 10px !important;
-}
-
-.busyLoader, .busyLoader > div {
-  height: 25px !important;
-}
-
-.busyLoader > div > div {
-  background-color: #fff !important;
-}
-
-.accounts {
+.section.accounts {
   display: flex;
+  padding: 0;
 }
 
-.accounts .userList {
+.section.accounts .userList {
   width: 260px;
   min-width: 260px;
-  padding-right: 30px;
+  padding: 2rem;
   border-right: 1px solid #B9B9B9;
 }
 
-.accounts .userActions {
+.section.accounts .userActions {
   flex-grow: 1;
 }
 
 .innerTabs {
   display: flex;
   flex-grow: 1;
-  padding-left: 30px;
+  padding: 1rem 2rem 0 2rem;
   border-bottom: 1px solid #B9B9B9;
+  user-select: none;
 }
 
 .innerTab {
@@ -169,5 +160,5 @@
 }
 
 .innerContent {
-  padding: 25px 0 0 30px;
+  padding: 25px 2rem 2rem 2rem;
 }

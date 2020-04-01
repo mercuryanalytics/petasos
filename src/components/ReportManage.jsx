@@ -18,6 +18,7 @@ const ReportManage = props => {
   const history = useHistory();
   const editMode = !isNaN(id);
   const [isBusy, setIsBusy] = useState(false);
+  const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
   const activeProject = useSelector(state => {
@@ -73,8 +74,8 @@ const ReportManage = props => {
           : '',
         project_id: data ? data.project_id : projectId,
       };
-      if (data) {
-        dispatch(updateReport(data.id, result)).then(() => {
+      if (editMode) {
+        data && dispatch(updateReport(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
         });
@@ -96,8 +97,10 @@ const ReportManage = props => {
   const modified_on = useField('modified_on', form);
 
   const handleDelete = () => {
+    setIsDeleteBusy(true);
     const parent = data.project_id;
     dispatch(deleteReport(data.id)).then(() => {
+      setIsDeleteBusy(false);
       history.push(Routes.ManageProject.replace(':id', parent));
     });
   };
@@ -105,9 +108,9 @@ const ReportManage = props => {
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       <div className={styles.actions}>
-        <Button transparent onClick={handleDelete}>
+        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
           <MdDelete className={styles.deleteIcon} />
-          <span>Delete report</span>
+          <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
         </Button>
         {editMode && (
           <a className={styles.view} href={data.url} target="_blank">
@@ -152,9 +155,8 @@ const ReportManage = props => {
             label="Last modified on *"
           />
           <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting || isBusy}>
-            <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
-              {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+            <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+              {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
             </Button>
           </div>
         </form>

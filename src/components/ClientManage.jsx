@@ -40,6 +40,7 @@ const ClientManage = props => {
   const history = useHistory();
   const editMode = !isNaN(id);
   const [isBusy, setIsBusy] = useState(false);
+  const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const clients = useSelector(state =>
     editMode ? state.clientsReducer.clients : null);
   const data = useSelector(state =>
@@ -111,8 +112,8 @@ const ClientManage = props => {
         billing_state: values.billing_state,
         billing_country: values.billing_country,
       };
-      if (data) {
-        dispatch(updateClient(data.id, result)).then(() => {
+      if (editMode) {
+        data && dispatch(updateClient(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
         });
@@ -178,6 +179,7 @@ const ClientManage = props => {
   }, [billing_as_mailing.input.value]);
 
   const handleDelete = () => {
+    setIsDeleteBusy(true);
     let redirectToId;
     if (clients.length > 1) {
       for (let i = 0; i < clients.length; i++) {
@@ -187,6 +189,7 @@ const ClientManage = props => {
       }
     }
     dispatch(deleteClient(data.id)).then(() => {
+      setIsDeleteBusy(false);
       if (redirectToId) {
         history.push(Routes.ManageClient.replace(':id', redirectToId));
       } else {
@@ -198,9 +201,9 @@ const ClientManage = props => {
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       <div className={styles.actions}>
-        <Button transparent onClick={handleDelete}>
+        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
           <MdDelete className={styles.deleteIcon} />
-          <span>Delete client</span>
+          <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
         </Button>
       </div>
       <div className={styles.tabs}>
@@ -378,9 +381,8 @@ const ClientManage = props => {
               </div>
             </div>
             <div className={styles.formButtons}>
-              <Button type="submit" disabled={submitting || isBusy}>
-                <span>{editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}</span>
-                {isBusy && <Loader inline size={3} className={styles.busyLoader} />}
+              <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
               </Button>
             </div>
           </form>
@@ -416,7 +418,7 @@ const ClientManage = props => {
             <div className={styles.innerContent}>
               {(accountsTab === AccountsTabs.Info && (
                 selectedUserId !== null && (
-                  <UserManage id={selectedUserId} preview={true} embeded={true} />
+                  <UserManage id={selectedUserId} clientId={editMode ? id : null} preview={true} embeded={true} />
                 )
               )) ||
               (accountsTab === AccountsTabs.Permissions && (

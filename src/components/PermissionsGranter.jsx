@@ -119,7 +119,6 @@ const PermissionsGranter = props => {
 
   const handleItemActiveChange = (id, status) => {
     setActiveItems({ ...activeItems, [id]: status});
-    // @TODO Update
   };
 
   const handleItemDelete = (id) => {
@@ -141,11 +140,11 @@ const PermissionsGranter = props => {
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: { add_user_email: '' },
     validate: (values) => {
-      let err, email = values.add_user_email;
-      if (!email) {
+      let err;
+      if (!values.add_user_email) {
         err = 'Field value is required.';
-      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-        err = 'Field value must be a valid email format.'
+      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.add_user_email)) {
+        err = 'Field value must be a valid email format.';
       }
       return err ? { add_user_email: err } : {};
     },
