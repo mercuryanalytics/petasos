@@ -27,7 +27,12 @@ const ResourceActions = props => {
     dispatch(getClient(clientId));
     dispatch(getAuthorizedUsers(clientId, { clientId: clientId }));
     dispatch(getProjects(clientId)).then(() => {
-      projects.forEach(p => dispatch(getAuthorizedUsers(clientId, { projectId: p.id })));
+      projects.forEach(p => {
+        if (p.domain_id === clientId) {
+          console.log('@call', p.id)
+          dispatch(getAuthorizedUsers(clientId, { projectId: p.id }))
+        }
+      });
       setIsLoading(false);
     });
   }, []);
@@ -38,7 +43,7 @@ const ResourceActions = props => {
       projects.length &&
       !Object.keys(openProjects).length
     ) {
-      setOpenProjects(projects[0].id);
+      // setOpenProjects(projects[0].id);
     }
   }, [clientId, client, projects, openProjects]);
 
@@ -55,6 +60,9 @@ const ResourceActions = props => {
   }, [openProjects]);
 
   useEffect(() => {
+    if (!userId) {
+      return;
+    }
     let states = {};
     if (client) {
       const clientKey = `client-${clientId}@${clientId}`;
@@ -64,29 +72,19 @@ const ResourceActions = props => {
     if (projects.length) {
       projects.forEach(p => {
         const key = `project-${p.id}@${clientId}`;
-        const data = authorizedUsers[key] || [];
-        if (authorizedUsers.hasOwnProperty(key)) {
-          (authorizedUsers[key] || []).forEach(u =>
-            u.id === userId && (states[`${clientId}-${p.id}`] = u.authorized));
-        } else {
-          // dispatch(getAuthorizedUsers(clientId, { projectId: p.id }));
-        }
+        (authorizedUsers[key] || []).forEach(u =>
+          u.id === userId && (states[`${clientId}-${p.id}`] = u.authorized));
       });
     }
     if (reports.length) {
       reports.forEach(r => {
         const key = `report-${r.id}@${clientId}`;
-        const data = authorizedUsers[key] || [];
-        if (authorizedUsers.hasOwnProperty(key)) {
-          (authorizedUsers[key] || []).forEach(u =>
-            u.id === userId && (states[`${clientId}-${r.project_id}-${r.id}`] = u.authorized));
-        } else {
-          // dispatch(getAuthorizedUsers(clientId, { reportId: r.id }));
-        }
+        (authorizedUsers[key] || []).forEach(u =>
+          u.id === userId && (states[`${clientId}-${r.project_id}-${r.id}`] = u.authorized));
       });
     }
     setActiveItems({ ...states });
-  }, [authorizedUsers, client, projects, reports]);
+  }, [authorizedUsers, userId, client, projects, reports]);
 
   const handleClientStatusChange = (status) => {
     const key = `${clientId}`;
