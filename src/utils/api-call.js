@@ -11,7 +11,7 @@ const apiCall = (method, url, options) => {
     const urlNoQs = url.split('?')[0];
     let block = cached.hasOwnProperty(url);
     if (!block) {
-      if (url.indexOf('/researchers') === -1 && url.indexOf('/authorize') === -1) {
+      if (url.indexOf('/researchers') === -1 && url.indexOf('/authorized') === -1) {
         if (url.indexOf('?') > -1) {
           if (!!cached[urlNoQs]) {
             block = true;
@@ -48,7 +48,11 @@ const apiCall = (method, url, options) => {
     .then(res => res.text())
     .then(res => {
       try {
-        return JSON.parse(res).data;
+        let result = JSON.parse(res).data;
+        if (url.indexOf('/authorized') > -1 && Array.isArray(result)) {
+          cached[url] = true;
+        }
+        return result;
       } catch (e) {
         return '';
       }

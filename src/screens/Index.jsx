@@ -27,7 +27,6 @@ const Index = props => {
   const [clientId, setClientId] = useState(null);
   const [projectId, setProjectId] = useState(null);
   const [reportId, setReportId] = useState(null);
-
   const report = useSelector(state =>
     reportId !== null ? state.reportsReducer.reports.filter(r => r.id === reportId)[0] : null);
   const project = useSelector(state => {

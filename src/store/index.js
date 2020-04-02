@@ -21,7 +21,12 @@ export const pushToStack = (stack, data, options) => {
     resIdToStackIndex[stackRes.id] = index;
   });
 
+  let pushedIds = {};
+
   data.forEach(res => {
+    if (pushedIds.hasOwnProperty(res.id)) {
+      return;
+    }
     if (resIdToStackIndex.hasOwnProperty(res.id)) {
       const index = resIdToStackIndex[res.id];
       if (options.deleteOnly) {
@@ -34,9 +39,17 @@ export const pushToStack = (stack, data, options) => {
     } else if (!restricted) {
       stack = [ ...stack, { ...res } ];
     }
+    pushedIds[res.id] = true;
   });
 
   return stack;
+};
+
+export const filterStackBy = (stack, criteria, values) => {
+  criteria = Array.isArray(criteria) ? criteria : [criteria];
+  return stack.filter(item => {
+    return values.indexOf(item[criteria]) > -1;
+  });
 };
 
 export default createStore(combineReducers({

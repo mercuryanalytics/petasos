@@ -1,0 +1,137 @@
+.container {
+  /**/
+}
+
+.client {
+  margin-bottom: 5px;
+}
+
+.client .title {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #fff;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.client .title .logo {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: .5rem;
+}
+
+.client .title .name {
+  flex-grow: 1;
+  width: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .9rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.client:not(.active) .title:hover {
+  background-color: #F0F0F0;
+}
+
+.client.active .title {
+  background-color: #F0F0F0;
+}
+
+.project .title {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #fff;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.project .title .arrow {
+  margin-right: .5rem;
+  font-size: 1.2rem;
+  color: #535353;
+}
+
+.project .title .arrow.open {
+  transform: rotate(90deg);
+}
+
+.project .title .icon {
+  margin: .125rem .5rem .125rem 0;
+  font-size: 1.6rem;
+  color: #7E7F7E;
+}
+
+.project .title .name {
+  flex-grow: 1;
+  width: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .85rem;
+  font-weight: bold;
+  color: #262626;
+}
+
+.project:not(.active) .title:hover {
+  background-color: #F0F0F0;
+}
+
+.project.active .title {
+  background-color: #F0F0F0;
+}
+
+.project .content {}
+
+.report .title {
+  display: flex;
+  align-items: center;
+  padding: .3125rem;
+  background-color: #fff;
+  color: #535353;
+  cursor: pointer;
+}
+
+.report .title .icon {
+  margin: .325rem .5rem .325rem 2.1rem;
+  font-size: 1.2rem;
+  color: #7E7F7E;
+}
+
+.report .title .name {
+  flex-grow: 1;
+  width: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .85rem;
+  color: #262626;
+}
+
+.report:not(.active) .title:hover {
+  background-color: #F0F0F0;
+}
+
+.report.active .title {
+  background-color: #F0F0F0;
+}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+  margin: 5px 0 !important;
+}
+
+.noResults {
+  display: block;
+  padding: 10px 5px;
+  text-align: center;
+  font-size: .85rem;
+  color: #A9A9A9;
+}

@@ -3,7 +3,7 @@ import { pushToStack } from '../index';
 const initialState = {
   users: [],
   researchers: [],
-  authorizedUsers: [],
+  authorizedUsers: {},
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -52,9 +52,39 @@ const usersReducer = (state = initialState, action) => {
       };
     }
     case 'GET_AUTHORIZED_USERS_SUCCESS': {
-      return state;
+      const { contextId, clientId, projectId, reportId } = action;
+      const key = (reportId ? `report-${reportId}`
+        : (projectId ? `project-${projectId}` : `client-${clientId}`)) + `@${contextId}`;
+      const result = pushToStack((state.authorizedUsers[key] || []), action.payload);
+      return {
+        ...state,
+        authorizedUsers: {
+          ...state.authorizedUsers,
+          [key]: result,
+        },
+      };
     }
     case 'AUTHORIZE_USER_SUCCESS': {
+      const { userId, contextId, clientId, projectId, reportId } = action;
+      const key = (reportId ? `report-${reportId}` :
+        (projectId ? `project-${projectId}` : `client-${clientId}`)) + `@${contextId}`;
+      if (state.authorizedUsers.hasOwnProperty(key)) {
+        let data = state.authorizedUsers[key];
+        for (let i = 0; i < data.length; i++) {
+          let user = data[i];
+          if (user.id === userId) {
+            data = [ ...data ];
+            data[i] = { ...user, authorized: !user.authorized };
+            return {
+              ...state,
+              authorizedUsers: {
+                ...state.authorizedUsers,
+                [key]: data,
+              },
+            }
+          }
+        }
+      }
       return state;
     }
     default: {

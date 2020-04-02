@@ -5,8 +5,9 @@ import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import Button from './Button';
 import Loader from './Loader';
-import PermissionsGranter, { PermissionsGranterModes } from './PermissionsGranter';
+import PermissionsGranter, { PermissionsGranterModes, PermissionsGranterContexts } from './PermissionsGranter';
 import UserManage from './UserManage';
+import ResourceActions from './ResourceActions';
 import { MdDelete, MdSupervisorAccount } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
@@ -395,6 +396,7 @@ const ClientManage = props => {
             </div>
             <PermissionsGranter
               mode={PermissionsGranterModes.Grant}
+              context={PermissionsGranterContexts.Client}
               clientId={data && data.id}
             />
           </div>
@@ -408,6 +410,7 @@ const ClientManage = props => {
             </div>
             <PermissionsGranter
               mode={PermissionsGranterModes.Manage}
+              context={PermissionsGranterContexts.Client}
               clientId={data && data.id}
               onUserSelect={id => setSelectedUserId(id)}
             />
@@ -434,7 +437,9 @@ const ClientManage = props => {
                 )
               )) ||
               (accountsTab === AccountsTabs.Permissions && (
-                <div>AccessAndPermissions</div>
+                selectedUserId !== null && (
+                  <ResourceActions clientId={id} userId={selectedUserId} />
+                )
               ))}
             </div>
           </div>

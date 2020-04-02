@@ -12,116 +12,130 @@ import Modal from './Modal';
 import Button from './Button';
 import { Input } from './FormFields';
 
+export const PermissionsGranterContexts = {
+  Client: 'client',
+  Project: 'project',
+  Report: 'report',
+};
+
 export const PermissionsGranterModes = {
   Grant: 'grant',
   Manage: 'manage',
 };
 
 const PermissionsGranter = props => {
-  const { mode, clientId, projectId, reportId } = props;
+  const { mode, context, clientId, projectId, reportId } = props;
   const dispatch = useDispatch();
-  const [currentClientId, setCurrentClientId] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [filter, setFilter] = useState(null);
-  const [openGroups, setOpenGroups] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [userNameFilter, setUserNameFilter] = useState(null);
+  const [openClients, setOpenClients] = useState({});
+  const [loadedClients, setLoadedClients] = useState({});
   const [activeItems, setActiveItems] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
-  const users = useSelector(state => state.usersReducer.users);
   const clients = useSelector(state => state.clientsReducer.clients);
-  const [didLoadUsers, setDidLoadUsers] = useState(false);
-  const [didLoadClients, setDidLoadClients] = useState(false);
-  const [visibleUsers, setVisibleUsers] = useState([]);
-  const [visibleClients, setVisibleClients] = useState([]);
-  const [statesBackup, setStatesBackup] = useState(null);
+  const users = useSelector(state => {
+    let result = state.usersReducer.users;
+    return mode === PermissionsGranterModes.Grant ? result
+      : result.filter(u => u.client_ids.indexOf(clientId) > -1);
+  });
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [blockedClients, setBlockedClients] = useState([]);
+  const [allowedClients, setAllowedClients] = useState([]);
+  const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
 
   useEffect(() => {
-    dispatch(getUsers()).then(() => setDidLoadUsers(true));
-    dispatch(getClients()).then(() => setDidLoadClients(true));
+    dispatch(getClients()).then(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
-    if (clientId) {
-      const options = {};
+    if (mode === PermissionsGranterModes.Grant) {
+      dispatch(getUsers());
+    }
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode === PermissionsGranterModes.Grant) {
+      let ids = {};
+      users.forEach(u => u.client_ids.forEach(cid => ids[cid] = true));
+      setAllowedClients(Object.keys(ids).map(x => +x));
+    }
+  }, [users, mode]);
+
+  useEffect(() => {
+    let authorizedOptions = {};
+    if (projectId) {
+      authorizedOptions.projectId = projectId;
+    } else if (reportId) {
+      authorizedOptions.reportId = reportId;
+    } else {
+      authorizedOptions.clientId = clientId;
+    }
+    for (let id in openClients) {
+      if (!loadedClients[id]) {
+        dispatch(getUsers(id));
+        dispatch(getAuthorizedUsers(id, authorizedOptions)).then(() => {
+          setLoadedClients({ ...loadedClients, [id]: true });
+        });
+      }
+    }
+  }, [openClients]);
+
+  useEffect(() => {
+    if (allowedClients.length) {
+      let states = {};
+      const keyPref = `${context}-${reportId || projectId || clientId}@`;
+      allowedClients.forEach(cid => {
+        let data = authorizedUsers[keyPref + cid] || [];
+        data.forEach(u => u.client_ids.forEach(mcid => {
+          if (allowedClients.indexOf(mcid) > -1) {
+            states[`${mcid}-${u.id}`] = u.authorized;
+          }
+        }));
+      });
+      setActiveItems({ ...states });
+    }
+  }, [authorizedUsers, allowedClients]);
+
+  useEffect(() => {
+    if (mode === PermissionsGranterModes.Manage) {
+      setAllowedClients([clientId]);
+    }
+    setSelectedItem(null);
+    setLoadedClients({ [clientId]: false });
+    setOpenClients({ [clientId]: true });
+  }, [mode, clientId, projectId, reportId]);
+
+  const handleClientToggle = (id) => {
+    setOpenClients({ ...openClients, [id]: !openClients[id] });
+  };
+
+  const handleSettingsToggle = (id, event) => {
+    // @TODO Open, implement settings
+    event.stopPropagation();
+  };
+
+  const handleItemDelete = (id) => {
+    setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
+    dispatch(deleteUser(id)).then(() =>
+      setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
+  };
+
+  const handleItemActiveChange = (groupId, id, status) => {
+    const key = `${groupId}-${id}`;
+    if (status !== !!activeItems[key]) {
+      let options = {};
       if (projectId) {
         options.projectId = projectId;
       } else if (reportId) {
         options.reportId = reportId;
+      } else {
+        options.clientId = clientId;
       }
-      dispatch(getAuthorizedUsers(clientId, options)).then(action => {
-        let states = {};
-        if (Array.isArray(action.payload)) {
-          action.payload.forEach(u => {
-            u.client_ids.forEach(cid => {
-              states[`${cid}-${u.id}`] = u.authorized;
-            });
-          });
-        }
-        setActiveItems({ ...states });
-      });
+      dispatch(authorizeUser(id, groupId, options));
     }
-  }, [clientId, projectId, reportId]);
-
-  useEffect(() => {
-    if (didLoadUsers && didLoadClients) {
-      setIsReady(true);
-    }
-  }, [didLoadUsers, didLoadClients]);
-
-  useEffect(() => {
-    const id = typeof clientId !== 'undefined' ? clientId : null;
-    if (isReady && id !== null) {
-      if (id !== currentClientId) {
-        setCurrentClientId(id);
-        setOpenGroups({ [id]: true });
-      }
-      let vu = [], vc = [], vcids = {}, f = null;
-      if (isSearching) {
-        f = filter.toLowerCase();
-        if (!statesBackup) {
-          setStatesBackup({ ...openGroups });
-        }
-      }
-      users.forEach(u => {
-        if (
-          (!isSearching || (u.contact_name || u.email || '').toLowerCase().includes(f)) &&
-          u.client_ids.length
-        ) {
-          if (mode === PermissionsGranterModes.Manage) {
-            if (id !== null && u.client_ids.indexOf(id) > -1) {
-              vu.push(u);
-              vcids[id] = true;
-            }
-          } else {
-            vu.push(u);
-            u.client_ids.forEach(mid => vcids[mid] = true);
-          }
-        }
-      });
-      clients.forEach(c => {
-        !!vcids[c.id] && vc.push(c);
-      });
-      setVisibleUsers(vu);
-      setVisibleClients(vc);
-      if (isSearching) {
-        setOpenGroups(vcids);
-      } else if (statesBackup) {
-        setOpenGroups(statesBackup);
-        setStatesBackup(null);
-      }
-    }
-  }, [users, clients, clientId, projectId, reportId, isReady, isSearching, filter]);
-
-  const toggleGroupOpen = (id) => {
-    setOpenGroups({ ...openGroups, [id]: !openGroups[id] });
-  };
-
-  const toggleGroupSettings = (id, event) => {
-    // @TODO Settings ?
-    event.stopPropagation();
   };
 
   const handleItemSelect = (id) => {
@@ -134,40 +148,47 @@ const PermissionsGranter = props => {
   };
 
   useEffect(() => {
-    if (mode === PermissionsGranterModes.Manage && selectedItem === null && visibleUsers.length) {
-      handleItemSelect(visibleUsers[0].id);
+    if (mode === PermissionsGranterModes.Manage && !isLoading && users.length && selectedItem === null) {
+      handleItemSelect(users[0].id);
     }
-  }, [selectedItem, visibleUsers]);
+  }, [isLoading, mode, clientId, projectId, reportId, users, selectedItem]);
 
-  const handleItemActiveChange = (groupId, id, status) => {
-    const key = `${groupId}-${id}`;
-    if (status !== !!activeItems[key]) {
-      let options = {};
-      if (projectId) {
-        options.projectId = projectId;
-      } else if (reportId) {
-        options.reportId = reportId;
-      }
-      dispatch(authorizeUser(id, clientId, options));
-      setActiveItems({ ...activeItems, [key]: status });
-    }
-  };
-
-  const handleItemDelete = (id) => {
-    setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
-    dispatch(deleteUser(id)).then(() =>
-      setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
-  };
+  const [openClientsBackup, setOpenClientsBackup] = useState(null);
 
   const handleSearch = (value) => {
     if (!!value.length) {
-      setIsSearching(true);
-      setFilter(value);
+      if (userNameFilter === null) {
+        setOpenClientsBackup({ ...openClients });
+      }
+      setUserNameFilter(value);
     } else {
-      setIsSearching(false);
-      setFilter(null);
+      if (openClientsBackup) {
+        setOpenClients({ ...openClientsBackup });
+        setOpenClientsBackup(null);
+        setBlockedClients([]);
+        setBlockedUsers([]);
+      }
+      setUserNameFilter(null);
     }
   };
+
+  useEffect(() => {
+    if (userNameFilter) {
+      let filter = userNameFilter.toLowerCase();
+      let buids = {}, bcids = {}, cids = {};
+      users.forEach(u => {
+        if ((u.contact_name || u.email || '').toLowerCase().includes(filter)) {
+          u.client_ids.forEach(cid => cids[cid] = true);
+        } else {
+          buids[u.id] = true;
+        }
+      });
+      clients.forEach(c => !cids[c.id] && (bcids[c.id] = true));
+      setOpenClients(cids);
+      setBlockedClients(Object.keys(bcids).map(x => +x));
+      setBlockedUsers(Object.keys(buids).map(x => +x));
+    }
+  }, [userNameFilter]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: { add_user_email: '' },
@@ -249,70 +270,80 @@ const PermissionsGranter = props => {
         </form>
       </Modal>
       <div className={styles.permissions}>
-        {visibleClients.map(client => (
-          <div className={styles.group} key={`permissions-group-${client.id}`}>
-            {mode === PermissionsGranterModes.Grant && (
-              <div
-                className={styles.groupTitle}
-                onClick={e => toggleGroupOpen(client.id, e)} title={client.name}
-              >
-                <div>
-                  <MdPlayArrow className={`${styles.arrow} ${!!openGroups[client.id] ? styles.open : ''}`} />
-                  <span className={styles.groupName}>{client.name}</span>
+        {!isLoading ? (
+          clients.map(client => (
+            allowedClients.indexOf(client.id) > -1 &&
+            blockedClients.indexOf(client.id) === -1
+          ) && (
+            <div className={styles.group} key={`permissions-group-${client.id}`}>
+              {mode === PermissionsGranterModes.Grant && (
+                <div
+                  className={styles.groupTitle}
+                  title={client.name}
+                  onClick={() => handleClientToggle(client.id)}
+                >
+                  <div>
+                    <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
+                    <span className={styles.groupName}>{client.name}</span>
+                  </div>
+                  <MdMoreHoriz
+                    className={styles.groupSettings}
+                    onClick={e => handleSettingsToggle(client.id, e)}
+                  />
                 </div>
-                <MdMoreHoriz
-                  className={styles.groupSettings}
-                  onClick={e => toggleGroupSettings(client.id, e)}
-                />
-              </div>
-            )}
-            {!!openGroups[client.id] && (
-              <div className={styles.items}>
-                {visibleUsers.filter(u => u.client_ids.indexOf(client.id) > -1).map(user => (
-                  <label
-                    key={`grant-user-${user.id}`}
-                    className={`
-                      ${styles.item}
-                      ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}
-                      ${selectedItem === user.id ? styles.selectedItem : ''}
-                    `}
-                    htmlFor={`user-toggle-${client.id}-${user.id}`}
-                    title={user.name || user.email}
-                    onClick={() => handleItemSelect(user.id)}
-                  >
-                    <span className={styles.itemName}>
-                      {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
-                    </span>
-                    {/* @TODO Pending status */}
-                    {(mode === PermissionsGranterModes.Grant && (
-                      <Toggle
-                        id={`user-toggle-${client.id}-${user.id}`}
-                        className={styles.itemToggle}
-                        active={!!activeItems[`${client.id}-${user.id}`]}
-                        onChange={status => handleItemActiveChange(client.id, user.id, status)}
-                      />
-                    )) ||
-                    (mode === PermissionsGranterModes.Manage && (
-                      !!isDeleteBusy[user.id] ? (
-                        <Loader inline size={3} className={styles.busyLoader} />
-                      ) : (
-                        <MdDelete
-                          className={styles.itemDelete}
-                          onClick={e => handleItemDelete(user.id, e)}
-                        />
-                      )
+              )}
+              {!!openClients[client.id] && (
+                !!loadedClients[client.id] ? (
+                  <div className={styles.items}>
+                    {users.filter(u => (
+                      u.client_ids.indexOf(client.id) > -1 &&
+                      blockedUsers.indexOf(u.id) === -1
+                    )).map(user => (
+                      <label
+                        key={`grant-user-${user.id}`}
+                        className={`
+                          ${styles.item}
+                          ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}
+                          ${selectedItem === user.id ? styles.selectedItem : ''}
+                        `}
+                        htmlFor={`user-toggle-${client.id}-${user.id}`}
+                        title={user.name || user.email}
+                        onClick={() => handleItemSelect(user.id)}
+                      >
+                        <span className={styles.itemName}>
+                          {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
+                        </span>
+                        {/* @TODO Pending status */}
+                        {(mode === PermissionsGranterModes.Grant && (
+                          <Toggle
+                            id={`user-toggle-${client.id}-${user.id}`}
+                            className={styles.itemToggle}
+                            active={!!activeItems[`${client.id}-${user.id}`]}
+                            onChange={status => handleItemActiveChange(client.id, user.id, status)}
+                          />
+                        )) ||
+                        (mode === PermissionsGranterModes.Manage && (
+                          !!isDeleteBusy[user.id] ? (
+                            <Loader inline size={3} className={styles.busyLoader} />
+                          ) : (
+                            <MdDelete
+                              className={styles.itemDelete}
+                              onClick={e => handleItemDelete(user.id, e)}
+                            />
+                          )
+                        ))}
+                      </label>
                     ))}
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-        {!isReady ? (
+                  </div>
+                ) : (
+                  <Loader inline className={styles.loader} />
+                )
+              )}
+            </div>
+          ))
+        ) : (
           <Loader inline className={styles.loader} />
-        ) : (!visibleClients.length && (
-          <span className={styles.noResults}>No results</span>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
-export function getUsers() {
+export function getUsers(clientId) {
+  const queryString = clientId ? `?client_id=${clientId}` : '';
   return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/users`)
+    return apiCall('GET', `${Constants.API_URL}/users${queryString}`)
       .then(res => dispatch(getUsersSuccess(res)))
       .catch(err => dispatch(getUsersFailure(err)));
   };
@@ -126,7 +127,7 @@ export const getResearchersFailure = (error) => ({
   payload: error,
 });
 
-export function getAuthorizedUsers(clientId, { projectId, reportId }) {
+export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }) {
   let resPath = 'clients', resId = clientId;
   if (!!projectId) {
     resPath = 'projects';
@@ -135,17 +136,21 @@ export function getAuthorizedUsers(clientId, { projectId, reportId }) {
     resPath = 'reports';
     resId = reportId;
   }
-  const queryString = `?client_id=${clientId}`;
+  const queryString = `?client_id=${contextId}`;
   return dispatch => {
     return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
-      .then(res => dispatch(getAuthorizedUsersSuccess(res)))
+      .then(res => dispatch(getAuthorizedUsersSuccess(res, contextId, clientId, projectId, reportId)))
       .catch(err => dispatch(getAuthorizedUsersFailure(err)));
   };
 }
 
-export const getAuthorizedUsersSuccess = (data) => ({
+export const getAuthorizedUsersSuccess = (data, contextId, clientId, projectId, reportId) => ({
   type: 'GET_AUTHORIZED_USERS_SUCCESS',
   payload: data,
+  contextId: contextId,
+  clientId: clientId,
+  projectId: projectId,
+  reportId: reportId,
 });
 
 export const getAuthorizedUsersFailure = (error) => ({
@@ -153,7 +158,7 @@ export const getAuthorizedUsersFailure = (error) => ({
   payload: error,
 });
 
-export function authorizeUser(id, clientId, { projectId, reportId }) {
+export function authorizeUser(id, contextId, { clientId, projectId, reportId }) {
   let resPath = 'clients', resId = clientId;
   if (!!projectId) {
     resPath = 'projects';
@@ -164,18 +169,23 @@ export function authorizeUser(id, clientId, { projectId, reportId }) {
   }
   const data = {
     user_id: id,
-    client_id: clientId,
+    client_id: contextId,
   };
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
-      .then(res => dispatch(authorizeUserSuccess(res)))
+      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId)))
       .catch(err => dispatch(authorizeUserFailure(err)));
   };
 }
 
-export const authorizeUserSuccess = (data) => ({
+export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId) => ({
   type: 'AUTHORIZE_USER_SUCCESS',
   payload: data,
+  userId: userId,
+  contextId: contextId,
+  clientId: clientId,
+  projectId: projectId,
+  reportId: reportId,
 });
 
 export const authorizeUserFailure = (error) => ({

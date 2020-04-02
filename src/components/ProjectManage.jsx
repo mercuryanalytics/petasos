@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProjectManage.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import PermissionsGranter, { PermissionsGranterModes } from './PermissionsGranter';
+import PermissionsGranter, { PermissionsGranterModes, PermissionsGranterContexts } from './PermissionsGranter';
 import Button from './Button';
 import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
@@ -243,11 +243,14 @@ const ProjectManage = props => {
           <MdSupervisorAccount className={styles.icon} />
           <span>Project access</span>
         </div>
-        <PermissionsGranter
-          mode={PermissionsGranterModes.Grant}
-          clientId={data ? data.domain_id : clientId}
-          projectId={data ? data.id : null}
-        />
+        {data && (
+          <PermissionsGranter
+            mode={PermissionsGranterModes.Grant}
+            context={PermissionsGranterContexts.Project}
+            clientId={data ? data.domain_id : clientId}
+            projectId={data ? data.id : null}
+          />
+        )}
       </div>
     </div>
   ) : (
