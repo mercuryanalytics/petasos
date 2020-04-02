@@ -86,9 +86,10 @@ export const updateUserFailure = (error, userId) => {
   }
 };
 
-export function deleteUser(id) {
+export function deleteUser(id, clientId) {
+  const queryString = clientId ? `?client_id=${clientId}` : '';
   return dispatch => {
-    return apiCall('DELETE', `${Constants.API_URL}/users/${id}`)
+    return apiCall('DELETE', `${Constants.API_URL}/users/${id}${queryString}`)
       .then(res => dispatch(deleteUserSuccess(id)))
       .catch(err => dispatch(deleteUserFailure(err, id)));
   };

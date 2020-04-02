@@ -12,6 +12,7 @@ import { getAuthorizedUsers, authorizeUser } from '../store/users/actions';
 
 const ResourceActions = props => {
   const { clientId, userId } = props;
+  const [previousProps, setPreviousProps] = useState({ clientId: null, userId: null });
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [openProjects, setOpenProjects] = useState({});
@@ -19,40 +20,37 @@ const ResourceActions = props => {
   const [activeItems, setActiveItems] = useState({});
   const client = useSelector(state =>
     state.clientsReducer.clients.filter(c => c.id === clientId)[0] || null);
-  const projects = useSelector(state => state.projectsReducer.projects);
-  const reports = useSelector(state => state.reportsReducer.reports);
+  const projects = useSelector(state =>
+    client ? state.projectsReducer.projects.filter(p => p.domain_id === clientId) : []);
+  const reports = useSelector(state => {
+    const pids = {};
+    projects.forEach(p => pids[p.id] = true);
+    return state.reportsReducer.reports.filter(r => !!pids[r.project_id]);
+  });
   const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
+  const [blockedItems, setBlockedItems] = useState({});
+  const [refreshActiveItems, setRefreshActiveItems] = useState(false);
+
+  const init = async () => {
+    return Promise.all([
+      await dispatch(getClient(clientId)),
+      await dispatch(getAuthorizedUsers(clientId, { clientId: clientId })),
+      await dispatch(getProjects(clientId)),
+    ]);
+  };
 
   useEffect(() => {
-    dispatch(getClient(clientId));
-    dispatch(getAuthorizedUsers(clientId, { clientId: clientId }));
-    dispatch(getProjects(clientId)).then(() => {
-      projects.forEach(p => {
-        if (p.domain_id === clientId) {
-          console.log('@call', p.id)
-          dispatch(getAuthorizedUsers(clientId, { projectId: p.id }))
-        }
-      });
-      setIsLoading(false);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (
-      clientId && client && clientId === client.id &&
-      projects.length &&
-      !Object.keys(openProjects).length
-    ) {
-      // setOpenProjects(projects[0].id);
+    if (clientId !== previousProps.clientId || userId !== previousProps.userId) {
+      setPreviousProps({ clientId, userId });
+      setIsLoading(true);
+      init().then(() => setRefreshActiveItems(true));
     }
-  }, [clientId, client, projects, openProjects]);
+  }, [clientId, userId]);
 
   useEffect(() => {
     for (let id in openProjects) {
-      if (!loadedProjects[id]) {
-        dispatch(getAuthorizedUsers(clientId, { projectId: id }));
+      if (!!openProjects[id] && !loadedProjects[id]) {
         dispatch(getReports(id)).then(() => {
-          reports.forEach(r => dispatch(getAuthorizedUsers(clientId, { reportId: r.id })));
           setLoadedProjects({ ...loadedProjects, [id]: true });
         });
       }
@@ -60,50 +58,92 @@ const ResourceActions = props => {
   }, [openProjects]);
 
   useEffect(() => {
-    if (!userId) {
-      return;
+    if (Object.keys(loadedProjects).length) {
+      setRefreshActiveItems(true);
     }
-    let states = {};
+  }, [loadedProjects]);
+
+  useEffect(() => {
+    let states = {}, pids = {};
     if (client) {
       const clientKey = `client-${clientId}@${clientId}`;
       (authorizedUsers[clientKey] || []).forEach(u =>
         u.id === userId && (states[clientId] = u.authorized));
     }
     if (projects.length) {
+      let blocked = {};
       projects.forEach(p => {
         const key = `project-${p.id}@${clientId}`;
-        (authorizedUsers[key] || []).forEach(u =>
-          u.id === userId && (states[`${clientId}-${p.id}`] = u.authorized));
+        const localKey = `${clientId}-${p.id}`;
+        if (authorizedUsers.hasOwnProperty(key)) {
+          (authorizedUsers[key] || []).forEach(u => {
+            if (u.id === userId) {
+              blocked[localKey] = false;
+              states[localKey] = u.authorized;
+            }
+          });
+        } else if (!blockedItems[localKey]) {
+          blocked[localKey] = true;
+          dispatch(getAuthorizedUsers(clientId, { projectId: p.id })).then(() => {
+            setBlockedItems({ ...blockedItems, [localKey]: false });
+            setRefreshActiveItems(true);
+          });
+        }
       });
+      setBlockedItems({ ...blockedItems, ...blocked });
     }
     if (reports.length) {
+      let blocked = {};
       reports.forEach(r => {
         const key = `report-${r.id}@${clientId}`;
-        (authorizedUsers[key] || []).forEach(u =>
-          u.id === userId && (states[`${clientId}-${r.project_id}-${r.id}`] = u.authorized));
+        const localKey = `${clientId}-${r.project_id}-${r.id}`;
+        if (authorizedUsers.hasOwnProperty(key)) {
+          (authorizedUsers[key] || []).forEach(u => {
+            if (u.id === userId) {
+              blocked[localKey] = false;
+              states[localKey] = u.authorized;
+            }
+          });
+        } else if (!blockedItems[localKey]) {
+          blocked[localKey] = true;
+          dispatch(getAuthorizedUsers(clientId, { reportId: r.id })).then(() => {
+            setBlockedItems({ ...blockedItems, [localKey]: false });
+            setRefreshActiveItems(true);
+          });
+        }
       });
+      setBlockedItems({ ...blockedItems, ...blocked });
     }
-    setActiveItems({ ...states });
-  }, [authorizedUsers, userId, client, projects, reports]);
+    setRefreshActiveItems(false);
+    setActiveItems(states);
+    setIsLoading(false);
+  }, [refreshActiveItems]);
+
+  const handleProjectToggle = (id) => {
+    setOpenProjects({ ...openProjects, [id]: !openProjects[id] });
+  };
 
   const handleClientStatusChange = (status) => {
     const key = `${clientId}`;
     if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { clientId: clientId }));
+      dispatch(authorizeUser(userId, clientId, { clientId: clientId }))
+        .then(() => setRefreshActiveItems(true));
     }
   };
 
   const handleProjectStatusChange = (id, status) => {
     const key = `${clientId}-${id}`;
     if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { projectId: id }));
+      dispatch(authorizeUser(userId, clientId, { projectId: id }))
+        .then(() => setRefreshActiveItems(true));
     }
   };
 
   const handleReportStatusChange = (id, pid, status) => {
     const key = `${clientId}-${pid}-${id}`;
     if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { reportId: id }));
+      dispatch(authorizeUser(userId, clientId, { reportId: id }))
+        .then(() => setRefreshActiveItems(true));
     }
   };
 
@@ -123,27 +163,37 @@ const ResourceActions = props => {
           </div>
         )}
       </div>
-      {!!projects && projects.filter(p => p.domain_id === clientId).map(project => (
-        <div key={project.id} className={styles.project}>
-          <div
-            className={styles.title}
-            title={project.name}
-            onClick={() => setOpenProjects({ ...openProjects, [project.id]: !openProjects[project.id] })}
-          >
-            <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-            <MdFolder className={styles.icon} />
-            <span className={styles.name}>{project.name}</span>
-            <Toggle
-              id={`project-toggle-${project.id}`}
-              className={styles.itemToggle}
-              active={!!activeItems[`${client.id}-${project.id}`]}
-              onChange={status => handleProjectStatusChange(project.id, status)}
-            />
-          </div>
-          {!!openProjects[project.id] && (
-            loadedProjects[project.id] ? (
-              <>
-                {!!reports && reports.filter(r => r.project_id === project.id).map(report => (
+      {!((projects || []).filter(p => (
+        !!blockedItems[`${client.id}-${p.id}`]
+      )).length) ? (
+        !projects || !projects.length ? (
+          <div className={styles.noResults}>No results</div>
+        ) : projects.map(project => (
+          <div key={project.id} className={styles.project}>
+            <div
+              className={styles.title}
+              title={project.name}
+              onClick={() => handleProjectToggle(project.id)}
+            >
+              <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
+              <MdFolder className={styles.icon} />
+              <span className={styles.name}>{project.name}</span>
+              <Toggle
+                id={`project-toggle-${project.id}`}
+                className={styles.itemToggle}
+                active={!!activeItems[`${client.id}-${project.id}`]}
+                onChange={status => handleProjectStatusChange(project.id, status)}
+              />
+            </div>
+            {!!openProjects[project.id] && (
+              loadedProjects[project.id] && !((reports || []).filter(r => (
+                !!blockedItems[`${client.id}-${project.id}-${r.id}`]
+              )).length) ? (
+                (!reports || !reports.filter(r => (
+                  r.project_id === project.id
+                )).length) ? (
+                  <div className={styles.noResults}>No results</div>
+                ) : !!reports && reports.filter(r => r.project_id === project.id).map(report => (
                   <div key={report.id} className={styles.report} title={report.name}>
                     <div className={styles.title}>
                       <MdInsertDriveFile className={styles.icon} />
@@ -156,17 +206,16 @@ const ResourceActions = props => {
                       />
                     </div>
                   </div>
-                ))}
-                {(!reports || !reports.filter(r => r.project_id === project.id).length) && (
-                  <div className={styles.noResults}>No results</div>
-                )}
-              </>
-            ) : (
-              <Loader inline className={styles.loader} />
-            )
-          )}
-        </div>
-      ))}
+                ))
+              ) : (
+                <Loader inline className={styles.loader} />
+              )
+            )}
+          </div>
+        ))
+      ) : (
+        <Loader inline className={styles.loader} />
+      )}
     </div>
   ) : (
     <Loader inline className={styles.loader} />

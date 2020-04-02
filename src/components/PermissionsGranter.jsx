@@ -119,7 +119,7 @@ const PermissionsGranter = props => {
 
   const handleItemDelete = (id) => {
     setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
-    dispatch(deleteUser(id)).then(() =>
+    dispatch(deleteUser(id, clientId)).then(() =>
       setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
   };
 
