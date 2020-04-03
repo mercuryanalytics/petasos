@@ -113,7 +113,7 @@ const UserManage = props => {
   const renderRequiredFieldLabel = (label) =>
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>;
 
-  return (
+  return !editMode || (editMode && data) ? (
     <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
       {preview && !isEditClicked && (
         <Button className={styles.editButton} transparent onClick={() => setIsEditClicked(true)}>
@@ -239,6 +239,8 @@ const UserManage = props => {
         </form>
       </div>
     </div>
+  ) : (
+    <Loader inline className={styles.loader} />
   );
 };
 

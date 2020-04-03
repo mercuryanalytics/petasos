@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProjectManage.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import PermissionsGranter, { PermissionsGranterModes, PermissionsGranterContexts } from './PermissionsGranter';
+import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
@@ -155,14 +155,16 @@ const ProjectManage = props => {
     });
   };
 
-  return (!editMode || (editMode && data)) && !!clients.length ? (
+  return !editMode || (editMode && data) ? (
     <div className={styles.container}>
-      <div className={styles.actions}>
-        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-          <MdDelete className={styles.deleteIcon} />
-          <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
-        </Button>
-      </div>
+      {editMode && (
+        <div className={styles.actions}>
+          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+            <MdDelete className={styles.deleteIcon} />
+            <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
+          </Button>
+        </div>
+      )}
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <MdInfoOutline className={styles.icon} />
@@ -238,20 +240,20 @@ const ProjectManage = props => {
           </div>
         </form>
       </div>
-      <div className={`${styles.section} ${styles.right}`}>
-        <div className={styles.title}>
-          <MdSupervisorAccount className={styles.icon} />
-          <span>Project access</span>
-        </div>
-        {data && (
-          <PermissionsGranter
-            mode={PermissionsGranterModes.Grant}
-            context={PermissionsGranterContexts.Project}
+      {editMode && (
+        <div className={`${styles.section} ${styles.right}`}>
+          <div className={styles.title}>
+            <MdSupervisorAccount className={styles.icon} />
+            <span>Project access</span>
+          </div>
+          <UserActions
+            mode={UserActionsModes.Grant}
+            context={UserActionsContexts.Project}
             clientId={data ? data.domain_id : clientId}
             projectId={data ? data.id : null}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   ) : (
     <Loader inline className={styles.loader} />

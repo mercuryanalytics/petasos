@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './ReportManage.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import PermissionsGranter, { PermissionsGranterModes, PermissionsGranterContexts } from './PermissionsGranter';
+import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
 import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
@@ -26,8 +26,6 @@ const ReportManage = props => {
     return pid !== null ? state.projectsReducer.projects.filter(p => p.id === pid)[0] : null;
   });
   const [clientId, setClientId] = useState(null);
-  const client = useSelector(state =>
-    clientId !== null ? state.clientsReducer.clients.filter(c => c.id === clientId)[0] : null);
 
   useEffect(() => {
     if (!!id) {
@@ -105,19 +103,19 @@ const ReportManage = props => {
     });
   };
 
-  return !editMode || (editMode && data) ? (
+  return !editMode || (editMode && data && !!clientId) ? (
     <div className={styles.container}>
-      <div className={styles.actions}>
-        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-          <MdDelete className={styles.deleteIcon} />
-          <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
-        </Button>
-        {editMode && (
+      {editMode && (
+        <div className={styles.actions}>
+          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+            <MdDelete className={styles.deleteIcon} />
+            <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
+          </Button>
           <a className={styles.view} href={data.url} target="_blank">
             <Button>View report</Button>
           </a>
-        )}
-      </div>
+        </div>
+      )}
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <MdInfoOutline className={styles.icon} />
@@ -161,20 +159,20 @@ const ReportManage = props => {
           </div>
         </form>
       </div>
-      <div className={`${styles.section} ${styles.right}`}>
-        <div className={styles.title}>
-          <MdSupervisorAccount className={styles.icon} />
-          <span>Report access</span>
-        </div>
-        {client && data && (
-          <PermissionsGranter
-            mode={PermissionsGranterModes.Grant}
-            context={PermissionsGranterContexts.Report}
-            clientId={client.id}
+      {editMode && (
+        <div className={`${styles.section} ${styles.right}`}>
+          <div className={styles.title}>
+            <MdSupervisorAccount className={styles.icon} />
+            <span>Report access</span>
+          </div>
+          <UserActions
+            mode={UserActionsModes.Grant}
+            context={UserActionsContexts.Report}
+            clientId={clientId}
             reportId={data.id}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   ) : (
     <Loader inline className={styles.loader} />

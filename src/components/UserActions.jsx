@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styles from './PermissionsGranter.module.css';
+import styles from './UserActions.module.css';
 import { getClients } from '../store/clients/actions';
 import { getUsers, createUser, deleteUser, getAuthorizedUsers, authorizeUser } from '../store/users/actions';
 import { useForm, useField } from 'react-final-form-hooks';
@@ -12,18 +12,18 @@ import Modal from './Modal';
 import Button from './Button';
 import { Input } from './FormFields';
 
-export const PermissionsGranterContexts = {
+export const UserActionsContexts = {
   Client: 'client',
   Project: 'project',
   Report: 'report',
 };
 
-export const PermissionsGranterModes = {
+export const UserActionsModes = {
   Grant: 'grant',
   Manage: 'manage',
 };
 
-const PermissionsGranter = props => {
+const UserActions = props => {
   const { mode, context, clientId, projectId, reportId } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +38,7 @@ const PermissionsGranter = props => {
   const clients = useSelector(state => state.clientsReducer.clients);
   const users = useSelector(state => {
     let result = state.usersReducer.users;
-    return mode === PermissionsGranterModes.Grant ? result
+    return mode === UserActionsModes.Grant ? result
       : result.filter(u => u.client_ids.indexOf(clientId) > -1);
   });
   const [blockedUsers, setBlockedUsers] = useState([]);
@@ -51,13 +51,13 @@ const PermissionsGranter = props => {
   }, []);
 
   useEffect(() => {
-    if (mode === PermissionsGranterModes.Grant) {
+    if (mode === UserActionsModes.Grant) {
       dispatch(getUsers());
     }
   }, [mode]);
 
   useEffect(() => {
-    if (mode === PermissionsGranterModes.Grant) {
+    if (mode === UserActionsModes.Grant) {
       let ids = {};
       users.forEach(u => u.client_ids.forEach(cid => ids[cid] = true));
       setAllowedClients(Object.keys(ids).map(x => +x));
@@ -100,7 +100,7 @@ const PermissionsGranter = props => {
   }, [authorizedUsers, allowedClients]);
 
   useEffect(() => {
-    if (mode === PermissionsGranterModes.Manage) {
+    if (mode === UserActionsModes.Manage) {
       setAllowedClients([clientId]);
     }
     setSelectedItem(null);
@@ -139,7 +139,7 @@ const PermissionsGranter = props => {
   };
 
   const handleItemSelect = (id) => {
-    if (mode === PermissionsGranterModes.Manage) {
+    if (mode === UserActionsModes.Manage) {
       setSelectedItem(id);
       if (props.onUserSelect) {
         props.onUserSelect(id);
@@ -148,7 +148,7 @@ const PermissionsGranter = props => {
   };
 
   useEffect(() => {
-    if (mode === PermissionsGranterModes.Manage && !isLoading && users.length && selectedItem === null) {
+    if (mode === UserActionsModes.Manage && !isLoading && users.length && selectedItem === null) {
       handleItemSelect(users[0].id);
     }
   }, [isLoading, mode, clientId, projectId, reportId, users, selectedItem]);
@@ -276,7 +276,7 @@ const PermissionsGranter = props => {
             blockedClients.indexOf(client.id) === -1
           ) && (
             <div className={styles.group} key={`permissions-group-${client.id}`}>
-              {mode === PermissionsGranterModes.Grant && (
+              {mode === UserActionsModes.Grant && (
                 <div
                   className={styles.groupTitle}
                   title={client.name}
@@ -303,7 +303,7 @@ const PermissionsGranter = props => {
                         key={`grant-user-${user.id}`}
                         className={`
                           ${styles.item}
-                          ${mode === PermissionsGranterModes.Manage ? styles.noIndent : ''}
+                          ${mode === UserActionsModes.Manage ? styles.noIndent : ''}
                           ${selectedItem === user.id ? styles.selectedItem : ''}
                         `}
                         htmlFor={`user-toggle-${client.id}-${user.id}`}
@@ -314,7 +314,7 @@ const PermissionsGranter = props => {
                           {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
                         </span>
                         {/* @TODO Pending status */}
-                        {(mode === PermissionsGranterModes.Grant && (
+                        {(mode === UserActionsModes.Grant && (
                           <Toggle
                             id={`user-toggle-${client.id}-${user.id}`}
                             className={styles.itemToggle}
@@ -322,7 +322,7 @@ const PermissionsGranter = props => {
                             onChange={status => handleItemActiveChange(client.id, user.id, status)}
                           />
                         )) ||
-                        (mode === PermissionsGranterModes.Manage && (
+                        (mode === UserActionsModes.Manage && (
                           !!isDeleteBusy[user.id] ? (
                             <Loader inline size={3} className={styles.busyLoader} />
                           ) : (
@@ -349,4 +349,4 @@ const PermissionsGranter = props => {
   );
 };
 
-export default PermissionsGranter;
+export default UserActions;

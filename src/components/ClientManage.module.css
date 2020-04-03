@@ -117,7 +117,6 @@
 .section.details .editor {
   flex-grow: 1;
   padding: 2rem;
-  border-right: 1px solid #B9B9B9;
 }
 
 .section.details .grant {
@@ -125,6 +124,7 @@
   min-width: 400px;
   padding: 2rem;
   box-sizing: border-box;
+  border-left: 1px solid #B9B9B9;
 }
 
 .section.accounts {

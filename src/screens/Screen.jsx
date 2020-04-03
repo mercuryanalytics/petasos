@@ -4,6 +4,7 @@ import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import { setUser, setAuthKey } from '../store/auth/actions';
+import { getUsers } from '../store/users/actions';
 import { useAuth0 } from '../react-auth0-spa';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
@@ -40,7 +41,7 @@ const Screen = props => {
       if (isAuthenticated) {
         getIdTokenClaims().then(res => {
           dispatch(setAuthKey(res.__raw));
-          setLoaded(true);
+          dispatch(getUsers()).then(() => setLoaded(true));
         });
       } else {
         return <Redirect to={`${Routes.Login}#${history.location.pathname}`} />;
@@ -50,7 +51,7 @@ const Screen = props => {
     setLoaded(true);
   }
 
-  return ready ? (
+  return ready && !props.keepLoading ? (
     !props.blank ? (
       <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>

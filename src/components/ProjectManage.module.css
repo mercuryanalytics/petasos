@@ -39,10 +39,8 @@
 .section.right {
   width: 400px;
   min-width: 400px;
-}
-
-.section:not(:last-child) {
-  border-right: 1px solid #B9B9B9;
+  box-sizing: border-box;
+  border-left: 1px solid #B9B9B9;
 }
 
 .section .title {

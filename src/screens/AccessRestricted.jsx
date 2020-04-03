@@ -1,18 +1,18 @@
 import React from 'react';
-import styles from './PageNotFound.module.css';
+import styles from './AccessRestricted.module.css';
 import Routes from '../utils/routes';
 import Screen from './Screen';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-const PageNotFound = () => {
+const AccessRestricted = () => {
   return (
     <Screen blank>
       <div className={styles.container}>
-        <span className={styles.info}>Page not found!</span>
+        <span className={styles.info}>Access to this location is restricted.</span>
         <a className={styles.link} href={Routes.Home}>Go Home</a>
       </div>
     </Screen>
   );
 };
 
-export default PageNotFound;
+export default AccessRestricted;

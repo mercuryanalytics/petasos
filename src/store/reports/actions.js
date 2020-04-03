@@ -21,6 +21,24 @@ export const getReportsFailure = (error) => ({
   payload: error,
 });
 
+export function getOrphanReports() {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/reports/orphans`)
+      .then(res => dispatch(getOrphanReportsSuccess(res)))
+      .catch(err => dispatch(getOrphanReportsFailure(err)));
+  };
+}
+
+export const getOrphanReportsSuccess = (reports) => ({
+  type: 'GET_ORPHAN_REPORTS_SUCCESS',
+  payload: reports,
+});
+
+export const getOrphanReportsFailure = (error) => ({
+  type: 'GET_ORPHAN_REPORTS_FAILURE',
+  payload: error,
+});
+
 export function getReport(id) {
   return dispatch => {
     return apiCall('GET', `${Constants.API_URL}/reports/${id}`)

@@ -75,3 +75,9 @@
 .section .form .controlsGroup > * {
   width: calc(50% - 10px);
 }
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}

@@ -20,6 +20,24 @@ export const getProjectsFailure = (error) => ({
   payload: error,
 });
 
+export function getOrphanProjects() {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/projects/orphans`)
+      .then(res => dispatch(getOrphanProjectsSuccess(res)))
+      .catch(err => dispatch(getOrphanProjectsFailure(err)));
+  };
+}
+
+export const getOrphanProjectsSuccess = (projects) => ({
+  type: 'GET_ORPHAN_PROJECTS_SUCCESS',
+  payload: projects,
+});
+
+export const getOrphanProjectsFailure = (error) => ({
+  type: 'GET_ORPHAN_PROJECTS_FAILURE',
+  payload: error,
+});
+
 export function getProject(id) {
   return dispatch => {
     return apiCall('GET', `${Constants.API_URL}/projects/${id}`)

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import Button from './Button';
 import Loader from './Loader';
-import PermissionsGranter, { PermissionsGranterModes, PermissionsGranterContexts } from './PermissionsGranter';
+import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import UserManage from './UserManage';
 import ResourceActions from './ResourceActions';
 import { MdDelete, MdSupervisorAccount } from 'react-icons/md';
@@ -201,12 +201,14 @@ const ClientManage = props => {
 
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
-      <div className={styles.actions}>
-        <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-          <MdDelete className={styles.deleteIcon} />
-          <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
-        </Button>
-      </div>
+      {editMode && (
+        <div className={styles.actions}>
+          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+            <MdDelete className={styles.deleteIcon} />
+            <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
+          </Button>
+        </div>
+      )}
       <div className={styles.tabs}>
         <div
           className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
@@ -214,18 +216,22 @@ const ClientManage = props => {
         >
           <span>Client details</span>
         </div>
-        <div
-          className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
-          onClick={() => setTab(ContentTabs.Accounts)}
-        >
-          <span>Accounts</span>
-        </div>
-        <div
-          className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
-          onClick={() => setTab(ContentTabs.Defaults)}
-        >
-          <span>Defaults</span>
-        </div>
+        {editMode && (
+          <>
+            <div
+              className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
+              onClick={() => setTab(ContentTabs.Accounts)}
+            >
+              <span>Accounts</span>
+            </div>
+            <div
+              className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
+              onClick={() => setTab(ContentTabs.Defaults)}
+            >
+              <span>Defaults</span>
+            </div>
+          </>
+        )}
       </div>
       {(tab === ContentTabs.Details && (
         <div className={`${styles.section} ${styles.details}`}>
@@ -389,17 +395,19 @@ const ClientManage = props => {
               </div>
             </form>
           </div>
-          <div className={styles.grant}>
-            <div className={styles.title}>
-              <MdSupervisorAccount className={styles.icon} />
-              <span>Client access</span>
+          {editMode && (
+            <div className={styles.grant}>
+              <div className={styles.title}>
+                <MdSupervisorAccount className={styles.icon} />
+                <span>Client access</span>
+              </div>
+              <UserActions
+                mode={UserActionsModes.Grant}
+                context={UserActionsContexts.Client}
+                clientId={data && data.id}
+              />
             </div>
-            <PermissionsGranter
-              mode={PermissionsGranterModes.Grant}
-              context={PermissionsGranterContexts.Client}
-              clientId={data && data.id}
-            />
-          </div>
+          )}
         </div>
       )) ||
       (tab === ContentTabs.Accounts && (
@@ -408,9 +416,9 @@ const ClientManage = props => {
             <div className={`${styles.title} ${styles.big}`}>
               <span>Users</span>
             </div>
-            <PermissionsGranter
-              mode={PermissionsGranterModes.Manage}
-              context={PermissionsGranterContexts.Client}
+            <UserActions
+              mode={UserActionsModes.Manage}
+              context={UserActionsContexts.Client}
               clientId={data && data.id}
               onUserSelect={id => setSelectedUserId(id)}
             />

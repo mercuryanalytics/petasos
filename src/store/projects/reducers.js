@@ -2,6 +2,7 @@ import { pushToStack } from '../index';
 
 const initialState = {
   projects: [],
+  orphans: [],
 };
 
 const projectsReducer = (state = initialState, action) => {
@@ -11,6 +12,13 @@ const projectsReducer = (state = initialState, action) => {
       return {
         ...state,
         projects: projects,
+      };
+    }
+    case 'GET_ORPHAN_PROJECTS_SUCCESS': {
+      const orphans = pushToStack(state.orphans, action.payload);
+      return {
+        ...state,
+        orphans: orphans,
       };
     }
     case 'GET_PROJECT_SUCCESS': {
