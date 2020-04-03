@@ -52,16 +52,11 @@ const ResourceActions = props => {
       if (!!openProjects[id] && !loadedProjects[id]) {
         dispatch(getReports(id)).then(() => {
           setLoadedProjects({ ...loadedProjects, [id]: true });
+          setRefreshActiveItems(true);
         });
       }
     }
   }, [openProjects]);
-
-  useEffect(() => {
-    if (Object.keys(loadedProjects).length) {
-      setRefreshActiveItems(true);
-    }
-  }, [loadedProjects]);
 
   useEffect(() => {
     let states = {}, pids = {};
@@ -128,6 +123,17 @@ const ResourceActions = props => {
     if (status !== !!activeItems[key]) {
       dispatch(authorizeUser(userId, clientId, { clientId: clientId }))
         .then(() => setRefreshActiveItems(true));
+      // projects.forEach(p => {
+      //   const key = `project-${p.id}@${clientId}`;
+      //   const localKey = `${clientId}-${p.id}`;
+      //   (authorizedUsers[key] || []).forEach(u => {
+      //     if (u.id === userId && u.authorized === !status) {
+      //       dispatch(authorizeUser(userId, clientId, { projectId: p.id }))
+      //         .then(() => setRefreshActiveItems(true));
+      //       setActiveItems({ ...activeItems, [localKey]: status });
+      //     }
+      //   });
+      // });
     }
   };
 
@@ -136,6 +142,8 @@ const ResourceActions = props => {
     if (status !== !!activeItems[key]) {
       dispatch(authorizeUser(userId, clientId, { projectId: id }))
         .then(() => setRefreshActiveItems(true));
+      // dispatch(getReports(id)).then(() => {
+      // });
     }
   };
 

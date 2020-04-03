@@ -1,7 +1,22 @@
 .container {
+  display: flex;
+  align-items: center;
   font-size: .9rem;
   font-weight: bold;
   line-height: 1.2rem;
   /* @TODO Remove after new design */
   margin-right: 300px;
+}
+
+.value {
+  display: inline-flex;
+  align-items: center;
+  height: 1rem;
+  line-height: 1rem;
+}
+
+.spacer {
+  margin: 0 7px;
+  font-weight: bold;
+  line-height: 1rem;
 }

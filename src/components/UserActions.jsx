@@ -223,7 +223,7 @@ const UserActions = props => {
       } else if (reportId) {
         result.report_id = reportId;
       }
-      dispatch(createUser(result)).then(() => {
+      dispatch(createUser(result, true)).then(() => {
         dispatch(getUsers());
         form.reset();
         setIsBusy(false);

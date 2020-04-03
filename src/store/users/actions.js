@@ -42,9 +42,10 @@ export const getUserFailure = (error, userId) => {
   }
 };
 
-export function createUser(data) {
+export function createUser(data, noAuth) {
+  const queryString = noAuth ? `?no_auth=1` : '';
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/users`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body: JSON.stringify(data) })
       .then(res => dispatch(createUserSuccess(res)))
       .catch(err => dispatch(createUserFailure(err)));
   };
