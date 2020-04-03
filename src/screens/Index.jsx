@@ -63,6 +63,19 @@ const Index = props => {
   }, [content, params]);
 
   useEffect(() => {
+    if (isLoaded) {
+      if (accessOptions) {
+        dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
+          setIsAccessBlocked(action.type === 'GET_AUTHORIZED_USERS_FAILURE');
+          setKeepLoading(false);
+        });
+      } else {
+        setKeepLoading(false);
+      }
+    }
+  }, [isLoaded, accessOptions]);
+
+  useEffect(() => {
     let bc = [];
     switch (content) {
       case ContentTypes.CreateClient:
@@ -92,23 +105,6 @@ const Index = props => {
     }
     setBreadcrumbs(bc);
   }, [content, client, project, report]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      if (accessOptions) {
-        dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
-          setIsAccessBlocked(action.type === 'GET_AUTHORIZED_USERS_FAILURE');
-          setKeepLoading(false);
-        });
-      } else {
-        setKeepLoading(false);
-      }
-    }
-  }, [isLoaded, accessOptions]);
-
-  useEffect(() => {
-    
-  }, [client, project, report]);
 
   return !isAccessBlocked ? (
     <Screen className={styles.container} private keepLoading={keepLoading} onLoad={() => setIsLoaded(true)}>
