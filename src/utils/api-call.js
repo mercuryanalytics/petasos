@@ -7,6 +7,9 @@ const apiCall = (method, url, options) => {
   if (!authKey) {
     return;
   }
+  if (!!((options || {}).forced) && cached.hasOwnProperty(url)) {
+    delete cached[url];
+  }
   if (method.toUpperCase() === 'GET') {
     const urlNoQs = url.split('?')[0];
     let block = cached.hasOwnProperty(url);

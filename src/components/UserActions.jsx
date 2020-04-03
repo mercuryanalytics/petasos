@@ -119,22 +119,22 @@ const UserActions = props => {
 
   const handleItemDelete = (id) => {
     setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
-    dispatch(deleteUser(id, (!!clientId ? clientId : reportId.project.domain_id)))
+    dispatch(deleteUser(id, (!!clientId ? clientId : null/* @TODO */)))
       .then(() => setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
   };
 
   const handleItemActiveChange = (groupId, id, status) => {
     const key = `${groupId}-${id}`;
     if (status !== !!activeItems[key]) {
-      let options = {};
+      let authorizedOptions = {};
       if (projectId) {
-        options.projectId = projectId;
+        authorizedOptions.projectId = projectId;
       } else if (reportId) {
-        options.reportId = reportId;
+        authorizedOptions.reportId = reportId;
       } else {
-        options.clientId = clientId;
+        authorizedOptions.clientId = clientId;
       }
-      dispatch(authorizeUser(id, groupId, options));
+      dispatch(authorizeUser(id, groupId, authorizedOptions));
     }
   };
 
@@ -205,7 +205,7 @@ const UserActions = props => {
       setIsBusy(true);
       const result = {
         email: values.add_user_email,
-        client_id: !!clientId ? clientId : reportId.project.domain_id,
+        client_id: !!clientId ? clientId : null/* @TODO */,
         company_name: null,
         contact_name: null,
         contact_title: null,
@@ -224,7 +224,16 @@ const UserActions = props => {
         result.report_id = reportId;
       }
       dispatch(createUser(result, mode === UserActionsModes.Manage)).then(() => {
+        let authorizedOptions = {};
+        if (projectId) {
+          authorizedOptions.projectId = projectId;
+        } else if (reportId) {
+          authorizedOptions.reportId = reportId;
+        } else {
+          authorizedOptions.clientId = clientId;
+        }
         dispatch(getUsers());
+        dispatch(getAuthorizedUsers(clientId/* @TODO */, authorizedOptions, { forced: true }));
         form.reset();
         setIsBusy(false);
         setIsAddUserOpen(false);

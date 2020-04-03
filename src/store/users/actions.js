@@ -129,7 +129,8 @@ export const getResearchersFailure = (error) => ({
   payload: error,
 });
 
-export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }) {
+export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }, options) {
+  const forced = !!((options || {}).forced);
   let resPath = 'clients', resId = clientId;
   if (!!projectId) {
     resPath = 'projects';
@@ -140,7 +141,7 @@ export function getAuthorizedUsers(contextId, { clientId, projectId, reportId })
   }
   const queryString = `?client_id=${contextId}`;
   return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
+    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`, { forced })
       .then(res => dispatch(getAuthorizedUsersSuccess(res, contextId, clientId, projectId, reportId)))
       .catch(err => dispatch(getAuthorizedUsersFailure(err)));
   };
