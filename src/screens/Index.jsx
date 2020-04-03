@@ -29,6 +29,14 @@ const Index = props => {
   const [keepLoading, setKeepLoading] = useState(true);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const report = useSelector(state => accessOptions && accessOptions.reportId ?
+    (state.reportsReducer.reports.filter(r => r.id === accessOptions.reportId)[0] || null) : null);
+  const project = useSelector(state => accessOptions && accessOptions.projectId ?
+    (state.projectsReducer.projects.filter(p => p.id === accessOptions.projectId)[0] || null) :
+      (!!report ? (state.projectsReducer.projects.filter(p => p.id === report.project_id)[0] || null) : null));
+  const client = useSelector(state => accessOptions && accessOptions.clientId ?
+    (state.clientsReducer.clients.filter(c => c.id === accessOptions.clientId)[0] || null) :
+      (!!project ? (state.clientsReducer.clients.filter(c => c.id === project.domain_id)[0] || null) : null));
 
   useEffect(() => {
     setAccessOptions(null);
@@ -55,6 +63,37 @@ const Index = props => {
   }, [content, params]);
 
   useEffect(() => {
+    let bc = [];
+    switch (content) {
+      case ContentTypes.CreateClient:
+        bc.push('Create client');
+        break;
+      case ContentTypes.ManageClient:
+        client && bc.push(client.name);
+        break;
+      case ContentTypes.CreateProject:
+        client && bc.push(client.name);
+        bc.push('Create project');
+        break;
+      case ContentTypes.ManageProject:
+        client && bc.push(client.name);
+        project && bc.push(project.name);
+        break;
+      case ContentTypes.CreateReport:
+        client && bc.push(client.name);
+        project && bc.push(project.name);
+        bc.push('Create report');
+        break;
+      case ContentTypes.ManageReport:
+        client && (bc.push(client.name));
+        project && bc.push(project.name);
+        report && bc.push(report.name);
+        break;
+    }
+    setBreadcrumbs(bc);
+  }, [content, client, project, report]);
+
+  useEffect(() => {
     if (isLoaded) {
       if (accessOptions) {
         dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
@@ -66,6 +105,10 @@ const Index = props => {
       }
     }
   }, [isLoaded, accessOptions]);
+
+  useEffect(() => {
+    
+  }, [client, project, report]);
 
   return !isAccessBlocked ? (
     <Screen className={styles.container} private keepLoading={keepLoading} onLoad={() => setIsLoaded(true)}>
