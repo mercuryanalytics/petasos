@@ -288,7 +288,7 @@ const SideMenu = React.memo(() => {
         <Search
           placeholder="Search"
           targets={searchComponentTargets}
-          defaultTarget={SearchTargets.Clients}
+          defaultTarget={SearchTargets.Reports}
           onSearch={handleSearch}
         />
       </div>
