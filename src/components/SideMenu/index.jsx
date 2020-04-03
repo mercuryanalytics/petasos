@@ -112,6 +112,10 @@ const SideMenu = React.memo(() => {
 
   useEffect(() => {
     if (task) {
+      const orphanProjectIds = {};
+      const orphanReportIds = {};
+      orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
+      orphanReports.forEach(r => orphanReportIds[r.id] = true);
       switch (task.type) {
         case TaskTypes.ShowReport:
           let r = reports.filter(r => r.id === task.target)[0];
@@ -144,7 +148,7 @@ const SideMenu = React.memo(() => {
         setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
       }
     }
-  }, [task, reports, projects, clients]);
+  }, [task, reports, projects, orphanReports, orphanProjects, clients]);
 
   const initSearch = async () => {
     return Promise.all([
@@ -192,7 +196,7 @@ const SideMenu = React.memo(() => {
         const result = filterStack(projects, projectsFilter);
         let orphanResult = [];
         let orphanProjectIds = {}, ids = {};
-        orphanProjects.forEach(r => orphanProjectIds[r.id] = true);
+        orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
         result.forEach(p => {
           ids[p.domain_id] = true;
           if (!!orphanProjectIds[p.id]) {
@@ -210,7 +214,7 @@ const SideMenu = React.memo(() => {
         let orphanProjectsResult = [];
         let orphanProjectIds = {}, orphanReportIds = {};
         let pids = {}, cids = {};
-        orphanProjects.forEach(r => orphanProjectIds[r.id] = true);
+        orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
         orphanReports.forEach(r => orphanReportIds[r.id] = true);
         result.forEach(r => {
           pids[r.project_id] = true;

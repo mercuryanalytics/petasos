@@ -103,7 +103,7 @@ const ReportManage = props => {
     });
   };
 
-  return !editMode || (editMode && data && !!clientId) ? (
+  return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       {editMode && (
         <div className={styles.actions}>

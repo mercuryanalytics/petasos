@@ -119,8 +119,8 @@ const UserActions = props => {
 
   const handleItemDelete = (id) => {
     setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
-    dispatch(deleteUser(id, clientId)).then(() =>
-      setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
+    dispatch(deleteUser(id, (!!clientId ? clientId : reportId.project.domain_id)))
+      .then(() => setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
   };
 
   const handleItemActiveChange = (groupId, id, status) => {
@@ -205,7 +205,7 @@ const UserActions = props => {
       setIsBusy(true);
       const result = {
         email: values.add_user_email,
-        client_id: clientId,
+        client_id: !!clientId ? clientId : reportId.project.domain_id,
         company_name: null,
         contact_name: null,
         contact_title: null,
