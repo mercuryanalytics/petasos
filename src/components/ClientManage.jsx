@@ -8,6 +8,7 @@ import Loader from './Loader';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import UserManage from './UserManage';
 import ResourceActions from './ResourceActions';
+import DomainActions from './DomainActions';
 import { MdDelete, MdSupervisorAccount } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
@@ -403,7 +404,7 @@ const ClientManage = props => {
               <UserActions
                 mode={UserActionsModes.Grant}
                 context={UserActionsContexts.Client}
-                clientId={data.id}
+                clientId={id}
               />
             </div>
           )}
@@ -418,7 +419,7 @@ const ClientManage = props => {
             <UserActions
               mode={UserActionsModes.Manage}
               context={UserActionsContexts.Client}
-              clientId={data.id}
+              clientId={id}
               onUserSelect={id => setSelectedUserId(id)}
             />
           </div>
@@ -465,7 +466,14 @@ const ClientManage = props => {
       )) ||
       (tab === ContentTabs.Defaults && (
         <div className={`${styles.section}`}>
-          ClientDefaults
+          <div className={`${styles.title} ${styles.big}`}>
+            <span>Domains</span>
+          </div>
+          <div className={styles.textBlock}>
+            {`Allow all users from a specific domain to authenticate as a {client_name} user 
+            and inherit the default user permissions.`}
+          </div>
+          <DomainActions clientId={id} />
         </div>
       ))}
     </div>

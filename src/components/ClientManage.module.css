@@ -80,6 +80,11 @@
   margin-bottom: 3.75rem;
 }
 
+.section .textBlock {
+  font-size: .85rem;
+  margin-bottom: 2rem;
+}
+
 .section .form .formSection {
   margin-bottom: 2rem;
 }

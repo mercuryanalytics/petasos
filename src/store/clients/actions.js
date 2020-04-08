@@ -107,3 +107,98 @@ export const deleteClientFailure = (error, clientId) => {
     clientId: clientId,
   }
 };
+
+export function getDomains(clientId) {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains`)
+      .then(res => dispatch(getDomainsSuccess(res)))
+      .catch(err => dispatch(getDomainsFailure(err)));
+  };
+}
+
+export const getDomainsSuccess = (domains) => ({
+  type: 'GET_DOMAINS_SUCCESS',
+  payload: domains,
+});
+
+export const getDomainsFailure = (error) => ({
+  type: 'GET_DOMAINS_FAILURE',
+  payload: error,
+});
+
+export function getDomain(id, clientId) {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
+      .then(res => dispatch(getDomainSuccess(res)))
+      .catch(err => dispatch(getDomainFailure(err)));
+  };
+}
+
+export const getDomainSuccess = (domain) => ({
+  type: 'GET_DOMAIN_SUCCESS',
+  payload: domain,
+});
+
+export const getDomainFailure = (error) => ({
+  type: 'GET_DOMAIN_FAILURE',
+  payload: error,
+});
+
+export function createDomain(data, clientId) {
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/domains`, { body: JSON.stringify(data) })
+      .then(res => dispatch(createDomainSuccess(res)))
+      .catch(err => dispatch(createDomainFailure(err)));
+  };
+}
+
+export const createDomainSuccess = (domain) => ({
+  type: 'CREATE_DOMAIN_SUCCESS',
+  payload: domain,
+});
+
+export const createDomainFailure = (error) => ({
+  type: 'CREATE_DOMAIN_FAILURE',
+  payload: error,
+});
+
+export function updateDomain(id, data, clientId) {
+  return dispatch => {
+    return apiCall('PATCH', `${Constants.API_URL}/clients/${clientId}/domains/${id}`, { body: JSON.stringify(data) })
+      .then(res => dispatch(updateDomainSuccess(res)))
+      .catch(err => dispatch(updateDomainFailure(err)));
+  };
+}
+
+export const updateDomainSuccess = (domain) => ({
+  type: 'UPDATE_DOMAIN_SUCCESS',
+  payload: domain,
+});
+
+export const updateDomainFailure = (error) => ({
+  type: 'UPDATE_DOMAIN_FAILURE',
+  payload: error,
+});
+
+export function deleteDomain(id, clientId) {
+  return dispatch => {
+    return apiCall('DELETE', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
+      .then(res => dispatch(deleteDomainSuccess(id)))
+      .catch(err => dispatch(deleteDomainFailure(err, id)));
+  };
+}
+
+export const deleteDomainSuccess = (domainId) => {
+  return {
+    type: 'DELETE_DOMAIN_SUCCESS',
+    domainId: domainId,
+  }
+};
+
+export const deleteDomainFailure = (error, domainId) => {
+  return {
+    type: 'DELETE_DOMAIN_FAILURE',
+    payload: error,
+    domainId: domainId,
+  }
+};

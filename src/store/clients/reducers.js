@@ -2,6 +2,7 @@ import { pushToStack } from '../index';
 
 const initialState = {
   clients: [],
+  domains: [],
 };
 
 const clientsReducer = (state = initialState, action) => {
@@ -40,6 +41,42 @@ const clientsReducer = (state = initialState, action) => {
       return {
         ...state,
         clients: clients,
+      };
+    }
+    case 'GET_DOMAINS_SUCCESS': {
+      const domains = pushToStack(state.domains, action.payload);
+      return {
+        ...state,
+        domains: domains,
+      };
+    }
+    case 'GET_DOMAIN_SUCCESS': {
+      const domains = pushToStack(state.domains, action.payload);
+      return {
+        ...state,
+        domains: domains,
+      };
+    }
+    case 'CREATE_DOMAIN_SUCCESS': {
+      const domains = pushToStack(state.domains, action.payload);
+      return {
+        ...state,
+        domains: domains,
+      };
+    }
+    case 'UPDATE_DOMAIN_SUCCESS': {
+      const domains = pushToStack(state.domains, action.payload, { updateOnly: true });
+      return {
+        ...state,
+        domains: domains,
+      };
+    }
+    case 'DELETE_DOMAIN_SUCCESS': {
+      const fakeRes = { id: action.domainId };
+      const domains = pushToStack(state.domains, fakeRes, { deleteOnly: true });
+      return {
+        ...state,
+        domains: domains,
       };
     }
     default: {

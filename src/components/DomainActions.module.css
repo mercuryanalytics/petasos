@@ -1,0 +1,90 @@
+.container {
+  background-color: #fff;
+}
+
+.adders {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.adders button {
+  padding: 0;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  font-size: .9rem;
+  font-weight: bold;
+}
+
+.domain {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  cursor: pointer;
+  user-select: none;
+  color: #000;
+}
+
+.domain.selected {
+  background-color: #F0F0F0;
+}
+
+.domain:not(.selected):hover {
+  background-color: #F0F0F0;
+}
+
+.domain .name {
+  flex-grow: 1;
+  width: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .9rem;
+  padding: .6rem .6rem .6rem 0;
+}
+
+.domain .delete {
+  font-size: 1.5rem;
+}
+
+.modal {
+  width: 320px;
+}
+
+.modalText {
+  margin-bottom: 25px;
+  font-size: .85rem;
+}
+
+.modalInput {
+  margin-bottom: 25px;
+}
+
+.modalButtons {}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}
+
+.busyLoader {
+  margin-left: 10px !important;
+}
+
+.busyLoader, .busyLoader > div {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.noResults {
+  display: block;
+  padding: 10px 5px;
+  text-align: center;
+  font-size: .85rem;
+  color: #A9A9A9;
+}

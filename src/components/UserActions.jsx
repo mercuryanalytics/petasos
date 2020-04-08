@@ -34,9 +34,8 @@ const UserActions = props => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [activeStates, setActiveStates] = useState({});
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-  const [isAddDomainOpen, setIsAddDomainOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
-  const [isDeleteBusy, setIsDeleteBusy] = useState(false);
+  const [isDeleteBusy, setIsDeleteBusy] = useState({});
   const clients = useSelector(state => state.clientsReducer.clients);
   const users = useSelector(state => state.usersReducer.users);
   const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
@@ -236,7 +235,6 @@ const UserActions = props => {
       </div>
       <div className={styles.adders}>
         <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
-        <button onClick={() => setIsAddDomainOpen(true)}>+ Add domain</button>
       </div>
       <Modal
         className={styles.modal}
@@ -262,32 +260,6 @@ const UserActions = props => {
             </Button>
           </div>
         </form>
-      </Modal>
-      <Modal
-        className={styles.modal}
-        title="Create new domain"
-        open={isAddDomainOpen}
-        onClose={() => setIsAddDomainOpen(false)}
-      >
-        <div className={styles.modalText}>
-          From here ?
-        </div>
-        AddClientDomain
-        {/* <form className={styles.form} onSubmit={handleSubmit}>
-          <Input
-            className={styles.modalInput}
-            field={addUserField}
-            label="Email"
-          />
-          <div className={styles.modalButtons}>
-            <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
-              {!isBusy ? 'Invite new user' : 'Inviting new user'}
-            </Button>
-            <Button transparent onClick={() => setIsAddUserOpen(false)}>
-              <span>Cancel</span>
-            </Button>
-          </div>
-        </form> */}
       </Modal>
       <div className={styles.permissions}>
         {!isLoading ? (
