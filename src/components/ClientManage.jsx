@@ -228,7 +228,7 @@ const ClientManage = props => {
               className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
               onClick={() => setTab(ContentTabs.Defaults)}
             >
-              <span>Defaults</span>
+              <span>Domains</span>
             </div>
           </>
         )}
