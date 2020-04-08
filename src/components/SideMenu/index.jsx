@@ -118,15 +118,20 @@ const SideMenu = () => {
 
   useEffect(() => {
     if (task) {
-      const orphanProjectIds = {};
-      const orphanReportIds = {};
-      orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
-      orphanReports.forEach(r => orphanReportIds[r.id] = true);
+      // const orphanProjectIds = {};
+      // const orphanReportIds = {};
+      // orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
+      // orphanReports.forEach(r => orphanReportIds[r.id] = true);
       switch (task.type) {
         case TaskTypes.ShowReport:
           let r = reports.filter(r => r.id === task.target)[0];
           if (r) {
-            setTask({ type: TaskTypes.OpenProject, target: r.project_id });
+            setTask({
+              type: TaskTypes.OpenProject,
+              target: r.project_id,
+              reportId: r.id,
+              clientId: r.project.domain_id,
+            });
           } else {
             dispatch(getReport(task.target));
           }
@@ -137,7 +142,18 @@ const SideMenu = () => {
             handleProjectOpen(p);
             setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
           } else {
-            dispatch(getProject(task.target));
+            dispatch(getProject(task.target)).then(action => {
+              if (action.type === 'GET_PROJECT_FAILURE') {
+                dispatch(getClientReports(task.clientId)).then((action) => {
+                  if (
+                    Array.isArray(action.payload) &&
+                    action.payload.filter(cr => cr.id === task.reportId).length
+                  ) {
+                    setTask({ type: TaskTypes.OpenClient, target: task.clientId });
+                  }
+                });
+              }
+            });
           }
           break;
         case TaskTypes.OpenClient:
