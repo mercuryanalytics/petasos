@@ -23,7 +23,8 @@
 .domain {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 10px 0 13px;
+  margin: 0 -13px;
   cursor: pointer;
   user-select: none;
   color: #000;
@@ -44,6 +45,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: .9rem;
+  font-weight: bold;
   padding: .6rem .6rem .6rem 0;
 }
 

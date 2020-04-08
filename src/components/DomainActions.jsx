@@ -101,7 +101,7 @@ const DomainActions = props => {
               title={domain.name}
               // onClick={() => handleDomainSelect(domain.id)}
             >
-              <span className={styles.name}>{domain.name}</span>
+              <span className={styles.name}>@{domain.name}</span>
               {!!isDeleteBusy[domain.id] ? (
                 <Loader inline size={3} className={styles.busyLoader} />
               ) : (

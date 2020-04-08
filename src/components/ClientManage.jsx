@@ -470,8 +470,9 @@ const ClientManage = props => {
             <span>Domains</span>
           </div>
           <div className={styles.textBlock}>
-            {`Allow all users from a specific domain to authenticate as a {client_name} user 
-            and inherit the default user permissions.`}
+            {'Allow all users from a specific domain to authenticate as a '}
+            <span>{data.name}</span>
+            {' user and inherit the default user permissions.'}
           </div>
           <DomainActions clientId={id} />
         </div>

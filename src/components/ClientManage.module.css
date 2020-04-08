@@ -85,6 +85,10 @@
   margin-bottom: 2rem;
 }
 
+.section .textBlock span {
+  font-weight: bold;
+}
+
 .section .form .formSection {
   margin-bottom: 2rem;
 }
