@@ -67,7 +67,7 @@ const Project = props => {
             !loaded ? (
               <Loader inline className={styles.loader} />
             ) : (
-              <span className={styles.noResults}>No results</span>
+              <div className={styles.noResults}>No results</div>
             )
           )}
           <ReportAdd projectId={data.id} active={isAdding} />

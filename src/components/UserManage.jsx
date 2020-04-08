@@ -12,6 +12,7 @@ const UserManage = props => {
   const { id, embeded, preview, clientId } = props;
   const dispatch = useDispatch();
   const editMode = !!id;
+  const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isEditClicked, setIsEditClicked] = useState(false);
   const data = useSelector(state =>
@@ -19,8 +20,9 @@ const UserManage = props => {
 
   useEffect(() => {
     setIsEditClicked(false);
-    if (!!id) {
-      dispatch(getUser(id));
+    if (!!id && (!data || data.id !== !!id)) {
+      setIsLoading(true);
+      dispatch(getUser(id)).then(() => setIsLoading(false));
     }
   }, [id]);
 
@@ -113,7 +115,7 @@ const UserManage = props => {
   const renderRequiredFieldLabel = (label) =>
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>;
 
-  return !editMode || (editMode && data) ? (
+  return !isLoading ? (
     <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
       {preview && !isEditClicked && (
         <Button className={styles.editButton} transparent onClick={() => setIsEditClicked(true)}>

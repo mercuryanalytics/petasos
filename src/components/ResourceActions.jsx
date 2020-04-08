@@ -1,232 +1,262 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ResourceActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
-import { MdPlayArrow, MdFolder, MdInsertDriveFile } from 'react-icons/md';
+import { MdPlayArrow, MdFolder, MdInsertDriveFile, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
-import { getReports } from '../store/reports/actions';
+import { getReports, getClientReports } from '../store/reports/actions';
 import { getAuthorizedUsers, authorizeUser } from '../store/users/actions';
 
 const ResourceActions = props => {
   const { clientId, userId } = props;
-  const [previousProps, setPreviousProps] = useState({ clientId: null, userId: null });
   const dispatch = useDispatch();
+  const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
   const [isLoading, setIsLoading] = useState(true);
+  const [client, setClient] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [reports, setReports] = useState({});
+  const [clientReports, setClientReports] = useState([]);
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
-  const [activeItems, setActiveItems] = useState({});
-  const client = useSelector(state =>
-    state.clientsReducer.clients.filter(c => c.id === clientId)[0] || null);
-  const projects = useSelector(state =>
-    client ? state.projectsReducer.projects.filter(p => p.domain_id === clientId) : []);
-  const reports = useSelector(state => {
-    const pids = {};
-    projects.forEach(p => pids[p.id] = true);
-    return state.reportsReducer.reports.filter(r => !!pids[r.project_id]);
-  });
-  const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
-  const [blockedItems, setBlockedItems] = useState({});
-  const [refreshActiveItems, setRefreshActiveItems] = useState(false);
+  const [activeStates, setActiveStates] = useState({});
+  const [previewTarget, setPreviewTarget] = useState(null);
 
-  const init = async () => {
-    return Promise.all([
-      await dispatch(getClient(clientId)),
-      await dispatch(getAuthorizedUsers(clientId, { clientId: clientId })),
-      await dispatch(getProjects(clientId)),
+  const init = useCallback(async () => {
+    const initProjectAuthorizations = async (id) => {
+      await dispatch(getAuthorizedUsers(clientId, { projectId: id }));
+    }
+    const initReportAuthorizations = async (id) => {
+      await dispatch(getAuthorizedUsers(clientId, { reportId: id }));
+    }
+    return await Promise.all([
+      dispatch(getClient(clientId)).then((action) => {
+        setClient(action.payload);
+      }),
+      dispatch(getAuthorizedUsers(clientId, { clientId: clientId })),
+      dispatch(getProjects(clientId)).then(async (action) => {
+        let promises = [];
+        for (let i = 0; i < action.payload.length; i++) {
+          promises.push(initProjectAuthorizations(action.payload[i].id));
+        }
+        await Promise.all(promises).then(() => {
+          setProjects(action.payload);
+        });
+      }),
+      dispatch(getClientReports(clientId)).then(async (action) => {
+        let promises = [];
+        for (let i = 0; i < action.payload.length; i++) {
+          promises.push(initReportAuthorizations(action.payload[i].id));
+        }
+        await Promise.all(promises).then(() => {
+          setClientReports(action.payload);
+        });
+      }),
     ]);
-  };
+  }, [clientId]);
 
   useEffect(() => {
-    if (clientId !== previousProps.clientId || userId !== previousProps.userId) {
-      setPreviousProps({ clientId, userId });
+    if (clientId && userId && (!client || client.id !== clientId)) {
       setIsLoading(true);
-      init().then(() => setRefreshActiveItems(true));
+      setOpenProjects({});
+      init().then(() => setIsLoading(false));
     }
   }, [clientId, userId]);
 
-  useEffect(() => {
-    for (let id in openProjects) {
-      if (!!openProjects[id] && !loadedProjects[id]) {
-        dispatch(getReports(id)).then(() => {
-          setLoadedProjects({ ...loadedProjects, [id]: true });
-          setRefreshActiveItems(true);
+  const handleProjectToggle = useCallback(async (id) => {
+    const initReportAuthorizations = async (id) => {
+      await dispatch(getAuthorizedUsers(clientId, { reportId: id }));
+    }
+    const status = !!openProjects[id];
+    setOpenProjects(prev => ({ ...prev, [id]: !status }));
+    if (!loadedProjects[id]) {
+      await dispatch(getReports(id)).then(async (action) => {
+        let promises = [];
+        for (let i = 0; i < action.payload.length; i++) {
+          promises.push(initReportAuthorizations(action.payload[i].id));
+        }
+        await Promise.all(promises).then(() => {
+          setReports(prev => ({ ...prev, [id]: action.payload }));
+          setLoadedProjects(prev => ({ ...prev, [id]: true }));
         });
+      });
+    }
+  }, [clientId, openProjects, loadedProjects]);
+
+  const getItemStatus = useCallback((type, id, stack) => {
+    const currentState = activeStates[`${type}-${id}`];
+    if (currentState === true || currentState === false) {
+      return currentState;
+    }
+    const users = stack || authorizedUsers[`${type}-${id}@${clientId}`];
+    if (users) {
+      for (let i = 0; i < users.length; i++) {
+        const user = users[i];
+        if (user.id === userId && user.authorized) {
+          return true;
+        }
       }
     }
-  }, [openProjects]);
+    return false;
+  }, [clientId, userId, authorizedUsers, activeStates]);
 
-  useEffect(() => {
-    let states = {}, pids = {};
-    if (client) {
-      const clientKey = `client-${clientId}@${clientId}`;
-      (authorizedUsers[clientKey] || []).forEach(u =>
-        u.id === userId && (states[clientId] = u.authorized));
-    }
-    if (projects.length) {
-      let blocked = {};
+  const setItemStatus = useCallback((type, id, status) => {
+    const options = { [`${type}Id`]: id };
+    let newStates = {};
+    dispatch(authorizeUser(userId, clientId, options, status));
+    newStates[`${type}-${id}`] = status;
+    const handleItem = async (itemType, itemId, isAsync) => {
+      const itemOptions = { [`${itemType}Id`]: itemId };
+      if (status) {
+        if (isAsync) {
+          setActiveStates(prev => ({ ...prev, [`${itemType}-${itemId}`]: true }));
+        } else {
+          newStates[`${itemType}-${itemId}`] = true;
+        }
+      }
+      dispatch(getAuthorizedUsers(clientId, itemOptions)).then((action) => {
+        const _status = getItemStatus(itemType, itemId, action.payload);
+        if (status && !_status) {
+          dispatch(authorizeUser(userId, clientId, itemOptions, status));
+        }
+      });
+    };
+    const handleProjectReports = (projectId) => {
+      dispatch(getReports(projectId)).then(action => action.payload.forEach((r) => {
+        handleItem('report', r.id, true);
+      }));
+    };
+    if (type === 'client') {
       projects.forEach(p => {
-        const key = `project-${p.id}@${clientId}`;
-        const localKey = `${clientId}-${p.id}`;
-        if (authorizedUsers.hasOwnProperty(key)) {
-          (authorizedUsers[key] || []).forEach(u => {
-            if (u.id === userId) {
-              blocked[localKey] = false;
-              states[localKey] = u.authorized;
-            }
-          });
-        } else if (!blockedItems[localKey]) {
-          blocked[localKey] = true;
-          dispatch(getAuthorizedUsers(clientId, { projectId: p.id })).then(() => {
-            setBlockedItems({ ...blockedItems, [localKey]: false });
-            setRefreshActiveItems(true);
-          });
-        }
+        handleItem('project', p.id);
+        handleProjectReports(p.id);
       });
-      setBlockedItems({ ...blockedItems, ...blocked });
-    }
-    if (reports.length) {
-      let blocked = {};
-      reports.forEach(r => {
-        const key = `report-${r.id}@${clientId}`;
-        const localKey = `${clientId}-${r.project_id}-${r.id}`;
-        if (authorizedUsers.hasOwnProperty(key)) {
-          (authorizedUsers[key] || []).forEach(u => {
-            if (u.id === userId) {
-              blocked[localKey] = false;
-              states[localKey] = u.authorized;
-            }
-          });
-        } else if (!blockedItems[localKey]) {
-          blocked[localKey] = true;
-          dispatch(getAuthorizedUsers(clientId, { reportId: r.id })).then(() => {
-            setBlockedItems({ ...blockedItems, [localKey]: false });
-            setRefreshActiveItems(true);
-          });
-        }
+      clientReports.forEach(r => {
+        handleItem('report', r.id);
       });
-      setBlockedItems({ ...blockedItems, ...blocked });
+    } else if (type === 'project') {
+      handleProjectReports(id);
     }
-    setRefreshActiveItems(false);
-    setActiveItems(states);
-    setIsLoading(false);
-  }, [refreshActiveItems]);
-
-  const handleProjectToggle = (id) => {
-    setOpenProjects({ ...openProjects, [id]: !openProjects[id] });
-  };
-
-  const handleClientStatusChange = (status) => {
-    const key = `${clientId}`;
-    if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { clientId: clientId }))
-        .then(() => setRefreshActiveItems(true));
-      // projects.forEach(p => {
-      //   const key = `project-${p.id}@${clientId}`;
-      //   const localKey = `${clientId}-${p.id}`;
-      //   (authorizedUsers[key] || []).forEach(u => {
-      //     if (u.id === userId && u.authorized === !status) {
-      //       dispatch(authorizeUser(userId, clientId, { projectId: p.id }))
-      //         .then(() => setRefreshActiveItems(true));
-      //       setActiveItems({ ...activeItems, [localKey]: status });
-      //     }
-      //   });
-      // });
-    }
-  };
-
-  const handleProjectStatusChange = (id, status) => {
-    const key = `${clientId}-${id}`;
-    if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { projectId: id }))
-        .then(() => setRefreshActiveItems(true));
-      // dispatch(getReports(id)).then(() => {
-      // });
-    }
-  };
-
-  const handleReportStatusChange = (id, pid, status) => {
-    const key = `${clientId}-${pid}-${id}`;
-    if (status !== !!activeItems[key]) {
-      dispatch(authorizeUser(userId, clientId, { reportId: id }))
-        .then(() => setRefreshActiveItems(true));
-    }
-  };
+    setActiveStates(prev => ({ ...prev, ...newStates }));
+  }, [clientId, userId, getItemStatus, activeStates, projects, clientReports]);
 
   return !isLoading ? (
     <div className={styles.container}>
-      <div className={styles.client}>
-        {client && (
-          <div className={styles.title} title={client.name}>
-            <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
-            <span className={styles.name}>{client.name}</span>
-            <Toggle
-              id={`client-toggle-${client.id}`}
-              className={styles.itemToggle}
-              active={!!activeItems[client.id]}
-              onChange={status => handleClientStatusChange(status)}
-            />
-          </div>
-        )}
-      </div>
-      {!((projects || []).filter(p => (
-        !!blockedItems[`${client.id}-${p.id}`]
-      )).length) ? (
-        !projects || !projects.length ? (
-          <div className={styles.noResults}>No results</div>
-        ) : projects.map(project => (
-          <div key={project.id} className={styles.project}>
+      <div className={styles.edit}>
+        <div className={styles.client}>
+          {client && (
             <div
               className={styles.title}
-              title={project.name}
-              onClick={() => handleProjectToggle(project.id)}
+              title={client.name}
+              onMouseOver={() => setPreviewTarget('Clients')}
+              onMouseOut={() => setPreviewTarget(null)}
             >
-              <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-              <MdFolder className={styles.icon} />
-              <span className={styles.name}>{project.name}</span>
+              <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
+              <span className={styles.name}>{client.name}</span>
               <Toggle
-                id={`project-toggle-${project.id}`}
+                id={`client-toggle-${client.id}`}
                 className={styles.itemToggle}
-                active={!!activeItems[`${client.id}-${project.id}`]}
-                onChange={status => handleProjectStatusChange(project.id, status)}
+                checked={getItemStatus('client', client.id)}
+                onChange={status => setItemStatus('client', client.id, status)}
               />
             </div>
-            {!!openProjects[project.id] && (
-              loadedProjects[project.id] && !((reports || []).filter(r => (
-                !!blockedItems[`${client.id}-${project.id}-${r.id}`]
-              )).length) ? (
-                (!reports || !reports.filter(r => (
-                  r.project_id === project.id
-                )).length) ? (
-                  <div className={styles.noResults}>No results</div>
-                ) : !!reports && reports.filter(r => r.project_id === project.id).map(report => (
-                  <div key={report.id} className={styles.report} title={report.name}>
-                    <div className={styles.title}>
-                      <MdInsertDriveFile className={styles.icon} />
-                      <span className={styles.name}>{report.name}</span>
-                      <Toggle
-                        id={`report-toggle-${report.id}`}
-                        className={styles.itemToggle}
-                        active={!!activeItems[`${client.id}-${project.id}-${report.id}`]}
-                        onChange={status => handleReportStatusChange(report.id, project.id, status)}
-                      />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <Loader inline className={styles.loader} />
-              )
-            )}
+          )}
+          {!!projects.length || !!clientReports.length ? <>
+            {projects.map(project => (
+              <div key={project.id} className={styles.project}>
+                <div
+                  className={styles.title}
+                  title={project.name}
+                  onClick={() => handleProjectToggle(project.id)}
+                  onMouseOver={() => setPreviewTarget('Projects')}
+                  onMouseOut={() => setPreviewTarget(null)}
+                >
+                  <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
+                  <MdFolder className={styles.icon} />
+                  <span className={styles.name}>{project.name}</span>
+                  <Toggle
+                    id={`project-toggle-${project.id}`}
+                    className={styles.itemToggle}
+                    checked={getItemStatus('project', project.id)}
+                    onChange={status => setItemStatus('project', project.id, status)}
+                  />
+                </div>
+                {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
+                  (!!reports[project.id] && !!reports[project.id].length) ? (
+                    reports[project.id].map(report => (
+                      <div
+                        key={report.id}
+                        className={styles.report}
+                        title={report.name}
+                        onMouseOver={() => setPreviewTarget('Reports')}
+                        onMouseOut={() => setPreviewTarget(null)}
+                      >
+                        <div className={styles.title}>
+                          <MdInsertDriveFile className={styles.icon} />
+                          <span className={styles.name}>{report.name}</span>
+                          <Toggle
+                            id={`report-toggle-${report.id}`}
+                            className={styles.itemToggle}
+                            checked={getItemStatus('report', report.id)}
+                            onChange={status => setItemStatus('report', report.id, status)}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.noResults}>No results</div>
+                  )
+                ) : (
+                  <Loader inline className={styles.loader} />
+                ))}
+              </div>
+            ))}
+            {clientReports.map(clientReport => (
+              <div
+                key={clientReport.id}
+                className={`${styles.report} ${styles.clientReport}`}
+                title={clientReport.name}
+                onMouseOver={() => setPreviewTarget('Reports')}
+                onMouseOut={() => setPreviewTarget(null)}
+              >
+                <div className={styles.title}>
+                  <MdInsertDriveFile className={styles.icon} />
+                  <span className={styles.name}>{clientReport.name}</span>
+                  <Toggle
+                    id={`client-report-toggle-${clientReport.id}`}
+                    className={styles.itemToggle}
+                    checked={getItemStatus('report', clientReport.id)}
+                    onChange={status => setItemStatus('report', clientReport.id, status)}
+                  />
+                </div>
+              </div>
+            ))}
+          </> : (
+            <div className={styles.noResults}>No results</div>
+          )}
+        </div>
+      </div>
+      <div className={styles.preview}>
+        <div className={styles.title}>User permissions</div>
+        {(['Clients', 'Projects', 'Reports']).map(item => (
+          <div key={item} className={`${styles.item} ${previewTarget === item ? styles.active : ''}`}>
+            <div className={styles.itemName}>{item}</div>
+            <div className={styles.itemState}>
+              <MdCheckBoxOutlineBlank />
+            </div>
+            <div className={styles.itemState}>
+              <MdCheckBox />
+            </div>
           </div>
-        ))
-      ) : (
-        <Loader inline className={styles.loader} />
-      )}
+        ))}
+      </div>
     </div>
   ) : (
-    <Loader inline className={styles.loader} />
+    <div className={styles.loaderContainer}>
+      <Loader inline className={styles.loader} />
+    </div>
   );
 };
 

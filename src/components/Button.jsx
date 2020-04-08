@@ -3,8 +3,9 @@ import styles from './Button.module.css';
 import { Link } from 'react-router-dom';
 import Loader from './Loader';
 
-const renderLoader = () =>
-  <Loader inline size={3} className={styles.loader} />;
+const renderLoader = () => (
+  <Loader inline size={3} className={styles.loader} />
+);
 
 const Button = props => {
   const { loading } = props;

@@ -102,9 +102,7 @@ const ProjectManage = props => {
       } else {
         dispatch(createProject(result)).then(action => {
           setIsBusy(false);
-          if (action.payload) {
-            history.push(Routes.ManageProject.replace(':id', action.payload.id));
-          }
+          history.push(Routes.ManageProject.replace(':id', action.payload.id));
         });
       }
     },
@@ -250,7 +248,7 @@ const ProjectManage = props => {
             mode={UserActionsModes.Grant}
             context={UserActionsContexts.Project}
             clientId={data ? data.domain_id : clientId}
-            projectId={data ? data.id : null}
+            projectId={data.id}
           />
         </div>
       )}

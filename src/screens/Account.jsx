@@ -16,11 +16,11 @@ const Account = () => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (activeUser) {
+    if (activeUser && !user) {
       dispatch(setLocationData({ account: activeUser.email }));
       dispatch(getUsers());
     }
-  }, [activeUser]);
+  }, [activeUser, user]);
 
   return (
     <Screen className={styles.container} private onLoad={() => setReady(true)}>

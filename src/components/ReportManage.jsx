@@ -21,25 +21,12 @@ const ReportManage = props => {
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
-  const activeProject = useSelector(state => {
-    let pid = typeof projectId !== 'undefined' ? projectId : (data ? data.project_id : null);
-    return pid !== null ? state.projectsReducer.projects.filter(p => p.id === pid)[0] : null;
-  });
-  const [clientId, setClientId] = useState(null);
 
   useEffect(() => {
     if (!!id) {
       dispatch(getReport(id));
     }
   }, [id]);
-
-  useEffect(() => {
-    if (activeProject) {
-      setClientId(activeProject.domain_id);
-    } else {
-      setClientId(null);
-    }
-  }, [activeProject]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -80,9 +67,7 @@ const ReportManage = props => {
       } else {
         dispatch(createReport(result)).then(action => {
           setIsBusy(false);
-          if (action.payload) {
-            history.push(Routes.ManageReport.replace(':id', action.payload.id));
-          }
+          history.push(Routes.ManageReport.replace(':id', action.payload.id));
         });
       }
     },
@@ -168,7 +153,7 @@ const ReportManage = props => {
           <UserActions
             mode={UserActionsModes.Grant}
             context={UserActionsContexts.Report}
-            clientId={clientId}
+            clientId={data.project.domain_id}
             reportId={data.id}
           />
         </div>

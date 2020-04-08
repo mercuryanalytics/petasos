@@ -141,7 +141,7 @@ export function getAuthorizedUsers(contextId, { clientId, projectId, reportId },
   }
   const queryString = `?client_id=${contextId}`;
   return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`, { forced })
+    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`, { forced: true })
       .then(res => dispatch(getAuthorizedUsersSuccess(res, contextId, clientId, projectId, reportId)))
       .catch(err => dispatch(getAuthorizedUsersFailure(err)));
   };
@@ -161,7 +161,7 @@ export const getAuthorizedUsersFailure = (error) => ({
   payload: error,
 });
 
-export function authorizeUser(id, contextId, { clientId, projectId, reportId }) {
+export function authorizeUser(id, contextId, { clientId, projectId, reportId }, status) {
   let resPath = 'clients', resId = clientId;
   if (!!projectId) {
     resPath = 'projects';
@@ -173,15 +173,16 @@ export function authorizeUser(id, contextId, { clientId, projectId, reportId }) 
   const data = {
     user_id: id,
     client_id: contextId,
+    authorize: !!status,
   };
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
-      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId)))
+      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, !!status)))
       .catch(err => dispatch(authorizeUserFailure(err)));
   };
 }
 
-export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId) => ({
+export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId, status) => ({
   type: 'AUTHORIZE_USER_SUCCESS',
   payload: data,
   userId: userId,
@@ -189,6 +190,7 @@ export const authorizeUserSuccess = (data, userId, contextId, clientId, projectI
   clientId: clientId,
   projectId: projectId,
   reportId: reportId,
+  status: status,
 });
 
 export const authorizeUserFailure = (error) => ({

@@ -7,9 +7,10 @@ import Loader from '../Loader';
 import Avatar from '../Avatar';
 import Project from './Project';
 import ProjectAdd from './ProjectAdd';
+import Report from './Report';
 
 const Client = props => {
-  const { data, projects, reports, open, loaded, openProjects, loadedProjects } = props;
+  const { data, projects, reports, clientReports, open, loaded, openProjects, loadedProjects } = props;
   const [isTouched, setIsTouched] = useState(false);
   const [isOpen, setIsOpen] = useState(!!open);
 
@@ -68,8 +69,8 @@ const Client = props => {
       </Link>
       {isOpen && (
         <div className={styles.content}>
-          {!!projects && !!projects.length ? (
-            projects.map(project => (
+          {projects && clientReports && !!(projects.length || clientReports.length) ? <>
+            {projects.map(project => (
               <Project
                 key={`project-btn-${project.id}`}
                 data={project}
@@ -82,12 +83,20 @@ const Client = props => {
                 onOpen={onProjectOpen}
                 onClose={onProjectClose}
               />
-            ))
-          ) : (
+            ))}
+            {clientReports.map(clientReport => (
+              <Report
+                key={`client-report-btn-${clientReport.id}`}
+                data={clientReport}
+                active={props.activeReport === clientReport.id}
+                orphan={true}
+              />
+            ))}
+          </> : (
             !loaded ? (
               <Loader inline className={styles.loader} />
             ) : (
-              <span className={styles.noResults}>No results</span>
+              <div className={styles.noResults}>No results</div>
             )
           )}
           <ProjectAdd clientId={data.id} active={isAdding} />

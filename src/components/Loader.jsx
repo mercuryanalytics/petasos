@@ -10,7 +10,10 @@ const Loader = props => {
   }
 
   return (
-    <div className={`${styles.container} ${props.className || ''} ${!!props.inline && styles.inline}`}>
+    <div
+      data-app-loader="1"
+      className={`app-loader ${styles.container} ${props.className || ''} ${!!props.inline && styles.inline}`}
+    >
       <div className={styles.loader}>
         {segments.map(n => <div key={n} className={styles[`r${n}`]}></div>)}
       </div>

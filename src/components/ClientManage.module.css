@@ -103,12 +103,6 @@
   width: calc(50% - 10px);
 }
 
-.loader {
-  display: flex !important;
-  justify-content: center;
-  width: 100% !important;
-}
-
 .section.details {
   display: flex;
   padding: 0;
@@ -141,6 +135,7 @@
 
 .section.accounts .userActions {
   flex-grow: 1;
+  overflow: hidden;
 }
 
 .innerTabs {
@@ -184,5 +179,23 @@
 }
 
 .innerContent {
+  height: 100%;
+}
+
+.innerContent.spaced {
   padding: 25px 2rem 2rem 2rem;
+}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}
+
+.noUser {
+  display: block;
+  padding: 10px 5px;
+  text-align: center;
+  font-size: .85rem;
+  color: #A9A9A9;
 }

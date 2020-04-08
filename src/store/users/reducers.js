@@ -65,7 +65,7 @@ const usersReducer = (state = initialState, action) => {
       };
     }
     case 'AUTHORIZE_USER_SUCCESS': {
-      const { userId, contextId, clientId, projectId, reportId } = action;
+      const { userId, contextId, clientId, projectId, reportId, status } = action;
       const key = (reportId ? `report-${reportId}` :
         (projectId ? `project-${projectId}` : `client-${clientId}`)) + `@${contextId}`;
       if (state.authorizedUsers.hasOwnProperty(key)) {
@@ -74,7 +74,7 @@ const usersReducer = (state = initialState, action) => {
           let user = data[i];
           if (user.id === userId) {
             data = [ ...data ];
-            data[i] = { ...user, authorized: !user.authorized };
+            data[i] = { ...user, authorized: status };
             return {
               ...state,
               authorizedUsers: {

@@ -1,21 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import styles from './Toggle.module.css';
 
+let timeout = {};
+
 const Toggle = props => {
-  const { id, active } = props;
-  const [status, setStatus] = useState(false);
+  const { id, checked } = props;
 
-  useEffect(() => {
-    setStatus(!!active);
-  }, [active]);
-
-  const handleChange = (event) => {
-    let newStatus = !!event.target.checked;
-    setStatus(newStatus);
-    if (props.onChange) {
-      props.onChange(newStatus);
+  const throttleChange = useCallback((status) => {
+    if (timeout[id]) {
+      clearTimeout(timeout[id]);
     }
-  };
+    timeout[id] = setTimeout(() => {
+      if (props.onChange && status !== checked) {
+        props.onChange(status);
+        timeout[id] = null;
+      }
+    }, 50);
+  }, [timeout, props.onChange, checked]);
+
+  const handleChange = useCallback((event) => {
+    throttleChange(!!event.target.checked);
+    event.stopPropagation();
+  }, [throttleChange]);
 
   return (
     <div className={styles.container}>
@@ -24,7 +30,7 @@ const Toggle = props => {
         type="checkbox"
         id={id}
         onChange={handleChange}
-        checked={status}
+        checked={!!checked}
       />
       <label htmlFor={id} className={styles.switch}></label>
     </div>

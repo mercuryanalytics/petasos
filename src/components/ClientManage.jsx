@@ -52,6 +52,7 @@ const ClientManage = props => {
 
   useEffect(() => {
     if (!!id) {
+      setSelectedUserId(null);
       dispatch(getClient(id));
     }
   }, [id]);
@@ -121,9 +122,7 @@ const ClientManage = props => {
       } else {
         dispatch(createClient(result)).then(action => {
           setIsBusy(false);
-          if (action.payload) {
-            history.push(Routes.ManageClient.replace(':id', action.payload.id));
-          }
+          history.push(Routes.ManageClient.replace(':id', action.payload.id));
         });
       }
     },
@@ -404,7 +403,7 @@ const ClientManage = props => {
               <UserActions
                 mode={UserActionsModes.Grant}
                 context={UserActionsContexts.Client}
-                clientId={data && data.id}
+                clientId={data.id}
               />
             </div>
           )}
@@ -419,7 +418,7 @@ const ClientManage = props => {
             <UserActions
               mode={UserActionsModes.Manage}
               context={UserActionsContexts.Client}
-              clientId={data && data.id}
+              clientId={data.id}
               onUserSelect={id => setSelectedUserId(id)}
             />
           </div>
@@ -438,10 +437,18 @@ const ClientManage = props => {
                 <span>Access and Permissions</span>
               </div>
             </div>
-            <div className={styles.innerContent}>
+            <div className={`
+              ${styles.innerContent}
+              ${accountsTab === AccountsTabs.Info || selectedUserId === null ? styles.spaced : ''}
+            `}>
               {(accountsTab === AccountsTabs.Info && (
                 selectedUserId !== null && (
-                  <UserManage id={selectedUserId} clientId={editMode ? id : null} preview={true} embeded={true} />
+                  <UserManage
+                    id={selectedUserId}
+                    clientId={editMode ? id : null}
+                    preview={true}
+                    embeded={true}
+                  />
                 )
               )) ||
               (accountsTab === AccountsTabs.Permissions && (
@@ -449,6 +456,9 @@ const ClientManage = props => {
                   <ResourceActions clientId={id} userId={selectedUserId} />
                 )
               ))}
+              {selectedUserId === null && (
+                <div className={styles.noUser}>No selected user</div>
+              )}
             </div>
           </div>
         </div>

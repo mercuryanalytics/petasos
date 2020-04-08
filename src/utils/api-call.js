@@ -3,62 +3,66 @@ import store from '../store';
 let cached = {};
 
 const apiCall = (method, url, options) => {
-  const authKey = store.getState().authReducer.authKey;
+  const state = store.getState();
+  const authKey = state.authReducer.authKey;
+  let cache = false;
+
   if (!authKey) {
     return;
   }
-  if (!!((options || {}).forced) && cached.hasOwnProperty(url)) {
+
+  options = options || {};
+
+  if (!!options.forced && cached.hasOwnProperty(url)) {
     delete cached[url];
   }
+
   if (method.toUpperCase() === 'GET') {
-    const urlNoQs = url.split('?')[0];
     let block = cached.hasOwnProperty(url);
     if (!block) {
-      if (url.indexOf('/researchers') === -1 && url.indexOf('/authorized') === -1) {
-        if (url.indexOf('?') > -1) {
-          if (!!cached[urlNoQs]) {
-            block = true;
-          }
-        } else {
-          for (let cachedUrl in cached) {
-            if (url.indexOf(cachedUrl) === 0) {
-              block = true;
-              break;
-            }
-          }
-        }
-        cached[url] = true;
-      }
+      // @TODO Enable caching
+      // cache = true;
     }
     if (block) {
-      return (new Promise((resolve, reject) => {
-        resolve([]);
+      return (new Promise((resolve) => {
+        const _result = JSON.parse(cached[url]);
+        return resolve(_result.hasOwnProperty('data') ? _result.data : _result);
       }));
     }
   }
-  options = options || {};
-  let finalOptions = {
+
+  let fetchOptions = {
     method: method,
     headers: new Headers({
       'Authorization': `Bearer ${authKey}`,
       'Content-Type': 'application/json',
     }),
   };
+
   if (options.body) {
-    finalOptions.body = options.body;
+    fetchOptions.body = options.body;
   }
-  return fetch(url, finalOptions)
-    .then(res => res.text())
-    .then(res => {
-      try {
-        let result = JSON.parse(res).data;
-        if (url.indexOf('/authorized') > -1 && Array.isArray(result)) {
-          cached[url] = true;
+
+  return fetch(url, fetchOptions)
+    .then(response => response.text())
+    .then(response => {
+      if (response.length) {
+        try {
+          let result = JSON.parse(response);
+          if (result.hasOwnProperty('errors')) {
+            return Promise.reject(result);
+          }
+          if (cache) {
+            cached[url] = JSON.stringify(result);
+          }
+          return result.hasOwnProperty('data') ? result.data : '';
+        } catch (e) {
+          return Promise.reject(e);
         }
-        return result;
-      } catch (e) {
-        return '';
       }
+      return '';
+    }, (reason) => {
+      return Promise.reject(reason);
     });
 };
 

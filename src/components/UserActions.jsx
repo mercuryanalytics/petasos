@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './UserActions.module.css';
 import { getClients } from '../store/clients/actions';
@@ -27,135 +27,128 @@ const UserActions = props => {
   const { mode, context, clientId, projectId, reportId } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [userNameFilter, setUserNameFilter] = useState(null);
+  const [authorizedOptions, setAuthorizedOptions] = useState(null);
   const [openClients, setOpenClients] = useState({});
   const [loadedClients, setLoadedClients] = useState({});
-  const [activeItems, setActiveItems] = useState({});
+  const [allowedClients, setAllowedClients] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [activeStates, setActiveStates] = useState({});
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isAddDomainOpen, setIsAddDomainOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const clients = useSelector(state => state.clientsReducer.clients);
-  const users = useSelector(state => {
-    let result = state.usersReducer.users;
-    return mode === UserActionsModes.Grant ? result
-      : result.filter(u => u.client_ids.indexOf(clientId) > -1);
-  });
+  const users = useSelector(state => state.usersReducer.users);
+  const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
+  const [userNameFilter, setUserNameFilter] = useState(null);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [blockedClients, setBlockedClients] = useState([]);
-  const [allowedClients, setAllowedClients] = useState([]);
-  const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
+  const [openClientsBackup, setOpenClientsBackup] = useState(null);
 
-  useEffect(() => {
-    dispatch(getClients()).then(() => setIsLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (mode === UserActionsModes.Grant) {
-      dispatch(getUsers());
-    }
-  }, [mode]);
-
-  useEffect(() => {
-    if (mode === UserActionsModes.Grant) {
-      let ids = {};
-      users.forEach(u => u.client_ids.forEach(cid => ids[cid] = true));
-      setAllowedClients(Object.keys(ids).map(x => +x));
-    }
-  }, [users, mode]);
-
-  useEffect(() => {
-    let authorizedOptions = {};
-    if (projectId) {
-      authorizedOptions.projectId = projectId;
-    } else if (reportId) {
-      authorizedOptions.reportId = reportId;
-    } else {
-      authorizedOptions.clientId = clientId;
-    }
-    for (let id in openClients) {
-      if (!loadedClients[id]) {
-        dispatch(getUsers(id));
-        dispatch(getAuthorizedUsers(id, authorizedOptions)).then(() => {
-          setLoadedClients({ ...loadedClients, [id]: true });
-        });
-      }
-    }
-  }, [openClients]);
-
-  useEffect(() => {
-    if (allowedClients.length) {
-      let states = {};
-      const keyPref = `${context}-${reportId || projectId || clientId}@`;
-      allowedClients.forEach(cid => {
-        let data = authorizedUsers[keyPref + cid] || [];
-        data.forEach(u => u.client_ids.forEach(mcid => {
-          if (allowedClients.indexOf(mcid) > -1) {
-            states[`${mcid}-${u.id}`] = u.authorized;
-          }
-        }));
-      });
-      setActiveItems({ ...states });
-    }
-  }, [authorizedUsers, allowedClients]);
-
-  useEffect(() => {
-    if (mode === UserActionsModes.Manage) {
-      setAllowedClients([clientId]);
-    }
-    setSelectedItem(null);
-    setLoadedClients({ [clientId]: false });
-    setOpenClients({ [clientId]: true });
-  }, [mode, clientId, projectId, reportId]);
-
-  const handleClientToggle = (id) => {
-    setOpenClients({ ...openClients, [id]: !openClients[id] });
-  };
-
-  const handleSettingsToggle = (id, event) => {
-    // @TODO Open, implement settings
-    event.stopPropagation();
-  };
-
-  const handleItemDelete = (id) => {
-    setIsDeleteBusy({ ...isDeleteBusy, [id]: true });
-    dispatch(deleteUser(id, (!!clientId ? clientId : null/* @TODO */)))
-      .then(() => setIsDeleteBusy({ ...isDeleteBusy, [id]: false }));
-  };
-
-  const handleItemActiveChange = (groupId, id, status) => {
-    const key = `${groupId}-${id}`;
-    if (status !== !!activeItems[key]) {
-      let authorizedOptions = {};
-      if (projectId) {
-        authorizedOptions.projectId = projectId;
-      } else if (reportId) {
-        authorizedOptions.reportId = reportId;
-      } else {
-        authorizedOptions.clientId = clientId;
-      }
-      dispatch(authorizeUser(id, groupId, authorizedOptions));
-    }
-  };
-
-  const handleItemSelect = (id) => {
+  const handleItemSelect = useCallback((id) => {
     if (mode === UserActionsModes.Manage) {
       setSelectedItem(id);
       if (props.onUserSelect) {
         props.onUserSelect(id);
       }
     }
-  };
+  }, [mode, props.onUserSelect]);
+
+  const handleClientToggle = useCallback(async (id, forced) => {
+    const status = forced ? !forced : !!openClients[id];
+    setOpenClients(prev => ({ ...prev, [id]: !status }));
+    if (!loadedClients[id]) {
+      await Promise.all([
+        dispatch(getUsers(id)),
+        dispatch(getAuthorizedUsers(id, authorizedOptions)),
+      ]).then(() => {
+        setLoadedClients(prev => ({ ...prev, [id]: true }));
+      });
+    }
+  }, [openClients, loadedClients, authorizedOptions]);
 
   useEffect(() => {
-    if (mode === UserActionsModes.Manage && !isLoading && users.length && selectedItem === null) {
-      handleItemSelect(users[0].id);
+    if (!authorizedOptions) {
+      return;
     }
-  }, [isLoading, mode, clientId, projectId, reportId, users, selectedItem]);
+    setIsLoading(true);
+    setOpenClients({});
+    dispatch(getClients()).then(() => {
+      if (mode === UserActionsModes.Grant) {
+        Promise.all([
+          dispatch(getUsers()),
+          dispatch(getAuthorizedUsers(clientId, authorizedOptions)),
+        ]).then(() => setIsLoading(false));
+        handleClientToggle(clientId, true);
+        return;
+      }
+      setAllowedClients([clientId]);
+      dispatch(getUsers(clientId)).then((action) => {
+        handleClientToggle(clientId, true);
+        setIsLoading(false);
+        handleItemSelect(action.payload.length ? action.payload[0].id : null);
+      });
+    });
+  }, [mode, clientId, authorizedOptions]);
 
-  const [openClientsBackup, setOpenClientsBackup] = useState(null);
+  useEffect(() => {
+    if (clientId || projectId || reportId) {
+      let options = {};
+      if (projectId) {
+        options.projectId = projectId;
+      } else if (reportId) {
+        options.reportId = reportId;
+      } else {
+        options.clientId = clientId;
+      }
+      setAuthorizedOptions(options);
+    }
+  }, [clientId, projectId, reportId]);
 
-  const handleSearch = (value) => {
+  useEffect(() => {
+    if (mode === UserActionsModes.Grant) {
+      let allowedIds = [];
+      users.forEach(u => u.client_ids.forEach(cid => allowedIds.push(cid)));
+      setAllowedClients(allowedIds);
+    }
+  }, [users, mode]);
+
+  const handleSettingsToggle = useCallback((id, event) => {
+    // @TODO Open, implement settings
+    event.stopPropagation();
+  });
+
+  const handleItemDelete = useCallback((id, event) => {
+    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
+    dispatch(deleteUser(id, clientId))
+      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })));
+    event.stopPropagation();
+  }, [clientId]);
+
+  const getItemStatus = useCallback((parentId, itemId) => {
+    const currentState = activeStates[`${parentId}-${itemId}`];
+    if (currentState === true || currentState === false) {
+      return currentState;
+    }
+    const resId = reportId || projectId || clientId;
+    const _users = authorizedUsers[`${context}-${resId}@${parentId}`];
+    if (_users) {
+      for (let i = 0; i < _users.length; i++) {
+        const user = _users[i];
+        if (user.id === itemId && user.authorized) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, [clientId, projectId, reportId, authorizedUsers, activeStates]);
+
+  const setItemStatus = useCallback((parentId, itemId, status) => {
+    dispatch(authorizeUser(itemId, parentId, authorizedOptions, status));
+    setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
+  }, [clientId, projectId, reportId, authorizedOptions]);
+
+  const handleSearch = useCallback((value) => {
     if (!!value.length) {
       if (userNameFilter === null) {
         setOpenClientsBackup({ ...openClients });
@@ -170,7 +163,7 @@ const UserActions = props => {
       }
       setUserNameFilter(null);
     }
-  };
+  }, [userNameFilter, openClients, openClientsBackup]);
 
   useEffect(() => {
     if (userNameFilter) {
@@ -184,9 +177,11 @@ const UserActions = props => {
         }
       });
       clients.forEach(c => !cids[c.id] && (bcids[c.id] = true));
-      setOpenClients(cids);
       setBlockedClients(Object.keys(bcids).map(x => +x));
       setBlockedUsers(Object.keys(buids).map(x => +x));
+      for (let i in cids) {
+        handleClientToggle(+i, true);
+      }
     }
   }, [userNameFilter]);
 
@@ -205,7 +200,7 @@ const UserActions = props => {
       setIsBusy(true);
       const result = {
         email: values.add_user_email,
-        client_id: !!clientId ? clientId : null/* @TODO */,
+        client_id: clientId,
         company_name: null,
         contact_name: null,
         contact_title: null,
@@ -224,16 +219,7 @@ const UserActions = props => {
         result.report_id = reportId;
       }
       dispatch(createUser(result, mode === UserActionsModes.Manage)).then(() => {
-        let authorizedOptions = {};
-        if (projectId) {
-          authorizedOptions.projectId = projectId;
-        } else if (reportId) {
-          authorizedOptions.reportId = reportId;
-        } else {
-          authorizedOptions.clientId = clientId;
-        }
-        dispatch(getUsers());
-        dispatch(getAuthorizedUsers(clientId/* @TODO */, authorizedOptions, { forced: true }));
+        dispatch(getAuthorizedUsers(clientId, authorizedOptions));
         form.reset();
         setIsBusy(false);
         setIsAddUserOpen(false);
@@ -250,7 +236,7 @@ const UserActions = props => {
       </div>
       <div className={styles.adders}>
         <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
-        <button>+ Add domain</button>
+        <button onClick={() => setIsAddDomainOpen(true)}>+ Add domain</button>
       </div>
       <Modal
         className={styles.modal}
@@ -268,15 +254,40 @@ const UserActions = props => {
             label="Email"
           />
           <div className={styles.modalButtons}>
-            <Button type="submit" disabled={isBusy || submitting}>
-              <span>{!isBusy ? 'Invite new user' : 'Inviting new user'}</span>
-              {isBusy && <Loader inline size={3} className={`${styles.busyLoader} ${styles.whiteLoader}`} />}
+            <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
+              {!isBusy ? 'Invite new user' : 'Inviting new user'}
             </Button>
             <Button transparent onClick={() => setIsAddUserOpen(false)}>
               <span>Cancel</span>
             </Button>
           </div>
         </form>
+      </Modal>
+      <Modal
+        className={styles.modal}
+        title="Create new domain"
+        open={isAddDomainOpen}
+        onClose={() => setIsAddDomainOpen(false)}
+      >
+        <div className={styles.modalText}>
+          From here ?
+        </div>
+        AddClientDomain
+        {/* <form className={styles.form} onSubmit={handleSubmit}>
+          <Input
+            className={styles.modalInput}
+            field={addUserField}
+            label="Email"
+          />
+          <div className={styles.modalButtons}>
+            <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
+              {!isBusy ? 'Invite new user' : 'Inviting new user'}
+            </Button>
+            <Button transparent onClick={() => setIsAddUserOpen(false)}>
+              <span>Cancel</span>
+            </Button>
+          </div>
+        </form> */}
       </Modal>
       <div className={styles.permissions}>
         {!isLoading ? (
@@ -327,8 +338,8 @@ const UserActions = props => {
                           <Toggle
                             id={`user-toggle-${client.id}-${user.id}`}
                             className={styles.itemToggle}
-                            active={!!activeItems[`${client.id}-${user.id}`]}
-                            onChange={status => handleItemActiveChange(client.id, user.id, status)}
+                            checked={getItemStatus(client.id, user.id)}
+                            onChange={status => setItemStatus(client.id, user.id, status)}
                           />
                         )) ||
                         (mode === UserActionsModes.Manage && (

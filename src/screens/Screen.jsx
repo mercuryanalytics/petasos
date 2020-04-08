@@ -37,7 +37,7 @@ const Screen = props => {
   }, [user]);
 
   if (props.private) {
-    if (!loading) {
+    if (!loading && !loaded) {
       if (isAuthenticated) {
         getIdTokenClaims().then(res => {
           dispatch(setAuthKey(res.__raw));

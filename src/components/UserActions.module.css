@@ -154,10 +154,6 @@
   height: 25px !important;
 }
 
-.busyLoader.whiteLoader > div > div {
-  background-color: #fff !important;
-}
-
 .noResults {
   display: block;
   padding: 10px 5px;

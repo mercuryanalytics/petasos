@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { MdInsertDriveFile } from 'react-icons/md';
 
 const Report = props => {
-  const { data } = props;
+  const { data, active, orphan } = props;
 
   return (
     <Link
-      className={`${styles.container} ${props.active ? styles.active : ''}`}
+      className={`${styles.container} ${active ? styles.active : ''} ${orphan ? styles.orphan : ''}`}
       to={Routes.ManageReport.replace(':id', data.id)}
       title={data.name}
     >

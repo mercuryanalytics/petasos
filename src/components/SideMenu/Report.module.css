@@ -17,6 +17,10 @@
   color: #7E7F7E;
 }
 
+.container.orphan .title .icon {
+  margin: .325rem .5rem .325rem .2rem;
+}
+
 .title .name {
   flex-grow: 1;
   width: 1px;
