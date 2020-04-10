@@ -163,6 +163,10 @@
   height: 25px !important;
 }
 
+.permissions .group .items .item.selectedItem > .busyLoader > div > div {
+  background-color: #fff;
+}
+
 .noResults {
   display: block;
   padding: 10px 5px;
