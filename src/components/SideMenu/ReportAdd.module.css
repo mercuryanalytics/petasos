@@ -1,13 +1,14 @@
 .container {
-  background-color: #fff;
+  margin: 5px 0;
+  border-radius: 18px;
 }
 
 .container:not(.active):hover {
-  background-color: #F0F0F0;
+  background-color: #fff;
 }
 
 .container.active {
-  background-color: #F0F0F0;
+  background-color: #0D7997;
 }
 
 .container a {
@@ -17,21 +18,26 @@
 .button {
   display: flex;
   align-items: center;
-  margin: 0 .6rem 0 1.8rem;
-  padding: 5px;
-  border-top: 1px dashed #BBBBBB;
+  min-height: 40px;
+  padding: 0 10px;
   color: #000;
   cursor: pointer;
 }
 
 .icon {
+  display: none;
   margin: .325rem .5rem .325rem .3rem;
   font-size: 1.2rem;
   color: #BBBBBB;
 }
 
 .name {
-  font-size: .85rem;
+  margin-left: 1.1rem;
+  font-size: .9375rem;
   font-weight: bold;
-  color: #262626;
+  color: #0C7997;
+}
+
+.container.active .name {
+  color: #fff;
 }

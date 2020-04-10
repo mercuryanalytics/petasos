@@ -1,14 +1,20 @@
 .container {
-  position: relative;
   display: flex;
-  margin: .5rem 2rem;
-  border: 1px solid #B9B9B9;
+  height: 100%;
+  position: relative;
+  margin: 0 0 0 40px;
+  border-radius: 5px 0 0 0;
+  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
   background-color: #fff;
 }
 
 .container.embed {
+  width: 100%;
+  height: auto;
   margin: 0;
+  box-shadow: none;
   border: 0;
+  border-radius: 0;
 }
 
 .container.embed .section {
@@ -32,6 +38,12 @@
   margin-top: -.8rem !important;
   padding: 0 !important;
   font-size: .95rem !important;
+  color: #0C7997 !important;
+  font-weight: bold;
+}
+
+.editButton > * {
+  color: #0C7997 !important;
 }
 
 .editButton svg {
@@ -51,6 +63,7 @@
   margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: bold;
+  color: #333;
 }
 
 .section .form .formSection {
@@ -59,6 +72,11 @@
 
 .section .form .formControl {
   margin-bottom: 1rem;
+}
+
+.section .form .formSection:last-child,
+.section .form .formControl:last-child {
+  margin-bottom: 0 !important;
 }
 
 .section .form .formButtons {

@@ -9,6 +9,7 @@
 }
 
 .preview {
+  display: none;
   width: 180px;
   min-width: 150px;
   border-left: 1px solid #B9B9B9;
@@ -60,9 +61,11 @@
 .client .title {
   display: flex;
   align-items: center;
-  padding: 5px;
+  margin: 0 -10px;
+  padding: 5px 15px;
+  border-radius: 18px;
   background-color: #fff;
-  color: #000;
+  color: #333;
   text-decoration: none;
   cursor: pointer;
 }
@@ -79,13 +82,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .9rem;
+  font-size: 1.125rem;
   font-weight: bold;
-  color: #000;
+  color: #333;
 }
 
 .client:not(.active) .title:hover {
   background-color: #F0F0F0;
+  color: #000;
 }
 
 .client.active .title {
@@ -95,9 +99,10 @@
 .project .title {
   display: flex;
   align-items: center;
-  padding: 5px;
+  margin: 0 -10px;
+  padding: 5px 15px;
   background-color: #fff;
-  color: #000;
+  color: #333;
   text-decoration: none;
   cursor: pointer;
 }
@@ -105,7 +110,7 @@
 .project .title .arrow {
   margin-right: .5rem;
   font-size: 1.2rem;
-  color: #535353;
+  color: #333;
 }
 
 .project .title .arrow.open {
@@ -115,7 +120,7 @@
 .project .title .icon {
   margin: .125rem .5rem .125rem 0;
   font-size: 1.6rem;
-  color: #7E7F7E;
+  color: #333;
 }
 
 .project .title .name {
@@ -124,13 +129,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .85rem;
+  font-size: .875rem;
   font-weight: bold;
-  color: #262626;
+  color: #333;
 }
 
 .project:not(.active) .title:hover {
   background-color: #F0F0F0;
+  color: #000;
 }
 
 .project.active .title {
@@ -139,19 +145,23 @@
 
 .project .content {}
 
+.report {
+  margin-left: 34px;
+}
 .report .title {
   display: flex;
   align-items: center;
-  padding: .3125rem;
+  margin: 0 -10px;
+  padding: 5px 15px;
   background-color: #fff;
-  color: #535353;
+  color: #333;
   cursor: pointer;
 }
 
 .report .title .icon {
-  margin: .325rem .5rem .325rem 2.1rem;
+  margin: .325rem .5rem .325rem 0;
   font-size: 1.2rem;
-  color: #7E7F7E;
+  color: #333;
 }
 
 .report .title .name {
@@ -160,12 +170,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .85rem;
-  color: #262626;
+  font-size: .875rem;
+  color: #333;
 }
 
 .report:not(.active) .title:hover {
   background-color: #F0F0F0;
+  color: #000;
 }
 
 .report.active .title {
@@ -195,6 +206,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .85rem;
+  font-size: .875rem;
   color: #A9A9A9;
 }

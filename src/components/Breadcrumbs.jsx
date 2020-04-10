@@ -8,7 +8,10 @@ const Breadcrumbs = props => {
   return data ? (
     <div className={styles.container}>
       {data.map((fragment, i) => (
-        <span key={`breadcrumb-${i}`} className={styles.value}>
+        <span
+          key={`breadcrumb-${i}`}
+          className={`${styles.value} ${i === data.length-1 ? styles.active : ''}`}
+        >
           <span>{fragment}</span>
           {i !== data.length-1 && <FaAngleRight className={styles.spacer} />}
         </span>

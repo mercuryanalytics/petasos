@@ -108,15 +108,17 @@ const Index = props => {
 
   return !isAccessBlocked ? (
     <Screen className={styles.container} private keepLoading={keepLoading} onLoad={() => setIsLoaded(true)}>
-      <div className={styles.header}>
+      <div className={styles.breadcrumbs}>
         <Breadcrumbs data={breadcrumbs} />
       </div>
-      {(content === ContentTypes.CreateClient && <ClientManage />) ||
-      (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
-      (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
-      (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
-      (content === ContentTypes.CreateReport && <ReportManage projectId={params.projectId} />) ||
-      (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
+      <div className={styles.content}>
+        {(content === ContentTypes.CreateClient && <ClientManage />) ||
+        (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
+        (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
+        (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
+        (content === ContentTypes.CreateReport && <ReportManage projectId={params.projectId} />) ||
+        (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
+      </div>
     </Screen>
   ) : (
     <AccessRestricted />

@@ -3,14 +3,15 @@
   align-items: center;
   justify-content: center;
   min-width: 120px;
-  height: 40px;
+  height: 33px;
   padding: 0 20px;
   cursor: pointer;
-  background-color: #000;
+  border: 1px solid #0C7997;;
+  border-radius: 4px;
+  background-color: #0C7997;
   box-sizing: border-box;
   color: #fff;
-  font-size: .85rem;
-  font-weight: bold;
+  font-size: .875rem;
   outline: none;
   user-select: none;
 }
@@ -24,9 +25,15 @@
 }
 
 .container.transparent {
-  border: 0;
+  border-color: transparent;
   background-color: transparent;
   color: #333;
+}
+
+.container.action {
+  background-color: transparent;
+  border-color: #F37646;
+  color: #F37646;
 }
 
 .container:not(.disabled):not(.transparent):hover {
@@ -51,5 +58,5 @@
 }
 
 .container.transparent .loader > div > div {
-  background-color: #000 !important;
+  background-color: #333 !important;
 }

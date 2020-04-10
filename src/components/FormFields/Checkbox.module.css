@@ -1,5 +1,6 @@
 .container {
   width: 100%;
+  user-select: none;
 }
 
 .container label {
@@ -23,35 +24,41 @@
 .toggle {
   position: relative;
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   box-sizing: border-box;
-  border: 1px solid #B9B9B9;
+  border: 1px solid #DFDFDF;
+  border-radius: 4px;
 }
 
 .toggle .mark {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -.5rem;
-  margin-left: -.5rem;
-  font-size: 1rem;
+  margin-top: -.4rem;
+  margin-left: -.4rem;
+  font-size: .8rem;
 }
 
-.container:not(.disabled):hover .toggle,
+.container:not(.disabled):hover .toggle {
+  border-color: #A0A0A0;
+}
+
 .container:not(.disabled) input:checked ~ .toggle {
-  border-color: #000;
-  color: #000;
+  border-color: #0D7997;
+  background-color: #0D7997;
+  color: #fff;
 }
 
 .label {
   display: inline-block;
-  margin-left: 15px;
-  font-size: .8rem;
+  margin-left: 10px;
+  font-size: .75rem;
+  color: #333;
 }
 
 .error {
   margin-top: .3rem;
   color: #B60010;
-  font-size: .8rem;
+  font-size: .75rem;
 }

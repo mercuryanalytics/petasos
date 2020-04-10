@@ -3,27 +3,37 @@
 .title {
   display: flex;
   align-items: center;
-  padding: 5px;
-  background-color: #fff;
-  color: #000;
+  min-height: 40px;
+  margin: 5px 0;
+  padding: 0 10px;
+  color: #333;
   text-decoration: none;
   cursor: pointer;
+  border-radius: 18px;
 }
 
 .title .arrow {
   margin-right: .5rem;
   font-size: 1.2rem;
-  color: #535353;
+  color: #333;
 }
 
 .title .arrow.open {
   transform: rotate(90deg);
 }
 
+.container.active .arrow {
+  color: #fff;
+}
+
 .title .icon {
   margin: .125rem .5rem .125rem 0;
   font-size: 1.6rem;
-  color: #7E7F7E;
+  color: #333;
+}
+
+.container.active .icon {
+  color: #fff;
 }
 
 .title .name {
@@ -32,20 +42,25 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .85rem;
-  font-weight: bold;
-  color: #262626;
+  font-size: .875rem;
+  color: #333;
 }
 
 .container:not(.active) .title:hover {
-  background-color: #F0F0F0;
+  background-color: #fff;
 }
 
 .container.active .title {
-  background-color: #F0F0F0;
+  background-color: #0D7997;
 }
 
-.content {}
+.container.active .title .name {
+  color: #fff;
+}
+
+.content {
+  margin-left: 20px;
+}
 
 .loader {
   display: flex !important;
@@ -58,6 +73,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .85rem;
+  font-size: .875rem;
   color: #A9A9A9;
 }

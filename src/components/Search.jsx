@@ -3,7 +3,7 @@ import styles from './Search.module.css';
 import { MdSearch, MdRadioButtonChecked, MdRadioButtonUnchecked } from 'react-icons/md';
 
 const Search = props => {
-  const { targets } = props;
+  const { targets, hasShadows } = props;
   const [value, setValue] = useState('');
   const valueRef = useRef(null);
   const [targetsList, setTargetsList] = useState([]);
@@ -43,7 +43,7 @@ const Search = props => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${hasShadows ? styles.shadows : ''}`}>
       <input
         className={`${styles.input} ${showTargets ? styles.active : ''}`}
         type="text"

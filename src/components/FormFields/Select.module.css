@@ -5,8 +5,9 @@
 .container label {
   display: block;
   margin-bottom: .4rem;
-  font-size: .8rem;
+  font-size: .75rem;
   font-weight: bold;
+  color: #333;
 }
 
 .controlWrapper {
@@ -16,7 +17,7 @@
 .trigger {
   display: flex;
   justify-content: space-between;
-  padding: 12px 15px;
+  padding: 7.5px 15px;
 }
 
 .container:not(.disabled) .trigger {
@@ -29,6 +30,7 @@
   right: 15px;
   margin-top: -.5rem;
   font-size: 1rem;
+  color: #333;
 }
 
 .container.open .trigger .triggerIcon {
@@ -46,42 +48,49 @@
   left: 0;
   width: 100%;
   max-height: 220px;
-  margin-top: .5rem;
+  margin-top: 10px;
   box-sizing: border-box;
   background-color: #fff;
-  border: 1px solid #000;
+  border: 1px solid #A0A0A0;
+  border-radius: 3px;
   overflow-y: auto;
+  user-select: none;
 }
 
 .option {
-  padding: 12px 15px;
+  padding: 7.5px 15px;
   cursor: pointer;
+  font-size: .75rem;
+  color: #333;
 }
 
 .option:hover {
-  background-color: #F0F0F0;
+  background-color: #F7F7F7;
+  color: #000;
 }
 
 .option.selected {
-  background-color: #F0F0F0;
-  font-weight: bold;
+  background-color: #F7F7F7;
+  color: #000;
 }
 
 .control {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #B9B9B9;
+  border: 1px solid #DFDFDF;
+  border-radius: 3px;
   outline: none;
-  font-size: .8rem;
+  font-size: .75rem;
+  color: #333;
 }
 
 .container.open .control,
 .container:not(.disabled) .control:hover {
-  border-color: #000;
+  border-color: #A0A0A0;
 }
 
 .error {
   margin-top: .3rem;
-  color: #B60010;
-  font-size: .8rem;
+  color: rgb(231, 183, 187);
+  font-size: .75rem;
 }

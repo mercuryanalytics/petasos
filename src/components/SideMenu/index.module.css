@@ -1,11 +1,9 @@
 .container {
   user-select: none;
-  background-color: #fff;
 }
 
 .search {
-  padding: 10px;
-  border-bottom: 1px solid #B9B9B9;
+  margin-bottom: 25px;
 }
 
 .add {

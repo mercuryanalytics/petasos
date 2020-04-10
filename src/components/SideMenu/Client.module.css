@@ -3,20 +3,27 @@
 .title {
   display: flex;
   align-items: center;
-  padding: 5px;
-  border-bottom: 1px solid #B9B9B9;
-  background-color: #000;
-  color: #fff;
+  min-height: 40px;
+  margin: 5px 0;
+  padding: 0 10px;
+  color: #333;
   text-decoration: none;
   cursor: pointer;
+  border-radius: 18px;
 }
 
 .title .arrow {
   margin-right: .5rem;
   font-size: 1.2rem;
+  color: #333;
 }
+
 .title .arrow.open {
   transform: rotate(90deg);
+}
+
+.container.active .arrow {
+  color: #fff;
 }
 
 .title .logo {
@@ -31,22 +38,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .9rem;
+  font-size: 1.125rem;
 }
 
 .container:not(.active) .title:hover {
-  background-color: #333;
+  background-color: #fff;
 }
+
 .container.active .title {
-  background-color: #333;
+  background-color: #0D7997;
+}
+
+.container.active .title .name {
+  color: #fff;
 }
 
 .content {
-  border-bottom: 1px solid #B9B9B9;
+  margin-left: 20px;
+  /* border-bottom: 1px solid #B9B9B9; */
 }
 
 .orphans {
-  border-top: 1px dashed #BBBBBB;
+  /* border-top: 1px dashed #BBBBBB; */
 }
 
 .loader {
@@ -60,6 +73,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .85rem;
+  font-size: .875rem;
   color: #A9A9A9;
 }

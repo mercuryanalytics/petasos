@@ -16,26 +16,30 @@
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  font-size: .9rem;
+  font-size: .9375rem;
   font-weight: bold;
+  color: #0C7997;
 }
 
 .domain {
   display: flex;
   align-items: center;
   padding: 0 10px 0 13px;
-  margin: 0 -13px;
+  margin: 5px -13px;
   cursor: pointer;
   user-select: none;
-  color: #000;
+  border-radius: 10px;
+  color: #333;
 }
 
 .domain.selected {
-  background-color: #F0F0F0;
+  background-color: #0C7997;
+  color: #fff;
 }
 
 .domain:not(.selected):hover {
-  background-color: #F0F0F0;
+  background-color: #EFEFEF;
+  color: #000;
 }
 
 .domain .name {
@@ -44,13 +48,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .9rem;
+  font-size: .875rem;
   font-weight: bold;
   padding: .6rem .6rem .6rem 0;
 }
 
 .domain .delete {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .modal {
@@ -87,6 +91,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .85rem;
+  font-size: .875rem;
   color: #A9A9A9;
 }

@@ -3,14 +3,14 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: 80px;
-  padding: 0 2rem;
-  background-color: #fff;
+  height: 72px;
+  padding: 0 28px;
   user-select: none;
 }
 
 .logo {
-  height: 52px;
+  width: auto;
+  height: 40px;
 }
 
 .controls {

@@ -311,6 +311,7 @@ const SideMenu = () => {
           placeholder="Search"
           targets={searchComponentTargets}
           defaultTarget={SearchTargets.Reports}
+          hasShadows={true}
           onSearch={handleSearch}
         />
       </div>

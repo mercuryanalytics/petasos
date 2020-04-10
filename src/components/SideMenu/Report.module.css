@@ -5,20 +5,26 @@
 .title {
   display: flex;
   align-items: center;
-  padding: .3125rem;
-  background-color: #fff;
-  color: #535353;
+  min-height: 40px;
+  margin: 5px 0;
+  padding: 0 10px;
+  color: #333;
   cursor: pointer;
+  border-radius: 18px;
 }
 
 .title .icon {
-  margin: .325rem .5rem .325rem 2.1rem;
+  margin: .125rem .5rem .125rem .9rem;
   font-size: 1.2rem;
-  color: #7E7F7E;
+  color: #333;
+}
+
+.container.active .icon {
+  color: #fff;
 }
 
 .container.orphan .title .icon {
-  margin: .325rem .5rem .325rem .2rem;
+  margin: .325rem .5rem .325rem 0;
 }
 
 .title .name {
@@ -27,14 +33,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .85rem;
-  color: #262626;
+  font-size: .875rem;
+  color: #333;
 }
 
 .container:not(.active) .title:hover {
-  background-color: #F0F0F0;
+  background-color: #fff;
 }
 
 .container.active .title {
-  background-color: #F0F0F0;
+  background-color: #0D7997;
+}
+
+.container.active .title .name {
+  color: #fff;
 }

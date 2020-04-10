@@ -5,8 +5,9 @@
 .container label {
   display: block;
   margin-bottom: .4rem;
-  font-size: .8rem;
+  font-size: .75rem;
   font-weight: bold;
+  color: #333;
 }
 
 .pickerWrapper {
@@ -28,6 +29,7 @@
   top: 50%;
   right: 19px;
   transform: translate(50%, -50%);
+  color: #333;
 }
 
 .container:not(.disabled) .controlIcon {
@@ -36,20 +38,22 @@
 
 .control {
   width: 100%;
-  padding: 12px 35px 12px 15px;
+  padding: 7.5px 35px 7.5px 15px;
   box-sizing: border-box;
-  border: 1px solid #B9B9B9;
+  border: 1px solid #DFDFDF;
+  border-radius: 3px;
   outline: none;
-  font-size: .8rem;
+  font-size: .75rem;
+  color: #333;
 }
 
 .container:not(.disabled) .control:hover {
-  border-color: #000;
+  border-color: #A0A0A0;
 }
 
 .container.open .control,
 .container:not(.disabled) .control:focus {
-  border-color: #000;
+  border-color: #A0A0A0;
 }
 
 .control::placeholder {
@@ -62,5 +66,5 @@
 .error {
   margin-top: .3rem;
   color: #B60010;
-  font-size: .8rem;
+  font-size: .75rem;
 }

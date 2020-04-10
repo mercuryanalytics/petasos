@@ -8,11 +8,12 @@ const renderLoader = () => (
 );
 
 const Button = props => {
-  const { loading } = props;
+  const { loading, action } = props;
   const baseClasses = `
     ${styles.container}
     ${props.transparent ? styles.transparent : ''}
     ${props.disabled ? styles.disabled : ''}
+    ${props.action ? styles.action : ''}
     ${props.className || ''}
   `;
 

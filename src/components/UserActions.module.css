@@ -1,6 +1,4 @@
-.container {
-  background-color: #fff;
-}
+.container {}
 
 .search {
   margin-bottom: 1rem;
@@ -20,8 +18,9 @@
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  font-size: .9rem;
+  font-size: .9375rem;
   font-weight: bold;
+  color: #0C7997;
 }
 
 .permissions {
@@ -29,18 +28,21 @@
 }
 
 .permissions .group {
-  color: #000;
+  color: #333;
 }
 
 .permissions .group .groupTitle {
   display: flex;
   align-items: center;
+  margin: 5px 0;
   padding: 0 10px;
   cursor: pointer;
+  border-radius: 12px;
 }
 
 .permissions .group .groupTitle:hover {
-  background-color: #F0F0F0;
+  background-color: #0C7997;
+  color: #fff;
 }
 
 .permissions .group .groupTitle > div {
@@ -48,7 +50,7 @@
   align-items: center;
   flex-grow: 1;
   padding: 10px 10px 10px 0;
-  font-size: .9rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -67,13 +69,17 @@
 
 .permissions .group .groupTitle .groupDelete,
 .permissions .group .items .item .itemDelete {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .permissions .group .groupTitle .arrow {
   margin-right: .5rem;
   font-size: 1.2rem;
-  color: #535353;
+  color: #333;
+}
+
+.permissions .group .groupTitle:hover .arrow {
+  color: #fff;
 }
 
 .permissions .group .groupTitle .arrow.open {
@@ -87,9 +93,10 @@
 .permissions .group .items .item {
   display: flex;
   align-items: center;
-  margin-left: 1.7rem;
+  margin: 5px 0 5px 1.7rem;
   padding: 0 10px;
   cursor: pointer;
+  border-radius: 10px;
 }
 
 .permissions .group .items .item.noIndent {
@@ -97,11 +104,13 @@
 }
 
 .permissions .group .items .item.selectedItem {
-  background-color: #F0F0F0;
+  background-color: #0C7997;
+  color: #fff;
 }
 
 .permissions .group .items .item:not(.selectedItem):hover {
-  background-color: #F0F0F0;
+  background-color: #EFEFEF;
+  color: #000;
 }
 
 .permissions .group .items .item .itemName {
@@ -110,7 +119,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .9rem;
+  font-size: .875rem;
   padding: .6rem .6rem .6rem 0;
 }
 
@@ -158,6 +167,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .85rem;
+  font-size: .875rem;
   color: #A9A9A9;
 }

@@ -3,58 +3,78 @@
 }
 
 .input {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 12px 2.6rem 12px 15px;
+  height: 34px;
+  padding: 0 24px;
   box-sizing: border-box;
-  border: 1px solid #B9B9B9;
+  border: 1px solid #E6E6E6;
   outline: none;
   background-color: #fff;
-  font-size: .8rem;
-  color: #000;
+  font-size: .9375rem;
+  color: #333;
+  line-height: .9375rem;
+  border-radius: 24px;
+}
+
+.container.shadows .input {
+  box-shadow: 0 1px 5px 2px rgba(0,0,0,0.02);
 }
 
 .input:hover {
-  border-color: #000;
+  border-color: #C6C6C6;
 }
 
-input.active,
-.input:not(.active):focus {
-  border-color: #000;
+input.active, .input:not(.active):focus {
+  border-color: #C6C6C6;
 }
 
 .input::placeholder {
-  color: #B9B9B9;
+  color: #333;
+  opacity: 0.5;
 }
 .input::-ms-input-placeholder {
-  color: #B9B9B9;
+  color: #333;
+  opacity: 0.5;
 }
 
 .icon {
+  display: none;
   position: absolute;
   z-index: 1;
-  right: .4rem;
+  right: 12px;
   top: 50%;
-  margin-top: -.9rem;
-  font-size: 1.8rem;
+  margin-top: -.7rem;
+  font-size: 1.4rem;
   color: #E0E0E0;
 }
 
 .targets {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 100%;
   left: 0;
   width: 100%;
+  margin-top: 10px;
+  padding: 10px 0;
   box-sizing: border-box;
-  border: 1px solid #000;
+  border: 1px solid #E6E6E6;
+  border-radius: 14px;
   background-color: #fff;
+  overflow: hidden;
+}
+
+.container.shadows .targets {
+  box-shadow: 0 1px 5px 2px rgba(0,0,0,0.02);
 }
 
 .targets .title {
   display: block;
-  padding: 10px;
+  padding: 0 10px;
+  margin: 5px 0 10px 0;
   font-size: .85rem;
-  color: #000;
+  color: #555;
   font-weight: bold;
 }
 
@@ -66,15 +86,21 @@ input.active,
   cursor: pointer;
 }
 
-.targets label:not(.checked):hover,
-.targets label.checked {
-  background-color: #F0F0F0;
+.targets label span {
+  color: #555;
+  font-size: .8rem;
 }
 
-.targets label span {
-  font-size: .85rem;
+.targets label:not(.checked):hover,
+.targets label.checked {
+  background-color: #F7F7F7 !important;
+}
+.targets label:not(.checked):hover span,
+.targets label.checked span {
+  color: #000 !important;
 }
 
 .targets label svg {
   font-size: 1rem;
+  color: #555;
 }

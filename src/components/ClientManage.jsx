@@ -397,7 +397,7 @@ const ClientManage = props => {
           </div>
           {editMode && (
             <div className={styles.grant}>
-              <div className={styles.title}>
+              <div className={`${styles.title} ${styles.big}`}>
                 <MdSupervisorAccount className={styles.icon} />
                 <span>Client access</span>
               </div>

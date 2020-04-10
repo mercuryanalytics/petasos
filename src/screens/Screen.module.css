@@ -4,31 +4,28 @@
 }
 
 .head {
-  height: 80px;
+  height: 72px;
+  margin-bottom: 10px;
   box-sizing: content-box;
-  border-bottom: 1px solid #B9B9B9;
 }
 
 .body {
   display: flex;
+  min-height: calc(100vh - 82px);
 }
 
 .body .side {
-  width: 250px;
-  min-width: 250px;
-  height: calc(100vh - 81px);
-  padding-bottom: 1rem;
+  width: 320px;
+  min-width: 320px;
+  min-height: calc(100vh - 82px);
+  padding: 0 18px 1rem 18px;
   box-sizing: border-box;
-  border-right: 1px solid #B9B9B9;
-  background-color: #fff;
   overflow-x: visible;
   overflow-y: auto;
 }
 
 .body .content {
   flex-grow: 1;
-  height: calc(100vh - 81px);
-  padding-bottom: 1rem;
+  min-height: calc(100vh - 82px);
   box-sizing: border-box;
-  overflow: auto;
 }
