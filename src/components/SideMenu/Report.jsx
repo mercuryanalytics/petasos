@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Report.module.css';
 import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
-import { MdInsertDriveFile } from 'react-icons/md';
+import { FiFile } from 'react-icons/fi';
 
 const Report = props => {
   const { data, active, orphan } = props;
@@ -14,7 +14,7 @@ const Report = props => {
       title={data.name}
     >
       <div className={styles.title}>
-        <MdInsertDriveFile className={styles.icon} />
+        <FiFile className={styles.icon} />
         <span className={styles.name}>{data.name}</span>
       </div>
     </Link>

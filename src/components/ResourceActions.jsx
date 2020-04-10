@@ -4,7 +4,9 @@ import styles from './ResourceActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
-import { MdPlayArrow, MdFolder, MdInsertDriveFile, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { MdPlayArrow, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { FiFile } from 'react-icons/fi';
+import { TiFolder } from 'react-icons/ti';
 import { getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports, getClientReports } from '../store/reports/actions';
@@ -174,7 +176,7 @@ const ResourceActions = props => {
                   onMouseOut={() => setPreviewTarget(null)}
                 >
                   <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-                  <MdFolder className={styles.icon} />
+                  <TiFolder className={styles.icon} />
                   <span className={styles.name}>{project.name}</span>
                   <Toggle
                     id={`project-toggle-${project.id}`}
@@ -194,7 +196,7 @@ const ResourceActions = props => {
                         onMouseOut={() => setPreviewTarget(null)}
                       >
                         <div className={styles.title}>
-                          <MdInsertDriveFile className={styles.icon} />
+                          <FiFile className={styles.icon} />
                           <span className={styles.name}>{report.name}</span>
                           <Toggle
                             id={`report-toggle-${report.id}`}
@@ -216,13 +218,13 @@ const ResourceActions = props => {
             {clientReports.map(clientReport => (
               <div
                 key={clientReport.id}
-                className={`${styles.report} ${styles.clientReport}`}
+                className={styles.report}
                 title={clientReport.name}
                 onMouseOver={() => setPreviewTarget('Reports')}
                 onMouseOut={() => setPreviewTarget(null)}
               >
                 <div className={styles.title}>
-                  <MdInsertDriveFile className={styles.icon} />
+                  <FiFile className={styles.icon} />
                   <span className={styles.name}>{clientReport.name}</span>
                   <Toggle
                     id={`client-report-toggle-${clientReport.id}`}
