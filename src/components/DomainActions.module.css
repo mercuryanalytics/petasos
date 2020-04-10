@@ -68,7 +68,7 @@
 
 .modalInputContainer {
   display: flex;
-  align-items: center;
+  align-items: top;
   margin-bottom: 25px;
 }
 
@@ -76,6 +76,7 @@
   margin-right: 10px;
   font-size: 1rem;
   color: #333;
+  line-height: 32px;
 }
 
 .modalInputContainer .modalInput {
