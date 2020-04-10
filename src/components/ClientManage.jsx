@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ClientManage.module.css';
 import { useHistory } from 'react-router-dom';
@@ -43,6 +43,7 @@ const ClientManage = props => {
   const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
+  const users = useSelector(state => state.usersReducer.users);
   const clients = useSelector(state =>
     editMode ? state.clientsReducer.clients : null);
   const data = useSelector(state =>
@@ -50,6 +51,7 @@ const ClientManage = props => {
   const [tab, setTab] = useState(ContentTabs.Details);
   const [accountsTab, setAccountsTab] = useState(AccountsTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [breadcrumbs, setBreadcrumbs] = useState(null);
 
   useEffect(() => {
     if (!!id) {
@@ -199,6 +201,38 @@ const ClientManage = props => {
     });
   };
 
+  const handleTabSelect = useCallback((tabId) => {
+    setTab(tabId);
+  });
+
+  const handleUserSelect = useCallback((uid, uname) => {
+    setSelectedUserId(uid);
+    // history.push(`${Routes.ManageClient.replace(':id', id)}/accounts/${uid}`);
+  }, [id]);
+
+  // const updateBreadcrumbs = useCallback((location) => {
+  //   const uidString = location.match(/\/accounts\/([0-9]+)$/)[1];
+  //   let result = tab === ContentTabs.Accounts ? ['Accounts'] : [];
+  //   if (uidString.length) {
+  //     const user = users.filter(u => u.id === +uidString)[0];
+  //     if (user) {
+  //       result.push(user.name || user.email);
+  //     }
+  //   }
+  //   setBreadcrumbs(result);
+  //   if (props.onBreadcrumbsChange) {
+  //     props.onBreadcrumbsChange(result);
+  //   }
+  // }, [users, tab, props.onBreadcrumbsChange]);
+
+  // useEffect(() => {
+  //   updateBreadcrumbs(history.location.pathname);
+  // }, [tab, history.location.pathname]);
+
+  // useEffect(() => {
+    
+  // }, [tab]);
+
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
       {editMode && tab === ContentTabs.Details && (
@@ -212,7 +246,7 @@ const ClientManage = props => {
       <div className={styles.tabs}>
         <div
           className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
-          onClick={() => setTab(ContentTabs.Details)}
+          onClick={() => handleTabSelect(ContentTabs.Details)}
         >
           <span>Client details</span>
         </div>
@@ -220,13 +254,13 @@ const ClientManage = props => {
           <>
             <div
               className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
-              onClick={() => setTab(ContentTabs.Accounts)}
+              onClick={() => handleTabSelect(ContentTabs.Accounts)}
             >
               <span>Accounts</span>
             </div>
             <div
               className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
-              onClick={() => setTab(ContentTabs.Defaults)}
+              onClick={() => handleTabSelect(ContentTabs.Defaults)}
             >
               <span>Domains</span>
             </div>
@@ -420,7 +454,7 @@ const ClientManage = props => {
               mode={UserActionsModes.Manage}
               context={UserActionsContexts.Client}
               clientId={id}
-              onUserSelect={id => setSelectedUserId(id)}
+              onUserSelect={handleUserSelect}
             />
           </div>
           <div className={styles.userActions}>

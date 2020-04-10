@@ -29,6 +29,7 @@ const Index = props => {
   const [keepLoading, setKeepLoading] = useState(true);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [clientBreadcrumbs, setClientBreadcrumbs] = useState(null);
   const report = useSelector(state => accessOptions && accessOptions.reportId ?
     (state.reportsReducer.reports.filter(r => r.id === accessOptions.reportId)[0] || null) : null);
   const project = useSelector(state => accessOptions && accessOptions.projectId ?
@@ -83,6 +84,7 @@ const Index = props => {
         break;
       case ContentTypes.ManageClient:
         client && bc.push(client.name);
+        clientBreadcrumbs && (bc = bc.concat(clientBreadcrumbs));
         break;
       case ContentTypes.CreateProject:
         client && bc.push(client.name);
@@ -103,8 +105,11 @@ const Index = props => {
         report && bc.push(report.name);
         break;
     }
+    if (content !== ContentTypes.ManageClient) {
+      setClientBreadcrumbs(null);
+    }
     setBreadcrumbs(bc);
-  }, [content, client, project, report]);
+  }, [content, client, project, report, clientBreadcrumbs]);
 
   return !isAccessBlocked ? (
     <Screen className={styles.container} private keepLoading={keepLoading} onLoad={() => setIsLoaded(true)}>
@@ -113,7 +118,9 @@ const Index = props => {
       </div>
       <div className={styles.content}>
         {(content === ContentTypes.CreateClient && <ClientManage />) ||
-        (content === ContentTypes.ManageClient && <ClientManage id={resId} />) ||
+        (content === ContentTypes.ManageClient && (
+          <ClientManage id={resId} onBreadcrumbsChange={b => setClientBreadcrumbs(b)} />
+        )) ||
         (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
         (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
         (content === ContentTypes.CreateReport && <ReportManage projectId={params.projectId} />) ||

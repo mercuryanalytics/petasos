@@ -44,11 +44,11 @@ const UserActions = props => {
   const [blockedClients, setBlockedClients] = useState([]);
   const [openClientsBackup, setOpenClientsBackup] = useState(null);
 
-  const handleItemSelect = useCallback((id) => {
+  const handleItemSelect = useCallback((id, name) => {
     if (mode === UserActionsModes.Manage) {
       setSelectedItem(id);
       if (props.onUserSelect) {
-        props.onUserSelect(id);
+        props.onUserSelect(id, name);
       }
     }
   }, [mode, props.onUserSelect]);
@@ -85,7 +85,10 @@ const UserActions = props => {
       dispatch(getUsers(clientId)).then((action) => {
         handleClientToggle(clientId, true);
         setIsLoading(false);
-        handleItemSelect(action.payload.length ? action.payload[0].id : null);
+        const u = action.payload[0];
+        const uid = u ? u.id : null;
+        const uname = u ? (u.name || u.email) : null;
+        handleItemSelect(uid, uname);
       });
     });
   }, [mode, clientId, authorizedOptions]);
@@ -300,7 +303,7 @@ const UserActions = props => {
                         `}
                         htmlFor={`user-toggle-${client.id}-${user.id}`}
                         title={user.name || user.email}
-                        onClick={() => handleItemSelect(user.id)}
+                        onClick={() => handleItemSelect(user.id, (user.name || user.email))}
                       >
                         <span className={styles.itemName}>
                           {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}

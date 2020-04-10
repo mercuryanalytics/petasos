@@ -46,7 +46,7 @@ const apiCall = (method, url, options) => {
   return fetch(url, fetchOptions)
     .then(response => response.text())
     .then(response => {
-      if (response.length) {
+      if (response.trim().length) {
         try {
           let result = JSON.parse(response);
           if (result.hasOwnProperty('errors')) {
