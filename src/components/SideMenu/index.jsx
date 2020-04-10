@@ -328,7 +328,8 @@ const SideMenu = () => {
                 openProjects={openProjects}
                 loadedProjects={loadedProjects}
                 reports={(isSearching ? filteredReports : reports)}
-                clientReports={(isSearching ? filteredClientReports : clientReports)}
+                clientReports={(isSearching ? filteredClientReports : clientReports)
+                  .filter(cr => cr.project.domain_id === client.id)}
                 open={!!openClients[client.id]}
                 loaded={!!loadedClients[client.id]}
                 active={activeClient === client.id}

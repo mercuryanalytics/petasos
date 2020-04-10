@@ -96,9 +96,9 @@ const ReportManage = props => {
             <MdDelete className={styles.deleteIcon} />
             <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
           </Button>
-          <a className={styles.view} href={data.url} target="_blank">
-            <Button>View report</Button>
-          </a>
+          {!!data.url && (
+            <Button link={data.url} target="_blank" action={true}>View report</Button>
+          )}
         </div>
       )}
       <div className={`${styles.section} ${styles.left}`}>

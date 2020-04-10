@@ -26,12 +26,17 @@
 
 .container.transparent {
   border-color: transparent;
-  background-color: transparent;
+  background-color: transparent !important;
   color: #333;
 }
 
 .container.action {
-  background-color: transparent;
+  background-color: #F37646;
+  border-color: #F37646;
+  color: #fff;
+}
+
+.container.action.transparent {
   border-color: #F37646;
   color: #F37646;
 }
@@ -40,7 +45,7 @@
   opacity: .85;
 }
 
-.container:not(.disabled).transparent:hover {
+.container:not(.disabled):not(.action).transparent:hover {
   color: #000;
 }
 

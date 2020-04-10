@@ -5,20 +5,20 @@
 }
 
 .actions {
-  display: none;
   position: absolute;
-  right: 0;
-  top: -70px;
-  /* display: flex; */
+  z-index: 3;
+  right: 432px;
+  top: 72px;
+  display: flex;
   align-items: center;
 }
 
-.actions > :not(:last-child) {
-  margin-right: .5rem;
+.actions > :not(:first-child) {
+  margin-left: .5rem;
 }
 
 .actions .deleteIcon {
-  font-size: 2rem;
+  font-size: 1.3rem;
   margin-right: .2rem;
 }
 

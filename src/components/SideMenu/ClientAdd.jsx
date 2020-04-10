@@ -5,7 +5,7 @@ import Routes from '../../utils/routes';
 
 const ClientAdd = () => {
   return (
-    <Button className={styles.container} link={Routes.CreateClient} action={true}>
+    <Button className={styles.container} to={Routes.CreateClient} action={true} transparent>
       + Create new client
     </Button>
   );

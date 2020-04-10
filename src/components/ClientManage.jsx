@@ -201,7 +201,7 @@ const ClientManage = props => {
 
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
-      {editMode && (
+      {editMode && tab === ContentTabs.Details && (
         <div className={styles.actions}>
           <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
             <MdDelete className={styles.deleteIcon} />

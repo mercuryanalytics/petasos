@@ -8,6 +8,13 @@
   user-select: none;
 }
 
+.link {
+  display: flex;
+  align-items: center;
+  outline: none;
+  text-decoration: none;
+}
+
 .logo {
   width: auto;
   height: 40px;

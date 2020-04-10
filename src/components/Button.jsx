@@ -8,7 +8,7 @@ const renderLoader = () => (
 );
 
 const Button = props => {
-  const { loading, action } = props;
+  const { loading } = props;
   const baseClasses = `
     ${styles.container}
     ${props.transparent ? styles.transparent : ''}
@@ -17,12 +17,23 @@ const Button = props => {
     ${props.className || ''}
   `;
 
-  return !!props.link ? (
-    <Link className={`${baseClasses} ${styles.link}`} to={props.link} target={props.target || '_self'}>
+  const link = !!props.link ?
+    (props.link.match(/^.+\:\/\//) ? props.link : `http://${props.link}`)
+    : null;
+
+  return (!!link && (
+    <a className={`${baseClasses} ${styles.link}`} href={link} target={props.target || '_self'}>
+      {props.children}
+      {!!loading && renderLoader()}
+    </a>
+  )) ||
+  (!!props.to && (
+    <Link className={`${baseClasses} ${styles.link}`} to={props.to}>
       {props.children}
       {!!loading && renderLoader()}
     </Link>
-  ) : (
+  )) ||
+  (
     <button type={props.type || 'button'} disabled={!!props.disabled} className={`${baseClasses}`} onClick={props.onClick}>
       {props.children}
       {!!loading && renderLoader()}
