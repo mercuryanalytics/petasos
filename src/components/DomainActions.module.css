@@ -66,8 +66,20 @@
   font-size: .85rem;
 }
 
-.modalInput {
+.modalInputContainer {
+  display: flex;
+  align-items: center;
   margin-bottom: 25px;
+}
+
+.modalInputContainer .modalInputPrefix {
+  margin-right: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.modalInputContainer .modalInput {
+  flex-grow: 1;
 }
 
 .modalButtons {}

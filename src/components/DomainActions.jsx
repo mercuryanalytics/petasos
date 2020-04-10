@@ -75,10 +75,13 @@ const DomainActions = props => {
           Enter domain address.
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <Input
-            className={styles.modalInput}
-            field={addDomainField}
-          />
+          <div className={styles.modalInputContainer}>
+            <span className={styles.modalInputPrefix}>@</span>
+            <Input
+              className={styles.modalInput}
+              field={addDomainField}
+            />
+          </div>
           <div className={styles.modalButtons}>
             <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
               {!isBusy ? 'Add new domain' : 'Adding new domain'}
