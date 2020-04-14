@@ -2,6 +2,7 @@ const Routes = {
   Home: '/',
   CreateClient: '/clients/new',
   ManageClient: '/clients/:id',
+  ManageClientUser: '/clients/:id/accounts/:userId',
   CreateProject: '/projects/new/:clientId',
   ManageProject: '/projects/:id',
   CreateReport: '/reports/new/:projectId',

@@ -24,7 +24,7 @@ export const UserActionsModes = {
 };
 
 const UserActions = props => {
-  const { mode, context, clientId, projectId, reportId } = props;
+  const { mode, context, clientId, projectId, reportId, selectedUserId } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [authorizedOptions, setAuthorizedOptions] = useState(null);
@@ -44,14 +44,14 @@ const UserActions = props => {
   const [blockedClients, setBlockedClients] = useState([]);
   const [openClientsBackup, setOpenClientsBackup] = useState(null);
 
-  const handleItemSelect = useCallback((id, name) => {
+  const handleItemSelect = useCallback((id) => {
     if (mode === UserActionsModes.Manage) {
       setSelectedItem(id);
       if (props.onUserSelect) {
-        props.onUserSelect(id, name);
+        props.onUserSelect(id);
       }
     }
-  }, [mode, props.onUserSelect]);
+  }, [mode, props.onUserSelect, selectedUserId]);
 
   const handleClientToggle = useCallback(async (id, forced) => {
     const status = forced ? !forced : !!openClients[id];
@@ -65,6 +65,20 @@ const UserActions = props => {
       });
     }
   }, [openClients, loadedClients, authorizedOptions]);
+
+  useEffect(() => {
+    if (clientId || projectId || reportId) {
+      let options = {};
+      if (projectId) {
+        options.projectId = projectId;
+      } else if (reportId) {
+        options.reportId = reportId;
+      } else {
+        options.clientId = clientId;
+      }
+      setAuthorizedOptions(options);
+    }
+  }, [clientId, projectId, reportId]);
 
   useEffect(() => {
     if (!authorizedOptions) {
@@ -85,27 +99,9 @@ const UserActions = props => {
       dispatch(getUsers(clientId)).then((action) => {
         handleClientToggle(clientId, true);
         setIsLoading(false);
-        const u = action.payload[0];
-        const uid = u ? u.id : null;
-        const uname = u ? (u.name || u.email) : null;
-        handleItemSelect(uid, uname);
       });
     });
   }, [mode, clientId, authorizedOptions]);
-
-  useEffect(() => {
-    if (clientId || projectId || reportId) {
-      let options = {};
-      if (projectId) {
-        options.projectId = projectId;
-      } else if (reportId) {
-        options.reportId = reportId;
-      } else {
-        options.clientId = clientId;
-      }
-      setAuthorizedOptions(options);
-    }
-  }, [clientId, projectId, reportId]);
 
   useEffect(() => {
     if (mode === UserActionsModes.Grant) {
@@ -114,6 +110,26 @@ const UserActions = props => {
       setAllowedClients(allowedIds);
     }
   }, [users, mode]);
+
+  const ensureSelectedItem = useCallback((id) => {
+    if (id !== selectedItem || !selectedItem) {
+      let toSelect = null;
+      if (typeof id !== 'undefined') {
+        toSelect = id || null;
+      }
+      const u = (toSelect ?
+        users.filter(u => u.id === toSelect)
+        : users.filter(u => u.client_ids.indexOf(clientId) > -1)
+      )[0];
+      handleItemSelect(u ? u.id : null);
+    }
+  }, [users, clientId, selectedUserId, selectedItem]);
+
+  useEffect(() => {
+    if (!isLoading && mode === UserActionsModes.Manage) {
+      ensureSelectedItem(selectedUserId);
+    }
+  }, [mode, isLoading, selectedUserId]);
 
   const handleSettingsToggle = useCallback((id, event) => {
     // @TODO Open, implement settings
@@ -303,7 +319,7 @@ const UserActions = props => {
                         `}
                         htmlFor={`user-toggle-${client.id}-${user.id}`}
                         title={user.name || user.email}
-                        onClick={() => handleItemSelect(user.id, (user.name || user.email))}
+                        onClick={() => handleItemSelect(user.id)}
                       >
                         <span className={styles.itemName}>
                           {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}

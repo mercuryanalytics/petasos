@@ -119,7 +119,7 @@ const Index = props => {
       <div className={styles.content}>
         {(content === ContentTypes.CreateClient && <ClientManage />) ||
         (content === ContentTypes.ManageClient && (
-          <ClientManage id={resId} onBreadcrumbsChange={b => setClientBreadcrumbs(b)} />
+          <ClientManage id={resId} onBreadcrumbsChange={bc => setClientBreadcrumbs(bc)} />
         )) ||
         (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
         (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||

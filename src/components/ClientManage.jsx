@@ -36,6 +36,8 @@ const AccountsTabs = {
   Permissions: 2,
 };
 
+const urlAccountsRegExp = /\/accounts\/([0-9]+)$/;
+
 const ClientManage = props => {
   const { id } = props;
   const dispatch = useDispatch();
@@ -51,14 +53,84 @@ const ClientManage = props => {
   const [tab, setTab] = useState(ContentTabs.Details);
   const [accountsTab, setAccountsTab] = useState(AccountsTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [breadcrumbs, setBreadcrumbs] = useState(null);
+
+  const initSelectedUser = useCallback(() => {
+    const pathname = history.location.pathname;
+    const accountMatch = pathname.match(urlAccountsRegExp);
+    if (accountMatch && accountMatch[1].length) {
+      const user = users.filter(u => u.id === +accountMatch[1])[0];
+      if (tab !== ContentTabs.Accounts) {
+        setTab(ContentTabs.Accounts);
+      }
+      if (user) {
+        setSelectedUserId(user.id);
+        return;
+      }
+    }
+    setSelectedUserId(null);
+  }, [history.location.pathname, tab, users]);
 
   useEffect(() => {
     if (!!id) {
-      setSelectedUserId(null);
       dispatch(getClient(id));
     }
+    initSelectedUser();
   }, [id]);
+
+  const handleBreadcrumbsChange = useCallback(() => {
+    let bc = tab === ContentTabs.Accounts ? ['Accounts'] : [];
+    if (bc.length && selectedUserId) {
+      let u = users.filter(u => u.id === selectedUserId)[0];
+      if (u) {
+        bc.push(u.name || u.email);
+      }
+    }
+    if (props.onBreadcrumbsChange) {
+      props.onBreadcrumbsChange(bc);
+    }
+  }, [tab, users, selectedUserId, props.onBreadcrumbsChange]);
+
+  useEffect(() => {
+    if (editMode) {
+      handleBreadcrumbsChange();
+    }
+  }, [editMode, selectedUserId, tab]);
+
+  const handleTabSelect = useCallback((tabId) => {
+    const pathname = history.location.pathname;
+    if (tabId !== ContentTabs.Accounts && pathname.match(urlAccountsRegExp)) {
+      setSelectedUserId(null);
+      history.push(`${Routes.ManageClient.replace(':id', id)}`);
+    }
+    setTab(tabId);
+  }, [id, history]);
+
+  const handleUserSelect = useCallback((uid) => {
+    if (tab === ContentTabs.Accounts && selectedUserId !== uid) {
+      setSelectedUserId(uid);
+      history.push(`${Routes.ManageClientUser.replace(':id', id).replace(':userId', uid)}`);
+    }
+  }, [id, history, tab, selectedUserId]);
+
+  const handleDelete = useCallback(() => {
+    setIsDeleteBusy(true);
+    let redirectToId;
+    if (clients.length > 1) {
+      for (let i = 0; i < clients.length; i++) {
+        if (clients[i].id === data.id) {
+          redirectToId = clients[i > 0 ? i-1 : i+1].id;
+        }
+      }
+    }
+    dispatch(deleteClient(data.id)).then(() => {
+      setIsDeleteBusy(false);
+      if (redirectToId) {
+        history.push(Routes.ManageClient.replace(':id', redirectToId));
+      } else {
+        history.push(Routes.CreateClient);
+      }
+    });
+  }, [clients, data, history]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -180,58 +252,6 @@ const ClientManage = props => {
     }
     setBillingAsMailing(!!status);
   }, [billing_as_mailing.input.value]);
-
-  const handleDelete = () => {
-    setIsDeleteBusy(true);
-    let redirectToId;
-    if (clients.length > 1) {
-      for (let i = 0; i < clients.length; i++) {
-        if (clients[i].id === data.id) {
-          redirectToId = clients[i > 0 ? i-1 : i+1].id;
-        }
-      }
-    }
-    dispatch(deleteClient(data.id)).then(() => {
-      setIsDeleteBusy(false);
-      if (redirectToId) {
-        history.push(Routes.ManageClient.replace(':id', redirectToId));
-      } else {
-        history.push(Routes.CreateClient);
-      }
-    });
-  };
-
-  const handleTabSelect = useCallback((tabId) => {
-    setTab(tabId);
-  });
-
-  const handleUserSelect = useCallback((uid, uname) => {
-    setSelectedUserId(uid);
-    // history.push(`${Routes.ManageClient.replace(':id', id)}/accounts/${uid}`);
-  }, [id]);
-
-  // const updateBreadcrumbs = useCallback((location) => {
-  //   const uidString = location.match(/\/accounts\/([0-9]+)$/)[1];
-  //   let result = tab === ContentTabs.Accounts ? ['Accounts'] : [];
-  //   if (uidString.length) {
-  //     const user = users.filter(u => u.id === +uidString)[0];
-  //     if (user) {
-  //       result.push(user.name || user.email);
-  //     }
-  //   }
-  //   setBreadcrumbs(result);
-  //   if (props.onBreadcrumbsChange) {
-  //     props.onBreadcrumbsChange(result);
-  //   }
-  // }, [users, tab, props.onBreadcrumbsChange]);
-
-  // useEffect(() => {
-  //   updateBreadcrumbs(history.location.pathname);
-  // }, [tab, history.location.pathname]);
-
-  // useEffect(() => {
-    
-  // }, [tab]);
 
   return !editMode || (editMode && data) ? (
     <div className={styles.container}>
@@ -454,6 +474,7 @@ const ClientManage = props => {
               mode={UserActionsModes.Manage}
               context={UserActionsContexts.Client}
               clientId={id}
+              selectedUserId={selectedUserId}
               onUserSelect={handleUserSelect}
             />
           </div>
