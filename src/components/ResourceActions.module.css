@@ -21,6 +21,16 @@
   padding: 25px 1.8rem 2rem 1.8rem;
 }
 
+.arrow {
+  margin-right: .5rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.arrow.open {
+  transform: rotate(90deg);
+}
+
 .client {
   margin-bottom: 5px;
 }
@@ -71,16 +81,6 @@
   color: #333;
   text-decoration: none;
   cursor: pointer;
-}
-
-.project .title .arrow {
-  margin-right: .5rem;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.project .title .arrow.open {
-  transform: rotate(90deg);
 }
 
 .project .title .icon {
@@ -147,6 +147,30 @@
 
 .report.active .title {
   background-color: #F0F0F0;
+}
+
+.checkboxesTitles {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.checkboxesTitles .checkboxTitle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+}
+
+.checkboxesTitles .checkboxTitle > span {
+  font-size: .8125rem;
+  color: #333;
+}
+
+.checkboxesTitles .checkboxTitle > svg {
+  margin-left: 5px;
+  color: #0C7997;
+  cursor: pointer;
 }
 
 .itemCheckbox, .itemToggle {
