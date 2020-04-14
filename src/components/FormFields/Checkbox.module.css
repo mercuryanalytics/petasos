@@ -32,6 +32,7 @@
 }
 
 .toggle .mark {
+  visibility: hidden;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -48,6 +49,10 @@
   border-color: #0D7997;
   background-color: #0D7997;
   color: #fff;
+}
+
+.container:not(.disabled) input:checked ~ .toggle .mark {
+  visibility: visible;
 }
 
 .label {

@@ -4,9 +4,10 @@ import { MdCheck } from 'react-icons/md';
 
 const Checkbox = props => {
   const { field, label, disabled } = props;
+  const { onChange } = props;
   const classes = `
     ${styles.container}
-    ${props.className}
+    ${props.className || ''}
     ${disabled ? styles.disabled : ''}
   `;
 
@@ -20,19 +21,22 @@ const Checkbox = props => {
     <div className={classes}>
       <label>
         <input
-          {...field.input}
+          {...(!!field ? field.input : {
+            onChange,
+            value: !!props.value,
+          })}
           disabled={!!disabled}
           className={styles.control}
           type="checkbox"
         />
         <span className={styles.toggle}>
-          {!!field.input.value && <MdCheck className={styles.mark} />}
+          <MdCheck className={styles.mark} />
         </span>
-        <span className={styles.label}>
-          {!!label && label}
-        </span>
+        {!!label && (
+          <span className={styles.label}>{label}</span>
+        )}
       </label>
-      {field.meta.touched && field.meta.error && (
+      {!!field && field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>

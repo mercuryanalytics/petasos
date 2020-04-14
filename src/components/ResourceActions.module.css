@@ -6,6 +6,7 @@
 
 .edit {
   flex-grow: 1;
+  padding: 25px 1.8rem 2rem 1.8rem;
 }
 
 .preview {
@@ -16,42 +17,8 @@
   background-color: #FAFAFA;
 }
 
-.edit, .preview {
+.edit {
   padding: 25px 1.8rem 2rem 1.8rem;
-}
-
-.preview .title {
-  margin-bottom: 1.5rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.preview .item {
-  display: flex;
-  align-items: center;
-  padding: 5px 0 5px 14px;
-  margin: 5px -14px;
-  font-size: .9rem;
-}
-
-.preview .item.active {
-  background-color: #F0F0F0;
-}
-
-.preview .item .itemName {
-  flex-grow: 1;
-}
-
-.preview .item .itemState {
-  display: inline-flex;
-  justify-content: center;
-  width: 50px;
-  min-width: 50px;
-  align-items: center;
-}
-
-.preview .item .itemState svg {
-  font-size: 1.2rem;
 }
 
 .client {
@@ -83,7 +50,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 1.125rem;
-  font-weight: bold;
   color: #333;
 }
 
@@ -130,7 +96,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: .875rem;
-  font-weight: bold;
   color: #333;
 }
 
@@ -148,6 +113,7 @@
 .report {
   margin-left: 34px;
 }
+
 .report .title {
   display: flex;
   align-items: center;
@@ -181,6 +147,14 @@
 
 .report.active .title {
   background-color: #F0F0F0;
+}
+
+.itemCheckbox, .itemToggle {
+  width: 60px;
+}
+
+.itemCheckbox label {
+  justify-content: center;
 }
 
 .loaderContainer {

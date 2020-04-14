@@ -24,7 +24,7 @@ const Toggle = props => {
   }, [throttleChange]);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.className || ''}`}>
       <input
         className={styles.checkbox}
         type="checkbox"

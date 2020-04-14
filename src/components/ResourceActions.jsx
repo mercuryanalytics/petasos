@@ -4,7 +4,8 @@ import styles from './ResourceActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
-import { MdPlayArrow, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { Checkbox } from './FormFields';
+import { MdPlayArrow } from 'react-icons/md';
 import { FiFile } from 'react-icons/fi';
 import { TiFolder } from 'react-icons/ti';
 import { getClient } from '../store/clients/actions';
@@ -24,7 +25,6 @@ const ResourceActions = props => {
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
   const [activeStates, setActiveStates] = useState({});
-  const [previewTarget, setPreviewTarget] = useState(null);
 
   const init = useCallback(async () => {
     const initProjectAuthorizations = async (id) => {
@@ -152,8 +152,6 @@ const ResourceActions = props => {
             <div
               className={styles.title}
               title={client.name}
-              onMouseOver={() => setPreviewTarget('Clients')}
-              onMouseOut={() => setPreviewTarget(null)}
             >
               <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
               <span className={styles.name}>{client.name}</span>
@@ -162,6 +160,14 @@ const ResourceActions = props => {
                 className={styles.itemToggle}
                 checked={getItemStatus('client', client.id)}
                 onChange={status => setItemStatus('client', client.id, status)}
+              />
+              <Checkbox
+                className={styles.itemCheckbox}
+                onChange={() => console.log('changed!')}
+              />
+              <Checkbox
+                className={styles.itemCheckbox}
+                onChange={() => console.log('changed!')}
               />
             </div>
           )}
@@ -172,8 +178,6 @@ const ResourceActions = props => {
                   className={styles.title}
                   title={project.name}
                   onClick={() => handleProjectToggle(project.id)}
-                  onMouseOver={() => setPreviewTarget('Projects')}
-                  onMouseOut={() => setPreviewTarget(null)}
                 >
                   <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
                   <TiFolder className={styles.icon} />
@@ -184,6 +188,14 @@ const ResourceActions = props => {
                     checked={getItemStatus('project', project.id)}
                     onChange={status => setItemStatus('project', project.id, status)}
                   />
+                  <Checkbox
+                    className={styles.itemCheckbox}
+                    onChange={() => console.log('changed!')}
+                  />
+                  <Checkbox
+                    className={styles.itemCheckbox}
+                    onChange={() => console.log('changed!')}
+                  />
                 </div>
                 {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
                   (!!reports[project.id] && !!reports[project.id].length) ? (
@@ -192,8 +204,6 @@ const ResourceActions = props => {
                         key={report.id}
                         className={styles.report}
                         title={report.name}
-                        onMouseOver={() => setPreviewTarget('Reports')}
-                        onMouseOut={() => setPreviewTarget(null)}
                       >
                         <div className={styles.title}>
                           <FiFile className={styles.icon} />
@@ -220,8 +230,6 @@ const ResourceActions = props => {
                 key={clientReport.id}
                 className={styles.report}
                 title={clientReport.name}
-                onMouseOver={() => setPreviewTarget('Reports')}
-                onMouseOut={() => setPreviewTarget(null)}
               >
                 <div className={styles.title}>
                   <FiFile className={styles.icon} />
@@ -239,20 +247,6 @@ const ResourceActions = props => {
             <div className={styles.noResults}>No results</div>
           )}
         </div>
-      </div>
-      <div className={styles.preview}>
-        <div className={styles.title}>User permissions</div>
-        {(['Clients', 'Projects', 'Reports']).map(item => (
-          <div key={item} className={`${styles.item} ${previewTarget === item ? styles.active : ''}`}>
-            <div className={styles.itemName}>{item}</div>
-            <div className={styles.itemState}>
-              <MdCheckBoxOutlineBlank />
-            </div>
-            <div className={styles.itemState}>
-              <MdCheckBox />
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   ) : (
