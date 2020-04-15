@@ -8,6 +8,7 @@ const Routes = {
   CreateReport: '/reports/new/:projectId',
   ManageReport: '/reports/:id',
   Account: '/account',
+  SuperUser: '/super-user',
   Login: '/login',
   LoginCallback: '/auth/auth0/callback',
   Logout: '/logout',

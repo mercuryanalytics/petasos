@@ -103,7 +103,6 @@ const ReportManage = props => {
       )}
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
-          <MdInfoOutline className={styles.icon} />
           <span>Report details</span>
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -147,7 +146,6 @@ const ReportManage = props => {
       {editMode && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
-            <MdSupervisorAccount className={styles.icon} />
             <span>Report access</span>
           </div>
           <UserActions

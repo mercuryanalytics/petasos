@@ -6,7 +6,7 @@ import Routes from '../utils/routes';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
-import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
@@ -165,7 +165,6 @@ const ProjectManage = props => {
       )}
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
-          <MdInfoOutline className={styles.icon} />
           <span>Project details</span>
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -241,7 +240,6 @@ const ProjectManage = props => {
       {editMode && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
-            <MdSupervisorAccount className={styles.icon} />
             <span>Project access</span>
           </div>
           <UserActions

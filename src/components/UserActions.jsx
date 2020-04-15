@@ -24,7 +24,7 @@ export const UserActionsModes = {
 };
 
 const UserActions = props => {
-  const { mode, context, clientId, projectId, reportId, selectedUserId } = props;
+  const { mode, context, clientId, projectId, reportId, selectedUserId, limitClientId } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [authorizedOptions, setAuthorizedOptions] = useState(null);
@@ -64,7 +64,7 @@ const UserActions = props => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
       });
     }
-  }, [openClients, loadedClients, authorizedOptions]);
+  }, [mode, openClients, loadedClients, authorizedOptions]);
 
   useEffect(() => {
     if (clientId || projectId || reportId) {
@@ -80,50 +80,53 @@ const UserActions = props => {
     }
   }, [clientId, projectId, reportId]);
 
-  useEffect(() => {
-    if (!authorizedOptions) {
-      return;
+  const init = useCallback(async () => {
+    const clientLimit = clientId ? clientId : (limitClientId ? limitClientId : null);
+    setAllowedClients(clientLimit ? [clientLimit] : []);
+    let promises = [
+      getClients(),
+      dispatch(getUsers(clientLimit)),
+    ];
+    if (mode === UserActionsModes.Grant) {
+      promises.push(dispatch(getAuthorizedUsers(clientId, authorizedOptions)));
     }
+    await Promise.all(promises).then(() => {
+      if (mode === UserActionsModes.Grant && clientId) {
+        handleClientToggle(clientId, true);
+      }
+    });
+  }, [mode, clientId, limitClientId, authorizedOptions]);
+
+  useEffect(() => {
     setIsLoading(true);
     setOpenClients({});
-    dispatch(getClients()).then(() => {
-      if (mode === UserActionsModes.Grant) {
-        Promise.all([
-          dispatch(getUsers()),
-          dispatch(getAuthorizedUsers(clientId, authorizedOptions)),
-        ]).then(() => setIsLoading(false));
-        handleClientToggle(clientId, true);
-        return;
-      }
-      setAllowedClients([clientId]);
-      dispatch(getUsers(clientId)).then((action) => {
-        handleClientToggle(clientId, true);
-        setIsLoading(false);
-      });
-    });
+    if (mode && (authorizedOptions || !clientId)) {
+      init().then(() => setIsLoading(false));
+    }
   }, [mode, clientId, authorizedOptions]);
 
   useEffect(() => {
-    if (mode === UserActionsModes.Grant) {
+    if (mode === UserActionsModes.Grant || !limitClientId) {
       let allowedIds = [];
       users.forEach(u => u.client_ids.forEach(cid => allowedIds.push(cid)));
       setAllowedClients(allowedIds);
     }
-  }, [users, mode]);
+  }, [users, mode, limitClientId]);
 
   const ensureSelectedItem = useCallback((id) => {
     if (id !== selectedItem || !selectedItem) {
+      const clientLimit = clientId ? clientId : (limitClientId ? limitClientId : null);
       let toSelect = null;
       if (typeof id !== 'undefined') {
         toSelect = id || null;
       }
       const u = (toSelect ?
         users.filter(u => u.id === toSelect)
-        : users.filter(u => u.client_ids.indexOf(clientId) > -1)
+        : (clientLimit ? users.filter(u => u.client_ids.indexOf(clientLimit) > -1) : users)
       )[0];
       handleItemSelect(u ? u.id : null);
     }
-  }, [users, clientId, selectedUserId, selectedItem]);
+  }, [users, clientId, limitClientId, selectedUserId, selectedItem]);
 
   useEffect(() => {
     if (!isLoading && mode === UserActionsModes.Manage) {
@@ -197,11 +200,13 @@ const UserActions = props => {
       clients.forEach(c => !cids[c.id] && (bcids[c.id] = true));
       setBlockedClients(Object.keys(bcids).map(x => +x));
       setBlockedUsers(Object.keys(buids).map(x => +x));
-      for (let i in cids) {
-        handleClientToggle(+i, true);
+      if (mode === UserActionsModes.Grant) {
+        for (let i in cids) {
+          handleClientToggle(+i, true);
+        }
       }
     }
-  }, [userNameFilter]);
+  }, [userNameFilter, mode]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: { add_user_email: '' },
@@ -237,7 +242,9 @@ const UserActions = props => {
         result.report_id = reportId;
       }
       dispatch(createUser(result, mode === UserActionsModes.Manage)).then(() => {
-        dispatch(getAuthorizedUsers(clientId, authorizedOptions));
+        if (mode === UserActionsModes.Grant) {
+          dispatch(getAuthorizedUsers(clientId, authorizedOptions));
+        }
         form.reset();
         setIsBusy(false);
         setIsAddUserOpen(false);
@@ -282,27 +289,58 @@ const UserActions = props => {
       </Modal>
       <div className={styles.permissions}>
         {!isLoading ? (
-          clients.map(client => (
+          (mode === UserActionsModes.Manage ? (
+            <div className={styles.group}>
+              <div className={styles.items}>
+                {users.filter(u => (
+                  (!limitClientId || u.client_ids.indexOf(limitClientId) > -1) &&
+                  blockedUsers.indexOf(u.id) === -1
+                )).map(user => (
+                  <label
+                    key={`grant-user-${user.id}`}
+                    className={`
+                      ${styles.item}
+                      ${styles.noIndent}
+                      ${selectedItem === user.id ? styles.selectedItem : ''}
+                    `}
+                    htmlFor={`user-toggle-${user.id}`}
+                    title={user.contact_name || user.email}
+                    onClick={() => handleItemSelect(user.id)}
+                  >
+                    <span className={styles.itemName}>
+                      {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
+                    </span>
+                    {!!isDeleteBusy[user.id] ? (
+                      <Loader inline size={3} className={styles.busyLoader} />
+                    ) : (
+                      <MdDelete
+                        className={styles.itemDelete}
+                        onClick={e => handleItemDelete(user.id, e)}
+                      />
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ) : clients.map(client => (
             allowedClients.indexOf(client.id) > -1 &&
             blockedClients.indexOf(client.id) === -1
           ) && (
             <div className={styles.group} key={`permissions-group-${client.id}`}>
-              {mode === UserActionsModes.Grant && (
-                <div
-                  className={styles.groupTitle}
-                  title={client.name}
-                  onClick={() => handleClientToggle(client.id)}
-                >
-                  <div>
-                    <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
-                    <span className={styles.groupName}>{client.name}</span>
-                  </div>
-                  <MdMoreHoriz
-                    className={styles.groupSettings}
-                    onClick={e => handleSettingsToggle(client.id, e)}
-                  />
+              <div
+                className={styles.groupTitle}
+                title={client.name}
+                onClick={() => handleClientToggle(client.id)}
+              >
+                <div>
+                  <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
+                  <span className={styles.groupName}>{client.name}</span>
                 </div>
-              )}
+                <MdMoreHoriz
+                  className={styles.groupSettings}
+                  onClick={e => handleSettingsToggle(client.id, e)}
+                />
+              </div>
               {!!openClients[client.id] && (
                 !!loadedClients[client.id] ? (
                   <div className={styles.items}>
@@ -314,35 +352,21 @@ const UserActions = props => {
                         key={`grant-user-${user.id}`}
                         className={`
                           ${styles.item}
-                          ${mode === UserActionsModes.Manage ? styles.noIndent : ''}
                           ${selectedItem === user.id ? styles.selectedItem : ''}
                         `}
                         htmlFor={`user-toggle-${client.id}-${user.id}`}
-                        title={user.name || user.email}
+                        title={user.contact_name || user.email}
                         onClick={() => handleItemSelect(user.id)}
                       >
                         <span className={styles.itemName}>
                           {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
                         </span>
-                        {/* @TODO Pending status */}
-                        {(mode === UserActionsModes.Grant && (
-                          <Toggle
-                            id={`user-toggle-${client.id}-${user.id}`}
-                            className={styles.itemToggle}
-                            checked={getItemStatus(client.id, user.id)}
-                            onChange={status => setItemStatus(client.id, user.id, status)}
-                          />
-                        )) ||
-                        (mode === UserActionsModes.Manage && (
-                          !!isDeleteBusy[user.id] ? (
-                            <Loader inline size={3} className={styles.busyLoader} />
-                          ) : (
-                            <MdDelete
-                              className={styles.itemDelete}
-                              onClick={e => handleItemDelete(user.id, e)}
-                            />
-                          )
-                        ))}
+                        <Toggle
+                          id={`user-toggle-${client.id}-${user.id}`}
+                          className={styles.itemToggle}
+                          checked={getItemStatus(client.id, user.id)}
+                          onChange={status => setItemStatus(client.id, user.id, status)}
+                        />
                       </label>
                     ))}
                   </div>
@@ -351,7 +375,7 @@ const UserActions = props => {
                 )
               )}
             </div>
-          ))
+          )))
         ) : (
           <Loader inline className={styles.loader} />
         )}

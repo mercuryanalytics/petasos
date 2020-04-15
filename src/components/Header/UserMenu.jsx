@@ -14,13 +14,6 @@ const UserMenu = props => {
     setIsOpen(!isOpen);
   };
 
-  // useEffect(() => {
-  //   if (!window.userMenuAttached) {
-  //     document.addEventListener('click', () => {});
-  //     window.userMenuAttached = true;
-  //   }
-  // }, []);
-
   return (
     <HeaderControl
       className={`${styles.container} ${isOpen ? styles.open : ''}`}
@@ -28,9 +21,7 @@ const UserMenu = props => {
       active={isOpen}
     >
       <Avatar className={styles.avatar} avatar={avatar} alt={name[0].toUpperCase()} />
-      <span className={styles.name}>
-        {name}
-      </span>
+      <span className={styles.name}>{name}</span>
       {isOpen && (
         <div className={styles.menu}>
           <Link className={styles.menuLink} to={Routes.Account}>My account</Link>

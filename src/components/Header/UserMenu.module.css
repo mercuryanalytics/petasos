@@ -22,11 +22,11 @@
 .avatar {
   width: 38px !important;
   height: 38px !important;
-  margin-right: 30px;
+  margin-right: 8px;
 }
 
 .name {
-  margin-right: 25px;
+  margin-right: 16px;
   font-size: 1.125rem;
   color: #333;
 }

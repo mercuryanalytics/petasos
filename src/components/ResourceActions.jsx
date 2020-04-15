@@ -41,7 +41,7 @@ const ResourceActions = props => {
 
   const init = useCallback(async () => {
     const initClients = async () => {
-      await dispatch(!clientId ? getClient(clientId) : getClients()).then(async (action) => {
+      await dispatch(clientId ? getClient(clientId) : getClients()).then(async (action) => {
         let data = action.payload;
         data = Array.isArray(data) ? data : [data];
         let promises = [];
@@ -49,10 +49,9 @@ const ResourceActions = props => {
           promises.push(initClientAuthorizations(data[i].id));
         }
         await Promise.all(promises).then(() => {
+          const clientToOpen = clientId || (data.length ? data[0].id : null);
           setClients(data);
-          if (clientId) {
-            handleClientToggle(clientId, true);
-          }
+          handleClientToggle(clientToOpen, true);
         });
       });
     };
@@ -60,7 +59,7 @@ const ResourceActions = props => {
   }, [clientId]);
 
   useEffect(() => {
-    if (clientId && userId) {
+    if (userId) {
       setIsLoading(true);
       setOpenClients({});
       setOpenProjects({});
@@ -217,7 +216,7 @@ const ResourceActions = props => {
               <div
                 className={styles.title}
                 title={client.name}
-                onClick={() => handleClientToggle(client.id)}
+                onClick={() => !clientId && handleClientToggle(client.id)}
               >
                 {!clientId && (
                   <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
@@ -238,7 +237,7 @@ const ResourceActions = props => {
                   (!!clientReports[client.id] && !!clientReports[client.id].length)
                 ) ? <>
                   {projects[client.id].map(project => (
-                    <div key={project.id} className={styles.project}>
+                    <div key={project.id} className={`${styles.project} ${!clientId ? styles.indented : ''}`}>
                       <div
                         className={styles.title}
                         title={project.name}
@@ -288,7 +287,7 @@ const ResourceActions = props => {
                   {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
                     <div
                       key={clientReport.id}
-                      className={styles.report}
+                      className={`${styles.report} ${styles.orphan}`}
                       title={clientReport.name}
                     >
                       <div className={styles.title}>

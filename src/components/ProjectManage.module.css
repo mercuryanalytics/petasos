@@ -12,7 +12,7 @@
   position: absolute;
   z-index: 3;
   right: 432px;
-  top: 27px;
+  top: 20px;
   display: flex;
   align-items: center;
 }
@@ -56,11 +56,6 @@
   color: #333;
 }
 
-.section .title .icon {
-  margin-right: .5rem;
-  font-size: 1.5rem;
-}
-
 .section .form .formControl {
   margin-bottom: 1rem;
 }
@@ -71,7 +66,7 @@
 
 .section .form .formButtons {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 1rem;
 }
 

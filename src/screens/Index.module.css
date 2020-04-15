@@ -14,10 +14,3 @@
 .content {
   height: calc(100% - 49px);
 }
-
-.loader {
-  display: flex !important;
-  justify-content: center;
-  width: 100% !important;
-  margin: 40px 0 !important;
-}

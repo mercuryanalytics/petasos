@@ -9,7 +9,7 @@ import UserActions, { UserActionsModes, UserActionsContexts } from './UserAction
 import UserManage from './UserManage';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
-import { MdDelete, MdSupervisorAccount } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
@@ -82,7 +82,7 @@ const ClientManage = props => {
     if (bc.length && selectedUserId) {
       let u = users.filter(u => u.id === selectedUserId)[0];
       if (u) {
-        bc.push(u.name || u.email);
+        bc.push(u.contact_name || u.email);
       }
     }
     if (props.onBreadcrumbsChange) {
@@ -452,7 +452,6 @@ const ClientManage = props => {
           {editMode && (
             <div className={styles.grant}>
               <div className={`${styles.title} ${styles.big}`}>
-                <MdSupervisorAccount className={styles.icon} />
                 <span>Client access</span>
               </div>
               <UserActions
@@ -472,8 +471,8 @@ const ClientManage = props => {
             </div>
             <UserActions
               mode={UserActionsModes.Manage}
-              context={UserActionsContexts.Client}
-              clientId={id}
+              showClients={false}
+              limitClientId={id}
               selectedUserId={selectedUserId}
               onUserSelect={handleUserSelect}
             />

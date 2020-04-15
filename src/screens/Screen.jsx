@@ -58,9 +58,11 @@ const Screen = props => {
           <Header user={activeUser} />
         </div>
         <div className={styles.body}>
-          <div className={styles.side}>
-            <SideMenu />
-          </div>
+          {props.showSideBar !== false && (
+            <div className={styles.side}>
+              <SideMenu />
+            </div>
+          )}
           <div className={styles.content}>
             {props.children}
           </div>

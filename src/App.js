@@ -11,6 +11,7 @@ import { setLocationData } from './store/location/actions';
 import Loader from './components/Loader';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
+import SuperUser from './screens/SuperUser';
 import Login from './screens/Login';
 import Logout from './screens/Logout';
 import PageNotFound from './screens/PageNotFound';
@@ -65,6 +66,7 @@ const App = () => {
           render={p => <Index {...p} content={ContentTypes.ManageReport} />}
         />
         <Route path={Routes.Account} component={Account} />
+        <Route path={Routes.SuperUser} component={SuperUser} />
         <Route path={Routes.Login} component={Login} />
         <Route path={Routes.LoginCallback} component={Loader} />
         <Route path={Routes.Logout} component={Logout} />

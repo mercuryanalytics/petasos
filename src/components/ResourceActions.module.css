@@ -72,6 +72,10 @@
   background-color: #F0F0F0;
 }
 
+.project.indented {
+  margin-left: 20px;
+}
+
 .project .title {
   display: flex;
   align-items: center;
@@ -111,7 +115,7 @@
 .project .content {}
 
 .report {
-  margin-left: 34px;
+  margin-left: 20px;
 }
 
 .report .title {
@@ -125,9 +129,13 @@
 }
 
 .report .title .icon {
-  margin: .325rem .5rem .325rem 0;
+  margin: .125rem .5rem .125rem .9rem;
   font-size: 1.2rem;
   color: #333;
+}
+
+.report.orphan .title .icon {
+  margin: .325rem .5rem .325rem 0;
 }
 
 .report .title .name {
@@ -152,14 +160,8 @@
 .checkboxesTitles {
   display: flex;
   justify-content: flex-end;
+  padding: 0 5px;
   margin-bottom: 24px;
-}
-
-.checkboxesTitles .checkboxTitle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
 }
 
 .checkboxesTitles .checkboxTitle > span {
@@ -173,8 +175,11 @@
   cursor: pointer;
 }
 
-.itemCheckbox, .itemToggle {
-  width: 60px;
+.itemCheckbox, .itemToggle, .checkboxesTitles .checkboxTitle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
 }
 
 .itemCheckbox label {

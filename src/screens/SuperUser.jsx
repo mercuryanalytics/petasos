@@ -1,0 +1,87 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import styles from './SuperUser.module.css';
+import { setLocationData } from '../store/location/actions';
+import Screen from './Screen';
+import AccessRestricted from './AccessRestricted';
+import UserActions, { UserActionsModes } from '../components/UserActions';
+import UserManage from '../components/UserManage';
+import ResourceActions from '../components/ResourceActions';
+
+const Tabs = {
+  Info: 1,
+  Permissions: 2,
+};
+
+const SuperUser = () => {
+  const dispatch = useDispatch();
+  const [tab, setTab] = useState(Tabs.Info);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const isAccessBlocked = false;
+
+  useEffect(() => {
+    dispatch(setLocationData({ superUser: true }));
+  }, []);
+
+  const handleUserSelect = useCallback((id) => {
+    if (selectedUserId !== id) {
+      setSelectedUserId(id);
+    }
+  }, [selectedUserId]);
+
+  return !isAccessBlocked ? (
+    <Screen className={styles.container} private showSideBar={false}>
+      <div className={styles.content}>
+        <div className={styles.left}>
+          <div className={styles.title}>
+            <span>Users</span>
+          </div>
+          <UserActions
+            mode={UserActionsModes.Manage}
+            showClients={false}
+            selectedUserId={selectedUserId}
+            onUserSelect={handleUserSelect}
+          />
+        </div>
+        <div className={styles.right}>
+          <div className={styles.tabs}>
+            <div
+              className={`${styles.tab} ${tab === Tabs.Info ? styles.active : ''}`}
+              onClick={() => setTab(Tabs.Info)}
+            >
+              <span>User info</span>
+            </div>
+            <div
+              className={`${styles.tab} ${tab === Tabs.Permissions ? styles.active : ''}`}
+              onClick={() => setTab(Tabs.Permissions)}
+            >
+              <span>Access and Permissions</span>
+            </div>
+          </div>
+          <div className={`
+            ${styles.tabContent}
+            ${tab === Tabs.Info || selectedUserId === null ? styles.spaced : ''}
+          `}>
+            {(tab === Tabs.Info && (
+              selectedUserId !== null && (
+                <UserManage id={selectedUserId} preview={true} embeded={true} />
+              )
+            )) ||
+            (tab === Tabs.Permissions && (
+              selectedUserId !== null && (
+                <ResourceActions userId={selectedUserId} />
+              )
+            ))}
+            {selectedUserId === null && (
+              <div className={styles.noUser}>No selected user</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Screen>
+  ) : (
+    <AccessRestricted />
+  );
+};
+
+export default SuperUser;

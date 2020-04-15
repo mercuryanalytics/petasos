@@ -81,7 +81,7 @@
 
 .section .form .formButtons {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 1rem;
 }
 

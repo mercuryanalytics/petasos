@@ -66,10 +66,12 @@ const Index = props => {
   useEffect(() => {
     if (isLoaded) {
       if (accessOptions) {
-        dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
-          setIsAccessBlocked(action.type === 'GET_AUTHORIZED_USERS_FAILURE');
-          setKeepLoading(false);
-        });
+        // @TODO Restore
+        setKeepLoading(false);
+        // dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
+        //   setIsAccessBlocked(action.type === 'GET_AUTHORIZED_USERS_FAILURE');
+        //   setKeepLoading(false);
+        // });
       } else {
         setKeepLoading(false);
       }

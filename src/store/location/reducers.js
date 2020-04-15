@@ -5,6 +5,7 @@ const initialState = {
     client: null,
     project: null,
     report: null,
+    superUser: null,
   },
 };
 
