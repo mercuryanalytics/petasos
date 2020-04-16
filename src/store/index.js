@@ -90,7 +90,7 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
           if (a[0].subject_id !== resId) {
             continue;
           }
-          if (role && a[1] === UserRolesWriteToRead[role]) {
+          if (role && (Array.isArray(a[1]) ? a[1] : [a[1]]).indexOf(UserRolesWriteToRead[role]) > -1) {
             return true;
           }
           if (scopeId) {

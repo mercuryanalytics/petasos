@@ -140,15 +140,16 @@ const ResourceActions = props => {
         if (status) {
           states.authorize = true;
           newStates[`${userId}-${type}-${id}-viewer`] = true;
-          if (role === managerRole) {
-            newStates[`${userId}-${type}-${id}-${adminRole}`] = false; 
-            dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }));
-          } else if (role === adminRole) {
-            newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
-            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }));
+          if (role === adminRole) {
+            newStates[`${userId}-${type}-${id}-${managerRole}`] = true;
+            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 1 }));
           }
         } else {
           skipCollections = true;
+          if (role === adminRole) {
+            newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
+            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }));
+          }
         }
       } else {
         states.authorize = status;
