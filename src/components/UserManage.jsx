@@ -86,6 +86,9 @@ const UserManage = props => {
       if (values.new_password) {
         result.password = values.new_password;
       }
+      if (clientId) {
+        result.client_id = clientId;
+      }
       if (editMode) {
         data && dispatch(updateUser(data.id, result)).then(() => {
           form.reset();

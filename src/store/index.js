@@ -8,6 +8,10 @@ import reportsReducer from './reports/reducers';
 import locationReducer from './location/reducers';
 
 export const pushToStack = (stack, data, options) => {
+  if (!data) {
+    return stack;
+  }
+
   data = Array.isArray(data) ? data : [data];
   options = Object.assign({}, {
     updateOnly: false,

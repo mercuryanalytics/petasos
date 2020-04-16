@@ -265,3 +265,8 @@
   font-size: .875rem;
   color: #A9A9A9;
 }
+
+.noResults.alignLeft {
+  margin-left: 57px;
+  text-align: left;
+}

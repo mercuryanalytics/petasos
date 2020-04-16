@@ -223,7 +223,7 @@ const UserActions = props => {
       setIsBusy(true);
       const result = {
         email: values.add_user_email,
-        client_id: clientId,
+        client_id: clientId || limitClientId || null,
         company_name: null,
         contact_name: null,
         contact_title: null,
