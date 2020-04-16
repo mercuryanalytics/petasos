@@ -1,24 +1,26 @@
 .container {
-  height: 100%;
   display: flex;
+  flex-direction: column;
+  /* height: 100%; */
+  padding: 25px 1.8rem 2rem 1.8rem;
   background-color: #fff;
 }
 
-.edit {
-  flex-grow: 1;
-  padding: 25px 1.8rem 2rem 1.8rem;
+.section {
+  border-bottom: 1px solid #F0F0F0;
+  margin-bottom: 25px;
+  padding-bottom: 25px;
 }
 
-.preview {
-  display: none;
-  width: 180px;
-  min-width: 150px;
-  border-left: 1px solid #B9B9B9;
-  background-color: #FAFAFA;
+.bigTitle {
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
 }
 
-.edit {
-  padding: 25px 1.8rem 2rem 1.8rem;
+.resources {
+  position: relative;
 }
 
 .arrow {
@@ -35,11 +37,12 @@
   margin-bottom: 5px;
 }
 
-.client .title {
+.client > .title {
   display: flex;
   align-items: center;
+  height: 40px;
   margin: 0 -10px;
-  padding: 5px 15px;
+  padding: 0 10px;
   border-radius: 18px;
   background-color: #fff;
   color: #333;
@@ -47,13 +50,13 @@
   cursor: pointer;
 }
 
-.client .title .logo {
+.client > .title .logo {
   width: 1.75rem;
   height: 1.75rem;
   margin-right: .5rem;
 }
 
-.client .title .name {
+.client > .title .name {
   flex-grow: 1;
   width: 1px;
   overflow: hidden;
@@ -63,12 +66,12 @@
   color: #333;
 }
 
-.client:not(.active) .title:hover {
+.client:not(.active) > .title:hover {
   background-color: #F0F0F0;
   color: #000;
 }
 
-.client.active .title {
+.client.active > .title {
   background-color: #F0F0F0;
 }
 
@@ -76,24 +79,26 @@
   margin-left: 20px;
 }
 
-.project .title {
+.project > .title {
   display: flex;
   align-items: center;
+  height: 40px;
   margin: 0 -10px;
-  padding: 5px 15px;
+  padding: 0 10px;
   background-color: #fff;
+  border-radius: 18px;
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
 
-.project .title .icon {
+.project > .title .icon {
   margin: .125rem .5rem .125rem 0;
   font-size: 1.6rem;
   color: #333;
 }
 
-.project .title .name {
+.project > .title .name {
   flex-grow: 1;
   width: 1px;
   overflow: hidden;
@@ -103,42 +108,42 @@
   color: #333;
 }
 
-.project:not(.active) .title:hover {
+.project:not(.active) > .title:hover {
   background-color: #F0F0F0;
   color: #000;
 }
 
-.project.active .title {
+.project.active > .title {
   background-color: #F0F0F0;
 }
-
-.project .content {}
 
 .report {
   margin-left: 20px;
 }
 
-.report .title {
+.report > .title {
   display: flex;
   align-items: center;
+  height: 40px;
   margin: 0 -10px;
-  padding: 5px 15px;
+  padding: 0 10px;
+  border-radius: 18px;
   background-color: #fff;
   color: #333;
-  cursor: pointer;
+  cursor: default;
 }
 
-.report .title .icon {
+.report > .title .icon {
   margin: .125rem .5rem .125rem .9rem;
   font-size: 1.2rem;
   color: #333;
 }
 
-.report.orphan .title .icon {
+.report.orphan > .title .icon {
   margin: .325rem .5rem .325rem 0;
 }
 
-.report .title .name {
+.report > .title .name {
   flex-grow: 1;
   width: 1px;
   overflow: hidden;
@@ -148,13 +153,27 @@
   color: #333;
 }
 
-.report:not(.active) .title:hover {
+.report:not(.active) > .title:hover {
   background-color: #F0F0F0;
   color: #000;
 }
 
-.report.active .title {
+.report.active > .title {
   background-color: #F0F0F0;
+}
+
+.globalCheckboxes {
+  display: flex;
+}
+
+.globalCheckboxes > * {
+  width: auto;
+  margin-right: 40px;
+}
+
+.globalCheckboxes [data-checkbox-label] {
+  font-size: .875rem;
+  font-weight: normal;
 }
 
 .checkboxesTitles {
@@ -164,15 +183,45 @@
   margin-bottom: 24px;
 }
 
-.checkboxesTitles .checkboxTitle > span {
+.checkboxesTitles .checkboxTitle.separator, .itemCheckbox.separator {
+  margin-left: 80px;
+}
+
+.verticalSeparator {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 0px;
+  height: 100%;
+  border-left: 1px dashed #F37646;
+}
+
+.checkboxesTitles .checkboxTitle > div {
+  position: relative;
+  padding-right: 30px;
+  text-align: right;
   font-size: .8125rem;
   color: #333;
 }
 
-.checkboxesTitles .checkboxTitle > svg {
-  margin-left: 5px;
-  color: #0C7997;
+.checkboxesTitles .checkboxTitle > div > span {
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 20px;
+  transform: translateY(-50%);
   cursor: pointer;
+}
+
+.checkboxesTitles .checkboxTitle > svg {
+  color: #0C7997;
+}
+
+.globalCheckboxes [data-checked], .itemCheckbox.scoped [data-checked] {
+  border-color: #F37646 !important;
+  background-color: #F37646 !important;
 }
 
 .itemCheckbox, .itemToggle, .checkboxesTitles .checkboxTitle {
@@ -180,6 +229,14 @@
   align-items: center;
   justify-content: center;
   width: 70px;
+}
+
+.itemCheckbox.scoped, .checkboxesTitles .checkboxTitle.scoped {
+  width: 100px;
+}
+
+.itemCheckbox[data-checkbox-disabled] label {
+  visibility: hidden;
 }
 
 .itemCheckbox label {
@@ -203,7 +260,7 @@
 
 .noResults {
   display: block;
-  padding: 10px 5px;
+  padding: 5px;
   text-align: center;
   font-size: .875rem;
   color: #A9A9A9;

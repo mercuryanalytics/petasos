@@ -12,28 +12,28 @@ const Checkbox = props => {
   `;
 
   useEffect(() => {
-    if (field && typeof props.value !== 'undefined') {
-      field.input.onChange(props.value);
+    if (field && typeof props.checked !== 'undefined') {
+      field.input.onChange(props.checked);
     }
-  }, [props.value]);
+  }, [props.checked]);
 
   return (
-    <div className={classes}>
+    <div className={classes} {...(!!disabled ? { 'data-checkbox-disabled': 1 } : {})}>
       <label>
         <input
           {...(!!field ? field.input : {
             onChange,
-            value: !!props.value,
+            checked: !!props.checked,
           })}
           disabled={!!disabled}
           className={styles.control}
           type="checkbox"
         />
-        <span className={styles.toggle}>
+        <span {...(!!props.checked ? { 'data-checked': 1 } : {})} className={styles.toggle}>
           <MdCheck className={styles.mark} />
         </span>
         {!!label && (
-          <span className={styles.label}>{label}</span>
+          <span data-checkbox-label className={styles.label}>{label}</span>
         )}
       </label>
       {!!field && field.meta.touched && field.meta.error && (

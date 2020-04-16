@@ -5,19 +5,18 @@
 
 .head {
   height: 72px;
-  margin-bottom: 10px;
   box-sizing: content-box;
 }
 
 .body {
   display: flex;
-  min-height: calc(100vh - 82px);
+  min-height: calc(100vh - 72px);
 }
 
 .body .side {
   width: 320px;
   min-width: 320px;
-  min-height: calc(100vh - 82px);
+  min-height: calc(100vh - 72px);
   padding: 0 18px 1rem 18px;
   box-sizing: border-box;
   overflow-x: visible;
@@ -26,6 +25,6 @@
 
 .body .content {
   flex-grow: 1;
-  min-height: calc(100vh - 82px);
+  min-height: calc(100vh - 72px);
   box-sizing: border-box;
 }

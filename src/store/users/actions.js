@@ -129,8 +129,45 @@ export const getResearchersFailure = (error) => ({
   payload: error,
 });
 
-export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }, options) {
-  const forced = !!((options || {}).forced);
+export function getScopes() {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/scopes`)
+      .then(res => dispatch(getScopesSuccess(res)))
+      .catch(err => dispatch(getScopesFailure(err)));
+  };
+}
+
+export const getScopesSuccess = (scopes) => ({
+  type: 'GET_SCOPES_SUCCESS',
+  payload: scopes,
+});
+
+export const getScopesFailure = (error) => ({
+  type: 'GET_SCOPES_FAILURE',
+  payload: error,
+});
+
+export function getUserAuthorizations(id) {
+  return dispatch => {
+    return apiCall('GET', `${Constants.API_URL}/users/${id}/authorized`)
+      .then(res => dispatch(getUserAuthorizationsSuccess(res, id)))
+      .catch(err => dispatch(getUserAuthorizationsFailure(err, id)));
+  };
+}
+
+export const getUserAuthorizationsSuccess = (authorizations, userId) => ({
+  type: 'GET_USER_AUTHORIZATIONS_SUCCESS',
+  payload: authorizations,
+  userId: userId,
+});
+
+export const getUserAuthorizationsFailure = (error, userId) => ({
+  type: 'GET_USER_AUTHORIZATIONS_FAILURE',
+  payload: error,
+  userId: userId,
+});
+
+export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }) {
   let resPath = 'clients', resId = clientId;
   if (!!projectId) {
     resPath = 'projects';
@@ -161,28 +198,41 @@ export const getAuthorizedUsersFailure = (error) => ({
   payload: error,
 });
 
-export function authorizeUser(id, contextId, { clientId, projectId, reportId }, status) {
+export function authorizeUser(id, contextId, res, states) {
+  let clientId, projectId, reportId;
   let resPath = 'clients', resId = clientId;
-  if (!!projectId) {
-    resPath = 'projects';
-    resId = projectId;
-  } else if (!!reportId) {
-    resPath = 'reports';
-    resId = reportId;
+  states = states || {};
+  if (res) {
+    if (res.isGlobal) {
+      return dispatch => {
+        return apiCall('POST', `${Constants.API_URL}/users/${id}/scopes`, { body: JSON.stringify(states) })
+          .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, states, true)))
+          .catch(err => dispatch(authorizeUserFailure(err)));
+      };
+    }
+    if (res.projectId) {
+      resPath = 'projects';
+      resId = res.projectId;
+    } else if (res.reportId) {
+      resPath = 'reports';
+      resId = res.reportId;
+    } else if (res.clientId) {
+      resPath = 'clients';
+      resId = res.clientId;
+    }
   }
-  const data = {
+  const data = Object.assign({}, {
     user_id: id,
     client_id: contextId,
-    authorize: !!status,
-  };
+  }, states);
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
-      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, !!status)))
+      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, states, false)))
       .catch(err => dispatch(authorizeUserFailure(err)));
   };
 }
 
-export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId, status) => ({
+export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId, states, isGlobal) => ({
   type: 'AUTHORIZE_USER_SUCCESS',
   payload: data,
   userId: userId,
@@ -190,7 +240,8 @@ export const authorizeUserSuccess = (data, userId, contextId, clientId, projectI
   clientId: clientId,
   projectId: projectId,
   reportId: reportId,
-  status: status,
+  states: states,
+  isGlobal: isGlobal,
 });
 
 export const authorizeUserFailure = (error) => ({
