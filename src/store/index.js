@@ -49,13 +49,6 @@ export const pushToStack = (stack, data, options) => {
   return stack;
 };
 
-export const filterStackBy = (stack, criteria, values) => {
-  criteria = Array.isArray(criteria) ? criteria : [criteria];
-  return stack.filter(item => {
-    return values.indexOf(item[criteria]) > -1;
-  });
-};
-
 export const UserRoles = {
   ClientManager: 'client_manager',
   ClientAdmin: 'client_admin',
