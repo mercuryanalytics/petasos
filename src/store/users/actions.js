@@ -178,7 +178,7 @@ export function getAuthorizedUsers(contextId, { clientId, projectId, reportId })
   }
   const queryString = `?client_id=${contextId}`;
   return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`, { forced: true })
+    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
       .then(res => dispatch(getAuthorizedUsersSuccess(res, contextId, clientId, projectId, reportId)))
       .catch(err => dispatch(getAuthorizedUsersFailure(err)));
   };

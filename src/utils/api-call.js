@@ -13,9 +13,9 @@ const apiCall = (method, url, options) => {
 
   options = options || {};
 
-  if (!!options.forced && cached.hasOwnProperty(url)) {
-    delete cached[url];
-  }
+  // if (!!options.forced && cached.hasOwnProperty(url)) {
+  //   delete cached[url];
+  // }
 
   if (method.toUpperCase() === 'GET') {
     let block = cached.hasOwnProperty(url);
