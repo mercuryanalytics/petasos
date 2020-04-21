@@ -1,13 +1,24 @@
+import { hasValue, queryState } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
 export function getUsers(clientId) {
-  const queryString = clientId ? `?client_id=${clientId}` : '';
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/users${queryString}`)
-      .then(res => dispatch(getUsersSuccess(res)))
-      .catch(err => dispatch(getUsersFailure(err)));
-  };
+  const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/users`,
+      `${Constants.API_URL}/users${queryString}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/users${queryString}`)
+      : queryState(state => ({
+        target: state.usersReducer.users,
+        filters: [{ run: hasValue(clientId),
+          filter: item => Array.isArray(item.client_ids) && item.client_ids.indexOf(clientId) > -1 }],
+      }))
+  ).then(
+    res => dispatch(getUsersSuccess(res)),
+    err => dispatch(getUsersFailure(err)),
+  );
 }
 
 export const getUsersSuccess = (users) => ({
@@ -21,11 +32,21 @@ export const getUsersFailure = (error) => ({
 });
 
 export function getUser(id) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/users/${id}`)
-      .then(res => dispatch(getUserSuccess(res)))
-      .catch(err => dispatch(getUserFailure(err, id)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/users`,
+      `${Constants.API_URL}/users/${id}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/users/${id}`)
+      : queryState(state => ({
+        target: state.usersReducer.users,
+        filters: [{ run: true, filter: item => item.id === id }],
+        index: 0,
+      }))
+  ).then(
+    res => dispatch(getUserSuccess(res)),
+    err => dispatch(getUserFailure(err)),
+  );
 }
 
 export const getUserSuccess = (user) => {
@@ -35,7 +56,7 @@ export const getUserSuccess = (user) => {
   }
 };
 
-export const getUserFailure = (error, userId) => {
+export const getUserFailure = (error) => {
   return {
     type: 'GET_USER_FAILURE',
     payload: error,
@@ -46,8 +67,10 @@ export function createUser(data, noAuth) {
   const queryString = noAuth ? `?no_auth=1` : '';
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(createUserSuccess(res)))
-      .catch(err => dispatch(createUserFailure(err)));
+      .then(
+        res => dispatch(createUserSuccess(res)),
+        err => dispatch(createUserFailure(err)),
+      );
   };
 }
 
@@ -68,8 +91,10 @@ export const createUserFailure = (error) => {
 export function updateUser(id, data) {
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(updateUserSuccess(res)))
-      .catch(err => dispatch(updateUserFailure(err, id)));
+      .then(
+        res => dispatch(updateUserSuccess(res)),
+        err => dispatch(updateUserFailure(err)),
+      );
   };
 }
 
@@ -80,7 +105,7 @@ export const updateUserSuccess = (user) => {
   }
 };
 
-export const updateUserFailure = (error, userId) => {
+export const updateUserFailure = (error) => {
   return {
     type: 'UPDATE_USER_FAILURE',
     payload: error,
@@ -88,11 +113,13 @@ export const updateUserFailure = (error, userId) => {
 };
 
 export function deleteUser(id, clientId) {
-  const queryString = clientId ? `?client_id=${clientId}` : '';
+  const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
   return dispatch => {
     return apiCall('DELETE', `${Constants.API_URL}/users/${id}${queryString}`)
-      .then(res => dispatch(deleteUserSuccess(id)))
-      .catch(err => dispatch(deleteUserFailure(err, id)));
+      .then(
+        res => dispatch(deleteUserSuccess(id)),
+        err => dispatch(deleteUserFailure(err, id)),
+      );
   };
 }
 
@@ -112,11 +139,18 @@ export const deleteUserFailure = (error, userId) => {
 };
 
 export function getResearchers() {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/users/researchers`)
-      .then(res => dispatch(getResearchersSuccess(res)))
-      .catch(err => dispatch(getResearchersFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/users/researchers`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/users/researchers`)
+      : queryState(state => ({
+        target: state.usersReducer.researchers,
+      }))
+  ).then(
+    res => dispatch(getResearchersSuccess(res)),
+    err => dispatch(getResearchersFailure(err)),
+  );
 }
 
 export const getResearchersSuccess = (users) => ({
@@ -130,11 +164,18 @@ export const getResearchersFailure = (error) => ({
 });
 
 export function getScopes() {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/scopes`)
-      .then(res => dispatch(getScopesSuccess(res)))
-      .catch(err => dispatch(getScopesFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/scopes`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/scopes`)
+      : queryState(state => ({
+        target: state.usersReducer.scopes,
+      }))
+  ).then(
+    res => dispatch(getScopesSuccess(res)),
+    err => dispatch(getScopesFailure(err)),
+  );
 }
 
 export const getScopesSuccess = (scopes) => ({
@@ -148,11 +189,19 @@ export const getScopesFailure = (error) => ({
 });
 
 export function getUserAuthorizations(id) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/users/${id}/authorized`)
-      .then(res => dispatch(getUserAuthorizationsSuccess(res, id)))
-      .catch(err => dispatch(getUserAuthorizationsFailure(err, id)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/users/${id}/authorized`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/users/${id}/authorized`)
+      : queryState(state => ({
+        target: state.usersReducer.authorizations,
+        key: id,
+      }))
+  ).then(
+    res => dispatch(getUserAuthorizationsSuccess(res, id)),
+    err => dispatch(getUserAuthorizationsFailure(err, id)),
+  );
 }
 
 export const getUserAuthorizationsSuccess = (authorizations, userId) => ({
@@ -167,30 +216,40 @@ export const getUserAuthorizationsFailure = (error, userId) => ({
   userId: userId,
 });
 
-export function getAuthorizedUsers(contextId, { clientId, projectId, reportId }) {
-  let resPath = 'clients', resId = clientId;
-  if (!!projectId) {
-    resPath = 'projects';
-    resId = projectId;
-  } else if (!!reportId) {
-    resPath = 'reports';
-    resId = reportId;
-  }
+export function getAuthorizedUsers(contextId, res) {
   const queryString = `?client_id=${contextId}`;
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
-      .then(res => dispatch(getAuthorizedUsersSuccess(res, contextId, clientId, projectId, reportId)))
-      .catch(err => dispatch(getAuthorizedUsersFailure(err)));
-  };
+  let resPath, resId;
+  if (hasValue(res.reportId)) {
+    resPath = 'reports';
+    resId = res.reportId;
+  } else if (hasValue(res.projectId)) {
+    resPath = 'projects';
+    resId = res.projectId;
+  } else if (hasValue(res.clientId)) {
+    resPath = 'clients';
+    resId = res.clientId;
+  }
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
+      : queryState(state => ({
+        target: state.usersReducer.authorizedUsers,
+        key: `${resPath}-${resId}@${contextId}`,
+      }))
+  ).then(
+    res => dispatch(getAuthorizedUsersSuccess(res, contextId, resPath, resId)),
+    err => dispatch(getAuthorizedUsersFailure(err)),
+  );
 }
 
-export const getAuthorizedUsersSuccess = (data, contextId, clientId, projectId, reportId) => ({
+export const getAuthorizedUsersSuccess = (data, contextId, resPath, resId) => ({
   type: 'GET_AUTHORIZED_USERS_SUCCESS',
   payload: data,
   contextId: contextId,
-  clientId: clientId,
-  projectId: projectId,
-  reportId: reportId,
+  resPath: resPath,
+  resId: resId,
 });
 
 export const getAuthorizedUsersFailure = (error) => ({
@@ -199,24 +258,32 @@ export const getAuthorizedUsersFailure = (error) => ({
 });
 
 export function authorizeUser(id, contextId, res, states) {
-  let clientId, projectId, reportId;
-  let resPath = 'clients', resId = clientId;
+  const refreshAuthorizations = async (dispatch) => {
+    apiCall.forget(`${Constants.API_URL}/users/${id}/authorized`);
+    await dispatch(getUserAuthorizations(id));
+  };
+  let resPath, resId;
   states = states || {};
   if (res) {
     if (res.isGlobal) {
       return dispatch => {
         return apiCall('POST', `${Constants.API_URL}/users/${id}/scopes`, { body: JSON.stringify(states) })
-          .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, states, true)))
-          .catch(err => dispatch(authorizeUserFailure(err)));
+          .then(
+            async (res) => {
+              await refreshAuthorizations(dispatch);
+              dispatch(authorizeUserSuccess(res, id, contextId, null, null, states, true));
+            },
+            err => dispatch(authorizeUserFailure(err)),
+          );
       };
     }
-    if (res.projectId) {
-      resPath = 'projects';
-      resId = res.projectId;
-    } else if (res.reportId) {
+    if (hasValue(res.reportId)) {
       resPath = 'reports';
       resId = res.reportId;
-    } else if (res.clientId) {
+    } else if (hasValue(res.projectId)) {
+      resPath = 'projects';
+      resId = res.projectId;
+    } else if (hasValue(res.clientId)) {
       resPath = 'clients';
       resId = res.clientId;
     }
@@ -227,19 +294,23 @@ export function authorizeUser(id, contextId, res, states) {
   }, states);
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
-      .then(res => dispatch(authorizeUserSuccess(res, id, contextId, clientId, projectId, reportId, states, false)))
-      .catch(err => dispatch(authorizeUserFailure(err)));
+      .then(
+        async (res) => {
+          await refreshAuthorizations(dispatch);
+          return dispatch(authorizeUserSuccess(res, id, contextId, resPath, resId, states, false));
+        },
+        err => dispatch(authorizeUserFailure(err)),
+      );
   };
 }
 
-export const authorizeUserSuccess = (data, userId, contextId, clientId, projectId, reportId, states, isGlobal) => ({
+export const authorizeUserSuccess = (data, userId, contextId, resPath, resId, states, isGlobal) => ({
   type: 'AUTHORIZE_USER_SUCCESS',
   payload: data,
   userId: userId,
   contextId: contextId,
-  clientId: clientId,
-  projectId: projectId,
-  reportId: reportId,
+  resPath: resPath,
+  resId: resId,
   states: states,
   isGlobal: isGlobal,
 });

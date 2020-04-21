@@ -1,13 +1,23 @@
+import { hasValue, queryState } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
 export function getProjects(clientId) {
-  const queryString = clientId ? `?client_id=${clientId}` : '';
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
-      .then(res => dispatch(getProjectsSuccess(res)))
-      .catch(err => dispatch(getProjectsFailure(err)));
-  };
+  const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/projects`,
+      `${Constants.API_URL}/projects${queryString}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
+      : queryState(state => ({
+        target: state.projectsReducer.projects,
+        filters: [{ run: hasValue(clientId), filter: item => item.domain_id === clientId }],
+      }))
+  ).then(
+    res => dispatch(getProjectsSuccess(res)),
+    err => dispatch(getProjectsFailure(err)),
+  );
 }
 
 export const getProjectsSuccess = (projects) => ({
@@ -21,11 +31,18 @@ export const getProjectsFailure = (error) => ({
 });
 
 export function getOrphanProjects() {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/projects/orphans`)
-      .then(res => dispatch(getOrphanProjectsSuccess(res)))
-      .catch(err => dispatch(getOrphanProjectsFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/projects/orphans`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/projects/orphans`)
+      : queryState(state => ({
+        target: state.projectsReducer.orphans,
+      }))
+  ).then(
+    res => dispatch(getOrphanProjectsSuccess(res)),
+    err => dispatch(getOrphanProjectsFailure(err)),
+  );
 }
 
 export const getOrphanProjectsSuccess = (projects) => ({
@@ -39,11 +56,21 @@ export const getOrphanProjectsFailure = (error) => ({
 });
 
 export function getProject(id) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/projects/${id}`)
-      .then(res => dispatch(getProjectSuccess(res)))
-      .catch(err => dispatch(getProjectFailure(err, id)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/projects`,
+      `${Constants.API_URL}/projects/${id}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/projects/${id}`)
+      : queryState(state => ({
+        target: state.projectsReducer.projects,
+        filters: [{ run: true, filter: item => item.id === id }],
+        index: 0,
+      }))
+  ).then(
+    res => dispatch(getProjectSuccess(res)),
+    err => dispatch(getProjectFailure(err)),
+  );
 }
 
 export const getProjectSuccess = (project) => {
@@ -53,7 +80,7 @@ export const getProjectSuccess = (project) => {
   }
 };
 
-export const getProjectFailure = (error, projectId) => {
+export const getProjectFailure = (error) => {
   return {
     type: 'GET_PROJECT_FAILURE',
     payload: error,
@@ -63,8 +90,10 @@ export const getProjectFailure = (error, projectId) => {
 export function createProject(data) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
-      .then(res => dispatch(createProjectSuccess(res)))
-      .catch(err => dispatch(createProjectFailure(err)));
+      .then(
+        res => dispatch(createProjectSuccess(res)),
+        err => dispatch(createProjectFailure(err)),
+      );
   };
 }
 
@@ -85,8 +114,10 @@ export const createProjectFailure = (error) => {
 export function updateProject(id, data) {
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(updateProjectSuccess(res)))
-      .catch(err => dispatch(updateProjectFailure(err, id)));
+      .then(
+        res => dispatch(updateProjectSuccess(res)),
+        err => dispatch(updateProjectFailure(err)),
+      );
   };
 }
 
@@ -97,7 +128,7 @@ export const updateProjectSuccess = (project) => {
   }
 };
 
-export const updateProjectFailure = (error, projectId) => {
+export const updateProjectFailure = (error) => {
   return {
     type: 'UPDATE_PROJECT_FAILURE',
     payload: error,
@@ -107,8 +138,10 @@ export const updateProjectFailure = (error, projectId) => {
 export function deleteProject(id) {
   return dispatch => {
     return apiCall('DELETE', `${Constants.API_URL}/projects/${id}`)
-      .then(res => dispatch(deleteProjectSuccess(id)))
-      .catch(err => dispatch(deleteProjectFailure(err, id)));
+      .then(
+        res => dispatch(deleteProjectSuccess(id)),
+        err => dispatch(deleteProjectFailure(err, id)),
+      );
   };
 }
 

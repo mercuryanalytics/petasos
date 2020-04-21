@@ -1,14 +1,27 @@
+import { hasValue, queryState } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
 export function getReports(projectId, clientId) {
-  const queryString = projectId ? `?project_id=${projectId}` :
-    (clientId ? `?client_id=${clientId}` : '');
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/reports${queryString}`)
-      .then(res => dispatch(getReportsSuccess(res)))
-      .catch(err => dispatch(getReportsFailure(err)));
-  };
+  const queryString = hasValue(projectId) ? `?project_id=${projectId}` :
+    (hasValue(clientId) ? `?client_id=${clientId}` : '');
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/reports`,
+      `${Constants.API_URL}/reports${queryString}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/reports${queryString}`)
+      : queryState(state => ({
+        target: state.reportsReducer.reports,
+        filters: [
+          { run: hasValue(clientId), filter: item => item.project.domain_id === clientId },
+          { run: hasValue(projectId), filter: item => item.project_id === projectId },
+        ],
+      }))
+  ).then(
+    res => dispatch(getReportsSuccess(res)),
+    err => dispatch(getReportsFailure(err)),
+  );
 }
 
 export const getReportsSuccess = (reports) => ({
@@ -22,11 +35,18 @@ export const getReportsFailure = (error) => ({
 });
 
 export function getOrphanReports() {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/reports/orphans`)
-      .then(res => dispatch(getOrphanReportsSuccess(res)))
-      .catch(err => dispatch(getOrphanReportsFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/reports/orphans`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/reports/orphans`)
+      : queryState(state => ({
+        target: state.reportsReducer.orphans,
+      }))
+  ).then(
+    res => dispatch(getOrphanReportsSuccess(res)),
+    err => dispatch(getOrphanReportsFailure(err)),
+  );
 }
 
 export const getOrphanReportsSuccess = (reports) => ({
@@ -40,11 +60,19 @@ export const getOrphanReportsFailure = (error) => ({
 });
 
 export function getClientReports(clientId) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/clients/${clientId}/orphans`)
-      .then(res => dispatch(getClientReportsSuccess(res)))
-      .catch(err => dispatch(getClientReportsFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients/${clientId}/orphans`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients/${clientId}/orphans`)
+      : queryState(state => ({
+        target: state.reportsReducer.clientReports,
+        filters: [{ run: true, filter: item => item.project.domain_id === clientId }],
+      }))
+  ).then(
+    res => dispatch(getClientReportsSuccess(res)),
+    err => dispatch(getClientReportsFailure(err)),
+  );
 }
 
 export const getClientReportsSuccess = (reports) => ({
@@ -58,11 +86,21 @@ export const getClientReportsFailure = (error) => ({
 });
 
 export function getReport(id) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/reports/${id}`)
-      .then(res => dispatch(getReportSuccess(res)))
-      .catch(err => dispatch(getReportFailure(err, id)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/reports`,
+      `${Constants.API_URL}/reports/${id}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/reports/${id}`)
+      : queryState(state => ({
+        target: state.reportsReducer.reports,
+        filters: [{ run: true, filter: item => item.id === id }],
+        index: 0,
+      }))
+  ).then(
+    res => dispatch(getReportSuccess(res)),
+    err => dispatch(getReportFailure(err)),
+  );
 }
 
 export const getReportSuccess = (report) => {
@@ -72,7 +110,7 @@ export const getReportSuccess = (report) => {
   }
 };
 
-export const getReportFailure = (error, reportId) => {
+export const getReportFailure = (error) => {
   return {
     type: 'GET_REPORT_FAILURE',
     payload: error,
@@ -82,8 +120,10 @@ export const getReportFailure = (error, reportId) => {
 export function createReport(data) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
-      .then(res => dispatch(createReportSuccess(res)))
-      .catch(err => dispatch(createReportFailure(err)));
+      .then(
+        res => dispatch(createReportSuccess(res)),
+        err => dispatch(createReportFailure(err)),
+      );
   };
 }
 
@@ -104,8 +144,10 @@ export const createReportFailure = (error) => {
 export function updateReport(id, data) {
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(updateReportSuccess(res)))
-      .catch(err => dispatch(updateReportFailure(err, id)));
+      .then(
+        res => dispatch(updateReportSuccess(res)),
+        err => dispatch(updateReportFailure(err)),
+      );
   };
 }
 
@@ -116,7 +158,7 @@ export const updateReportSuccess = (report) => {
   }
 };
 
-export const updateReportFailure = (error, reportId) => {
+export const updateReportFailure = (error) => {
   return {
     type: 'UPDATE_REPORT_FAILURE',
     payload: error,
@@ -126,8 +168,10 @@ export const updateReportFailure = (error, reportId) => {
 export function deleteReport(id) {
   return dispatch => {
     return apiCall('DELETE', `${Constants.API_URL}/reports/${id}`)
-      .then(res => dispatch(deleteReportSuccess(id)))
-      .catch(err => dispatch(deleteReportFailure(err, id)));
+      .then(
+        res => dispatch(deleteReportSuccess(id)),
+        err => dispatch(deleteReportFailure(err, id)),
+      );
   };
 }
 

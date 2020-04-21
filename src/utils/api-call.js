@@ -1,30 +1,21 @@
 import store from '../store';
 
-let cached = {};
+let called = {};
 
-const apiCall = (method, url, options) => {
+function apiCall (method, url, options) {
   const state = store.getState();
   const authKey = state.authReducer.authKey;
-  let cache = false;
 
   if (!authKey) {
-    return;
+    return new Promise((resolve) => {
+      return resolve('');
+    });
   }
 
   options = options || {};
 
   if (method.toUpperCase() === 'GET') {
-    let block = cached.hasOwnProperty(url);
-    if (!block) {
-      // @TODO Enable caching
-      // cache = true;
-    }
-    if (block) {
-      return (new Promise((resolve) => {
-        const _result = JSON.parse(cached[url]);
-        return resolve(_result.hasOwnProperty('data') ? _result.data : _result);
-      }));
-    }
+    called[url] = true;
   }
 
   let fetchOptions = {
@@ -41,25 +32,44 @@ const apiCall = (method, url, options) => {
 
   return fetch(url, fetchOptions)
     .then(response => response.text())
-    .then(response => {
-      if (response.trim().length) {
-        try {
-          let result = JSON.parse(response);
-          if (result.hasOwnProperty('errors')) {
-            return Promise.reject(result);
+    .then(
+      response => {
+        if (response.trim().length) {
+          try {
+            let result = JSON.parse(response);
+            if (result.hasOwnProperty('errors')) {
+              return Promise.reject(result);
+            }
+            return result.hasOwnProperty('data') ? result.data : '';
+          } catch (e) {
+            return Promise.reject(e);
           }
-          if (cache) {
-            cached[url] = JSON.stringify(result);
-          }
-          return result.hasOwnProperty('data') ? result.data : '';
-        } catch (e) {
-          return Promise.reject(e);
         }
+        return '';
+      },
+      reason => {
+        return Promise.reject(reason);
       }
-      return '';
-    }, (reason) => {
-      return Promise.reject(reason);
-    });
+    );
+};
+
+apiCall.isCalled = (urls) => {
+  urls = Array.isArray(urls) ? urls : [urls];
+  for (let i = 0; i < urls.length; i++) {
+    if (called.hasOwnProperty(urls[i])) {
+      return true;
+    }
+  }
+  return false;
+};
+
+apiCall.forget = (urls) => {
+  urls = Array.isArray(urls) ? urls : [urls];
+  for (let i = 0; i < urls.length; i++) {
+    if (called.hasOwnProperty(urls[i])) {
+      delete called[urls[i]];
+    }
+  }
 };
 
 export default apiCall;

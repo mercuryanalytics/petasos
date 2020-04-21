@@ -1,12 +1,20 @@
+import { queryState } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
 export function getClients() {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/clients`)
-      .then(res => dispatch(getClientsSuccess(res)))
-      .catch(err => dispatch(getClientsFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients`)
+      : queryState(state => ({
+        target: state.clientsReducer.clients,
+      }))
+  ).then(
+    res => dispatch(getClientsSuccess(res)),
+    err => dispatch(getClientsFailure(err)),
+  );
 }
 
 export const getClientsSuccess = (clients) => ({
@@ -20,11 +28,21 @@ export const getClientsFailure = (error) => ({
 });
 
 export function getClient(id) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/clients/${id}`)
-      .then(res => dispatch(getClientSuccess(res)))
-      .catch(err => dispatch(getClientFailure(err, id))); 
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients`,
+      `${Constants.API_URL}/clients/${id}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients/${id}`)
+      : queryState(state => ({
+        target: state.clientsReducer.clients,
+        filters: [{ run: true, filter: item => item.id === id }],
+        index: 0,
+      }))
+  ).then(
+    res => dispatch(getClientSuccess(res)),
+    err => dispatch(getClientFailure(err)),
+  );
 }
 
 export const getClientSuccess = (client) => {
@@ -34,7 +52,7 @@ export const getClientSuccess = (client) => {
   }
 };
 
-export const getClientFailure = (error, clientId) => {
+export const getClientFailure = (error) => {
   return {
     type: 'GET_CLIENT_FAILURE',
     payload: error,
@@ -44,8 +62,10 @@ export const getClientFailure = (error, clientId) => {
 export function createClient(data) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
-      .then(res => dispatch(createClientSuccess(res)))
-      .catch(err => dispatch(createClientFailure(err)));
+      .then(
+        res => dispatch(createClientSuccess(res)),
+        err => dispatch(createClientFailure(err)),
+      );
   };
 }
 
@@ -66,8 +86,10 @@ export const createClientFailure = (error) => {
 export function updateClient(id, data) {
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(updateClientSuccess(res)))
-      .catch(err => dispatch(updateClientFailure(err, id)));
+      .then(
+        res => dispatch(updateClientSuccess(res)),
+        err => dispatch(updateClientFailure(err)),
+      );
   };
 }
 
@@ -78,7 +100,7 @@ export const updateClientSuccess = (client) => {
   }
 };
 
-export const updateClientFailure = (error, clientId) => {
+export const updateClientFailure = (error) => {
   return {
     type: 'UPDATE_CLIENT_FAILURE',
     payload: error,
@@ -88,8 +110,10 @@ export const updateClientFailure = (error, clientId) => {
 export function deleteClient(id) {
   return dispatch => {
     return apiCall('DELETE', `${Constants.API_URL}/clients/${id}`)
-      .then(res => dispatch(deleteClientSuccess(id)))
-      .catch(err => dispatch(deleteClientFailure(err, id)));
+      .then(
+        res => dispatch(deleteClientSuccess(id)),
+        err => dispatch(deleteClientFailure(err, id)),
+      );
   };
 }
 
@@ -109,11 +133,19 @@ export const deleteClientFailure = (error, clientId) => {
 };
 
 export function getDomains(clientId) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains`)
-      .then(res => dispatch(getDomainsSuccess(res)))
-      .catch(err => dispatch(getDomainsFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients/${clientId}/domains`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains`)
+      : queryState(state => ({
+        target: state.clientsReducer.domains,
+        filters: [{ run: true, filter: item => item.client_id === clientId }],
+      }))
+  ).then(
+    res => dispatch(getDomainsSuccess(res)),
+    err => dispatch(getDomainsFailure(err)),
+  );
 }
 
 export const getDomainsSuccess = (domains) => ({
@@ -127,11 +159,21 @@ export const getDomainsFailure = (error) => ({
 });
 
 export function getDomain(id, clientId) {
-  return dispatch => {
-    return apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
-      .then(res => dispatch(getDomainSuccess(res)))
-      .catch(err => dispatch(getDomainFailure(err)));
-  };
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients/${clientId}/domains`,
+      `${Constants.API_URL}/clients/${clientId}/domains/${id}`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
+      : queryState(state => ({
+        target: state.clientsReducer.domains,
+        filters: [{ run: true, filter: item => item.id === id }],
+        index: 0,
+      }))
+  ).then(
+    res => dispatch(getDomainSuccess(res)),
+    err => dispatch(getDomainFailure(err)),
+  );
 }
 
 export const getDomainSuccess = (domain) => ({
@@ -147,8 +189,10 @@ export const getDomainFailure = (error) => ({
 export function createDomain(data, clientId) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/domains`, { body: JSON.stringify(data) })
-      .then(res => dispatch(createDomainSuccess(res)))
-      .catch(err => dispatch(createDomainFailure(err)));
+      .then(
+        res => dispatch(createDomainSuccess(res)),
+        err => dispatch(createDomainFailure(err)),
+      );
   };
 }
 
@@ -165,8 +209,10 @@ export const createDomainFailure = (error) => ({
 export function updateDomain(id, data, clientId) {
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/clients/${clientId}/domains/${id}`, { body: JSON.stringify(data) })
-      .then(res => dispatch(updateDomainSuccess(res)))
-      .catch(err => dispatch(updateDomainFailure(err)));
+      .then(
+        res => dispatch(updateDomainSuccess(res)),
+        err => dispatch(updateDomainFailure(err)),
+      );
   };
 }
 
@@ -183,8 +229,10 @@ export const updateDomainFailure = (error) => ({
 export function deleteDomain(id, clientId) {
   return dispatch => {
     return apiCall('DELETE', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
-      .then(res => dispatch(deleteDomainSuccess(id)))
-      .catch(err => dispatch(deleteDomainFailure(err, id)));
+      .then(
+        res => dispatch(deleteDomainSuccess(id)),
+        err => dispatch(deleteDomainFailure(err, id)),
+      );
   };
 }
 

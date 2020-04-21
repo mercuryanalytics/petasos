@@ -1,11 +1,11 @@
-import { pushToStack, UserRolesWriteToRead } from '../index';
+import { pushToStack } from '../index';
 
 const initialState = {
   users: [],
   researchers: [],
-  authorizedUsers: {},
   scopes: {},
   authorizations: {},
+  authorizedUsers: {},
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -69,9 +69,9 @@ const usersReducer = (state = initialState, action) => {
       };
     }
     case 'GET_AUTHORIZED_USERS_SUCCESS': {
-      const { contextId, clientId, projectId, reportId } = action;
-      const key = (reportId ? `report-${reportId}`
-        : (projectId ? `project-${projectId}` : `client-${clientId}`)) + `@${contextId}`;
+      const { contextId, resPath, resId } = action;
+      const resType = resPath ? resPath.slice(0, -1) : '';
+      const key = `${resType}-${resId}@${contextId}`;
       const result = pushToStack((state.authorizedUsers[key] || []), action.payload);
       return {
         ...state,
@@ -82,54 +82,15 @@ const usersReducer = (state = initialState, action) => {
       };
     }
     case 'AUTHORIZE_USER_SUCCESS': {
-      const { userId, contextId, clientId, projectId, reportId, states, isGlobal } = action;
-      let key, resType, resId, role, roleStatus;
       let authorizedUsers = state.authorizedUsers;
       let authorizations = state.authorizations;
+      const { userId, contextId, resPath, resId, states, isGlobal } = action;
+      const resType = resPath ? resPath.slice(0, -1) : '';
+      const authorizedKey = `${resType}-${resId}@${contextId}`;
       if (!isGlobal) {
-        if (reportId) {
-          key = `report-${reportId}@${contextId}`;
-          resType = 'report';
-          resId = reportId;
-        } else if (projectId) {
-          key = `project-${projectId}@${contextId}`;
-          resType = 'project';
-          resId = projectId;
-        } else if (clientId) {
-          key = `client-${clientId}@${contextId}`;
-          resType = 'client';
-          resId = clientId;
-        }
-        if (states.role) {
-          role = states.role;
-          roleStatus = states.role_state;
-          if (authorizations.hasOwnProperty(userId)) {
-            let data = authorizations[userId];
-            if (data.hasOwnProperty(resType)) {
-              let resData = data[resType];
-              for (let i = 0; i < resData.length; i++) {
-                let a = resData[i];
-                const newAuthorization = [
-
-                ];
-                if (a[0].subject_id === resId && a[1] === UserRolesWriteToRead[role]) {
-                  data = { ...data };
-                  data[resType][i] = [ ...data[resType][i], ...newAuthorization ];
-                  authorizations = {
-                    ...authorizations,
-                    [userId]: {
-                      ...authorizations[userId],
-                      [resType]: [ ...data[resType] ],
-                    },
-                  };
-                  break;
-                }
-              }
-            }
-          }
-        } else {
-          if (authorizedUsers.hasOwnProperty(key)) {
-            let data = authorizedUsers[key];
+        if (states.hasOwnProperty('authorized')) {
+          if (authorizedUsers.hasOwnProperty(authorizedKey)) {
+            let data = authorizedUsers[authorizedKey];
             for (let i = 0; i < data.length; i++) {
               let user = data[i];
               if (user.id === userId) {
@@ -137,14 +98,13 @@ const usersReducer = (state = initialState, action) => {
                 data[i] = { ...user, authorized: !!states.authorized };
                 authorizedUsers = {
                   ...authorizedUsers,
-                  [key]: data,
+                  [authorizedKey]: data,
                 };
                 break;
               }
             }
           }
         }
-      } else {
       }
       return {
         ...state,

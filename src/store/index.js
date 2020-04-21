@@ -1,11 +1,68 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from './auth/reducers';
+import locationReducer from './location/reducers';
 import usersReducer from './users/reducers';
 import clientsReducer from './clients/reducers';
 import projectsReducer from './projects/reducers';
 import reportsReducer from './reports/reducers';
-import locationReducer from './location/reducers';
+
+const store = createStore(combineReducers({
+  authReducer,
+  locationReducer,
+  usersReducer,
+  clientsReducer,
+  projectsReducer,
+  reportsReducer,
+}), applyMiddleware(thunk));
+
+export const UserRoles = {
+  ClientManager: 'client_manager',
+  ClientAdmin: 'client_admin',
+  ProjectManager: 'project_manager',
+  ProjectAdmin: 'project_admin',
+  ReportManager: 'report_manager',
+  ReportAdmin: 'report_admin',
+  Viewer: 'viewer',
+};
+
+export const UserRolesWriteToRead = {
+  [UserRoles.ClientManager]: 'client_editor',
+  [UserRoles.ClientAdmin]: 'client_admin',
+  [UserRoles.ProjectManager]: 'project_editor',
+  [UserRoles.ProjectAdmin]: 'project_admin',
+  [UserRoles.ReportManager]: 'report_editor',
+  [UserRoles.ReportAdmin]: 'report_admin',
+  [UserRoles.Viewer]: 'viewer',
+};
+
+export const hasValue = (source) => {
+  return typeof source !== 'undefined' && source !== null;
+};
+
+export const filterStack = (stack, filters) => {
+  if (!Array.isArray(stack)) {
+    return stack;
+  }
+
+  filters = Array.isArray(filters) ? filters : [];
+  let finalFilters = [];
+
+  filters.forEach(filter => {
+    if (filter.run) {
+      finalFilters.push(filter);
+    }
+  });
+
+  return !finalFilters.length ? stack : stack.filter(item => {
+    for (let i = 0; i < finalFilters.length; i++) {
+      if (finalFilters[i].filter(item, i)) {
+        return true;
+      }
+    }
+    return false;
+  });
+};
 
 export const pushToStack = (stack, data, options) => {
   if (!data) {
@@ -49,22 +106,38 @@ export const pushToStack = (stack, data, options) => {
   return stack;
 };
 
-export const UserRoles = {
-  ClientManager: 'client_manager',
-  ClientAdmin: 'client_admin',
-  ProjectManager: 'project_manager',
-  ProjectAdmin: 'project_admin',
-  ReportManager: 'report_manager',
-  ReportAdmin: 'report_admin',
-};
+export const queryState = async (callback) => {
+  let target, filters, index, key;
+  let error;
 
-export const UserRolesWriteToRead = {
-  [UserRoles.ClientManager]: 'client_editor',
-  [UserRoles.ClientAdmin]: 'client_admin',
-  [UserRoles.ProjectManager]: 'project_editor',
-  [UserRoles.ProjectAdmin]: 'project_admin',
-  [UserRoles.ReportManager]: 'report_editor',
-  [UserRoles.ReportAdmin]: 'report_admin',
+  try {
+    const setup = callback(store.getState());
+    target = setup.target;
+    filters = setup.filters;
+    index = setup.index;
+    key = setup.key;
+  } catch (e) {
+    error = e;
+  }
+
+  return new Promise((resolve, reject) => {
+    let result;
+    if (!error) {
+      if (target) {
+        result = Array.isArray(filters) ? filterStack(target, filters) : target;
+        if (typeof index !== 'undefined' && index !== null) {
+          result = typeof result[index] !== 'undefined' ? result[index] : null;
+        }
+        if (typeof key !== 'undefined' && key !== null) {
+          result = typeof result[key] !== 'undefined' ? result[key] : null;
+        }
+      }
+      if (!result) {
+        error = new Error('No state query results');
+      }
+    }
+    return !error ? resolve(result) : reject(error);
+  });
 };
 
 export const isUserAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal) => {
@@ -104,11 +177,4 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
   return false;
 };
 
-export default createStore(combineReducers({
-  authReducer,
-  usersReducer,
-  clientsReducer,
-  projectsReducer,
-  reportsReducer,
-  locationReducer,
-}), applyMiddleware(thunk));
+export default store;
