@@ -7,8 +7,8 @@
 .actions {
   position: absolute;
   z-index: 3;
-  right: 432px;
-  top: 67px;
+  right: 0;
+  top: -11px;
   display: flex;
   align-items: center;
 }
@@ -91,7 +91,7 @@
 }
 
 .section .title.mailing {
-  margin-bottom: 3.75rem;
+  margin-bottom: 3.51rem;
 }
 
 .section .textBlock {
@@ -101,6 +101,11 @@
 
 .section .textBlock span {
   font-weight: bold;
+}
+
+.section .form {
+  position: relative;
+  max-width: 600px;
 }
 
 .section .form .formSection {
@@ -134,6 +139,7 @@
 .section.details .editor {
   flex-grow: 1;
   padding: 2rem;
+  box-sizing: border-box;
 }
 
 .section.details .grant {

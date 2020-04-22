@@ -11,8 +11,8 @@
 .actions {
   position: absolute;
   z-index: 3;
-  right: 432px;
-  top: 20px;
+  right: 0;
+  top: -11px;
   display: flex;
   align-items: center;
 }
@@ -56,6 +56,11 @@
   color: #333;
 }
 
+.section .form {
+  position: relative;
+  max-width: 600px;
+}
+
 .section .form .formControl {
   margin-bottom: 1rem;
 }
@@ -68,6 +73,13 @@
   display: flex;
   justify-content: flex-start;
   margin-top: 1rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 2rem;
 }
 
 .loader {

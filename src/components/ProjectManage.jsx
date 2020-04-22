@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ProjectManage.module.css';
 import { useHistory } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers } from '../store/users/actions';
 import { format } from 'date-fns';
-import { UserRoles, hasRoleOnProject } from '../store';
+import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -38,7 +38,10 @@ const ProjectManage = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(state => state.authReducer.user);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canManage, setCanManage] = useState(false);
   const editMode = !!id;
+  const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
@@ -52,10 +55,27 @@ const ProjectManage = props => {
     dispatch(getResearchers());
   }, []);
 
-  useEffect(() => {
-    if (!!id) {
-      dispatch(getProject(id));
+  const init = useCallback(() => {
+    setIsLoading(true);
+    if (!editMode) {
+      setCanEdit(true);
+      setIsLoading(false);
+      return;
     }
+    if (id) {
+      dispatch(getProject(id)).then((action) => {
+        setCanEdit(
+          hasRoleOnProject(user.id, id, UserRoles.ProjectManager) ||
+          hasRoleOnClient(user.id, action.payload.domain_id, UserRoles.ClientManager),
+        );
+        setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
+        setIsLoading(false);
+      });
+    }
+  }, [editMode, id, clientId, user]);
+
+  useEffect(() => {
+    init();
   }, [id]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -155,36 +175,51 @@ const ProjectManage = props => {
     });
   };
 
-  return !editMode || (editMode && data) ? (
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>
+          <Loader inline className={styles.loader} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className={styles.container}>
-      {editMode && (
-        <div className={styles.actions}>
-          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-            <MdDelete className={styles.deleteIcon} />
-            <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
-          </Button>
-        </div>
-      )}
       <div className={`${styles.section} ${styles.left}`}>
-        <div className={styles.title}>
-          <span>Project details</span>
-        </div>
         <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.title}>
+            <span>Project details</span>
+          </div>
+          {editMode && (
+            <div className={styles.actions}>
+              {canEdit && (
+                <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                  <MdDelete className={styles.deleteIcon} />
+                  <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
+                </Button>
+              )}
+            </div>
+          )}
           <Input
             className={styles.formControl}
             field={name}
+            preview={!canEdit}
             disabled={isBusy}
-            label="Project name *"
+            label={`Project name ${canEdit ? '*' : ''}`}
           />
           <Input
             className={styles.formControl}
             field={project_number}
+            preview={!canEdit}
             disabled={isBusy}
             label="Project #"
           />
           <Select
             className={styles.formControl}
             field={domain_id}
+            preview={!canEdit}
             options={domainsOptions}
             disabled={isBusy}
             placeholder="Select a client..."
@@ -193,20 +228,23 @@ const ProjectManage = props => {
           <Select
             className={styles.formControl}
             field={project_type}
+            preview={!canEdit}
             options={projectTypesOptions}
             disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
-            label="Project type *"
+            label={`Project type ${canEdit ? '*' : ''}`}
           />
           <Textarea
             className={styles.formControl}
             field={description}
+            preview={!canEdit}
             disabled={isBusy}
             label="Description"
           />
           <Select
             className={styles.formControl}
             field={account_id}
+            preview={!canEdit}
             options={contactsOptions}
             disabled={isBusy}
             placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
@@ -215,6 +253,7 @@ const ProjectManage = props => {
           <Input
             className={styles.formControl}
             field={phone}
+            preview={!canEdit}
             disabled={true}
             value={!!contact ? contact.contact_phone : ''}
             label="Phone"
@@ -222,6 +261,7 @@ const ProjectManage = props => {
           <Input
             className={styles.formControl}
             field={email}
+            preview={!canEdit}
             disabled={true}
             value={!!contact ? contact.email : ''}
             label="Email"
@@ -229,17 +269,20 @@ const ProjectManage = props => {
           <Datepicker
             className={styles.formControl}
             field={modified_on}
+            preview={!canEdit}
             disabled={isBusy}
-            label="Last modified on *"
+            label={`Last modified on ${canEdit ? '*' : ''}`}
           />
-          <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-              {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
-            </Button>
-          </div>
+          {canEdit && (
+            <div className={styles.formButtons}>
+              <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
-      {editMode && user && hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin) && (
+      {editMode && canManage && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
             <span>Project access</span>
@@ -253,8 +296,6 @@ const ProjectManage = props => {
         </div>
       )}
     </div>
-  ) : (
-    <Loader inline className={styles.loader} />
   );
 };
 

@@ -10,6 +10,7 @@ import Client from './Client';
 import ClientAdd from './ClientAdd';
 import Project from './Project';
 import Report from './Report';
+import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../../store';
 
 const TaskTypes = {
   ShowReport: 'show-report',
@@ -67,7 +68,9 @@ const SideMenu = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    init().then(() => setIsLoading(false));
+    init().then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const handleClientOpen = useCallback(async (client) => {

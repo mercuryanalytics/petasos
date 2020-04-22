@@ -68,6 +68,15 @@ const usersReducer = (state = initialState, action) => {
         },
       };
     }
+    case 'GET_MY_AUTHORIZATIONS_SUCCESS': {
+      return {
+        ...state,
+        authorizations: {
+          ...state.authorizations,
+          [action.userId]: action.payload,
+        },
+      };
+    }
     case 'GET_AUTHORIZED_USERS_SUCCESS': {
       const { contextId, resPath, resId } = action;
       const resType = resPath ? resPath.slice(0, -1) : '';

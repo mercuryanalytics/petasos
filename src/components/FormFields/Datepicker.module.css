@@ -1,5 +1,6 @@
 .container {
   width: 100%;
+  max-width: 250px;
 }
 
 .container label {
@@ -61,6 +62,11 @@
 }
 .control::-ms-input-placeholder {
   color: #B9B9B9;
+}
+
+.preview {
+  font-size: .75rem;
+  color: #333;
 }
 
 .error {

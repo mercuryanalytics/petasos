@@ -146,8 +146,15 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
       const userAuthorizations = authorizations[userId];
       if (scopeId && isGlobal) {
         const scopes = userAuthorizations.global;
-        if (scopes && scopes.indexOf(scopeId) > -1) {
-          return true;
+        for (let j = 0; j < scopes.length; j++) {
+          if (Array.isArray(scopeId)) {
+            const [scopeBranch, scopeAction] = scopeId;
+            if (scopes[j].scope === scopeBranch && scopes[j].action === scopeAction) {
+              return true;
+            }
+          } else if (scopes[j].id === scopeId) {
+            return true;
+          }
         }
       } else if (userAuthorizations.hasOwnProperty(resType)) {
         const resAuthorizations = userAuthorizations[resType];
@@ -186,15 +193,15 @@ const getAuthorizations = () => {
 };
 
 export const isSuperUser = (userId) => {
-  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 432, true);
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, ['admin', 'admin'], true);
 };
 
 export const isResearcher = (userId) => {
-  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 442, true);
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, ['user', 'research'], true);
 };
 
 export const isErpAdmin = (userId) => {
-  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 452, true);
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, ['user', 'erp'], true);
 };
 
 export const hasRoleOnClient = (userId, clientId, role) => {

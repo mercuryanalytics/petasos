@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 
 const Datepicker = props => {
-  const { field, label, disabled, placeholder } = props;
+  const { field, preview, label, disabled, placeholder } = props;
   const [value, setValue] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
   const classes = `
@@ -43,30 +43,36 @@ const Datepicker = props => {
       {!!label && (
         <label>{label}</label>
       )}
-      <div className={styles.controlWrapper}>
-        <DatePicker
-          className={styles.control}
-          wrapperClassName={styles.pickerWrapper}
-          popperPlacement={'top-end'}
-          popperClassName={styles.picker}
-          customInput={
-            <input
-              {...field.input}
-              disabled={!!disabled}
-              placeholder={placeholder}
-            />
-          }
-          selected={value}
-          dateFormat={'EEEE, MMMM dd, yyyy'}
-          disabled={!!disabled}
-          open={isOpen}
-          onChange={handleChange}
-          onFocus={() => setIsOpen(true)}
-          onClickOutside={() => setIsOpen(false)}
-        />
-        <FaRegCalendarAlt className={styles.controlIcon} onClick={togglePicker} />
-      </div>
-      {field.meta.touched && field.meta.error && (
+      {!preview ? (
+        <div className={styles.controlWrapper}>
+          <DatePicker
+            className={styles.control}
+            wrapperClassName={styles.pickerWrapper}
+            popperPlacement={'top-end'}
+            popperClassName={styles.picker}
+            customInput={
+              <input
+                {...field.input}
+                disabled={!!disabled}
+                placeholder={placeholder}
+              />
+            }
+            selected={value}
+            dateFormat={'EEEE, MMMM dd, yyyy'}
+            disabled={!!disabled}
+            open={isOpen}
+            onChange={handleChange}
+            onFocus={() => setIsOpen(true)}
+            onClickOutside={() => setIsOpen(false)}
+          />
+          <FaRegCalendarAlt className={styles.controlIcon} onClick={togglePicker} />
+        </div>
+      ) : (
+        <span className={styles.preview}>
+          {field.input.value !== '' ? field.input.value : 'N/A'}
+        </span>
+      )}
+      {!preview && field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>

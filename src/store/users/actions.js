@@ -216,6 +216,34 @@ export const getUserAuthorizationsFailure = (error, userId) => ({
   userId: userId,
 });
 
+export function getMyAuthorizations(id) {
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/users/me`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/users/me`)
+      : queryState(state => ({
+        target: state.usersReducer.authorizations,
+        key: id,
+      }))
+  ).then(
+    res => dispatch(getMyAuthorizationsSuccess(res, id)),
+    err => dispatch(getMyAuthorizationsFailure(err, id)),
+  );
+}
+
+export const getMyAuthorizationsSuccess = (authorizations, userId) => ({
+  type: 'GET_MY_AUTHORIZATIONS_SUCCESS',
+  payload: authorizations,
+  userId: userId,
+});
+
+export const getMyAuthorizationsFailure = (error, userId) => ({
+  type: 'GET_MY_AUTHORIZATIONS_FAILURE',
+  payload: error,
+  userId: userId,
+});
+
 export function getAuthorizedUsers(contextId, res) {
   const queryString = `?client_id=${contextId}`;
   let resPath, resId;

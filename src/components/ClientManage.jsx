@@ -44,7 +44,10 @@ const ClientManage = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(state => state.authReducer.user);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canManage, setCanManage] = useState(false);
   const editMode = !!id;
+  const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const users = useSelector(state => state.usersReducer.users);
@@ -56,7 +59,7 @@ const ClientManage = props => {
   const [accountsTab, setAccountsTab] = useState(AccountsTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const initSelectedUser = useCallback(() => {
+  const initSelection = useCallback(() => {
     const pathname = history.location.pathname;
     const accountMatch = pathname.match(urlAccountsRegExp);
     if (accountMatch && accountMatch[1].length) {
@@ -69,14 +72,30 @@ const ClientManage = props => {
         return;
       }
     }
+    setTab(ContentTabs.Details);
     setSelectedUserId(null);
   }, [history.location.pathname, tab, users]);
 
-  useEffect(() => {
-    if (!!id) {
-      dispatch(getClient(id));
+  const init = useCallback(() => {
+    setIsLoading(true);
+    setAccountsTab(AccountsTabs.Info);
+    if (!editMode) {
+      setCanEdit(true);
+      setIsLoading(false);
+      return;
     }
-    initSelectedUser();
+    if (id) {
+      initSelection();
+      dispatch(getClient(id)).then((action) => {
+        setCanEdit(hasRoleOnClient(user.id, id, UserRoles.ClientManager));
+        setCanManage(hasRoleOnClient(user.id, id, UserRoles.ClientAdmin));
+        setIsLoading(false);
+      });
+    }
+  }, [editMode, id, user, initSelection]);
+
+  useEffect(() => {
+    init();
   }, [id]);
 
   const handleBreadcrumbsChange = useCallback(() => {
@@ -255,16 +274,8 @@ const ClientManage = props => {
     setBillingAsMailing(!!status);
   }, [billing_as_mailing.input.value]);
 
-  return !editMode || (editMode && data) ? (
+  return (
     <div className={styles.container}>
-      {editMode && tab === ContentTabs.Details && (
-        <div className={styles.actions}>
-          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-            <MdDelete className={styles.deleteIcon} />
-            <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
-          </Button>
-        </div>
-      )}
       <div className={styles.tabs}>
         <div
           className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
@@ -272,7 +283,7 @@ const ClientManage = props => {
         >
           <span>Client details</span>
         </div>
-        {editMode && user && hasRoleOnClient(user.id, id, UserRoles.ClientAdmin) && (
+        {editMode && canEdit && (
           <>
             <div
               className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
@@ -289,10 +300,25 @@ const ClientManage = props => {
           </>
         )}
       </div>
+      {isLoading ? (
+        <div className={styles.section}>
+          <Loader inline className={styles.loader} />
+        </div>
+      ) : (<>
       {(tab === ContentTabs.Details && (
         <div className={`${styles.section} ${styles.details}`}>
           <div className={styles.editor}>
             <form className={styles.form} onSubmit={handleSubmit}>
+              {editMode && (
+                <div className={styles.actions}>
+                  {canEdit && (
+                    <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                      <MdDelete className={styles.deleteIcon} />
+                      <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
+                    </Button>
+                  )}
+                </div>
+              )}
               <div className={styles.formSection}>
                 <div className={styles.title}>
                   <span>Name and type</span>
@@ -301,23 +327,26 @@ const ClientManage = props => {
                   <Input
                     className={styles.formControl}
                     field={name}
+                    preview={!canEdit}
                     disabled={isBusy}
-                    label="Client name *"
+                    label={`Client name ${canEdit ? '*' : ''}`}
                   />
                   <Input
                     className={styles.formControl}
                     field={company_name}
+                    preview={!canEdit}
                     disabled={isBusy}
-                    label="Company name *"
+                    label={`Company name ${canEdit ? '*' : ''}`}
                   />
                 </div>
                 <Select
                   className={styles.formControl}
                   field={contact_type}
+                  preview={!canEdit}
                   options={clientTypesOptions}
                   disabled={isBusy}
                   placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
-                  label="Client type *"
+                  label={`Client type ${canEdit ? '*' : ''}`}
                 />
               </div>
               <div className={styles.formSection}>
@@ -328,12 +357,14 @@ const ClientManage = props => {
                   <Input
                     className={styles.formControl}
                     field={contact_name}
+                    preview={!canEdit}
                     disabled={isBusy}
-                    label="Name *"
+                    label={`Name ${canEdit ? '*' : ''}`}
                   />
                   <Input
                     className={styles.formControl}
                     field={contact_title}
+                    preview={!canEdit}
                     disabled={isBusy}
                     label="Title"
                   />
@@ -342,12 +373,14 @@ const ClientManage = props => {
                   <Input
                     className={styles.formControl}
                     field={contact_phone}
+                    preview={!canEdit}
                     disabled={isBusy}
-                    label="Phone number *"
+                    label={`Phone number ${canEdit ? '*' : ''}`}
                   />
                   <Input
                     className={styles.formControl}
                     field={contact_fax}
+                    preview={!canEdit}
                     disabled={isBusy}
                     label="Fax number"
                   />
@@ -355,43 +388,49 @@ const ClientManage = props => {
                 <Input
                   className={styles.formControl}
                   field={contact_email}
+                  preview={!canEdit}
                   disabled={isBusy}
-                  label="Email *"
+                  label={`Email ${canEdit ? '*' : ''}`}
                 />
               </div>
               <div className={styles.formSection}>
                 <div className={styles.controlsGroup}>
                   <div>
-                    <div className={`${styles.title} ${styles.mailing}`}>
+                    <div className={`${styles.title} ${canEdit ? styles.mailing : ''}`}>
                       <span>Mailing address</span>
                     </div>
                     <Input
                       className={styles.formControl}
                       field={mailing_address_1}
+                      preview={!canEdit}
                       disabled={isBusy}
-                      label="Address *"
+                      label={`Address ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={mailing_city}
+                      preview={!canEdit}
                       disabled={isBusy}
-                      label="City *"
+                      label={`City ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={mailing_state}
+                      preview={!canEdit}
                       disabled={isBusy}
-                      label="State *"
+                      label={`State ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={mailing_zip}
+                      preview={!canEdit}
                       disabled={isBusy}
-                      label="Zip code *"
+                      label={`Zip code ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={mailing_country}
+                      preview={!canEdit}
                       disabled={isBusy}
                       label="Country"
                     />
@@ -403,40 +442,46 @@ const ClientManage = props => {
                     <Checkbox
                       className={styles.formControl}
                       field={billing_as_mailing}
+                      preview={!canEdit}
                       disabled={isBusy}
                       label="Same as the mailing address"
                     />
                     <Input
                       className={styles.formControl}
                       field={billing_address_1}
+                      preview={!canEdit}
                       disabled={isBusy || billingAsMailing}
                       value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
-                      label="Address *"
+                      label={`Address ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={billing_city}
+                      preview={!canEdit}
                       disabled={isBusy || billingAsMailing}
                       value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
-                      label="City *"
+                      label={`City ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={billing_state}
+                      preview={!canEdit}
                       disabled={isBusy || billingAsMailing}
                       value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
-                      label="State *"
+                      label={`State ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={billing_zip}
+                      preview={!canEdit}
                       disabled={isBusy || billingAsMailing}
                       value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
-                      label="Zip code *"
+                      label={`Zip code ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
                       field={billing_country}
+                      preview={!canEdit}
                       disabled={isBusy || billingAsMailing}
                       value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
                       label="Country"
@@ -444,14 +489,16 @@ const ClientManage = props => {
                   </div>
                 </div>
               </div>
-              <div className={styles.formButtons}>
-                <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-                  {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
-                </Button>
-              </div>
+              {canEdit && (
+                <div className={styles.formButtons}>
+                  <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                    {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+                  </Button>
+                </div>
+              )}
             </form>
           </div>
-          {editMode && user && hasRoleOnClient(user.id, id, UserRoles.ClientAdmin) && (
+          {editMode && canManage && (
             <div className={styles.grant}>
               <div className={`${styles.title} ${styles.big}`}>
                 <span>Client access</span>
@@ -487,12 +534,14 @@ const ClientManage = props => {
               >
                 <span>User info</span>
               </div>
-              <div
-                className={`${styles.innerTab} ${accountsTab === AccountsTabs.Permissions ? styles.active : ''}`}
-                onClick={() => setAccountsTab(AccountsTabs.Permissions)}
-              >
-                <span>Access and Permissions</span>
-              </div>
+              {canManage && (
+                <div
+                  className={`${styles.innerTab} ${accountsTab === AccountsTabs.Permissions ? styles.active : ''}`}
+                  onClick={() => setAccountsTab(AccountsTabs.Permissions)}
+                >
+                  <span>Access and Permissions</span>
+                </div>
+              )}
             </div>
             <div className={`
               ${styles.innerContent}
@@ -533,9 +582,8 @@ const ClientManage = props => {
           <DomainActions clientId={id} />
         </div>
       ))}
+      </>)}
     </div>
-  ) : (
-    <Loader inline className={styles.loader} />
   );
 };
 

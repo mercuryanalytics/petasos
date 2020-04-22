@@ -3,7 +3,7 @@ import styles from './Checkbox.module.css';
 import { MdCheck } from 'react-icons/md';
 
 const Checkbox = props => {
-  const { field, label, disabled } = props;
+  const { field, preview, label, disabled } = props;
   const { onChange } = props;
   const classes = `
     ${styles.container}
@@ -17,7 +17,7 @@ const Checkbox = props => {
     }
   }, [props.checked]);
 
-  return (
+  return !preview ? (
     <div className={classes} {...(!!disabled ? { 'data-checkbox-disabled': 1 } : {})}>
       <label>
         <input
@@ -40,7 +40,7 @@ const Checkbox = props => {
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>
-  );
+  ) : '';
 };
 
 export default Checkbox;

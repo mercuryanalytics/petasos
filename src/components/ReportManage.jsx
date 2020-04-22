@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ReportManage.module.css';
 import { useHistory } from 'react-router-dom';
@@ -11,23 +11,46 @@ import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { format } from 'date-fns';
-import { UserRoles, hasRoleOnReport } from '../store';
+import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
 const ReportManage = props => {
   const { id, projectId } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(state => state.authReducer.user);
+  const [canDelete, setCanDelete] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canManage, setCanManage] = useState(false);
   const editMode = !!id;
+  const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.reportsReducer.reports.filter(r => r.id === id)[0] : null);
 
-  useEffect(() => {
-    if (!!id) {
-      dispatch(getReport(id));
+  const init = useCallback(() => {
+    setIsLoading(true);
+    if (!editMode) {
+      setCanEdit(true);
+      setIsLoading(false);
+      return;
     }
+    if (id) {
+      dispatch(getReport(id)).then((action) => {
+        setCanDelete(hasRoleOnProject(user.id, projectId, UserRoles.ProjectManager));
+        setCanEdit(
+          hasRoleOnReport(user.id, id, UserRoles.ReportManager) ||
+          hasRoleOnProject(user.id, action.payload.projectId, UserRoles.ProjectManager) ||
+          hasRoleOnClient(user.id, action.payload.project.domain_id, UserRoles.ClientManager)
+        );
+        setCanManage(hasRoleOnReport(user.id, id, UserRoles.ReportAdmin));
+        setIsLoading(false);
+      });
+    }
+  }, [editMode, id, projectId, user]);
+
+  useEffect(() => {
+    init();
   }, [id]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -90,62 +113,81 @@ const ReportManage = props => {
     });
   };
 
-  return !editMode || (editMode && data) ? (
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>
+          <Loader inline className={styles.loader} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className={styles.container}>
-      {editMode && (
-        <div className={styles.actions}>
-          <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-            <MdDelete className={styles.deleteIcon} />
-            <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
-          </Button>
-          {!!data.url && (
-            <Button link={data.url} target="_blank" action={true}>View report</Button>
-          )}
-        </div>
-      )}
       <div className={`${styles.section} ${styles.left}`}>
-        <div className={styles.title}>
-          <span>Report details</span>
-        </div>
         <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.title}>
+            <span>Report details</span>
+          </div>
+          {editMode && (
+            <div className={styles.actions}>
+              {canDelete && (
+                <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                  <MdDelete className={styles.deleteIcon} />
+                  <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
+                </Button>
+              )}
+              {!!data.url && (
+                <Button link={data.url} target="_blank" action={true}>View report</Button>
+              )}
+            </div>
+          )}
           <Input
             className={styles.formControl}
             field={name}
+            preview={!canEdit}
             disabled={isBusy}
-            label="Report name *"
+            label={`Report name ${canEdit ? '*' : ''}`}
           />
           <Input
             className={styles.formControl}
             field={url}
+            preview={!canEdit}
             disabled={isBusy}
             label="URL"
           />
           <Textarea
             className={styles.formControl}
             field={description}
+            preview={!canEdit}
             disabled={isBusy}
             label="Description"
           />
           <Datepicker
             className={styles.formControl}
             field={presented_on}
+            preview={!canEdit}
             disabled={isBusy}
             label="Last presented on"
           />
           <Datepicker
             className={styles.formControl}
             field={modified_on}
+            preview={!canEdit}
             disabled={isBusy}
-            label="Last modified on *"
+            label={`Last modified on ${canEdit ? '*' : ''}`}
           />
-          <div className={styles.formButtons}>
-            <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-              {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
-            </Button>
-          </div>
+          {canEdit && (
+            <div className={styles.formButtons}>
+              <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
-      {editMode && user && hasRoleOnReport(user.id, id, UserRoles.ReportAdmin) && (
+      {editMode && canManage && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
             <span>Report access</span>
@@ -159,8 +201,6 @@ const ReportManage = props => {
         </div>
       )}
     </div>
-  ) : (
-    <Loader inline className={styles.loader} />
   );
 };
 

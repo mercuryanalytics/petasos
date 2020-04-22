@@ -89,6 +89,11 @@
   border-color: #A0A0A0;
 }
 
+.preview {
+  font-size: .75rem;
+  color: #333;
+}
+
 .error {
   margin-top: .3rem;
   color: rgb(231, 183, 187);

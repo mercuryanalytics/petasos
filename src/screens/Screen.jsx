@@ -4,7 +4,7 @@ import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import { setUser, setAuthKey } from '../store/auth/actions';
-import { getUsers, getUserAuthorizations } from '../store/users/actions';
+import { getUsers, getMyAuthorizations } from '../store/users/actions';
 import { useAuth0 } from '../react-auth0-spa';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
@@ -40,7 +40,7 @@ const Screen = props => {
             if (user) {
               setLocalUser(user);
               dispatch(setUser(user));
-              dispatch(getUserAuthorizations(user.id)).then((r) => {
+              dispatch(getMyAuthorizations(user.id)).then(() => {
                 setIsLoading(false);
               });
             } else {

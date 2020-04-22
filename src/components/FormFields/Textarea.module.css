@@ -36,6 +36,11 @@
   color: #B9B9B9;
 }
 
+.preview {
+  font-size: .75rem;
+  color: #333;
+}
+
 .error {
   margin-top: .3rem;
   color: #B60010;

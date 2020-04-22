@@ -3,7 +3,7 @@ import styles from './Select.module.css';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 const Select = props => {
-  const { field, options, label, disabled, placeholder } = props;
+  const { field, preview, options, label, disabled, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const classes = `
@@ -52,41 +52,47 @@ const Select = props => {
       {!!label && (
         <label>{label}</label>
       )}
-      <div className={styles.controlWrapper}>
-        <select {...field.input} disabled={!!disabled} style={{ display: 'none' }}>
-          {!!options && !!options.length && options.map((option, i) => (
-            <option key={i} value={option.value}/>
-          ))}
-        </select>
-        <div className={styles.control}>
-          <div className={styles.trigger} onClick={handleToggle}>
-            {!!selectedOption ? (
-              <span>{selectedOption.text}</span>
-            ) : (
-              <span className={styles.placeholder}>{placeholder || 'Select...'}</span>
-            )}
-            <MdKeyboardArrowDown className={styles.triggerIcon} />
-          </div>
-          {isOpen && !!options && !!options.length && (
-            <div className={styles.options}>
-              {options.map((option, i) => (
-                <div
-                  key={i}
-                  className={`
-                    ${styles.option}
-                    ${!!selectedOption && selectedOption.value === option.value && styles.selected}
-                  `}
-                  value={option.value}
-                  onClick={() => handleChange(option)}
-                >
-                  <span>{option.text}</span>
-                </div>
-              ))}
+      {!preview ? (
+        <div className={styles.controlWrapper}>
+          <select {...field.input} disabled={!!disabled} style={{ display: 'none' }}>
+            {!!options && !!options.length && options.map((option, i) => (
+              <option key={i} value={option.value}/>
+            ))}
+          </select>
+          <div className={styles.control}>
+            <div className={styles.trigger} onClick={handleToggle}>
+              {!!selectedOption ? (
+                <span>{selectedOption.text}</span>
+              ) : (
+                <span className={styles.placeholder}>{placeholder || 'Select...'}</span>
+              )}
+              <MdKeyboardArrowDown className={styles.triggerIcon} />
             </div>
-          )}
+            {isOpen && !!options && !!options.length && (
+              <div className={styles.options}>
+                {options.map((option, i) => (
+                  <div
+                    key={i}
+                    className={`
+                      ${styles.option}
+                      ${!!selectedOption && selectedOption.value === option.value && styles.selected}
+                    `}
+                    value={option.value}
+                    onClick={() => handleChange(option)}
+                  >
+                    <span>{option.text}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      {field.meta.touched && field.meta.error && (
+      ) : (
+        <span className={styles.preview}>
+          {selectedOption ? selectedOption.text : 'N/A'}
+        </span>
+      )}
+      {!preview && field.meta.touched && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>
