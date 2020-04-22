@@ -143,7 +143,7 @@ const SideMenu = () => {
             setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
           } else {
             dispatch(getProject(task.target)).then(action => {
-              if (action.type === 'GET_PROJECT_FAILURE') {
+              if (action.type === 'GET_PROJECT_FAILURE' && task.clientId) {
                 dispatch(getClientReports(task.clientId)).then((action) => {
                   if (
                     Array.isArray(action.payload) &&

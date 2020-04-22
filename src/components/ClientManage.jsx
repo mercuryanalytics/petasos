@@ -13,6 +13,7 @@ import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
+import { UserRoles, hasRoleOnClient } from '../store';
 
 const ClientTypes = {
   Client: 'Client',
@@ -42,6 +43,7 @@ const ClientManage = props => {
   const { id } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+  const user = useSelector(state => state.authReducer.user);
   const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -270,7 +272,7 @@ const ClientManage = props => {
         >
           <span>Client details</span>
         </div>
-        {editMode && (
+        {editMode && user && hasRoleOnClient(user.id, id, UserRoles.ClientAdmin) && (
           <>
             <div
               className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
@@ -449,7 +451,7 @@ const ClientManage = props => {
               </div>
             </form>
           </div>
-          {editMode && (
+          {editMode && user && hasRoleOnClient(user.id, id, UserRoles.ClientAdmin) && (
             <div className={styles.grant}>
               <div className={`${styles.title} ${styles.big}`}>
                 <span>Client access</span>

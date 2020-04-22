@@ -177,4 +177,39 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
   return false;
 };
 
+const getAuthorizations = () => {
+  try {
+    return store.getState().usersReducer.authorizations || {};
+  } catch (e) {
+    return {};
+  }
+};
+
+export const isSuperUser = (userId) => {
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 432, true);
+};
+
+export const isResearcher = (userId) => {
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 442, true);
+};
+
+export const isErpAdmin = (userId) => {
+  return isUserAuthorized(getAuthorizations(), userId, null, null, null, 452, true);
+};
+
+export const hasRoleOnClient = (userId, clientId, role) => {
+  return isSuperUser(userId) ||
+    isUserAuthorized(getAuthorizations(), userId, 'client', clientId, role);
+};
+
+export const hasRoleOnProject = (userId, projectId, role) => {
+  return isSuperUser(userId) ||
+    isUserAuthorized(getAuthorizations(), userId, 'project', projectId, role);
+};
+
+export const hasRoleOnReport = (userId, reportId, role) => {
+  return isSuperUser(userId) ||
+    isUserAuthorized(getAuthorizations(), userId, 'report', reportId, role);
+};
+
 export default store;

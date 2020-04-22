@@ -7,6 +7,7 @@ import AccessRestricted from './AccessRestricted';
 import UserActions, { UserActionsModes } from '../components/UserActions';
 import UserManage from '../components/UserManage';
 import ResourceActions from '../components/ResourceActions';
+import { isSuperUser } from '../store';
 
 const Tabs = {
   Info: 1,
@@ -17,11 +18,15 @@ const SuperUser = () => {
   const dispatch = useDispatch();
   const [tab, setTab] = useState(Tabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const isAccessBlocked = false;
+  const [isAccessBlocked, setIsAccessBlocked] = useState(false);
 
   useEffect(() => {
     dispatch(setLocationData({ superUser: true }));
   }, []);
+
+  const handleScreenLoad = useCallback((user) => {
+    setIsAccessBlocked(!isSuperUser(user.id));
+  });
 
   const handleUserSelect = useCallback((id) => {
     if (selectedUserId !== id) {
@@ -30,7 +35,7 @@ const SuperUser = () => {
   }, [selectedUserId]);
 
   return !isAccessBlocked ? (
-    <Screen className={styles.container} private showSideBar={false}>
+    <Screen className={styles.container} private showSideBar={false} onLoad={handleScreenLoad}>
       <div className={styles.content}>
         <div className={styles.left}>
           <div className={styles.title}>

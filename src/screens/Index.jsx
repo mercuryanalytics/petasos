@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Index.module.css';
 import { setLocationData } from '../store/location/actions';
-import { getAuthorizedUsers } from '../store/users/actions';
 import Screen from './Screen';
 import AccessRestricted from './AccessRestricted';
 import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
+import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -24,9 +24,9 @@ const Index = props => {
   const params = props.match.params;
   const resId = +params.id;
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [accessOptions, setAccessOptions] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [keepLoading, setKeepLoading] = useState(true);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [clientBreadcrumbs, setClientBreadcrumbs] = useState(null);
@@ -64,21 +64,6 @@ const Index = props => {
   }, [content, params]);
 
   useEffect(() => {
-    if (isLoaded) {
-      if (accessOptions) {
-        // @TODO Restore
-        setKeepLoading(false);
-        // dispatch(getAuthorizedUsers(0, accessOptions)).then(action => {
-        //   setIsAccessBlocked(action.type === 'GET_AUTHORIZED_USERS_FAILURE');
-        //   setKeepLoading(false);
-        // });
-      } else {
-        setKeepLoading(false);
-      }
-    }
-  }, [isLoaded, accessOptions]);
-
-  useEffect(() => {
     let bc = [];
     switch (content) {
       case ContentTypes.CreateClient:
@@ -113,8 +98,33 @@ const Index = props => {
     setBreadcrumbs(bc);
   }, [content, client, project, report, clientBreadcrumbs]);
 
+  const handleScreenLoad = useCallback((user) => {
+    setUser(user);
+    setIsLoading(false);
+  }, []);
+
+  const checkAuthorizations = useCallback(() => {
+    switch (content) {
+      case ContentTypes.ManageClient:
+        setIsAccessBlocked(!hasRoleOnClient(user.id, resId, UserRoles.Viewer));
+        break;
+      case ContentTypes.ManageProject:
+        setIsAccessBlocked(!hasRoleOnProject(user.id, resId, UserRoles.Viewer));
+        break;
+      case ContentTypes.ManageReport:
+        setIsAccessBlocked(!hasRoleOnReport(user.id, resId, UserRoles.Viewer));
+        break;
+    }
+  }, [user, content, resId, params]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      checkAuthorizations();
+    }
+  }, [content, resId, isLoading]);
+
   return !isAccessBlocked ? (
-    <Screen className={styles.container} private keepLoading={keepLoading} onLoad={() => setIsLoaded(true)}>
+    <Screen className={styles.container} private onLoad={handleScreenLoad}>
       <div className={styles.breadcrumbs}>
         <Breadcrumbs data={breadcrumbs} />
       </div>

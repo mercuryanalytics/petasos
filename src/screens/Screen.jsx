@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import { setUser, setAuthKey } from '../store/auth/actions';
-import { getUsers } from '../store/users/actions';
+import { getUsers, getUserAuthorizations } from '../store/users/actions';
 import { useAuth0 } from '../react-auth0-spa';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
@@ -15,47 +15,66 @@ const Screen = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, isAuthenticated, user, getIdTokenClaims } = useAuth0();
-  const activeUser = useSelector(state => state.authReducer.user);
-  const [loaded, setLoaded] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authUser, setAuthUser] = useState(null);
+  const [localUser, setLocalUser] = useState(null);
+  const [doRedirect, setDoRedirect] = useState(false);
 
   useEffect(() => {
-    if (loaded) {
-      if (props.onLoad) {
-        props.onLoad();
-      }
-      setReady(true);
+    if (loading) {
+      return;
+    }
+    if (!props.private) {
+      setIsLoading(false);
     } else {
-      setReady(false);
-    }
-  }, [loaded]);
-
-  useEffect(() => {
-    if (user) {
-      dispatch(setUser(user));
-    }
-  }, [user]);
-
-  if (props.private) {
-    if (!loading && !loaded) {
       if (isAuthenticated) {
-        getIdTokenClaims().then(res => {
-          dispatch(setAuthKey(res.__raw));
-          dispatch(getUsers()).then(() => setLoaded(true));
+        let authUserEmail;
+        getIdTokenClaims().then(async (res) => {
+          authUserEmail = res.email;
+          setAuthUser(res);
+          await dispatch(setAuthKey(res.__raw));
+        }).then(() => {
+          dispatch(getUsers()).then(action => {
+            const users = Array.isArray(action.payload) ? action.payload : [];
+            const user = users.filter(u => u.email === authUserEmail)[0];
+            if (user) {
+              setLocalUser(user);
+              dispatch(setUser(user));
+              dispatch(getUserAuthorizations(user.id)).then((r) => {
+                setIsLoading(false);
+              });
+            } else {
+              // @TODO Global error
+            }
+          });
         });
       } else {
-        return <Redirect to={`${Routes.Login}#${history.location.pathname}`} />;
+        setDoRedirect(true);
       }
     }
-  } else if (!loaded) {
-    setLoaded(true);
+  }, [props.private, isAuthenticated, loading]);
+
+  const handleOnLoad = useCallback(() => {
+    if (props.onLoad) {
+      props.onLoad(localUser, authUser);
+    }
+  }, [localUser, authUser, props.onLoad]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      handleOnLoad();
+    }
+  }, [isLoading]);
+
+  if (doRedirect) {
+    return <Redirect to={`${Routes.Login}#${history.location.pathname}`} />;
   }
 
-  return ready && !props.keepLoading ? (
+  return !isLoading && !props.keepLoading ? (
     !props.blank ? (
       <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>
-          <Header user={activeUser} />
+          <Header authUser={authUser} localUser={localUser} />
         </div>
         <div className={styles.body}>
           {props.showSideBar !== false && (

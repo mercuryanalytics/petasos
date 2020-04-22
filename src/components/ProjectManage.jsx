@@ -13,6 +13,7 @@ import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers } from '../store/users/actions';
 import { format } from 'date-fns';
+import { UserRoles, hasRoleOnProject } from '../store';
 
 const ProjectTypes = {
   CommercialTest: 'Commercial Test',
@@ -36,6 +37,7 @@ const ProjectManage = props => {
   const { id, clientId } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+  const user = useSelector(state => state.authReducer.user);
   const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -237,7 +239,7 @@ const ProjectManage = props => {
           </div>
         </form>
       </div>
-      {editMode && (
+      {editMode && user && hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin) && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
             <span>Project access</span>

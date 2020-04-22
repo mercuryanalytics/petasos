@@ -6,16 +6,18 @@ import Routes from '../utils/routes';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
-import { MdInfoOutline, MdSupervisorAccount, MdDelete } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { format } from 'date-fns';
+import { UserRoles, hasRoleOnReport } from '../store';
 
 const ReportManage = props => {
   const { id, projectId } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+  const user = useSelector(state => state.authReducer.user);
   const editMode = !!id;
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -143,7 +145,7 @@ const ReportManage = props => {
           </div>
         </form>
       </div>
-      {editMode && (
+      {editMode && user && hasRoleOnReport(user.id, id, UserRoles.ReportAdmin) && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
             <span>Report access</span>

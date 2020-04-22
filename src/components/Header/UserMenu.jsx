@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './UserMenu.module.css';
 import Routes from '../../utils/routes';
 import HeaderControl from './HeaderControl';
@@ -6,9 +6,9 @@ import Avatar from '../Avatar';
 import { Link } from 'react-router-dom';
 
 const UserMenu = props => {
-  const { user } = props;
-  const avatar = user.picture;
-  const name = user.nickname || user.name;
+  const { authUser, localUser } = props;
+  const avatar = authUser.picture;
+  const name = localUser.contact_name || authUser.nickname || authUser.name;
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);

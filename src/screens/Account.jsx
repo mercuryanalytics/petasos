@@ -1,27 +1,22 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import styles from './Account.module.css';
 import { setLocationData } from '../store/location/actions';
-import { getUsers } from '../store/users/actions';
 import Screen from './Screen';
 import Breadcrumbs from '../components/Breadcrumbs';
 import UserManage from '../components/UserManage';
 
 const Account = () => {
   const dispatch = useDispatch();
-  const activeUser = useSelector(state => state.authReducer.user);
-  const user = useSelector(state =>
-    activeUser ? state.usersReducer.users.filter(u => u.email === activeUser.email)[0] : null);
+  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    if (activeUser && !user) {
-      dispatch(setLocationData({ account: activeUser.email }));
-      dispatch(getUsers());
-    }
-  }, [activeUser, user]);
+  const handleScreenLoad = useCallback((user) => {
+    setUser(user);
+    dispatch(setLocationData({ account: user.email }));
+  });
 
   return (
-    <Screen className={styles.container} private>
+    <Screen className={styles.container} private onLoad={handleScreenLoad}>
       <div className={styles.breadcrumbs}>
         <Breadcrumbs data={['My account'].concat(user ? [user.email] : [])} />
       </div>
