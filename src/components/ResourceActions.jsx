@@ -44,7 +44,7 @@ const ResourceActions = props => {
       dispatch(getUserAuthorizations(userId)),
     ]).then(() => {
       if (clientToOpen) {
-        handleClientToggle(clientToOpen, true);
+        handleClientToggle(clientToOpen, true, true);
       }
     });
   }, [clientId, userId]);
@@ -58,12 +58,14 @@ const ResourceActions = props => {
     }
   }, [clientId, userId]);
 
-  const handleClientToggle = useCallback(async (id, forced) => {
+  const handleClientToggle = useCallback(async (id, openFirstProject, forced) => {
     const status = forced ? !forced : !!openClients[id];
     setOpenClients(prev => ({ ...prev, [id]: !status }));
     if (!loadedClients[id]) {
+      let _projects;
       await Promise.all([
         dispatch(getProjects(id)).then(async (action) => {
+          _projects = action.payload;
           setProjects(prev => ({ ...prev, [id]: action.payload }));
         }),
         dispatch(getClientReports(id)).then(async (action) => {
@@ -71,12 +73,15 @@ const ResourceActions = props => {
         }),
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
+        if (openFirstProject && _projects) {
+          handleProjectToggle(_projects[0].id, true);
+        }
       });
     }
   }, [openClients, loadedClients]);
 
-  const handleProjectToggle = useCallback(async (id) => {
-    const status = !!openProjects[id];
+  const handleProjectToggle = useCallback(async (id, forced) => {
+    const status = forced ? !forced : !!openProjects[id];
     setOpenProjects(prev => ({ ...prev, [id]: !status }));
     if (!loadedProjects[id]) {
       await dispatch(getReports(id)).then(async (action) => {
