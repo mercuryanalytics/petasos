@@ -1,26 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  /* height: 100%; */
-  padding: 25px 1.8rem 2rem 1.8rem;
   background-color: #fff;
-}
-
-.section {
-  border-bottom: 1px solid #F0F0F0;
-  margin-bottom: 25px;
-  padding-bottom: 25px;
-}
-
-.bigTitle {
-  margin-bottom: 15px;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.resources {
-  position: relative;
 }
 
 .arrow {
@@ -47,7 +28,7 @@
   background-color: #fff;
   color: #333;
   text-decoration: none;
-  cursor: pointer;
+  cursor: default;
 }
 
 .client > .title .logo {
@@ -165,39 +146,11 @@
   background-color: #F0F0F0;
 }
 
-.globalCheckboxes {
-  display: flex;
-}
-
-.globalCheckboxes > * {
-  width: auto;
-  margin-right: 40px;
-}
-
-.globalCheckboxes [data-checkbox-label] {
-  font-size: .875rem;
-  font-weight: normal;
-}
-
 .checkboxesTitles {
   display: flex;
   justify-content: flex-end;
   padding: 0 5px;
   margin-bottom: 24px;
-}
-
-.checkboxesTitles .checkboxTitle.separator, .itemCheckbox.separator {
-  margin-left: 80px;
-}
-
-.verticalSeparator {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 0px;
-  height: 100%;
-  border-left: 1px dashed #F37646;
 }
 
 .checkboxesTitles .checkboxTitle > div {
@@ -222,24 +175,11 @@
   color: #0C7997;
 }
 
-.globalCheckboxes [data-checked], .itemCheckbox.scoped [data-checked] {
-  border-color: #F37646 !important;
-  background-color: #F37646 !important;
-}
-
 .itemCheckbox, .itemToggle, .checkboxesTitles .checkboxTitle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 70px;
-}
-
-.itemCheckbox.scoped, .checkboxesTitles .checkboxTitle.scoped {
-  width: 100px;
-}
-
-.itemCheckbox[data-checkbox-disabled] label {
-  visibility: hidden;
 }
 
 .itemCheckbox label {
@@ -267,9 +207,4 @@
   text-align: center;
   font-size: .875rem;
   color: #A9A9A9;
-}
-
-.noResults.alignLeft {
-  margin-left: 57px;
-  text-align: left;
 }

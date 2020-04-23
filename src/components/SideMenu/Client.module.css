@@ -39,6 +39,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 1.125rem;
+  line-height: 1.6rem;
 }
 
 .container:not(.active) .title:hover {

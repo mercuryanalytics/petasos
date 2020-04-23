@@ -3,6 +3,7 @@ import { pushToStack } from '../index';
 const initialState = {
   clients: [],
   domains: [],
+  templates: {},
 };
 
 const clientsReducer = (state = initialState, action) => {
@@ -41,6 +42,63 @@ const clientsReducer = (state = initialState, action) => {
       return {
         ...state,
         clients: clients,
+      };
+    }
+    case 'GET_TEMPLATES_SUCCESS': {
+      return {
+        ...state,
+        templates: {
+          ...state.templates,
+          [action.clientId]: action.payload,
+        },
+      };
+    }
+    case 'UPDATE_TEMPLATE_SUCCESS': {
+      if (!state.templates.hasOwnProperty(action.clientId)) {
+        return state;
+      }
+      const type = action.data.resource_type;
+      const id = action.data.resource_id;
+      const status = !!action.data.state;
+      let clientTemplates = state.templates[action.clientId];
+      if (type === 'client') {
+        clientTemplates = {
+          ...clientTemplates,
+          authorized: status,
+        };
+      } else if (type === 'project') {
+        let projects = clientTemplates.projects;
+        projects.forEach((project, i) => {
+          if (project.id === id) {
+            projects[i] = { ...projects[i], authorized: status };
+          }
+        });
+        clientTemplates = {
+          ...clientTemplates,
+          projects: [ ...projects ],
+        };
+      } else if (type === 'report') {
+        let projects = clientTemplates.projects;
+        projects.forEach((project, i) => {
+          project.reports.forEach((report, j) => {
+            if (report.id === id) {
+              let reports = projects[i].reports;
+              reports[j] = { ...reports[j], authorized: status };
+              projects[i] = { ...projects[i], reports: [ ...reports ] };
+            }
+          });
+        });
+        clientTemplates = {
+          ...clientTemplates,
+          projects: [ ...projects ],
+        };
+      }
+      return {
+        ...state,
+        templates: {
+          ...state.templates,
+          [action.clientId]: { ...clientTemplates },
+        },
       };
     }
     case 'GET_DOMAINS_SUCCESS': {

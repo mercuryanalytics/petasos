@@ -7,6 +7,7 @@ import Button from './Button';
 import Loader from './Loader';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import UserManage from './UserManage';
+import TemplateActions from './TemplateActions';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
 import { MdDelete } from 'react-icons/md';
@@ -627,6 +628,7 @@ const ClientManage = props => {
                 {'By activating the user template you will be able to '}
                 {'set a default access for your new users.'}
               </div>
+              <TemplateActions clientId={id} />
             </div>
           ))}
         </div>

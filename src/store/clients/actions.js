@@ -132,6 +132,56 @@ export const deleteClientFailure = (error, clientId) => {
   }
 };
 
+export function getTemplates(clientId) {
+  return dispatch => (
+    !apiCall.isCalled([
+      `${Constants.API_URL}/clients/${clientId}/templates`,
+    ])
+      ? apiCall('GET', `${Constants.API_URL}/clients/${clientId}/templates`)
+      : queryState(state => ({
+        target: state.clientsReducer.templates,
+        key: clientId,
+      }))
+  ).then(
+    res => dispatch(getTemplatesSuccess(res, clientId)),
+    err => dispatch(getTemplatesFailure(err, clientId)),
+  );
+}
+
+export const getTemplatesSuccess = (templates, clientId) => ({
+  type: 'GET_TEMPLATES_SUCCESS',
+  payload: templates,
+  clientId: clientId,
+});
+
+export const getTemplatesFailure = (error, clientId) => ({
+  type: 'GET_TEMPLATES_FAILURE',
+  payload: error,
+  clientId: clientId,
+});
+
+export function updateTemplate(data, clientId) {
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/templates`, { body: JSON.stringify(data) })
+      .then(
+        res => dispatch(updateTemplateSuccess(res, data, clientId)),
+        err => dispatch(updateTemplateFailure(err)),
+      );
+  };
+}
+
+export const updateTemplateSuccess = (domain, data, clientId) => ({
+  type: 'UPDATE_TEMPLATE_SUCCESS',
+  payload: domain,
+  data: data,
+  clientId: clientId,
+});
+
+export const updateTemplateFailure = (error) => ({
+  type: 'UPDATE_TEMPLATE_FAILURE',
+  payload: error,
+});
+
 export function getDomains(clientId) {
   return dispatch => (
     !apiCall.isCalled([
