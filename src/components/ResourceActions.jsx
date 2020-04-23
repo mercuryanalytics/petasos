@@ -44,7 +44,7 @@ const ResourceActions = props => {
       dispatch(getUserAuthorizations(userId)),
     ]).then(() => {
       if (clientToOpen) {
-        handleClientToggle(clientToOpen, true, true);
+        handleClientToggle(clientToOpen, !!clientId, true);
       }
     });
   }, [clientId, userId]);
@@ -74,11 +74,16 @@ const ResourceActions = props => {
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
         if (openFirstProject && _projects) {
+          console.log(222)
           handleProjectToggle(_projects[0].id, true);
         }
       });
+    } else if (openFirstProject) {
+      try {
+        handleProjectToggle(projects[id][0].id, true);
+      } catch (e) {}
     }
-  }, [openClients, loadedClients]);
+  }, [openClients, loadedClients, projects]);
 
   const handleProjectToggle = useCallback(async (id, forced) => {
     const status = forced ? !forced : !!openProjects[id];
