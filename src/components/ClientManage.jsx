@@ -29,12 +29,17 @@ const clientTypesOptions = Object.keys(ClientTypes).map(key => ({
 const ContentTabs = {
   Details: 1,
   Accounts: 2,
-  Defaults: 3,
+};
+
+const UsersTabs = {
+  Info: 1,
+  Permissions: 2,
 };
 
 const AccountsTabs = {
-  Info: 1,
-  Permissions: 2,
+  Users: 1,
+  Domains: 2,
+  Template: 3,
 };
 
 const urlAccountsRegExp = /\/accounts\/([0-9]+)$/;
@@ -56,7 +61,9 @@ const ClientManage = props => {
   const data = useSelector(state =>
     editMode ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null);
   const [tab, setTab] = useState(ContentTabs.Details);
-  const [accountsTab, setAccountsTab] = useState(AccountsTabs.Info);
+  const [accountsTab, setAccountsTab] = useState(AccountsTabs.Users);
+  const [showTemplate, setShowTemplate] = useState(false);
+  const [usersTab, setUsersTab] = useState(UsersTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const initSelection = useCallback(() => {
@@ -78,7 +85,8 @@ const ClientManage = props => {
 
   const init = useCallback(() => {
     setIsLoading(true);
-    setAccountsTab(AccountsTabs.Info);
+    setAccountsTab(AccountsTabs.Users);
+    setUsersTab(UsersTabs.Info);
     if (!editMode) {
       setCanEdit(true);
       setIsLoading(false);
@@ -86,7 +94,7 @@ const ClientManage = props => {
     }
     if (id) {
       initSelection();
-      dispatch(getClient(id)).then((action) => {
+      dispatch(getClient(id)).then(() => {
         setCanEdit(hasRoleOnClient(user.id, id, UserRoles.ClientManager));
         setCanManage(hasRoleOnClient(user.id, id, UserRoles.ClientAdmin));
         setIsLoading(false);
@@ -126,10 +134,20 @@ const ClientManage = props => {
     setTab(tabId);
   }, [id, history]);
 
+  const handleTemplateClick = useCallback(() => {
+    setSelectedUserId(false);
+    setShowTemplate(true);
+    history.push(`${Routes.ManageClient.replace(':id', id)}`);
+  });
+
   const handleUserSelect = useCallback((uid) => {
     if (tab === ContentTabs.Accounts && selectedUserId !== uid) {
       setSelectedUserId(uid);
-      history.push(`${Routes.ManageClientUser.replace(':id', id).replace(':userId', uid)}`);
+      if (uid) {
+        setAccountsTab(AccountsTabs.Users);
+        setShowTemplate(false);
+        history.push(`${Routes.ManageClientUser.replace(':id', id).replace(':userId', uid)}`);
+      }
     }
   }, [id, history, tab, selectedUserId]);
 
@@ -284,20 +302,12 @@ const ClientManage = props => {
           <span>Client details</span>
         </div>
         {editMode && canEdit && (
-          <>
-            <div
-              className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
-              onClick={() => handleTabSelect(ContentTabs.Accounts)}
-            >
-              <span>Accounts</span>
-            </div>
-            <div
-              className={`${styles.tab} ${tab === ContentTabs.Defaults ? styles.active : ''}`}
-              onClick={() => handleTabSelect(ContentTabs.Defaults)}
-            >
-              <span>Domains</span>
-            </div>
-          </>
+          <div
+            className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
+            onClick={() => handleTabSelect(ContentTabs.Accounts)}
+          >
+            <span>Accounts</span>
+          </div>
         )}
       </div>
       {isLoading ? (
@@ -515,71 +525,110 @@ const ClientManage = props => {
       (tab === ContentTabs.Accounts && (
         <div className={`${styles.section} ${styles.accounts}`}>
           <div className={styles.userList}>
-            <div className={`${styles.title} ${styles.big}`}>
-              <span>Users</span>
-            </div>
-            <UserActions
-              mode={UserActionsModes.Manage}
-              showClients={false}
-              limitClientId={id}
-              selectedUserId={selectedUserId}
-              onUserSelect={handleUserSelect}
-            />
-          </div>
-          <div className={styles.userActions}>
-            <div className={styles.innerTabs}>
-              <div
-                className={`${styles.innerTab} ${accountsTab === AccountsTabs.Info ? styles.active : ''}`}
-                onClick={() => setAccountsTab(AccountsTabs.Info)}
-              >
-                <span>User info</span>
-              </div>
-              {canManage && (
+            <div className={styles.accountsTabs}>
+              <div className={`${styles.innerTabs} ${styles.stretch}`}>
                 <div
-                  className={`${styles.innerTab} ${accountsTab === AccountsTabs.Permissions ? styles.active : ''}`}
-                  onClick={() => setAccountsTab(AccountsTabs.Permissions)}
+                  className={`
+                    ${styles.innerTab}
+                    ${accountsTab === AccountsTabs.Users ? styles.active : ''}
+                  `}
+                  onClick={() => {
+                    setAccountsTab(AccountsTabs.Users);
+                    setShowTemplate(false);
+                    setSelectedUserId(null);
+                  }}
                 >
-                  <span>Access and Permissions</span>
+                  <span>Users</span>
+                </div>
+                <div
+                  className={`${styles.innerTab} ${accountsTab === AccountsTabs.Domains ? styles.active : ''}`}
+                  onClick={() => setAccountsTab(AccountsTabs.Domains)}
+                >
+                  <span>Domains</span>
+                </div>
+              </div>
+              {accountsTab !== AccountsTabs.Domains && (
+                <div className={`${styles.template} ${showTemplate ? styles.active : ''}`}>
+                  <span onClick={handleTemplateClick}>User Template</span>
                 </div>
               )}
             </div>
-            <div className={`
-              ${styles.innerContent}
-              ${accountsTab === AccountsTabs.Info || selectedUserId === null ? styles.spaced : ''}
-            `}>
-              {(accountsTab === AccountsTabs.Info && (
-                selectedUserId !== null && (
-                  <UserManage
-                    id={selectedUserId}
-                    clientId={editMode ? id : null}
-                    preview={true}
-                    embeded={true}
-                  />
-                )
-              )) ||
-              (accountsTab === AccountsTabs.Permissions && (
-                selectedUserId !== null && (
-                  <ResourceActions clientId={id} userId={selectedUserId} />
-                )
-              ))}
-              {selectedUserId === null && (
-                <div className={styles.noUser}>No selected user</div>
-              )}
+            {(accountsTab === AccountsTabs.Users && (
+              <UserActions
+                mode={UserActionsModes.Manage}
+                showClients={false}
+                limitClientId={id}
+                selectedUserId={selectedUserId}
+                onUserSelect={handleUserSelect}
+              />
+            )) ||
+            (accountsTab === AccountsTabs.Domains && (
+              <DomainActions clientId={id} />
+            ))}
+          </div>
+          {(accountsTab === AccountsTabs.Users && !showTemplate && (
+            <div className={styles.userActions}>
+              <div className={styles.innerTabs}>
+                <div
+                  className={`${styles.innerTab} ${usersTab === UsersTabs.Info ? styles.active : ''}`}
+                  onClick={() => setUsersTab(UsersTabs.Info)}
+                >
+                  <span>User info</span>
+                </div>
+                {canManage && (
+                  <div
+                    className={`${styles.innerTab} ${usersTab === UsersTabs.Permissions ? styles.active : ''}`}
+                    onClick={() => setUsersTab(UsersTabs.Permissions)}
+                  >
+                    <span>Access and Permissions</span>
+                  </div>
+                )}
+              </div>
+              <div className={`
+                ${styles.innerContent}
+                ${usersTab === UsersTabs.Info || selectedUserId === null ? styles.spaced : ''}
+              `}>
+                {(usersTab === UsersTabs.Info && (
+                  selectedUserId !== null && (
+                    <UserManage
+                      id={selectedUserId}
+                      clientId={editMode ? id : null}
+                      preview={true}
+                      embeded={true}
+                    />
+                  )
+                )) ||
+                (usersTab === UsersTabs.Permissions && (
+                  selectedUserId !== null && (
+                    <ResourceActions clientId={id} userId={selectedUserId} />
+                  )
+                ))}
+                {selectedUserId === null && (
+                  <div className={styles.noUser}>No selected user</div>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )) ||
-      (tab === ContentTabs.Defaults && (
-        <div className={`${styles.section}`}>
-          <div className={`${styles.title} ${styles.big}`}>
-            <span>Domains</span>
-          </div>
-          <div className={styles.textBlock}>
-            {'Allow all users from a specific domain to authenticate as a '}
-            <span>{data.name}</span>
-            {' user and inherit the default user permissions.'}
-          </div>
-          <DomainActions clientId={id} />
+          )) ||
+          (accountsTab === AccountsTabs.Domains && (
+            <div className={styles.anyActions}>
+              <div className={styles.textBlock}>
+                {'By adding a new domain you allow all users from that domain to authenticate as a '}
+                <span>{data.name}</span>
+                {' user and inherit the default user permissions.'}
+              </div>
+            </div>
+          )) ||
+          (showTemplate && (
+            <div className={styles.anyActions}>
+              <div className={`${styles.title} ${styles.big}`}>
+                <span>Template</span>
+              </div>
+              <div className={styles.textBlock}>
+                {'By activating the user template you will be able to '}
+                {'set a default access for your new users.'}
+              </div>
+            </div>
+          ))}
         </div>
       ))}
       </>)}

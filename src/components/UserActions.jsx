@@ -114,6 +114,10 @@ const UserActions = props => {
   }, [users, mode, limitClientId]);
 
   const ensureSelectedItem = useCallback((id) => {
+    if (id === false && selectedItem !== false) {
+      handleItemSelect(false);
+      return;
+    }
     if (id !== selectedItem || !selectedItem) {
       const clientLimit = clientId ? clientId : (limitClientId ? limitClientId : null);
       let toSelect = null;
@@ -126,7 +130,7 @@ const UserActions = props => {
       )[0];
       handleItemSelect(u ? u.id : null);
     }
-  }, [users, clientId, limitClientId, selectedUserId, selectedItem]);
+  }, [users, clientId, limitClientId, selectedItem]);
 
   useEffect(() => {
     if (!isLoading && mode === UserActionsModes.Manage) {

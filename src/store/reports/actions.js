@@ -85,12 +85,14 @@ export const getClientReportsFailure = (error) => ({
   payload: error,
 });
 
-export function getReport(id) {
+export function getReport(id, projectId) {
   return dispatch => (
     !apiCall.isCalled([
       `${Constants.API_URL}/reports`,
       `${Constants.API_URL}/reports/${id}`,
-    ])
+    ].concat(hasValue(projectId) ? [
+      `${Constants.API_URL}/reports?project_id=${projectId}`,
+    ] : []))
       ? apiCall('GET', `${Constants.API_URL}/reports/${id}`)
       : queryState(state => ({
         target: state.reportsReducer.reports,

@@ -95,6 +95,7 @@
 }
 
 .section .textBlock {
+  max-width: 490px;
   font-size: .875rem;
   margin-bottom: 2rem;
 }
@@ -157,9 +158,9 @@
 }
 
 .section.accounts .userList {
-  width: 260px;
+  width: 230px;
   min-width: 260px;
-  padding: 2rem;
+  padding: 0 2rem;
   border-right: 1px solid #F0F0F0;
 }
 
@@ -168,22 +169,70 @@
   overflow: hidden;
 }
 
+.section.accounts .anyActions {
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.accountsTabs {
+  margin-bottom: 1.5rem;
+}
+
+.accountsTabs .template {
+  margin: 0 -2rem;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.accountsTabs .template span {
+  display: block;
+  margin: -9px -10px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  font-size: .9375rem;
+  line-height: .9375rem;
+  font-weight: bold;
+  color: #0C7997;
+  cursor: pointer;
+}
+
+.accountsTabs .template:not(.active) span:hover {
+  background-color: #EFEFEF;
+}
+
+.accountsTabs .template.active span {
+  background-color: #0D7997;
+  color: #fff;
+}
+
 .innerTabs {
   display: flex;
+  align-items: flex-end;
   flex-grow: 1;
+  height: 65px;
   padding: 1rem 2rem 0 2rem;
+  box-sizing: border-box;
   border-bottom: 1px solid #F0F0F0;
   user-select: none;
 }
 
+.innerTabs.stretch {
+  margin: 0 -2rem;
+}
+
 .innerTab {
   position: relative;
-  padding: 1rem 0;
+  padding-bottom: 10px;
   background-color: #fff;
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
   color: #555;
+}
+
+.innerTabs.stretch .innerTab {
+  font-size: 1.25rem;
 }
 
 .innerTab:not(:last-child) {

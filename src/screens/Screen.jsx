@@ -64,7 +64,7 @@ const Screen = props => {
     if (!isLoading) {
       handleOnLoad();
     }
-  }, [isLoading]);
+  }, [isLoading, history.location.pathname]);
 
   if (doRedirect) {
     return <Redirect to={`${Routes.Login}#${history.location.pathname}`} />;

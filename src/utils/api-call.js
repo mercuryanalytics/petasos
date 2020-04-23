@@ -14,10 +14,6 @@ function apiCall (method, url, options) {
 
   options = options || {};
 
-  if (method.toUpperCase() === 'GET') {
-    called[url] = true;
-  }
-
   let fetchOptions = {
     method: method,
     headers: new Headers({
@@ -31,7 +27,12 @@ function apiCall (method, url, options) {
   }
 
   return fetch(url, fetchOptions)
-    .then(response => response.text())
+    .then(response => {
+      if (method.toUpperCase() === 'GET') {
+        called[url] = true;
+      }
+      return response.text();
+    })
     .then(
       response => {
         if (response.trim().length) {

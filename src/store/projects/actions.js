@@ -55,12 +55,14 @@ export const getOrphanProjectsFailure = (error) => ({
   payload: error,
 });
 
-export function getProject(id) {
+export function getProject(id, clientId) {
   return dispatch => (
     !apiCall.isCalled([
       `${Constants.API_URL}/projects`,
       `${Constants.API_URL}/projects/${id}`,
-    ])
+    ].concat(hasValue(clientId) ? [
+      `${Constants.API_URL}/reports?client_id=${clientId}`,
+    ] : []))
       ? apiCall('GET', `${Constants.API_URL}/projects/${id}`)
       : queryState(state => ({
         target: state.projectsReducer.projects,

@@ -8,6 +8,9 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
+import { getClient } from '../store/clients/actions';
+import { getProject } from '../store/projects/actions';
+import { getReport } from '../store/reports/actions';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
 export const ContentTypes = {
@@ -25,108 +28,172 @@ const Index = props => {
   const resId = +params.id;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [accessOptions, setAccessOptions] = useState(null);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [clientBreadcrumbs, setClientBreadcrumbs] = useState(null);
-  const report = useSelector(state => accessOptions && accessOptions.reportId ?
-    (state.reportsReducer.reports.filter(r => r.id === accessOptions.reportId)[0] || null) : null);
-  const project = useSelector(state => accessOptions && accessOptions.projectId ?
-    (state.projectsReducer.projects.filter(p => p.id === accessOptions.projectId)[0] || null) :
-      (!!report ? (state.projectsReducer.projects.filter(p => p.id === report.project_id)[0] || null) : null));
-  const client = useSelector(state => accessOptions && accessOptions.clientId ?
-    (state.clientsReducer.clients.filter(c => c.id === accessOptions.clientId)[0] || null) :
-      (!!project ? (state.clientsReducer.clients.filter(c => c.id === project.domain_id)[0] || null) : null));
+  const clients = useSelector(state => state.clientsReducer.clients);
+  const projects = useSelector(state => state.projectsReducer.projects);
+  const reports = useSelector(state => state.reportsReducer.reports);
 
   useEffect(() => {
-    setAccessOptions(null);
     switch (content) {
       case ContentTypes.ManageClient:
-        setAccessOptions({ clientId: resId });
         dispatch(setLocationData({ client: resId }));
         break;
       case ContentTypes.CreateProject:
         dispatch(setLocationData({ client: +params.clientId, create: true }));
         break;
       case ContentTypes.ManageProject:
-        setAccessOptions({ projectId: resId });
         dispatch(setLocationData({ project: resId }));
         break;
       case ContentTypes.CreateReport:
         dispatch(setLocationData({ project: +params.projectId, create: true }));
         break;
       case ContentTypes.ManageReport:
-        setAccessOptions({ reportId: resId });
         dispatch(setLocationData({ report: resId }));
-        break;
-    }
-  }, [content, params]);
-
-  useEffect(() => {
-    let bc = [];
-    switch (content) {
-      case ContentTypes.CreateClient:
-        bc.push('Create client');
-        break;
-      case ContentTypes.ManageClient:
-        client && bc.push(client.name);
-        clientBreadcrumbs && (bc = bc.concat(clientBreadcrumbs));
-        break;
-      case ContentTypes.CreateProject:
-        client && bc.push(client.name);
-        bc.push('Create project');
-        break;
-      case ContentTypes.ManageProject:
-        client && bc.push(client.name);
-        project && bc.push(project.name);
-        break;
-      case ContentTypes.CreateReport:
-        client && bc.push(client.name);
-        project && bc.push(project.name);
-        bc.push('Create report');
-        break;
-      case ContentTypes.ManageReport:
-        client && (bc.push(client.name));
-        project && bc.push(project.name);
-        report && bc.push(report.name);
         break;
     }
     if (content !== ContentTypes.ManageClient) {
       setClientBreadcrumbs(null);
     }
-    setBreadcrumbs(bc);
-  }, [content, client, project, report, clientBreadcrumbs]);
+  }, [content, params]);
 
-  const handleScreenLoad = useCallback((user) => {
-    setUser(user);
-    setIsLoading(false);
-  }, []);
+  const getCurrentReport = useCallback(() => {
+    let id, result;
+    if (content === ContentTypes.ManageReport) {
+      id = resId;
+    }
+    if (id) {
+      result = reports.filter(r => r.id === id)[0];
+    }
+    return result ? result : null;
+  }, [content, resId, params, reports]);
 
-  const checkAuthorizations = useCallback(() => {
+  const getCurrentProject = useCallback(() => {
+    let id, result;
+    if (content === ContentTypes.ManageProject) {
+      id = resId;
+    } else if (content === ContentTypes.CreateReport) {
+      id = +params.projectId;
+    } else {
+      const report = getCurrentReport();
+      if (report) {
+        id = report.project_id;
+      }
+    }
+    if (id) {
+      result = projects.filter(p => p.id === id)[0];
+    }
+    return result ? result : null;
+  }, [content, resId, params, projects]);
+
+  const getCurrentClient = useCallback(() => {
+    let id, result;
+    if (content === ContentTypes.ManageClient) {
+      id = resId;
+    } else if (content === ContentTypes.CreateProject) {
+      id = +params.clientId;
+    } else {
+      const project = getCurrentProject();
+      if (project) {
+        id = project.domain_id;
+      } else {
+        const report = getCurrentReport();
+        if (report) {
+          id = report.project.domain_id;
+        }
+      }
+    }
+    if (id) {
+      result = clients.filter(c => c.id === id)[0];
+    }
+    return result ? result : null;
+  }, [content, resId, params, clients]);
+
+  const checkAuthorizations = useCallback((user) => {
     switch (content) {
+      case ContentTypes.CreateClient:
+        // @TODO CreateClient authorizations
+        break;
       case ContentTypes.ManageClient:
         setIsAccessBlocked(!hasRoleOnClient(user.id, resId, UserRoles.Viewer));
         break;
+      case ContentTypes.CreateProject:
+        // @TODO CreateProject authorizations
+        break;
       case ContentTypes.ManageProject:
         setIsAccessBlocked(!hasRoleOnProject(user.id, resId, UserRoles.Viewer));
+        break;
+      case ContentTypes.CreateReport:
+        setIsAccessBlocked(!hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectManager));
         break;
       case ContentTypes.ManageReport:
         setIsAccessBlocked(!hasRoleOnReport(user.id, resId, UserRoles.Viewer));
         break;
     }
-  }, [user, content, resId, params]);
+  }, [content, resId, params]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      checkAuthorizations();
+  const handleScreenLoad = useCallback((user) => {
+    let client = getCurrentClient();
+    let project = getCurrentProject();
+    let report = getCurrentReport();
+    let promises = [], bc = [];
+    switch (content) {
+      case ContentTypes.CreateClient:
+        bc.push('Create client');
+        break;
+      case ContentTypes.ManageClient:
+        !client && promises.push(dispatch(getClient(resId))
+          .then((action) => (client = action.payload)));
+        break;
+      case ContentTypes.CreateProject:
+        bc.push('Create project');
+        !client && promises.push(dispatch(getClient(+params.clientId))
+          .then((action) => (client = action.payload)));
+        break;
+      case ContentTypes.ManageProject:
+        !project && promises.push(dispatch(getProject(resId)).then(async (action) => {
+          project = action.payload;
+          return await dispatch(getClient(project.domain_id))
+            .then((action) => (client = action.payload));
+        }));
+        break;
+      case ContentTypes.CreateReport:
+        bc.push('Create report');
+        !project && promises.push(dispatch(getProject(+params.projectId)).then(async (action) => {
+          project = action.payload;
+          return await dispatch(getClient(project.domain_id))
+            .then((action) => (client = action.payload));
+        }));
+        break;
+      case ContentTypes.ManageReport:
+        !report && promises.push(dispatch(getReport(resId)).then(async (action) => {
+          report = action.payload;
+          return await Promise.all([
+            dispatch(getProject(report.project_id))
+              .then((action) => (project = action.payload)),
+            dispatch(getClient(report.project.domain_id))
+              .then((action) => (client = action.payload)),
+          ]);
+        }));
+        break;
     }
-  }, [content, resId, isLoading]);
+    Promise.all(promises).then(() => {
+      let finalBc = [];
+      !!client && finalBc.push(client.name);
+      !!project && finalBc.push(project.name);
+      !!report && finalBc.push(report.name);
+      finalBc = finalBc.concat(bc);
+      setBreadcrumbs(finalBc);
+      checkAuthorizations(user);
+      setIsLoading(false);
+    });
+  }, [content, resId, params]);
 
   return !isAccessBlocked ? (
-    <Screen className={styles.container} private onLoad={handleScreenLoad}>
+    <Screen className={styles.container} private keepLoading={isLoading} onLoad={handleScreenLoad}>
       <div className={styles.breadcrumbs}>
-        <Breadcrumbs data={breadcrumbs} />
+        <Breadcrumbs data={[ ...breadcrumbs, ...(clientBreadcrumbs || []) ]} />
       </div>
       <div className={styles.content}>
         {(content === ContentTypes.CreateClient && <ClientManage />) ||
