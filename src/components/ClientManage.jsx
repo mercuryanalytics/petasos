@@ -94,14 +94,18 @@ const ClientManage = props => {
       return;
     }
     if (id) {
+      let client = data;
+      let promises = !client ? [
+        dispatch(getClient(id)).then((action) => (client = action.payload)),
+      ] : [];
       initSelection();
-      dispatch(getClient(id)).then(() => {
+      Promise.all(promises).then(() => {
         setCanEdit(hasRoleOnClient(user.id, id, UserRoles.ClientManager));
         setCanManage(hasRoleOnClient(user.id, id, UserRoles.ClientAdmin));
         setIsLoading(false);
       });
     }
-  }, [editMode, id, user, initSelection]);
+  }, [editMode, id, user, initSelection, data]);
 
   useEffect(() => {
     init();
@@ -293,7 +297,7 @@ const ClientManage = props => {
     setBillingAsMailing(!!status);
   }, [billing_as_mailing.input.value]);
 
-  return (
+  return (!editMode || data) ? (
     <div className={styles.container}>
       <div className={styles.tabs}>
         <div
@@ -635,7 +639,7 @@ const ClientManage = props => {
       ))}
       </>)}
     </div>
-  );
+  ) : '';
 };
 
 export default ClientManage;

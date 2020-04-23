@@ -184,6 +184,7 @@ const Index = props => {
       !!project && finalBc.push(project.name);
       !!report && finalBc.push(report.name);
       finalBc = finalBc.concat(bc);
+      console.log(finalBc, client, project, report);
       setBreadcrumbs(finalBc);
       checkAuthorizations(user);
       setIsLoading(false);

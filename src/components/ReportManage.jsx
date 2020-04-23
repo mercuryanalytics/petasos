@@ -36,18 +36,22 @@ const ReportManage = props => {
       return;
     }
     if (id) {
-      dispatch(getReport(id)).then((action) => {
+      let report = data;
+      let promises = !report ? [
+        dispatch(getReport(id)).then((action) => (report = action.payload)),
+      ] : [];
+      Promise.all(promises).then(() => {
         setCanDelete(hasRoleOnProject(user.id, projectId, UserRoles.ProjectManager));
         setCanEdit(
           hasRoleOnReport(user.id, id, UserRoles.ReportManager) ||
-          hasRoleOnProject(user.id, action.payload.projectId, UserRoles.ProjectManager) ||
-          hasRoleOnClient(user.id, action.payload.project.domain_id, UserRoles.ClientManager)
+          hasRoleOnProject(user.id, report.projectId, UserRoles.ProjectManager) ||
+          hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
         );
         setCanManage(hasRoleOnReport(user.id, id, UserRoles.ReportAdmin));
         setIsLoading(false);
       });
     }
-  }, [editMode, id, projectId, user]);
+  }, [editMode, id, projectId, user, data]);
 
   useEffect(() => {
     init();
@@ -113,7 +117,7 @@ const ReportManage = props => {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || (editMode && !data)) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>

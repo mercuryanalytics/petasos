@@ -63,16 +63,20 @@ const ProjectManage = props => {
       return;
     }
     if (id) {
-      dispatch(getProject(id)).then((action) => {
+      let project = data;
+      let promises = !project ? [
+        dispatch(getProject(id)).then((action) => (project = action.payload)),
+      ] : [];
+      Promise.all(promises).then(() => {
         setCanEdit(
           hasRoleOnProject(user.id, id, UserRoles.ProjectManager) ||
-          hasRoleOnClient(user.id, action.payload.domain_id, UserRoles.ClientManager),
+          hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager),
         );
         setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
         setIsLoading(false);
       });
     }
-  }, [editMode, id, clientId, user]);
+  }, [editMode, id, clientId, user, data]);
 
   useEffect(() => {
     init();
@@ -175,7 +179,7 @@ const ProjectManage = props => {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || (editMode && !data)) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>

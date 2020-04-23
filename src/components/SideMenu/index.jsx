@@ -46,6 +46,7 @@ const SideMenu = () => {
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
+
   const [isLoadedSearchData, setIsLoadedSearchData] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [clientsFilter, setClientsFilter] = useState(null);
@@ -121,10 +122,6 @@ const SideMenu = () => {
 
   useEffect(() => {
     if (task) {
-      // const orphanProjectIds = {};
-      // const orphanReportIds = {};
-      // orphanProjects.forEach(p => orphanProjectIds[p.id] = true);
-      // orphanReports.forEach(r => orphanReportIds[r.id] = true);
       switch (task.type) {
         case TaskTypes.ShowReport:
           let r = reports.filter(r => r.id === task.target)[0];
@@ -170,7 +167,11 @@ const SideMenu = () => {
     } else if (activeProject !== null) {
       let p = projects.filter(p => p.id === activeProject)[0];
       if (p && !openClients[p.domain_id]) {
-        setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
+        if (!isActiveAddLink) {
+          setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
+        } else if (!openProjects[p.id]) {
+          setTask({ type: TaskTypes.OpenProject, target: p.id });
+        }
       }
     }
   }, [task, reports, projects, orphanReports, orphanProjects, clients]);

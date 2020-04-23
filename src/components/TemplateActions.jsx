@@ -73,7 +73,7 @@ const TemplateActions = props => {
 
   return !isLoading ? (
     <div className={styles.container}>
-      {client && (<>
+      {!!client && (<>
         <div className={styles.checkboxesTitles}>
           <div className={styles.checkboxTitle}>
             <div>View<span title=""><InfoStroke /></span></div>
@@ -90,8 +90,8 @@ const TemplateActions = props => {
               onChange={status => setItemStatus('client', client.id, status)}
             />
           </div>
-          {!!client.projects && client.projects.map(project => (<>
-            <div key={project.id} className={styles.project}>
+          {!!client.projects && client.projects.map(project => (<div key={project.id}>
+            <div className={styles.project}>
               <div
                 className={styles.title}
                 title={project.name}
@@ -128,7 +128,7 @@ const TemplateActions = props => {
                 <div className={styles.noResults}>No results</div>
               )
             )}
-          </>))}
+          </div>))}
         </div>
       </>)}
     </div>
