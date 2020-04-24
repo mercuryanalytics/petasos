@@ -71,7 +71,9 @@ const Project = props => {
               <div className={styles.noResults}>No results</div>
             )
           )}
-          <ReportAdd projectId={data.id} active={isAdding} />
+          {!!props.canCreateReports[data.id] && (
+            <ReportAdd projectId={data.id} active={isAdding} />
+          )}
         </div>
       )}
     </div>

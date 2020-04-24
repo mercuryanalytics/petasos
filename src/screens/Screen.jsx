@@ -79,7 +79,7 @@ const Screen = props => {
         <div className={styles.body}>
           {props.showSideBar !== false && (
             <div className={styles.side}>
-              <SideMenu />
+              <SideMenu userId={localUser.id} />
             </div>
           )}
           <div className={styles.content}>

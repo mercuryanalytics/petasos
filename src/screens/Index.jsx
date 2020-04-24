@@ -9,9 +9,9 @@ import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
 import { getClient } from '../store/clients/actions';
-import { getProject } from '../store/projects/actions';
+import { getProject, getProjects } from '../store/projects/actions';
 import { getReport } from '../store/reports/actions';
-import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
+import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -110,16 +110,25 @@ const Index = props => {
     return result ? result : null;
   }, [content, resId, params, clients]);
 
-  const checkAuthorizations = useCallback((user) => {
+  const checkAuthorizations = useCallback((user, clientProjects) => {
     switch (content) {
       case ContentTypes.CreateClient:
-        // @TODO CreateClient authorizations
+        setIsAccessBlocked(!isSuperUser(user.id));
         break;
       case ContentTypes.ManageClient:
         setIsAccessBlocked(!hasRoleOnClient(user.id, resId, UserRoles.Viewer));
         break;
       case ContentTypes.CreateProject:
-        // @TODO CreateProject authorizations
+        let authorized = false;
+        if (clientProjects) {
+          for (let i = 0; i < clientProjects.length; i++) {
+            if (hasRoleOnProject(user.id, clientProjects[i].id, UserRoles.ProjectManager)) {
+              authorized = true;
+              break;
+            }
+          }
+        }
+        setIsAccessBlocked(!authorized);
         break;
       case ContentTypes.ManageProject:
         setIsAccessBlocked(!hasRoleOnProject(user.id, resId, UserRoles.Viewer));
@@ -135,6 +144,7 @@ const Index = props => {
 
   const handleScreenLoad = useCallback((user) => {
     let client = getCurrentClient();
+    let clientProjects;
     let project = getCurrentProject();
     let report = getCurrentReport();
     let promises = [], bc = [];
@@ -150,6 +160,8 @@ const Index = props => {
         bc.push('Create project');
         !client && promises.push(dispatch(getClient(+params.clientId))
           .then((action) => (client = action.payload)));
+        promises.push(dispatch(getProjects(+params.clientId))
+          .then((action) => (clientProjects = action.payload)));
         break;
       case ContentTypes.ManageProject:
         !project && promises.push(dispatch(getProject(resId)).then(async (action) => {
@@ -185,7 +197,7 @@ const Index = props => {
       !!report && !!report.name && finalBc.push(report.name);
       finalBc = finalBc.concat(bc);
       setBreadcrumbs(finalBc);
-      checkAuthorizations(user);
+      checkAuthorizations(user, clientProjects);
       setIsLoading(false);
     });
   }, [content, resId, params]);

@@ -80,6 +80,7 @@ const Client = props => {
                 active={props.activeProject === project.id}
                 activeReport={props.activeReport}
                 isActiveAddLink={props.isActiveAddLink}
+                canCreateReports={props.canCreateReports}
                 onOpen={onProjectOpen}
                 onClose={onProjectClose}
               />
@@ -99,7 +100,9 @@ const Client = props => {
               <div className={styles.noResults}>No results</div>
             )
           )}
-          <ProjectAdd clientId={data.id} active={isAdding} />
+          {!!props.canCreateProjects[data.id] && (
+            <ProjectAdd clientId={data.id} active={isAdding} />
+          )}
         </div>
       )}
     </div>

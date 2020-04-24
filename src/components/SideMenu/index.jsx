@@ -10,7 +10,7 @@ import Client from './Client';
 import ClientAdd from './ClientAdd';
 import Project from './Project';
 import Report from './Report';
-import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../../store';
+import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../../store';
 
 const TaskTypes = {
   ShowReport: 'show-report',
@@ -28,7 +28,8 @@ const searchComponentTargets = {};
 Object.keys(SearchTargets).forEach(key =>
   searchComponentTargets[SearchTargets[key]] = false);
 
-const SideMenu = () => {
+const SideMenu = props => {
+  const { userId } = props;
   const dispatch = useDispatch();
   const [task, setTask] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +47,9 @@ const SideMenu = () => {
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
-
+  const [canCreateProjects, setCanCreateProjects] = useState({});
+  const [canCreateReports, setCanCreateReports] = useState({});
+  // @TODO Refactor search
   const [isLoadedSearchData, setIsLoadedSearchData] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [clientsFilter, setClientsFilter] = useState(null);
@@ -79,14 +82,23 @@ const SideMenu = () => {
       setOpenClients(prev => ({ ...prev, [client.id]: true }));
     }
     if (!loadedClients[client.id]) {
+      let clientProjects;
       await Promise.all([
         dispatch(getClientReports(client.id)),
-        dispatch(getProjects(client.id)),
+        dispatch(getProjects(client.id)).then((action) => (clientProjects = action.payload)),
       ]).then(() => {
+        let canCreate = false;
+        for (let i = 0; i < clientProjects.length; i++) {
+          if (hasRoleOnProject(userId, clientProjects[i].id, UserRoles.ProjectManager)) {
+            canCreate = true;
+            break;
+          }
+        }
+        setCanCreateProjects(prev => ({ ...prev, [client.id]: canCreate }));
         setLoadedClients(prev => ({ ...prev, [client.id]: true }));
       });
     }
-  }, [openClients, loadedClients]);
+  }, [openClients, loadedClients, userId]);
 
   const handleClientClose = useCallback((client) => {
     if (openClients[client.id]) {
@@ -99,8 +111,11 @@ const SideMenu = () => {
       setOpenProjects(prev => ({ ...prev, [project.id]: true }));
     }
     if (!loadedProjects[project.id]) {
-      dispatch(getReports(project.id))
-        .then(() => setLoadedProjects(prev => ({ ...prev, [project.id]: true })));
+      dispatch(getReports(project.id)).then(() => {
+        let canCreate = hasRoleOnProject(userId, project.id, UserRoles.ProjectManager);
+        setCanCreateReports(prev => ({ ...prev, [project.id]: canCreate }));
+        setLoadedProjects(prev => ({ ...prev, [project.id]: true }));
+      });
     }
   }, [openProjects, loadedProjects]);
 
@@ -340,6 +355,8 @@ const SideMenu = () => {
                 activeProject={activeProject}
                 activeReport={activeReport}
                 isActiveAddLink={isActiveAddLink}
+                canCreateProjects={canCreateProjects}
+                canCreateReports={canCreateReports}
                 onOpen={handleClientOpen}
                 onClose={handleClientClose}
                 onProjectOpen={handleProjectOpen}
@@ -376,9 +393,11 @@ const SideMenu = () => {
           )}
         </>
       )}
-      <div className={styles.add}>
-        <ClientAdd />
-      </div>
+      {isSuperUser(userId) && (
+        <div className={styles.add}>
+          <ClientAdd />
+        </div>
+      )}
     </div>
   );
 };
