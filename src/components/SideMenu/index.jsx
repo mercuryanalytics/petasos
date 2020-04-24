@@ -376,6 +376,7 @@ const SideMenu = props => {
                 orphan={true}
                 activeReport={activeReport}
                 isActiveAddLink={isActiveAddLink}
+                canCreateReports={canCreateReports}
                 onOpen={handleProjectOpen}
                 onClose={handleProjectClose}
               />
