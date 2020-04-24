@@ -16,16 +16,20 @@ const reportsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_ORPHAN_REPORTS_SUCCESS': {
+      const reports = pushToStack(state.reports, action.payload);
       const orphans = pushToStack(state.orphans, action.payload);
       return {
         ...state,
+        reports: reports,
         orphans: orphans,
       };
     }
     case 'GET_CLIENT_REPORTS_SUCCESS': {
+      const reports = pushToStack(state.reports, action.payload);
       const clientReports = pushToStack(state.clientReports, action.payload);
       return {
         ...state,
+        reports: reports,
         clientReports: clientReports,
       };
     }

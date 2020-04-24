@@ -74,7 +74,6 @@ const ResourceActions = props => {
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
         if (openFirstProject && _projects) {
-          console.log(222)
           handleProjectToggle(_projects[0].id, true);
         }
       });

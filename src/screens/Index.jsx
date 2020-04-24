@@ -180,11 +180,10 @@ const Index = props => {
     }
     Promise.all(promises).then(() => {
       let finalBc = [];
-      !!client && finalBc.push(client.name);
-      !!project && finalBc.push(project.name);
-      !!report && finalBc.push(report.name);
+      !!client && !!client.name && finalBc.push(client.name);
+      !!project && !!project.name && finalBc.push(project.name);
+      !!report && !!report.name && finalBc.push(report.name);
       finalBc = finalBc.concat(bc);
-      console.log(finalBc, client, project, report);
       setBreadcrumbs(finalBc);
       checkAuthorizations(user);
       setIsLoading(false);

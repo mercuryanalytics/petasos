@@ -15,9 +15,11 @@ const projectsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_ORPHAN_PROJECTS_SUCCESS': {
+      const projects = pushToStack(state.projects, action.payload);
       const orphans = pushToStack(state.orphans, action.payload);
       return {
         ...state,
+        projects: projects,
         orphans: orphans,
       };
     }
