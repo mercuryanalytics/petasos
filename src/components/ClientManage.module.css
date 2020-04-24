@@ -95,13 +95,28 @@
 }
 
 .section .textBlock {
-  max-width: 490px;
-  font-size: .875rem;
   margin-bottom: 2rem;
+  font-size: .875rem;
+  line-height: 20px;
 }
 
 .section .textBlock span {
   font-weight: bold;
+}
+
+.section .textBlock.split {
+  display: flex;
+}
+
+.section .textBlock.split .left {
+  flex-grow: 1;
+}
+
+.section .textBlock.split .right {
+  display: flex;
+  justify-content: center;
+  width: 70px;
+  margin-left: 14px;
 }
 
 .section .form {

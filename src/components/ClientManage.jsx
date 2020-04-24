@@ -10,6 +10,7 @@ import UserManage from './UserManage';
 import TemplateActions from './TemplateActions';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
+import Toggle from './Toggle';
 import { MdDelete } from 'react-icons/md';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
@@ -66,6 +67,7 @@ const ClientManage = props => {
   const [showTemplate, setShowTemplate] = useState(false);
   const [usersTab, setUsersTab] = useState(UsersTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [templateActiveState, setTemplateActiveState] = useState(null);
 
   const initSelection = useCallback(() => {
     const pathname = history.location.pathname;
@@ -88,6 +90,7 @@ const ClientManage = props => {
     setIsLoading(true);
     setAccountsTab(AccountsTabs.Users);
     setUsersTab(UsersTabs.Info);
+    setTemplateActiveState(null);
     if (!editMode) {
       setCanEdit(true);
       setIsLoading(false);
@@ -296,6 +299,18 @@ const ClientManage = props => {
     }
     setBillingAsMailing(!!status);
   }, [billing_as_mailing.input.value]);
+
+  const getTemplateStatus = useCallback(() => {
+    if (templateActiveState === true || templateActiveState === false) {
+      return templateActiveState;
+    }
+    return !!data.default_template_enabled;
+  }, [templateActiveState, data]);
+
+  const setTemplateStatus = useCallback((status) => {
+    setTemplateActiveState(status);
+    dispatch(updateClient(id, { default_template_enabled: status }));
+  }, [id]);
 
   return (!editMode || data) ? (
     <div className={styles.container}>
@@ -552,7 +567,7 @@ const ClientManage = props => {
                   <span>Domains</span>
                 </div>
               </div>
-              {accountsTab !== AccountsTabs.Domains && (
+              {canManage && accountsTab !== AccountsTabs.Domains && (
                 <div className={`${styles.template} ${showTemplate ? styles.active : ''}`}>
                   <span onClick={handleTemplateClick}>User Template</span>
                 </div>
@@ -628,11 +643,22 @@ const ClientManage = props => {
               <div className={`${styles.title} ${styles.big}`}>
                 <span>Template</span>
               </div>
-              <div className={styles.textBlock}>
-                {'By activating the user template you will be able to '}
-                {'set a default access for your new users.'}
+              <div className={`${styles.textBlock} ${styles.split}`}>
+                <div className={styles.left}>
+                  {'By activating the user template you will be able to '}
+                  {'set a default access for your new users.'}
+                </div>
+                <div className={styles.right}>
+                  <Toggle
+                    id={`templates-toggle-${id}`}
+                    checked={getTemplateStatus()}
+                    onChange={status => setTemplateStatus(status)}
+                  />
+                </div>
               </div>
-              <TemplateActions clientId={id} />
+              {getTemplateStatus() && (
+                <TemplateActions clientId={id} />
+              )}
             </div>
           ))}
         </div>
