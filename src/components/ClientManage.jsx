@@ -656,9 +656,7 @@ const ClientManage = props => {
                   />
                 </div>
               </div>
-              {getTemplateStatus() && (
-                <TemplateActions clientId={id} />
-              )}
+              <TemplateActions clientId={id} />
             </div>
           ))}
         </div>
