@@ -42,11 +42,9 @@ const Screen = props => {
               dispatch(setUser(user));
               dispatch(getMyAuthorizations(user.id)).then(() => {
                 setIsLoading(false);
-              });
-            } else {
-              // @TODO Global error
+              }, () => {});
             }
-          });
+          }, () => {});
         });
       } else {
         setDoRedirect(true);

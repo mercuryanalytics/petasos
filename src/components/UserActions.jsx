@@ -59,8 +59,8 @@ const UserActions = props => {
     setOpenClients(prev => ({ ...prev, [id]: !status }));
     if (!loadedClients[id]) {
       await Promise.all([
-        dispatch(getUsers(id)),
-        dispatch(getAuthorizedUsers(id, authorizedOptions)),
+        dispatch(getUsers(id)).then(() => {}, () => {}),
+        dispatch(getAuthorizedUsers(id, authorizedOptions)).then(() => {}, () => {}),
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
       });
@@ -85,11 +85,11 @@ const UserActions = props => {
     const clientLimit = clientId ? clientId : (limitClientId ? limitClientId : null);
     setAllowedClients(clientLimit ? [clientLimit] : []);
     let promises = [
-      getClients(),
-      dispatch(getUsers(clientLimit)),
+      dispatch(getClients()).then(() => {}, () => {}),
+      dispatch(getUsers(clientLimit)).then(() => {}, () => {}),
     ];
     if (mode === UserActionsModes.Grant) {
-      promises.push(dispatch(getAuthorizedUsers(clientId, authorizedOptions)));
+      promises.push(dispatch(getAuthorizedUsers(clientId, authorizedOptions)).then(() => {}, () => {}));
     }
     await Promise.all(promises).then(() => {
       if (mode === UserActionsModes.Grant && clientId) {
@@ -147,7 +147,7 @@ const UserActions = props => {
   const handleItemDelete = useCallback((id, event) => {
     setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
     dispatch(deleteUser(id, clientId))
-      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })));
+      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })), () => {});
     event.stopPropagation();
   }, [clientId]);
 
@@ -170,7 +170,8 @@ const UserActions = props => {
   }, [clientId, projectId, reportId, authorizedUsers, activeStates]);
 
   const setItemStatus = useCallback((parentId, itemId, status) => {
-    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }));
+    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }))
+      .then(() => {}, () => {});
     setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
   }, [clientId, projectId, reportId, authorizedOptions]);
 
@@ -248,12 +249,12 @@ const UserActions = props => {
       }
       dispatch(createUser(result, mode === UserActionsModes.Manage)).then(() => {
         if (mode === UserActionsModes.Grant) {
-          dispatch(getAuthorizedUsers(clientId, authorizedOptions));
+          dispatch(getAuthorizedUsers(clientId, authorizedOptions)).then(() => {}, () => {});
         }
         form.reset();
         setIsBusy(false);
         setIsAddUserOpen(false);
-      });
+      }, () => {});
     },
   });
 

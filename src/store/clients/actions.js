@@ -1,4 +1,4 @@
-import { queryState } from '../index';
+import { queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
@@ -13,7 +13,7 @@ export function getClients() {
       }))
   ).then(
     res => dispatch(getClientsSuccess(res)),
-    err => dispatch(getClientsFailure(err)),
+    err => handleActionFailure(err, dispatch(getClientsFailure(err))),
   );
 }
 
@@ -41,7 +41,7 @@ export function getClient(id) {
       }))
   ).then(
     res => dispatch(getClientSuccess(res)),
-    err => dispatch(getClientFailure(err)),
+    err => handleActionFailure(err, dispatch(getClientFailure(err))),
   );
 }
 
@@ -64,7 +64,7 @@ export function createClient(data) {
     return apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(createClientSuccess(res)),
-        err => dispatch(createClientFailure(err)),
+        err => handleActionFailure(err, dispatch(createClientFailure(err))),
       );
   };
 }
@@ -88,7 +88,7 @@ export function updateClient(id, data) {
     return apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateClientSuccess(res)),
-        err => dispatch(updateClientFailure(err)),
+        err => handleActionFailure(err, dispatch(updateClientFailure(err))),
       );
   };
 }
@@ -112,7 +112,7 @@ export function deleteClient(id) {
     return apiCall('DELETE', `${Constants.API_URL}/clients/${id}`)
       .then(
         res => dispatch(deleteClientSuccess(id)),
-        err => dispatch(deleteClientFailure(err, id)),
+        err => handleActionFailure(err, dispatch(deleteClientFailure(err, id))),
       );
   };
 }
@@ -144,7 +144,7 @@ export function getTemplates(clientId) {
       }))
   ).then(
     res => dispatch(getTemplatesSuccess(res, clientId)),
-    err => dispatch(getTemplatesFailure(err, clientId)),
+    err => handleActionFailure(err, dispatch(getTemplatesFailure(err, clientId))),
   );
 }
 
@@ -165,7 +165,7 @@ export function updateTemplate(data, clientId) {
     return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/templates`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateTemplateSuccess(res, data, clientId)),
-        err => dispatch(updateTemplateFailure(err)),
+        err => handleActionFailure(err, dispatch(updateTemplateFailure(err))),
       );
   };
 }
@@ -194,7 +194,7 @@ export function getDomains(clientId) {
       }))
   ).then(
     res => dispatch(getDomainsSuccess(res)),
-    err => dispatch(getDomainsFailure(err)),
+    err => handleActionFailure(err, dispatch(getDomainsFailure(err))),
   );
 }
 
@@ -222,7 +222,7 @@ export function getDomain(id, clientId) {
       }))
   ).then(
     res => dispatch(getDomainSuccess(res)),
-    err => dispatch(getDomainFailure(err)),
+    err => handleActionFailure(err, dispatch(getDomainFailure(err))),
   );
 }
 
@@ -241,7 +241,7 @@ export function createDomain(data, clientId) {
     return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/domains`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(createDomainSuccess(res)),
-        err => dispatch(createDomainFailure(err)),
+        err => handleActionFailure(err, dispatch(createDomainFailure(err))),
       );
   };
 }
@@ -261,7 +261,7 @@ export function updateDomain(id, data, clientId) {
     return apiCall('PATCH', `${Constants.API_URL}/clients/${clientId}/domains/${id}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateDomainSuccess(res)),
-        err => dispatch(updateDomainFailure(err)),
+        err => handleActionFailure(err, dispatch(updateDomainFailure(err))),
       );
   };
 }
@@ -281,7 +281,7 @@ export function deleteDomain(id, clientId) {
     return apiCall('DELETE', `${Constants.API_URL}/clients/${clientId}/domains/${id}`)
       .then(
         res => dispatch(deleteDomainSuccess(id)),
-        err => dispatch(deleteDomainFailure(err, id)),
+        err => handleActionFailure(err, dispatch(deleteDomainFailure(err, id))),
       );
   };
 }

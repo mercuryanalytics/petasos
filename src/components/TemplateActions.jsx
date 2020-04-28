@@ -22,7 +22,7 @@ const TemplateActions = props => {
       try {
         setOpenProjects({ [action.payload.projects[0].id]: true });
       } catch (e) {}
-    });
+    }, () => {});
   }, [clientId]);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const TemplateActions = props => {
         resource_type: type,
         resource_id: id,
         state: status ? 1 : 0,
-      }, clientId));
+      }, clientId)).then(() => {}, () => {});
     }
   }, [activeStates, clientId]);
 

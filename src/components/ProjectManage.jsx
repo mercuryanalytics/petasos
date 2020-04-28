@@ -50,8 +50,8 @@ const ProjectManage = props => {
   const [contact, setContact] = useState(null);
 
   useEffect(() => {
-    dispatch(getClients());
-    dispatch(getResearchers());
+    dispatch(getClients()).then(() => {}, () => {});
+    dispatch(getResearchers()).then(() => {}, () => {});
   }, []);
 
   const init = useCallback(() => {
@@ -64,7 +64,7 @@ const ProjectManage = props => {
     if (id) {
       let project = data;
       let promises = !project ? [
-        dispatch(getProject(id)).then((action) => (project = action.payload)),
+        dispatch(getProject(id)).then((action) => (project = action.payload), () => {}),
       ] : [];
       Promise.all(promises).then(() => {
         setCanEdit(
@@ -120,12 +120,12 @@ const ProjectManage = props => {
         data && dispatch(updateProject(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        });
+        }, () => {});
       } else {
         dispatch(createProject(result)).then(action => {
           setIsBusy(false);
           history.push(Routes.ManageProject.replace(':id', action.payload.id));
-        });
+        }, () => {});
       }
     },
   });
@@ -162,7 +162,7 @@ const ProjectManage = props => {
     dispatch(deleteProject(data.id)).then(() => {
       setIsDeleteBusy(false);
       history.push(Routes.ManageClient.replace(':id', parent));
-    });
+    }, () => {});
   };
 
   if (isLoading || (editMode && !data)) {

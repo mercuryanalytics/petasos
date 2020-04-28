@@ -36,6 +36,10 @@ export const UserRolesWriteToRead = {
   [UserRoles.Viewer]: 'viewer',
 };
 
+export const handleActionFailure = (err) => {
+  return Promise.reject(err);
+};
+
 export const hasValue = (source) => {
   return typeof source !== 'undefined' && source !== null;
 };

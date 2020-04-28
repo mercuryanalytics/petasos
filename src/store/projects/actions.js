@@ -1,4 +1,4 @@
-import { hasValue, queryState } from '../index';
+import { hasValue, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
@@ -16,7 +16,7 @@ export function getProjects(clientId) {
       }))
   ).then(
     res => dispatch(getProjectsSuccess(res)),
-    err => dispatch(getProjectsFailure(err)),
+    err => handleActionFailure(err, dispatch(getProjectsFailure(err))),
   );
 }
 
@@ -41,7 +41,7 @@ export function getOrphanProjects() {
       }))
   ).then(
     res => dispatch(getOrphanProjectsSuccess(res)),
-    err => dispatch(getOrphanProjectsFailure(err)),
+    err => handleActionFailure(err, dispatch(getOrphanProjectsFailure(err))),
   );
 }
 
@@ -71,7 +71,7 @@ export function getProject(id, clientId) {
       }))
   ).then(
     res => dispatch(getProjectSuccess(res)),
-    err => dispatch(getProjectFailure(err)),
+    err => handleActionFailure(err, dispatch(getProjectFailure(err))),
   );
 }
 
@@ -94,7 +94,7 @@ export function createProject(data) {
     return apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(createProjectSuccess(res)),
-        err => dispatch(createProjectFailure(err)),
+        err => handleActionFailure(err, dispatch(createProjectFailure(err))),
       );
   };
 }
@@ -118,7 +118,7 @@ export function updateProject(id, data) {
     return apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateProjectSuccess(res)),
-        err => dispatch(updateProjectFailure(err)),
+        err => handleActionFailure(err, dispatch(updateProjectFailure(err))),
       );
   };
 }
@@ -143,6 +143,7 @@ export function deleteProject(id) {
       .then(
         res => dispatch(deleteProjectSuccess(id)),
         err => dispatch(deleteProjectFailure(err, id)),
+        err => handleActionFailure(err, dispatch(deleteProjectFailure(err, id))),
       );
   };
 }

@@ -1,4 +1,4 @@
-import { hasValue, queryState } from '../index';
+import { hasValue, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
@@ -17,7 +17,7 @@ export function getUsers(clientId) {
       }))
   ).then(
     res => dispatch(getUsersSuccess(res)),
-    err => dispatch(getUsersFailure(err)),
+    err => handleActionFailure(err, dispatch(getUsersFailure(err))),
   );
 }
 
@@ -45,7 +45,7 @@ export function getUser(id) {
       }))
   ).then(
     res => dispatch(getUserSuccess(res)),
-    err => dispatch(getUserFailure(err)),
+    err => handleActionFailure(err, dispatch(getUserFailure(err))),
   );
 }
 
@@ -69,7 +69,7 @@ export function createUser(data, noAuth) {
     return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(createUserSuccess(res)),
-        err => dispatch(createUserFailure(err)),
+        err => handleActionFailure(err, dispatch(createUserFailure(err))),
       );
   };
 }
@@ -93,7 +93,7 @@ export function updateUser(id, data) {
     return apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateUserSuccess(res)),
-        err => dispatch(updateUserFailure(err)),
+        err => handleActionFailure(err, dispatch(updateUserFailure(err))),
       );
   };
 }
@@ -118,7 +118,7 @@ export function deleteUser(id, clientId) {
     return apiCall('DELETE', `${Constants.API_URL}/users/${id}${queryString}`)
       .then(
         res => dispatch(deleteUserSuccess(id)),
-        err => dispatch(deleteUserFailure(err, id)),
+        err => handleActionFailure(err, dispatch(deleteUserFailure(err, id))),
       );
   };
 }
@@ -149,7 +149,7 @@ export function getResearchers() {
       }))
   ).then(
     res => dispatch(getResearchersSuccess(res)),
-    err => dispatch(getResearchersFailure(err)),
+    err => handleActionFailure(err, dispatch(getResearchersFailure(err))),
   );
 }
 
@@ -174,7 +174,7 @@ export function getScopes() {
       }))
   ).then(
     res => dispatch(getScopesSuccess(res)),
-    err => dispatch(getScopesFailure(err)),
+    err => handleActionFailure(err, dispatch(getScopesFailure(err))),
   );
 }
 
@@ -200,7 +200,7 @@ export function getUserAuthorizations(id) {
       }))
   ).then(
     res => dispatch(getUserAuthorizationsSuccess(res, id)),
-    err => dispatch(getUserAuthorizationsFailure(err, id)),
+    err => handleActionFailure(err, dispatch(getUserAuthorizationsFailure(err, id))),
   );
 }
 
@@ -228,7 +228,7 @@ export function getMyAuthorizations(id) {
       }))
   ).then(
     res => dispatch(getMyAuthorizationsSuccess(res, id)),
-    err => dispatch(getMyAuthorizationsFailure(err, id)),
+    err => handleActionFailure(err, dispatch(getMyAuthorizationsFailure(err, id))),
   );
 }
 
@@ -268,7 +268,7 @@ export function getAuthorizedUsers(contextId, res) {
       }))
   ).then(
     res => dispatch(getAuthorizedUsersSuccess(res, contextId, resPath, resId)),
-    err => dispatch(getAuthorizedUsersFailure(err)),
+    err => handleActionFailure(err, dispatch(getAuthorizedUsersFailure(err))),
   );
 }
 
@@ -301,7 +301,7 @@ export function authorizeUser(id, contextId, res, states) {
               await refreshAuthorizations(dispatch);
               dispatch(authorizeUserSuccess(res, id, contextId, null, null, states, true));
             },
-            err => dispatch(authorizeUserFailure(err)),
+            err => handleActionFailure(err, dispatch(authorizeUserFailure(err))),
           );
       };
     }
@@ -327,7 +327,7 @@ export function authorizeUser(id, contextId, res, states) {
           await refreshAuthorizations(dispatch);
           return dispatch(authorizeUserSuccess(res, id, contextId, resPath, resId, states, false));
         },
-        err => dispatch(authorizeUserFailure(err)),
+        err => handleActionFailure(err, dispatch(authorizeUserFailure(err))),
       );
   };
 }

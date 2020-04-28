@@ -7,7 +7,6 @@ import Routes from './utils/routes';
 import authConfig from './auth_config.json';
 import { Route, Switch } from 'react-router-dom';
 import { Auth0Provider } from './react-auth0-spa';
-import { setLocationData } from './store/location/actions';
 import Loader from './components/Loader';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
@@ -17,7 +16,6 @@ import Logout from './screens/Logout';
 import PageNotFound from './screens/PageNotFound';
 
 const App = () => {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const onAuth0RedirectCallback = (appState) => {
@@ -33,13 +31,6 @@ const App = () => {
       redirect_uri={`${Constants.APP_URL}${Routes.LoginCallback}`}
       onRedirectCallback={onAuth0RedirectCallback}
     >
-      {/* @TODO Reset location data */}
-      {/* <Route
-        path="*"
-        render={() => {
-          dispatch(setLocationData({}));
-        }}
-      /> */}
       <Switch>
         <Route exact path={Routes.Home} component={Index} />
         <Route

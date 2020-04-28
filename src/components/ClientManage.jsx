@@ -99,7 +99,7 @@ const ClientManage = props => {
     if (id) {
       let client = data;
       let promises = !client ? [
-        dispatch(getClient(id)).then((action) => (client = action.payload)),
+        dispatch(getClient(id)).then((action) => (client = action.payload), () => {}),
       ] : [];
       initSelection();
       Promise.all(promises).then(() => {
@@ -176,7 +176,7 @@ const ClientManage = props => {
       } else {
         history.push(Routes.CreateClient);
       }
-    });
+    }, () => {});
   }, [clients, data, history]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -240,12 +240,12 @@ const ClientManage = props => {
         data && dispatch(updateClient(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        });
+        }, () => {});
       } else {
         dispatch(createClient(result)).then(action => {
           setIsBusy(false);
           history.push(Routes.ManageClient.replace(':id', action.payload.id));
-        });
+        }, () => {});
       }
     },
   });
@@ -309,7 +309,8 @@ const ClientManage = props => {
 
   const setTemplateStatus = useCallback((status) => {
     setTemplateActiveState(status);
-    dispatch(updateClient(id, { default_template_enabled: status }));
+    dispatch(updateClient(id, { default_template_enabled: status }))
+      .then(() => {}, () => {});
   }, [id]);
 
   return (!editMode || data) ? (

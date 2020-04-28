@@ -71,9 +71,9 @@ const SideMenu = props => {
 
   const init = useCallback(async () => {
     return await Promise.all([
-      dispatch(getClients()),
-      dispatch(getOrphanProjects()),
-      dispatch(getOrphanReports()),
+      dispatch(getClients()).then(() => {}, () => {}),
+      dispatch(getOrphanProjects()).then(() => {}, () => {}),
+      dispatch(getOrphanReports()).then(() => {}, () => {}),
     ]);
   });
 
@@ -105,8 +105,9 @@ const SideMenu = props => {
     if (!loadedClients[client.id]) {
       let clientProjects;
       await Promise.all([
-        dispatch(getClientReports(client.id)),
-        dispatch(getProjects(client.id)).then((action) => (clientProjects = action.payload)),
+        dispatch(getClientReports(client.id)).then(() => {}, () => {}),
+        dispatch(getProjects(client.id)).then((action) => (clientProjects = action.payload))
+          .then(() => {}, () => {}),
       ]).then(() => {
         initProjectCreationRights(client.id, clientProjects);
         setLoadedClients(prev => ({ ...prev, [client.id]: true }));
@@ -128,7 +129,7 @@ const SideMenu = props => {
       dispatch(getReports(project.id)).then(() => {
         initReportCreationRights(project.id);
         setLoadedProjects(prev => ({ ...prev, [project.id]: true }));
-      });
+      }, () => {});
     }
   }, [openProjects, loadedProjects]);
 
@@ -161,7 +162,7 @@ const SideMenu = props => {
               clientId: r.project.domain_id,
             });
           } else {
-            dispatch(getReport(task.target));
+            dispatch(getReport(task.target)).then(() => {}, () => {});
           }
           break;
         case TaskTypes.OpenProject:
@@ -179,9 +180,9 @@ const SideMenu = props => {
                   ) {
                     setTask({ type: TaskTypes.OpenClient, target: task.clientId });
                   }
-                });
+                }, () => {});
               }
-            });
+            }, () => {});
           }
           break;
         case TaskTypes.OpenClient:
@@ -217,8 +218,8 @@ const SideMenu = props => {
     setClientsSearch(!shouldGetData);
     setProjectsSearch(hasProjects && !hasReports);
     if (!isLoadedSearchData && shouldGetData && value.length) {
-      promises.push(dispatch(getProjects()));
-      promises.push(dispatch(getReports()));
+      promises.push(dispatch(getProjects()).then(() => {}, () => {}));
+      promises.push(dispatch(getReports()).then(() => {}, () => {}));
     }
     await Promise.all(promises).then((res) => {
       shouldGetData && setIsLoadedSearchData(true);

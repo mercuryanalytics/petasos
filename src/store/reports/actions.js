@@ -1,4 +1,4 @@
-import { hasValue, queryState } from '../index';
+import { hasValue, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
@@ -20,7 +20,7 @@ export function getReports(projectId, clientId) {
       }))
   ).then(
     res => dispatch(getReportsSuccess(res)),
-    err => dispatch(getReportsFailure(err)),
+    err => handleActionFailure(err, dispatch(getReportsFailure(err))),
   );
 }
 
@@ -45,7 +45,7 @@ export function getOrphanReports() {
       }))
   ).then(
     res => dispatch(getOrphanReportsSuccess(res)),
-    err => dispatch(getOrphanReportsFailure(err)),
+    err => handleActionFailure(err, dispatch(getOrphanReportsFailure(err))),
   );
 }
 
@@ -71,7 +71,7 @@ export function getClientReports(clientId) {
       }))
   ).then(
     res => dispatch(getClientReportsSuccess(res)),
-    err => dispatch(getClientReportsFailure(err)),
+    err => handleActionFailure(err, dispatch(getClientReportsFailure(err))),
   );
 }
 
@@ -101,7 +101,7 @@ export function getReport(id, projectId) {
       }))
   ).then(
     res => dispatch(getReportSuccess(res)),
-    err => dispatch(getReportFailure(err)),
+    err => handleActionFailure(err, dispatch(getReportFailure(err))),
   );
 }
 
@@ -124,7 +124,7 @@ export function createReport(data) {
     return apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(createReportSuccess(res)),
-        err => dispatch(createReportFailure(err)),
+        err => handleActionFailure(err, dispatch(createReportFailure(err))),
       );
   };
 }
@@ -148,7 +148,7 @@ export function updateReport(id, data) {
     return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
       .then(
         res => dispatch(updateReportSuccess(res)),
-        err => dispatch(updateReportFailure(err)),
+        err => handleActionFailure(err, dispatch(updateReportFailure(err))),
       );
   };
 }
@@ -172,7 +172,7 @@ export function deleteReport(id) {
     return apiCall('DELETE', `${Constants.API_URL}/reports/${id}`)
       .then(
         res => dispatch(deleteReportSuccess(id)),
-        err => dispatch(deleteReportFailure(err, id)),
+        err => handleActionFailure(err, dispatch(deleteReportFailure(err, id))),
       );
   };
 }

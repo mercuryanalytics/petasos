@@ -37,9 +37,9 @@ const ResourceActions = props => {
         data = Array.isArray(data) ? data : [data];
         clientToOpen = clientId || (data.length ? data[0].id : null);
         setClients(data);
-      }),
-      dispatch(getScopes()),
-      dispatch(getUserAuthorizations(userId)),
+      }, () => {}),
+      dispatch(getScopes()).then(() => {}, () => {}),
+      dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
     ]).then(() => {
       if (clientToOpen) {
         handleClientToggle(clientToOpen, !!clientId, true);
@@ -65,10 +65,10 @@ const ResourceActions = props => {
         dispatch(getProjects(id)).then(async (action) => {
           _projects = action.payload;
           setProjects(prev => ({ ...prev, [id]: action.payload }));
-        }),
+        }, () => {}),
         dispatch(getClientReports(id)).then(async (action) => {
           setClientReports(prev => ({ ...prev, [id]: action.payload }));
-        }),
+        }, () => {}),
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
         if (openFirstProject && _projects && _projects.length) {
@@ -89,7 +89,7 @@ const ResourceActions = props => {
       await dispatch(getReports(id)).then(async (action) => {
         setReports(prev => ({ ...prev, [id]: action.payload }));
         setLoadedProjects(prev => ({ ...prev, [id]: true }));
-      });
+      }, () => {});
     }
   }, [openProjects, loadedProjects]);
 
@@ -111,7 +111,8 @@ const ResourceActions = props => {
         scope_id: scopeId,
         scope_state: status ? 1 : 0,
       };
-      dispatch(authorizeUser(userId, parentId, options, states));
+      dispatch(authorizeUser(userId, parentId, options, states))
+        .then(() => {}, () => {});
     } else {
       const rolePrefix = type[0].toUpperCase() + type.substr(1);
       const managerRole = UserRoles[`${rolePrefix}Manager`];
@@ -124,22 +125,23 @@ const ResourceActions = props => {
         const _status = getItemStatus(_type, _id);
         if (status && !_status) {
           setActiveStates(prev => ({ ...prev, [`${userId}-${_type}-${_id}-viewer`]: true }));
-          dispatch(authorizeUser(userId, parentId, _options, { authorize: true }));
+          dispatch(authorizeUser(userId, parentId, _options, { authorize: true }))
+            .then(() => {}, () => {});
         }
       };
       const handleProjectReports = async (_id) => {
         dispatch(getReports(_id)).then(action => action.payload.forEach((r) => {
           handleItem('report', r.id);
-        }));
+        }), () => {});
       };
       const handleClientContents = (_id) => {
         dispatch(getProjects(_id)).then(action => action.payload.forEach((p) => {
           handleItem('project', p.id);
           handleProjectReports(p.id);
-        }));
+        }), () => {});
         dispatch(getClientReports(_id)).then(action => action.payload.forEach((r) => {
           handleItem('report', r.id);
-        }));
+        }), () => {});
       };
       if (role) {
         states.role = role;
@@ -149,13 +151,15 @@ const ResourceActions = props => {
           newStates[`${userId}-${type}-${id}-viewer`] = true;
           if (role === adminRole) {
             newStates[`${userId}-${type}-${id}-${managerRole}`] = true;
-            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 1 }));
+            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 1 }))
+              .then(() => {}, () => {});
           }
         } else {
           skipCollections = true;
           if (role === adminRole) {
             newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
-            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }));
+            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }))
+              .then(() => {}, () => {});
           }
         }
       } else {
@@ -163,11 +167,13 @@ const ResourceActions = props => {
         if (!status) {
           newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
           newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
-          dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }));
-          dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }));
+          dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }))
+            .then(() => {}, () => {});
+          dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
+            .then(() => {}, () => {});
         }
       }
-      dispatch(authorizeUser(userId, parentId, options, states));
+      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
       if (!skipCollections) {
         if (type === 'client') {
           handleClientContents(id);

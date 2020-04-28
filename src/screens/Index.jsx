@@ -154,40 +154,40 @@ const Index = props => {
         break;
       case ContentTypes.ManageClient:
         !client && promises.push(dispatch(getClient(resId))
-          .then((action) => (client = action.payload)));
+          .then((action) => (client = action.payload), () => {}));
         break;
       case ContentTypes.CreateProject:
         bc.push('Create project');
         !client && promises.push(dispatch(getClient(+params.clientId))
-          .then((action) => (client = action.payload)));
+          .then((action) => (client = action.payload), () => {}));
         promises.push(dispatch(getProjects(+params.clientId))
-          .then((action) => (clientProjects = action.payload)));
+          .then((action) => (clientProjects = action.payload), () => {}));
         break;
       case ContentTypes.ManageProject:
         !project && promises.push(dispatch(getProject(resId)).then(async (action) => {
           project = action.payload;
           return await dispatch(getClient(project.domain_id))
-            .then((action) => (client = action.payload));
-        }));
+            .then((action) => (client = action.payload), () => {});
+        }, () => {}));
         break;
       case ContentTypes.CreateReport:
         bc.push('Create report');
         !project && promises.push(dispatch(getProject(+params.projectId)).then(async (action) => {
           project = action.payload;
           return await dispatch(getClient(project.domain_id))
-            .then((action) => (client = action.payload));
-        }));
+            .then((action) => (client = action.payload), () => {});
+        }, () => {}));
         break;
       case ContentTypes.ManageReport:
         !report && promises.push(dispatch(getReport(resId)).then(async (action) => {
           report = action.payload;
           return await Promise.all([
             dispatch(getProject(report.project_id))
-              .then((action) => (project = action.payload)),
+              .then((action) => (project = action.payload), () => {}),
             dispatch(getClient(report.project.domain_id))
-              .then((action) => (client = action.payload)),
+              .then((action) => (client = action.payload), () => {}),
           ]);
-        }));
+        }, () => {}));
         break;
     }
     Promise.all(promises).then(() => {

@@ -29,13 +29,13 @@ const DomainActions = props => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(getDomains(clientId)).then(() => setIsLoading(false));
+    dispatch(getDomains(clientId)).then(() => setIsLoading(false), () => {});
   }, [clientId]);
 
   const handleDomainDelete = useCallback((id, event) => {
     setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
     dispatch(deleteDomain(id, clientId))
-      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })));
+      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })), () => {});
     event.stopPropagation();
   }, [clientId]);
 
@@ -57,7 +57,7 @@ const DomainActions = props => {
         form.reset();
         setIsBusy(false);
         setIsAddDomainOpen(false);
-      });
+      }, () => {});
     },
   });
 

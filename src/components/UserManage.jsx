@@ -22,7 +22,7 @@ const UserManage = props => {
     setIsEditClicked(false);
     if (!!id && (!data || data.id !== !!id)) {
       setIsLoading(true);
-      dispatch(getUser(id)).then(() => setIsLoading(false));
+      dispatch(getUser(id)).then(() => setIsLoading(false), () => {});
     }
   }, [id]);
 
@@ -93,9 +93,9 @@ const UserManage = props => {
         data && dispatch(updateUser(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        });
+        }, () => {});
       } else {
-        dispatch(createUser(result));
+        dispatch(createUser(result)).then(() => {}, () => {});
       }
     },
   });

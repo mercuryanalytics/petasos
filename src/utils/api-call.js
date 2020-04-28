@@ -29,6 +29,9 @@ function apiCall (method, url, options) {
   return fetch(url, fetchOptions)
     .then(response => {
       if (method.toUpperCase() === 'GET') {
+        if (!response.ok) {
+          return Promise.reject(`Fetch error: ${response.status} ${response.statusText}`);
+        }
         called[url] = true;
       }
       return response.text();

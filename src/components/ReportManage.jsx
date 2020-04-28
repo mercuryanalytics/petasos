@@ -38,7 +38,7 @@ const ReportManage = props => {
     if (id) {
       let report = data;
       let promises = !report ? [
-        dispatch(getReport(id)).then((action) => (report = action.payload)),
+        dispatch(getReport(id)).then((action) => (report = action.payload), () => {}),
       ] : [];
       Promise.all(promises).then(() => {
         setCanDelete(hasRoleOnProject(user.id, projectId, UserRoles.ProjectManager));
@@ -92,12 +92,12 @@ const ReportManage = props => {
         data && dispatch(updateReport(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        });
+        }, () => {});
       } else {
         dispatch(createReport(result)).then(action => {
           setIsBusy(false);
           history.push(Routes.ManageReport.replace(':id', action.payload.id));
-        });
+        }, () => {});
       }
     },
   });
@@ -114,7 +114,7 @@ const ReportManage = props => {
     dispatch(deleteReport(data.id)).then(() => {
       setIsDeleteBusy(false);
       history.push(Routes.ManageProject.replace(':id', parent));
-    });
+    }, () => {});
   };
 
   if (isLoading || (editMode && !data)) {
