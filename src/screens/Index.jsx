@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Index.module.css';
+import Routes from '../utils/routes';
 import { setLocationData } from '../store/location/actions';
 import Screen from './Screen';
 import AccessRestricted from './AccessRestricted';
@@ -192,9 +193,18 @@ const Index = props => {
     }
     Promise.all(promises).then(() => {
       let finalBc = [];
-      !!client && !!client.name && finalBc.push(client.name);
-      !!project && !!project.name && finalBc.push(project.name);
-      !!report && !!report.name && finalBc.push(report.name);
+      !!client && !!client.name && finalBc.push({
+        text: client.name,
+        link: Routes.ManageClient.replace(':id', client.id),
+      });
+      !!project && !!project.name && finalBc.push({
+        text: project.name,
+        link: Routes.ManageProject.replace(':id', project.id),
+      });
+      !!report && !!report.name && finalBc.push({
+        text: report.name,
+        link: Routes.ManageReport.replace(':id', report.id),
+      });
       finalBc = finalBc.concat(bc);
       setBreadcrumbs(finalBc);
       checkAuthorizations(user, clientProjects);

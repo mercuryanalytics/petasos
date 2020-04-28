@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Breadcrumbs.module.css';
+import { Link } from 'react-router-dom';
 import { FaAngleRight } from 'react-icons/fa';
 
 const Breadcrumbs = props => {
@@ -7,12 +8,20 @@ const Breadcrumbs = props => {
 
   return data ? (
     <div className={styles.container}>
-      {data.map((fragment, i) => (
+      {data.map((frag, i) => (
         <span
           key={`breadcrumb-${i}`}
           className={`${styles.value} ${i === data.length-1 ? styles.active : ''}`}
         >
-          <span>{fragment}</span>
+          {typeof frag === 'object' && frag !== null ? (
+            i !== data.length-1 ? (
+              <Link className={styles.link} to={frag.link}>{frag.text}</Link>
+            ) : (
+              <span>{frag.text}</span>
+            )
+          ) : (
+            <span>{frag}</span>
+          )}
           {i !== data.length-1 && <FaAngleRight className={styles.spacer} />}
         </span>
       ))}
