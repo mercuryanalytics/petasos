@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Report.module.css';
 import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
-import { FiFile } from 'react-icons/fi';
+import { File } from '../Icons';
 
 const Report = props => {
   const { data, active, orphan } = props;
@@ -14,7 +14,7 @@ const Report = props => {
       title={data.name}
     >
       <div className={styles.title}>
-        <FiFile className={styles.icon} />
+        <File className={styles.icon} />
         <span className={styles.name}>{data.name}</span>
       </div>
     </Link>

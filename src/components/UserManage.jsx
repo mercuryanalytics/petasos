@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styles from './UserManage.module.css';
 import Loader from './Loader';
 import Button from './Button';
-import { MdEdit } from 'react-icons/md';
+import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
@@ -122,7 +122,7 @@ const UserManage = props => {
     <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
       {preview && !isEditClicked && (
         <Button className={styles.editButton} transparent onClick={() => setIsEditClicked(true)}>
-          Edit <MdEdit />
+          Edit <Pen />
         </Button>
       )}
       <div className={styles.section}>

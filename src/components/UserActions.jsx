@@ -6,7 +6,8 @@ import { getUsers, createUser, deleteUser, getAuthorizedUsers, authorizeUser } f
 import { useForm, useField } from 'react-final-form-hooks';
 import Loader from './Loader';
 import Search from './Search';
-import { MdPlayArrow, MdMoreHoriz, MdDelete } from 'react-icons/md';
+import { MdPlayArrow } from 'react-icons/md';
+import { Bin, Menu } from './Icons';
 import Toggle from './Toggle';
 import Modal from './Modal';
 import Button from './Button';
@@ -317,7 +318,7 @@ const UserActions = props => {
                     {!!isDeleteBusy[user.id] ? (
                       <Loader inline size={3} className={styles.busyLoader} />
                     ) : (
-                      <MdDelete
+                      <Bin
                         className={styles.itemDelete}
                         onClick={e => handleItemDelete(user.id, e)}
                       />
@@ -340,7 +341,7 @@ const UserActions = props => {
                   <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
                   <span className={styles.groupName}>{client.name}</span>
                 </div>
-                <MdMoreHoriz
+                <Menu
                   className={styles.groupSettings}
                   onClick={e => handleSettingsToggle(client.id, e)}
                 />

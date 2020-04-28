@@ -10,7 +10,7 @@ function SvgClose(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         transform="rotate(45 401.874 -481.976)"
         xlinkHref="#Close_svg__a"
         fillRule="evenodd"

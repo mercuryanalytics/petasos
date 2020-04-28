@@ -4,10 +4,8 @@ import styles from './TemplateActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
-import { InfoStroke } from './Icons';
+import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
-import { FiFile } from 'react-icons/fi';
-import { TiFolder } from 'react-icons/ti';
 import { getTemplates, updateTemplate } from '../store/clients/actions';
 
 const TemplateActions = props => {
@@ -98,7 +96,7 @@ const TemplateActions = props => {
                 onClick={() => handleProjectToggle(project.id)}
               >
                 <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-                <TiFolder className={styles.icon} />
+                <Folder className={styles.icon} />
                 <span className={styles.name}>{project.name}</span>
                 <Toggle
                   id={`project-toggle-${project.id}`}
@@ -113,7 +111,7 @@ const TemplateActions = props => {
                 project.reports.map(report => (
                   <div key={report.id} className={styles.report} title={report.name}>
                     <div className={styles.title}>
-                      <FiFile className={styles.icon} />
+                      <File className={styles.icon} />
                       <span className={styles.name}>{report.name}</span>
                       <Toggle
                         id={`report-toggle-${report.id}`}

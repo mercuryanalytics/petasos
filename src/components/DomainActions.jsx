@@ -4,7 +4,7 @@ import styles from './DomainActions.module.css';
 import { getDomains, createDomain, deleteDomain } from '../store/clients/actions';
 import { useForm, useField } from 'react-final-form-hooks';
 import Loader from './Loader';
-import { MdDelete } from 'react-icons/md';
+import { Bin } from './Icons';
 import Modal from './Modal';
 import Button from './Button';
 import { Input } from './FormFields';
@@ -108,7 +108,7 @@ const DomainActions = props => {
               {!!isDeleteBusy[domain.id] ? (
                 <Loader inline size={3} className={styles.busyLoader} />
               ) : (
-                <MdDelete
+                <Bin
                   className={styles.delete}
                   onClick={e => handleDomainDelete(domain.id, e)}
                 />

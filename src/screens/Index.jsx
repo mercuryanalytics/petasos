@@ -212,9 +212,9 @@ const Index = props => {
         (content === ContentTypes.ManageClient && (
           <ClientManage id={resId} onBreadcrumbsChange={bc => setClientBreadcrumbs(bc)} />
         )) ||
-        (content === ContentTypes.CreateProject && <ProjectManage clientId={params.clientId} />) ||
+        (content === ContentTypes.CreateProject && <ProjectManage clientId={+params.clientId} />) ||
         (content === ContentTypes.ManageProject && <ProjectManage id={resId} />) ||
-        (content === ContentTypes.CreateReport && <ReportManage projectId={params.projectId} />) ||
+        (content === ContentTypes.CreateReport && <ReportManage projectId={+params.projectId} />) ||
         (content === ContentTypes.ManageReport && <ReportManage id={resId} />)}
       </div>
     </Screen>

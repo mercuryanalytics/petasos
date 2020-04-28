@@ -10,7 +10,7 @@ function SvgFolder(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#Folder_svg__a"
         transform="translate(-663 -136)"

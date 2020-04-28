@@ -1,46 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './Search.module.css';
-import { MdSearch, MdRadioButtonChecked, MdRadioButtonUnchecked } from 'react-icons/md';
+import { MdSearch, MdCheck } from 'react-icons/md';
 
 const Search = props => {
   const { targets, hasShadows } = props;
   const [value, setValue] = useState('');
   const valueRef = useRef(null);
-  const [targetsList, setTargetsList] = useState([]);
-  const [target, setTarget] = useState(null);
+  const [searchTargets, setSearchTargets] = useState(null);
   const [showTargets, setShowTargets] = useState(false);
   const [overTargets, setOverTargets] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 
   useEffect(() => {
-    let list = Object.keys(targets || {});
-    let selected = props.defaultTarget;
-    list.forEach(targetName => {
-      if (!!targets[targetName]) {
-        selected = targetName;
-      }
-    });
-    setTargetsList(list);
-    setTarget(selected);
-  }, []);
+    setSearchTargets([ ...(targets || []) ]);
+  }, [targets]);
 
   useEffect(() => {
-    if (isTouched &&props.onSearch) {
-      props.onSearch(value, target);
+    if (isTouched && props.onSearch) {
+      props.onSearch(value, searchTargets);
     }
-  }, [value, target, isTouched]);
+  }, [isTouched, value, searchTargets]);
 
-  const handleChange = (event) => {
+  const handleChange = useCallback((event) => {
     setValue(event.target.value);
     setIsTouched(true);
-  };
+  });
 
-  const handleTargetChange = (targetName, checked) => {
+  const handleTargetChange = useCallback((targetKey, value) => {
     valueRef.current.focus();
-    if (checked) {
-      setTarget(targetName);
+    let newTargets = [ ...targets ];
+    for (let i = 0; i < targets.length; i++) {
+      if (targets[i].key === targetKey) {
+        newTargets[i].value = !!value;
+        break;
+      }
     }
-  };
+    setSearchTargets(newTargets);
+  }, [valueRef, searchTargets]);
 
   return (
     <div className={`${styles.container} ${hasShadows ? styles.shadows : ''}`}>
@@ -54,29 +50,31 @@ const Search = props => {
         onBlur={() => !overTargets && setShowTargets(false)}
       />
       <MdSearch className={styles.icon} />
-      {showTargets && !!targetsList.length && (
+      {showTargets && !!searchTargets.length &&  (
         <div
           className={styles.targets}
           onMouseOver={() => setOverTargets(true)}
           onMouseOut={() => setOverTargets(false)}
         >
           <span className={styles.title}>Search for</span>
-          {targetsList.map((targetName, i) => (
+          {searchTargets.map(target => (
             <label
-              key={`search-target-${i}`}
-              htmlFor={`search-target-input-${i}`}
-              className={target === targetName ? styles.checked : ''}
+              key={`search-target-${target.key}`}
+              htmlFor={`search-target-input-${target.key}`}
+              className={!!target.value ? styles.checked : ''}
             >
-              <span>{targetName}</span>
+              <span>{target.label}</span>
               <input
                 style={{ visibility: 'hidden' }}
-                id={`search-target-input-${i}`}
-                type="radio"
-                value={targetName}
-                checked={target === targetName}
-                onChange={e => handleTargetChange(targetName, e.target.checked)}
+                id={`search-target-input-${target.key}`}
+                type="checkbox"
+                value={target.label}
+                checked={!!target.value}
+                onChange={e => handleTargetChange(target.key, e.target.checked)}
               />
-              {target === targetName ? <MdRadioButtonChecked /> : <MdRadioButtonUnchecked />}
+              <div className={styles.checkbox}>
+                {!!target.value && <MdCheck />}
+              </div>
             </label>
           ))}
         </div>

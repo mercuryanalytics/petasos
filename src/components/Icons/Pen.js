@@ -10,7 +10,7 @@ function SvgPen(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         transform="rotate(30 505.681 -862.11)"
         xlinkHref="#Pen_svg__a"

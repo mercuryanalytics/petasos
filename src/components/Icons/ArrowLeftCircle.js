@@ -10,7 +10,7 @@ function SvgArrowLeftCircle(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#ArrowLeftCircle_svg__a"
         transform="translate(-118 -132)"

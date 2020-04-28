@@ -6,7 +6,7 @@ import Routes from '../utils/routes';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
-import { MdDelete } from 'react-icons/md';
+import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
@@ -138,7 +138,7 @@ const ReportManage = props => {
             <div className={styles.actions}>
               {canDelete && (
                 <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-                  <MdDelete className={styles.deleteIcon} />
+                  <Bin className={styles.deleteIcon} />
                   <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
                 </Button>
               )}

@@ -10,7 +10,7 @@ function SvgArrowDropDown(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#ArrowDropDown_svg__a"
         transform="translate(-420 -139)"

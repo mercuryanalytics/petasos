@@ -10,7 +10,7 @@ function SvgArrowBack(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#ArrowBack_svg__a"
         transform="translate(-207 -136)"

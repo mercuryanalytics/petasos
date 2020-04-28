@@ -15,7 +15,7 @@ const Input = props => {
         field.input.onChange(props.value);
       } catch (e) {}
     }
-  }, [props.value]);
+  }, [props]);
 
   return (
     <div className={classes}>

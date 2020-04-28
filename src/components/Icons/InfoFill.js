@@ -10,7 +10,7 @@ function SvgInfoFill(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#InfoFill_svg__a"
         transform="translate(-777 -133)"

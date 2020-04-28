@@ -71,7 +71,7 @@ input.active, .input:not(.active):focus {
 
 .targets .title {
   display: block;
-  padding: 0 10px;
+  padding: 0 15px;
   margin: 5px 0 10px 0;
   font-size: .85rem;
   color: #555;
@@ -82,7 +82,7 @@ input.active, .input:not(.active):focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 10px;
+  padding: 7px 15px;
   cursor: pointer;
 }
 
@@ -91,8 +91,7 @@ input.active, .input:not(.active):focus {
   font-size: .8rem;
 }
 
-.targets label:not(.checked):hover,
-.targets label.checked {
+.targets label:hover {
   background-color: #F7F7F7 !important;
 }
 .targets label:not(.checked):hover span,
@@ -100,7 +99,24 @@ input.active, .input:not(.active):focus {
   color: #000 !important;
 }
 
-.targets label svg {
-  font-size: 1rem;
+.targets .checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  border-radius: 3px;
   color: #555;
+}
+
+.checkbox svg {
+  font-size: .7rem;
+  color: #000;
+}
+
+.targets label.checked .checkbox {
+  border-color: #000;
+  color: #000;
 }

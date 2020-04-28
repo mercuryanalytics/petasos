@@ -5,10 +5,8 @@ import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
 import { Checkbox } from './FormFields';
-import { InfoStroke } from './Icons';
+import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
-import { FiFile } from 'react-icons/fi';
-import { TiFolder } from 'react-icons/ti';
 import { getClients, getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports, getClientReports } from '../store/reports/actions';
@@ -73,7 +71,7 @@ const ResourceActions = props => {
         }),
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
-        if (openFirstProject && _projects) {
+        if (openFirstProject && _projects && _projects.length) {
           handleProjectToggle(_projects[0].id, true);
         }
       });
@@ -291,7 +289,7 @@ const ResourceActions = props => {
                       onClick={() => handleProjectToggle(project.id)}
                     >
                       <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-                      <TiFolder className={styles.icon} />
+                      <Folder className={styles.icon} />
                       <span className={styles.name}>{project.name}</span>
                       <Toggle
                         id={`project-toggle-${project.id}`}
@@ -310,7 +308,7 @@ const ResourceActions = props => {
                             title={report.name}
                           >
                             <div className={styles.title}>
-                              <FiFile className={styles.icon} />
+                              <File className={styles.icon} />
                               <span className={styles.name}>{report.name}</span>
                               <Toggle
                                 id={`report-toggle-${report.id}`}
@@ -338,7 +336,7 @@ const ResourceActions = props => {
                     title={clientReport.name}
                   >
                     <div className={styles.title}>
-                      <FiFile className={styles.icon} />
+                      <File className={styles.icon} />
                       <span className={styles.name}>{clientReport.name}</span>
                       <Toggle
                         id={`client-report-toggle-${clientReport.id}`}

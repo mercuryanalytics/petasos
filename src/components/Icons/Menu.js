@@ -10,7 +10,7 @@ function SvgMenu(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         xlinkHref="#Menu_svg__a"
         transform="translate(-581 -141)"
         fillRule="evenodd"

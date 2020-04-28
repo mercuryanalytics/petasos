@@ -33,12 +33,13 @@ const App = () => {
       redirect_uri={`${Constants.APP_URL}${Routes.LoginCallback}`}
       onRedirectCallback={onAuth0RedirectCallback}
     >
-      <Route
+      {/* @TODO Reset location data */}
+      {/* <Route
         path="*"
         render={() => {
           dispatch(setLocationData({}));
         }}
-      />
+      /> */}
       <Switch>
         <Route exact path={Routes.Home} component={Index} />
         <Route

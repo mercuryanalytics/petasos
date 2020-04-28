@@ -10,7 +10,7 @@ function SvgArrowRight(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         transform="rotate(90 445.429 -297)"
         xlinkHref="#ArrowRight_svg__a"
         fillRule="evenodd"

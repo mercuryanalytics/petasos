@@ -26,6 +26,7 @@
 
 .trigger .triggerIcon {
   position: absolute;
+  z-index: 1;
   top: 50%;
   right: 15px;
   margin-top: -.5rem;
@@ -43,7 +44,7 @@
 
 .options {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 100%;
   left: 0;
   width: 100%;

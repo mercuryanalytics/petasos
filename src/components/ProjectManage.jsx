@@ -6,7 +6,7 @@ import Routes from '../utils/routes';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
-import { MdDelete } from 'react-icons/md';
+import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
@@ -46,7 +46,6 @@ const ProjectManage = props => {
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
   const data = useSelector(state =>
     editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
-  const clients = useSelector(state => state.clientsReducer.clients);
   const contacts = useSelector(state => state.usersReducer.researchers);
   const [contact, setContact] = useState(null);
 
@@ -86,12 +85,9 @@ const ProjectManage = props => {
     initialValues: data ? {
       name: data.name || '',
       project_number: data.project_number || '',
-      domain_id: data.domain_id || '',
       project_type: data.project_type || '',
       description: data.description || '',
       account_id: +data.account_id || '',
-      phone: contact ? (contact.contact_phone || '') : '',
-      email: contact ? (contact.email || '') : '',
       modified_on: data.modified_on || '',
     } : {
       project_type: ProjectTypes.CommercialTest,
@@ -110,12 +106,12 @@ const ProjectManage = props => {
       const result = {
         name: values.name,
         project_number: values.project_number,
-        domain_id: values.domain_id,
+        domain_id: editMode ? data.domain_id : clientId,
         project_type: values.project_type,
         description: values.description,
         account_id: values.account_id,
-        phone: values.phone,
-        email: values.email,
+        phone: contact ? contact.contact_phone : null,
+        email: contact ? contact.email : null,
         modified_on: values.modified_on ?
           format(new Date(values.modified_on), 'yyyy-MM-dd')
           : '',
@@ -136,25 +132,15 @@ const ProjectManage = props => {
 
   const name = useField('name', form);
   const project_number = useField('project_number', form);
-  const domain_id = useField('domain_id', form);
   const project_type = useField('project_type', form);
   const description = useField('description', form);
   const account_id = useField('account_id', form);
-  const phone = useField('phone', form);
-  const email = useField('email', form);
   const modified_on = useField('modified_on', form);
 
-  const [domainsOptions, setDomainsOptions] = useState([]);
-  const [contactsOptions, setContactsOptions] = useState([]);
+  const contact_phone = useField('contact_phone', form);
+  const contact_email = useField('contact_email', form);
 
-  useEffect(() => {
-    if (clients) {
-      setDomainsOptions(clients.map(domain => ({
-        value: domain.id,
-        text: domain.name,
-      })));
-    }
-  }, [clients]);
+  const [contactsOptions, setContactsOptions] = useState([]);
 
   useEffect(() => {
     if (contacts) {
@@ -167,8 +153,8 @@ const ProjectManage = props => {
 
   useEffect(() => {
     let c = contacts.filter(c => c.id === +account_id.input.value)[0];
-    setContact(c || null);
-  }, [contacts, account_id.input.value, form]);
+    setContact(!!c ? { ...c } : null);
+  }, [contacts, account_id.input.value]);
 
   const handleDelete = () => {
     setIsDeleteBusy(true);
@@ -200,7 +186,7 @@ const ProjectManage = props => {
             <div className={styles.actions}>
               {canEdit && (
                 <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-                  <MdDelete className={styles.deleteIcon} />
+                  <Bin className={styles.deleteIcon} />
                   <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
                 </Button>
               )}
@@ -219,15 +205,6 @@ const ProjectManage = props => {
             preview={!canEdit}
             disabled={isBusy}
             label="Project #"
-          />
-          <Select
-            className={styles.formControl}
-            field={domain_id}
-            preview={!canEdit}
-            options={domainsOptions}
-            disabled={isBusy}
-            placeholder="Select a client..."
-            label="Associated client"
           />
           <Select
             className={styles.formControl}
@@ -254,22 +231,22 @@ const ProjectManage = props => {
             placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
             label="Research contact"
           />
-          <Input
-            className={styles.formControl}
-            field={phone}
-            preview={!canEdit}
-            disabled={true}
-            value={!!contact ? contact.contact_phone : ''}
-            label="Phone"
-          />
-          <Input
-            className={styles.formControl}
-            field={email}
-            preview={!canEdit}
-            disabled={true}
-            value={!!contact ? contact.email : ''}
-            label="Email"
-          />
+          {!!contact && (<>
+            <Input
+              className={styles.formControl}
+              field={contact_phone}
+              preview={true}
+              value={!!contact ? contact.contact_phone : ''}
+              label="Phone"
+            />
+            <Input
+              className={styles.formControl}
+              field={contact_email}
+              preview={true}
+              value={!!contact ? contact.email : ''}
+              label="Email"
+            />
+          </>)}
           <Datepicker
             className={styles.formControl}
             field={modified_on}

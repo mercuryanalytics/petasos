@@ -3,7 +3,7 @@ import styles from './Project.module.css';
 import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
 import { MdPlayArrow } from 'react-icons/md';
-import { TiFolder } from 'react-icons/ti';
+import { Folder } from '../Icons';
 import Loader from '../Loader';
 import Report from './Report';
 import ReportAdd from './ReportAdd';
@@ -51,7 +51,7 @@ const Project = props => {
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
           onClick={toggleOpen}
         />
-        <TiFolder className={styles.icon} />
+        <Folder className={styles.icon} />
         <span className={styles.name}>{data.name}</span>
       </Link>
       {isOpen && (

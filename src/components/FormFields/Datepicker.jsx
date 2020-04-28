@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Datepicker.module.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaRegCalendarAlt } from 'react-icons/fa';
+import { Calendar } from '../Icons';
 
 const Datepicker = props => {
   const { field, preview, label, disabled, placeholder } = props;
@@ -65,7 +65,7 @@ const Datepicker = props => {
             onFocus={() => setIsOpen(true)}
             onClickOutside={() => setIsOpen(false)}
           />
-          <FaRegCalendarAlt className={styles.controlIcon} onClick={togglePicker} />
+          <Calendar className={styles.controlIcon} onClick={togglePicker} />
         </div>
       ) : (
         <span className={styles.preview}>

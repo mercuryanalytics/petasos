@@ -10,7 +10,7 @@ function SvgArrowDown(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         transform="rotate(-180 359.429 74)"
         xlinkHref="#ArrowDown_svg__a"
         fillRule="evenodd"

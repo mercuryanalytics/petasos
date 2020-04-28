@@ -14,7 +14,7 @@
 }
 
 .title .icon {
-  margin: .125rem .5rem .125rem .9rem;
+  margin: .125rem .5rem .125rem .8rem;
   font-size: 1.2rem;
   color: #333;
 }
@@ -24,7 +24,7 @@
 }
 
 .container.orphan .title .icon {
-  margin: .325rem .5rem .325rem 0;
+  margin-left: .4rem;
 }
 
 .title .name {

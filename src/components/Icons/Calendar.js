@@ -10,7 +10,7 @@ function SvgCalendar(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#Calendar_svg__a"
         transform="translate(-252 -135)"

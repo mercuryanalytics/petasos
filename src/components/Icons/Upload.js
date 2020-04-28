@@ -10,7 +10,7 @@ function SvgUpload(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         fillRule="nonzero"
         xlinkHref="#Upload_svg__a"
         transform="translate(-164 -135)"

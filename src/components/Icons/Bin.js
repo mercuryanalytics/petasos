@@ -10,7 +10,7 @@ function SvgBin(props) {
         />
       </defs>
       <use
-        fill="#333"
+        fill="currentColor"
         xlinkHref="#Bin_svg__a"
         transform="translate(-540 -133)"
         fillRule="evenodd"

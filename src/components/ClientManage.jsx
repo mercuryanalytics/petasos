@@ -11,7 +11,7 @@ import TemplateActions from './TemplateActions';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
 import Toggle from './Toggle';
-import { MdDelete } from 'react-icons/md';
+import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
@@ -343,7 +343,7 @@ const ClientManage = props => {
                 <div className={styles.actions}>
                   {canEdit && (
                     <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-                      <MdDelete className={styles.deleteIcon} />
+                      <Bin className={styles.deleteIcon} />
                       <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
                     </Button>
                   )}

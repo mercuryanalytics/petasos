@@ -15,5 +15,13 @@
   display: flex !important;
   justify-content: center;
   width: 100% !important;
-  margin-top: 10px !important;
+  margin-bottom: 18px !important;
+}
+
+.noResults {
+  display: block;
+  margin-bottom: 18px;
+  text-align: center;
+  font-size: .875rem;
+  color: #A9A9A9;
 }
