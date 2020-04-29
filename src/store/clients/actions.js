@@ -60,8 +60,9 @@ export const getClientFailure = (error) => {
 };
 
 export function createClient(data) {
+  const body = JSON.stringify({ client: data });
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/clients`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/clients`, { body })
       .then(
         res => dispatch(createClientSuccess(res)),
         err => handleActionFailure(err, dispatch(createClientFailure(err))),
@@ -84,8 +85,9 @@ export const createClientFailure = (error) => {
 };
 
 export function updateClient(id, data) {
+  const body = JSON.stringify({ client: data });
   return dispatch => {
-    return apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/clients/${id}`, { body })
       .then(
         res => dispatch(updateClientSuccess(res)),
         err => handleActionFailure(err, dispatch(updateClientFailure(err))),
