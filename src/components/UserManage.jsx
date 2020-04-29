@@ -93,9 +93,15 @@ const UserManage = props => {
         data && dispatch(updateUser(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        }, () => {});
+        }, () => {
+          setIsBusy(false);
+        });
       } else {
-        dispatch(createUser(result)).then(() => {}, () => {});
+        dispatch(createUser(result)).then(() => {
+          setIsBusy(false);
+        }, () => {
+          setIsBusy(false);
+        });
       }
     },
   });

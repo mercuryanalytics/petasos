@@ -76,4 +76,8 @@ apiCall.forget = (urls) => {
   }
 };
 
+apiCall.forgetAll = () => {
+  called = {};
+};
+
 export default apiCall;

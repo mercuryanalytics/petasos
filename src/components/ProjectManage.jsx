@@ -97,7 +97,9 @@ const ProjectManage = props => {
     dispatch(deleteProject(data.id)).then(() => {
       setIsDeleteBusy(false);
       history.push(Routes.ManageClient.replace(':id', parent));
-    }, () => {});
+    }, () => {
+      setIsDeleteBusy(false);
+    });
   }, [data, history]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -139,16 +141,18 @@ const ProjectManage = props => {
         data && dispatch(updateProject(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        }, () => {});
+        }, () => {
+          setIsBusy(false);
+        });
       } else {
         dispatch(createProject(result)).then(action => {
           const project = action.payload;
-          dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id)).then(() => {
+          const handleSuccess = () => {
             setIsBusy(false);
             history.push(Routes.ManageProject.replace(':id', project.id));
-          }, () => {
-            setIsBusy(false);
-          });
+          };
+          dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id))
+            .then(handleSuccess, handleSuccess);
         }, () => {
           setIsBusy(false);
         });

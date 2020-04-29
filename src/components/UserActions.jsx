@@ -2,7 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './UserActions.module.css';
 import { getClients } from '../store/clients/actions';
-import { getUsers, createUser, deleteUser, getAuthorizedUsers, authorizeUser } from '../store/users/actions';
+import {
+  getUsers,
+  createUser,
+  deleteUser,
+  getAuthorizedUsers,
+  authorizeUser,
+  getUserAuthorizations,
+} from '../store/users/actions';
 import { useForm, useField } from 'react-final-form-hooks';
 import Loader from './Loader';
 import Search from './Search';
@@ -107,19 +114,19 @@ const UserActions = props => {
   }, [mode, clientId, authorizedOptions]);
 
   useEffect(() => {
-    if (mode === UserActionsModes.Grant || !limitClientId) {
-      let allowedIds = [];
-      users.forEach(u => u.client_ids.forEach(cid => allowedIds.push(cid)));
-      setAllowedClients(allowedIds);
+    if (!isLoading && (mode === UserActionsModes.Grant || !limitClientId)) {
+      let allowedIds = {};
+      users.forEach(u => u.client_ids.forEach(cid => (allowedIds[cid] = true)));
+      setAllowedClients(Object.keys(allowedIds).map(id => +id));
     }
-  }, [users, mode, limitClientId]);
+  }, [isLoading, users, mode, limitClientId]);
 
   const ensureSelectedItem = useCallback((id) => {
     if (id === false && selectedItem !== false) {
       handleItemSelect(false);
       return;
     }
-    if (id !== selectedItem || !selectedItem) {
+    if (id === true || id !== selectedItem || !selectedItem) {
       const clientLimit = clientId ? clientId : (limitClientId ? limitClientId : null);
       let toSelect = null;
       if (typeof id !== 'undefined') {
@@ -137,7 +144,7 @@ const UserActions = props => {
     if (!isLoading && mode === UserActionsModes.Manage) {
       ensureSelectedItem(selectedUserId);
     }
-  }, [mode, isLoading, selectedUserId]);
+  }, [isLoading, mode, selectedUserId]);
 
   const handleSettingsToggle = useCallback((id, event) => {
     // @TODO Open, implement settings
@@ -145,11 +152,83 @@ const UserActions = props => {
   });
 
   const handleItemDelete = useCallback((id, event) => {
-    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
-    dispatch(deleteUser(id, clientId))
-      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })), () => {});
+    const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
     event.stopPropagation();
-  }, [clientId]);
+    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
+    dispatch(deleteUser(id, clientId)).then(() => {
+      if (id === selectedUserId) {
+        ensureSelectedItem(true);
+      }
+      stopLoading();
+    }, stopLoading);
+  }, [clientId, selectedUserId]);
+
+  const { form, handleSubmit, pristine, submitting } = useForm({
+    initialValues: { add_user_email: '' },
+    validate: (values) => {
+      let err;
+      if (!values.add_user_email) {
+        err = 'Field value is required.';
+      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.add_user_email)) {
+        err = 'Field value must be a valid email format.';
+      }
+      return err ? { add_user_email: err } : {};
+    },
+    onSubmit: (values) => {
+      setIsBusy(true);
+      const result = {
+        email: values.add_user_email,
+        client_id: clientId || limitClientId || null,
+        company_name: null,
+        contact_name: null,
+        contact_title: null,
+        contact_phone: null,
+        contact_fax: null,
+        contact_email: null,
+        mailing_address_1: null,
+        mailing_address_2: null,
+        mailing_city: null,
+        mailing_state: null,
+        mailing_zip: null,
+      };
+      if (projectId) {
+        result.project_id = projectId;
+      } else if (reportId) {
+        result.report_id = reportId;
+      }
+      dispatch(createUser(result, mode === UserActionsModes.Manage)).then((action) => {
+        const user = action.payload;
+        const handleSuccess = () => {
+          form.reset();
+          setIsBusy(false);
+          setIsAddUserOpen(false);
+        };
+        let promises = [];
+        const contextId = clientId ? clientId : (limitClientId ? limitClientId : null);
+        if (contextId) {
+          promises.push(
+            dispatch(authorizeUser(user.id, contextId, { clientId: contextId }, { authorize: true }))
+              .then(() => {}, () => {})
+          );
+        }
+        Promise.all(promises).then(() => {
+          promises = contextId ? [
+            dispatch(getUsers(contextId, true)).then(() => {}, () => {}),
+            dispatch(getUserAuthorizations(user.id)).then(() => {}, () => {}),
+          ] : [];
+          Promise.all(promises).then(() => {
+            handleSuccess();
+          }, () => {
+            setIsBusy(false);
+          });
+        });
+      }, () => {
+        setIsBusy(false);
+      });
+    },
+  });
+
+  const addUserField = useField('add_user_email', form);
 
   const getItemStatus = useCallback((parentId, itemId) => {
     const currentState = activeStates[`${parentId}-${itemId}`];
@@ -204,8 +283,8 @@ const UserActions = props => {
         }
       });
       clients.forEach(c => !cids[c.id] && (bcids[c.id] = true));
-      setBlockedClients(Object.keys(bcids).map(x => +x));
-      setBlockedUsers(Object.keys(buids).map(x => +x));
+      setBlockedClients(Object.keys(bcids).map(id => +id));
+      setBlockedUsers(Object.keys(buids).map(id => +id));
       if (mode === UserActionsModes.Grant) {
         for (let i in cids) {
           handleClientToggle(+i, true);
@@ -213,52 +292,6 @@ const UserActions = props => {
       }
     }
   }, [userNameFilter, mode]);
-
-  const { form, handleSubmit, pristine, submitting } = useForm({
-    initialValues: { add_user_email: '' },
-    validate: (values) => {
-      let err;
-      if (!values.add_user_email) {
-        err = 'Field value is required.';
-      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.add_user_email)) {
-        err = 'Field value must be a valid email format.';
-      }
-      return err ? { add_user_email: err } : {};
-    },
-    onSubmit: (values) => {
-      setIsBusy(true);
-      const result = {
-        email: values.add_user_email,
-        client_id: clientId || limitClientId || null,
-        company_name: null,
-        contact_name: null,
-        contact_title: null,
-        contact_phone: null,
-        contact_fax: null,
-        contact_email: null,
-        mailing_address_1: null,
-        mailing_address_2: null,
-        mailing_city: null,
-        mailing_state: null,
-        mailing_zip: null,
-      };
-      if (projectId) {
-        result.project_id = projectId;
-      } else if (reportId) {
-        result.report_id = reportId;
-      }
-      dispatch(createUser(result, mode === UserActionsModes.Manage)).then(() => {
-        if (mode === UserActionsModes.Grant) {
-          dispatch(getAuthorizedUsers(clientId, authorizedOptions)).then(() => {}, () => {});
-        }
-        form.reset();
-        setIsBusy(false);
-        setIsAddUserOpen(false);
-      }, () => {});
-    },
-  });
-
-  const addUserField = useField('add_user_email', form);
 
   return (
     <div className={styles.container}>
@@ -328,7 +361,7 @@ const UserActions = props => {
                 ))}
               </div>
             </div>
-          ) : clients.map(client => (
+          ) : (clients.map(client => (
             allowedClients.indexOf(client.id) > -1 &&
             blockedClients.indexOf(client.id) === -1
           ) && (
@@ -381,7 +414,7 @@ const UserActions = props => {
                 )
               )}
             </div>
-          )))
+          ))))
         ) : (
           <Loader inline className={styles.loader} />
         )}

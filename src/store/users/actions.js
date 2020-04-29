@@ -2,10 +2,10 @@ import { hasValue, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
-export function getUsers(clientId) {
+export function getUsers(clientId, force) {
   const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
   return dispatch => (
-    !apiCall.isCalled([
+    force || !apiCall.isCalled([
       `${Constants.API_URL}/users`,
       `${Constants.API_URL}/users${queryString}`,
     ])
@@ -352,7 +352,7 @@ export const authorizeUserFailure = (error) => ({
 
 export function refreshAuthorizations(type, id, userId, contextId) {
   return dispatch => Promise.all([
-    dispatch(getAuthorizedUsers(contextId, { [type]: id })).then(() => {}, () => {}),
+    dispatch(getAuthorizedUsers(contextId, { [`${type}Id`]: id })).then(() => {}, () => {}),
     dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
   ]);
 }

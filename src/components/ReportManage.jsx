@@ -64,7 +64,9 @@ const ReportManage = props => {
     dispatch(deleteReport(data.id)).then(() => {
       setIsDeleteBusy(false);
       history.push(Routes.ManageProject.replace(':id', parent));
-    }, () => {});
+    }, () => {
+      setIsDeleteBusy(false);
+    });
   }, [data, history]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -102,16 +104,18 @@ const ReportManage = props => {
         data && dispatch(updateReport(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        }, () => {});
+        }, () => {
+          setIsBusy(false);
+        });
       } else {
         dispatch(createReport(result)).then(action => {
           const report = action.payload;
-          dispatch(refreshAuthorizations('report', report.id, user.id, report.project.domain_id)).then(() => {
+          const handleSuccess = () => {
             setIsBusy(false);
             history.push(Routes.ManageReport.replace(':id', report.id));
-          }, () => {
-            setIsBusy(false);
-          });
+          };
+          dispatch(refreshAuthorizations('report', report.id, user.id, report.project.domain_id))
+            .then(handleSuccess, handleSuccess);
         }, () => {
           setIsBusy(false);
         });

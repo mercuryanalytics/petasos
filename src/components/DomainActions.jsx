@@ -20,12 +20,12 @@ const DomainActions = props => {
   const domains = useSelector(state =>
     state.clientsReducer.domains.filter(d => d.client_id === clientId));
 
-  const handleDomainSelect = useCallback((id) => {
-    setSelectedDomain(id);
-    if (props.onDomainSelect) {
-      props.onDomainSelect(id, clientId);
-    }
-  }, [clientId, props.onDomainSelect]);
+  // const handleDomainSelect = useCallback((id) => {
+  //   setSelectedDomain(id);
+  //   if (props.onDomainSelect) {
+  //     props.onDomainSelect(id, clientId);
+  //   }
+  // }, [clientId, props.onDomainSelect]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -33,10 +33,10 @@ const DomainActions = props => {
   }, [clientId]);
 
   const handleDomainDelete = useCallback((id, event) => {
-    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
-    dispatch(deleteDomain(id, clientId))
-      .then(() => setIsDeleteBusy(prev => ({ ...prev, [id]: false })), () => {});
+    const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
     event.stopPropagation();
+    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
+    dispatch(deleteDomain(id, clientId)).then(stopLoading, stopLoading);
   }, [clientId]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
@@ -57,7 +57,9 @@ const DomainActions = props => {
         form.reset();
         setIsBusy(false);
         setIsAddDomainOpen(false);
-      }, () => {});
+      }, () => {
+        setIsBusy(false);
+      });
     },
   });
 

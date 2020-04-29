@@ -16,7 +16,7 @@ import { Bin, Upload } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
-import { refreshAuthorizations } from '../store/users/actions';
+import { refreshAuthorizations, getUsers } from '../store/users/actions';
 import { UserRoles, hasRoleOnClient } from '../store';
 
 const ClientTypes = {
@@ -188,7 +188,9 @@ const ClientManage = props => {
       } else {
         history.push(Routes.CreateClient);
       }
-    }, () => {});
+    }, () => {
+      setIsDeleteBusy(false);
+    });
   }, [clients, data, history]);
 
   const handleAvatarChange = useCallback((images) => {
@@ -265,15 +267,20 @@ const ClientManage = props => {
         data && dispatch(updateClient(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
-        }, () => {});
+        }, () => {
+          setIsBusy(false);
+        });
       } else {
         dispatch(createClient(result)).then(action => {
           const client = action.payload;
-          dispatch(refreshAuthorizations('client', client.id, user.id, client.id)).then(() => {
+          Promise.all([
+            dispatch(refreshAuthorizations('client', client.id, user.id, client.id))
+              .then(() => {}, () => {}),
+            dispatch(getUsers(client.id, true))
+              .then(() => {}, () => {}),
+          ]).then(() => {
             setIsBusy(false);
             history.push(Routes.ManageClient.replace(':id', client.id));
-          }, () => {
-            setIsBusy(false);
           });
         }, () => {
           setIsBusy(false);

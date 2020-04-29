@@ -6,6 +6,7 @@ import usersReducer from './users/reducers';
 import clientsReducer from './clients/reducers';
 import projectsReducer from './projects/reducers';
 import reportsReducer from './reports/reducers';
+import apiCall from '../utils/api-call';
 
 const store = createStore(combineReducers({
   authReducer,
@@ -40,6 +41,10 @@ export const UserRolesWriteToRead = {
   [UserRoles.ReportManager]: 'report_editor',
   [UserRoles.ReportAdmin]: 'report_admin',
   [UserRoles.Viewer]: 'viewer',
+};
+
+export const clearCache = () => {
+  return apiCall.forgetAll();
 };
 
 export const handleActionFailure = (err) => {
