@@ -101,6 +101,7 @@ const ClientManage = props => {
     setUsersTab(UsersTabs.Info);
     setTemplateActiveState(null);
     if (!editMode) {
+      setAvatar(null);
       setTab(ContentTabs.Details);
       setCanEdit(true);
       setIsLoading(false);
@@ -200,6 +201,7 @@ const ClientManage = props => {
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
+      slogan: data.slogan || '',
       company_name: data.company_name || '',
       contact_type: data.contact_type || '',
       contact_name: data.contact_name || '',
@@ -236,6 +238,7 @@ const ClientManage = props => {
       setIsBusy(true);
       const result = {
         name: values.name,
+        slogan: values.slogan,
         company_name: values.company_name,
         contact_type: values.contact_type,
         contact_name: values.contact_name,
@@ -254,6 +257,9 @@ const ClientManage = props => {
         billing_state: values.billing_state,
         billing_country: values.billing_country,
       };
+      if (avatar) {
+        result.logo = avatar.dataURL;
+      }
       if (editMode) {
         data && dispatch(updateClient(data.id, result)).then(() => {
           form.reset();
@@ -269,6 +275,7 @@ const ClientManage = props => {
   });
 
   const name = useField('name', form);
+  const slogan = useField('slogan', form);
   const company_name = useField('company_name', form);
   const contact_type = useField('contact_type', form);
 
@@ -430,6 +437,13 @@ const ClientManage = props => {
                       label={`Company name ${canEdit ? '*' : ''}`}
                     />
                   </div>
+                  <Input
+                    className={styles.formControl}
+                    field={slogan}
+                    preview={!canEdit}
+                    disabled={isBusy}
+                    label="Slogan"
+                  />
                   <Select
                     className={styles.formControl}
                     field={contact_type}
