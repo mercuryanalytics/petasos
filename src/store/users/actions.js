@@ -65,8 +65,9 @@ export const getUserFailure = (error) => {
 
 export function createUser(data, noAuth) {
   const queryString = noAuth ? `?no_auth=1` : '';
+  const body = JSON.stringify({ user: data });
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body })
       .then(
         res => dispatch(createUserSuccess(res)),
         err => handleActionFailure(err, dispatch(createUserFailure(err))),
@@ -89,8 +90,9 @@ export const createUserFailure = (error) => {
 };
 
 export function updateUser(id, data) {
+  const body = JSON.stringify({ user: data });
   return dispatch => {
-    return apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/users/${id}`, { body })
       .then(
         res => dispatch(updateUserSuccess(res)),
         err => handleActionFailure(err, dispatch(updateUserFailure(err))),
@@ -286,7 +288,7 @@ export const getAuthorizedUsersFailure = (error) => ({
 });
 
 export function authorizeUser(id, contextId, res, states) {
-  const refreshAuthorizations = async (dispatch) => {
+  const refresh = async (dispatch) => {
     apiCall.forget(`${Constants.API_URL}/users/${id}/authorized`);
     await dispatch(getUserAuthorizations(id));
   };
@@ -298,7 +300,7 @@ export function authorizeUser(id, contextId, res, states) {
         return apiCall('POST', `${Constants.API_URL}/users/${id}/scopes`, { body: JSON.stringify(states) })
           .then(
             async (res) => {
-              await refreshAuthorizations(dispatch);
+              await refresh(dispatch);
               dispatch(authorizeUserSuccess(res, id, contextId, null, null, states, true));
             },
             err => handleActionFailure(err, dispatch(authorizeUserFailure(err))),
@@ -324,7 +326,7 @@ export function authorizeUser(id, contextId, res, states) {
     return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
       .then(
         async (res) => {
-          await refreshAuthorizations(dispatch);
+          await refresh(dispatch);
           return dispatch(authorizeUserSuccess(res, id, contextId, resPath, resId, states, false));
         },
         err => handleActionFailure(err, dispatch(authorizeUserFailure(err))),
@@ -347,3 +349,10 @@ export const authorizeUserFailure = (error) => ({
   type: 'AUTHORIZE_USER_FAILURE',
   payload: error,
 });
+
+export function refreshAuthorizations(type, id, userId, contextId) {
+  return dispatch => Promise.all([
+    dispatch(getAuthorizedUsers(contextId, { [type]: id })).then(() => {}, () => {}),
+    dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
+  ]);
+}

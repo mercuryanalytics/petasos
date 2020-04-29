@@ -90,8 +90,9 @@ export const getProjectFailure = (error) => {
 };
 
 export function createProject(data) {
+  const body = JSON.stringify({ project: data });
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/projects`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/projects`, { body })
       .then(
         res => dispatch(createProjectSuccess(res)),
         err => handleActionFailure(err, dispatch(createProjectFailure(err))),
@@ -114,8 +115,9 @@ export const createProjectFailure = (error) => {
 };
 
 export function updateProject(id, data) {
+  const body = JSON.stringify({ project: data });
   return dispatch => {
-    return apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/projects/${id}`, { body })
       .then(
         res => dispatch(updateProjectSuccess(res)),
         err => handleActionFailure(err, dispatch(updateProjectFailure(err))),

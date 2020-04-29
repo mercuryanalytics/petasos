@@ -11,7 +11,7 @@ import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
-import { getResearchers } from '../store/users/actions';
+import { getResearchers, refreshAuthorizations } from '../store/users/actions';
 import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
 
@@ -47,6 +47,7 @@ const ProjectManage = props => {
   const data = useSelector(state =>
     editMode ? state.projectsReducer.projects.filter(p => p.id === id)[0] : null);
   const contacts = useSelector(state => state.usersReducer.researchers);
+  const [contactsOptions, setContactsOptions] = useState([]);
   const [contact, setContact] = useState(null);
 
   useEffect(() => {
@@ -80,6 +81,24 @@ const ProjectManage = props => {
   useEffect(() => {
     init();
   }, [id]);
+
+  useEffect(() => {
+    if (contacts) {
+      setContactsOptions(contacts.map(contact => ({
+        value: contact.id,
+        text: contact.email,
+      })));
+    }
+  }, [contacts]);
+
+  const handleDelete = useCallback(() => {
+    setIsDeleteBusy(true);
+    const parent = data.domain_id;
+    dispatch(deleteProject(data.id)).then(() => {
+      setIsDeleteBusy(false);
+      history.push(Routes.ManageClient.replace(':id', parent));
+    }, () => {});
+  }, [data, history]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -123,9 +142,16 @@ const ProjectManage = props => {
         }, () => {});
       } else {
         dispatch(createProject(result)).then(action => {
+          const project = action.payload;
+          dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id)).then(() => {
+            setIsBusy(false);
+            history.push(Routes.ManageProject.replace(':id', project.id));
+          }, () => {
+            setIsBusy(false);
+          });
+        }, () => {
           setIsBusy(false);
-          history.push(Routes.ManageProject.replace(':id', action.payload.id));
-        }, () => {});
+        });
       }
     },
   });
@@ -140,30 +166,10 @@ const ProjectManage = props => {
   const contact_phone = useField('contact_phone', form);
   const contact_email = useField('contact_email', form);
 
-  const [contactsOptions, setContactsOptions] = useState([]);
-
-  useEffect(() => {
-    if (contacts) {
-      setContactsOptions(contacts.map(contact => ({
-        value: contact.id,
-        text: contact.email,
-      })));
-    }
-  }, [contacts]);
-
   useEffect(() => {
     let c = contacts.filter(c => c.id === +account_id.input.value)[0];
     setContact(!!c ? { ...c } : null);
   }, [contacts, account_id.input.value]);
-
-  const handleDelete = () => {
-    setIsDeleteBusy(true);
-    const parent = data.domain_id;
-    dispatch(deleteProject(data.id)).then(() => {
-      setIsDeleteBusy(false);
-      history.push(Routes.ManageClient.replace(':id', parent));
-    }, () => {});
-  };
 
   if (isLoading || (editMode && !data)) {
     return (

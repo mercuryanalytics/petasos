@@ -16,6 +16,12 @@ const store = createStore(combineReducers({
   reportsReducer,
 }), applyMiddleware(thunk));
 
+export const ResourceTypes = {
+  Client: 'client',
+  Project: 'project',
+  Report: 'report',
+};
+
 export const UserRoles = {
   ClientManager: 'client_manager',
   ClientAdmin: 'client_admin',
@@ -210,17 +216,17 @@ export const isErpAdmin = (userId) => {
 
 export const hasRoleOnClient = (userId, clientId, role) => {
   return isSuperUser(userId) ||
-    isUserAuthorized(getAuthorizations(), userId, 'client', clientId, role);
+    isUserAuthorized(getAuthorizations(), userId, ResourceTypes.Client, clientId, role);
 };
 
 export const hasRoleOnProject = (userId, projectId, role) => {
   return isSuperUser(userId) ||
-    isUserAuthorized(getAuthorizations(), userId, 'project', projectId, role);
+    isUserAuthorized(getAuthorizations(), userId, ResourceTypes.Project, projectId, role);
 };
 
 export const hasRoleOnReport = (userId, reportId, role) => {
   return isSuperUser(userId) ||
-    isUserAuthorized(getAuthorizations(), userId, 'report', reportId, role);
+    isUserAuthorized(getAuthorizations(), userId, ResourceTypes.Report, reportId, role);
 };
 
 export default store;

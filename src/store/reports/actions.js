@@ -120,8 +120,9 @@ export const getReportFailure = (error) => {
 };
 
 export function createReport(data) {
+  const body = JSON.stringify({ report: data });
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/reports`, { body: JSON.stringify(data) })
+    return apiCall('POST', `${Constants.API_URL}/reports`, { body })
       .then(
         res => dispatch(createReportSuccess(res)),
         err => handleActionFailure(err, dispatch(createReportFailure(err))),
@@ -144,8 +145,9 @@ export const createReportFailure = (error) => {
 };
 
 export function updateReport(id, data) {
+  const body = JSON.stringify({ report: data });
   return dispatch => {
-    return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body: JSON.stringify(data) })
+    return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body })
       .then(
         res => dispatch(updateReportSuccess(res)),
         err => handleActionFailure(err, dispatch(updateReportFailure(err))),

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './ReportManage.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
+import { format } from 'date-fns';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
@@ -10,7 +11,7 @@ import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
-import { format } from 'date-fns';
+import { refreshAuthorizations } from '../store/users/actions';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
 const ReportManage = props => {
@@ -57,6 +58,15 @@ const ReportManage = props => {
     init();
   }, [id]);
 
+  const handleDelete = useCallback(() => {
+    setIsDeleteBusy(true);
+    const parent = data.project_id;
+    dispatch(deleteReport(data.id)).then(() => {
+      setIsDeleteBusy(false);
+      history.push(Routes.ManageProject.replace(':id', parent));
+    }, () => {});
+  }, [data, history]);
+
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
@@ -95,9 +105,16 @@ const ReportManage = props => {
         }, () => {});
       } else {
         dispatch(createReport(result)).then(action => {
+          const report = action.payload;
+          dispatch(refreshAuthorizations('report', report.id, user.id, report.project.domain_id)).then(() => {
+            setIsBusy(false);
+            history.push(Routes.ManageReport.replace(':id', report.id));
+          }, () => {
+            setIsBusy(false);
+          });
+        }, () => {
           setIsBusy(false);
-          history.push(Routes.ManageReport.replace(':id', action.payload.id));
-        }, () => {});
+        });
       }
     },
   });
@@ -107,15 +124,6 @@ const ReportManage = props => {
   const description = useField('description', form);
   const presented_on = useField('presented_on', form);
   const modified_on = useField('modified_on', form);
-
-  const handleDelete = () => {
-    setIsDeleteBusy(true);
-    const parent = data.project_id;
-    dispatch(deleteReport(data.id)).then(() => {
-      setIsDeleteBusy(false);
-      history.push(Routes.ManageProject.replace(':id', parent));
-    }, () => {});
-  };
 
   if (isLoading || (editMode && !data)) {
     return (

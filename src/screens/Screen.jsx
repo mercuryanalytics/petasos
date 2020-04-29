@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
+import { setLocationData } from '../store/location/actions';
 import { setUser, setAuthKey } from '../store/auth/actions';
 import { getUsers, getMyAuthorizations } from '../store/users/actions';
 import { useAuth0 } from '../react-auth0-spa';
@@ -19,6 +20,10 @@ const Screen = props => {
   const [authUser, setAuthUser] = useState(null);
   const [localUser, setLocalUser] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
+
+  useEffect(() => {
+    dispatch(setLocationData({}));
+  }, []);
 
   useEffect(() => {
     if (loading) {

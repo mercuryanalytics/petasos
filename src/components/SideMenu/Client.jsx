@@ -64,7 +64,7 @@ const Client = props => {
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
           onClick={toggleOpen}
         />
-        <Avatar className={styles.logo} avatar={data.logo} alt={data.name[0].toUpperCase()} />
+        <Avatar className={styles.logo} avatar={data.logo_url} alt={data.name[0].toUpperCase()} />
         <span className={styles.name}>{data.name}</span>
       </Link>
       {isOpen && (
