@@ -75,6 +75,10 @@
   overflow: auto;
 }
 
+.container.noTabs .section {
+  height: 100%;
+}
+
 .section .title {
   display: flex;
   align-items: center;
@@ -98,6 +102,10 @@
   margin-bottom: 2rem;
   font-size: .875rem;
   line-height: 20px;
+}
+
+.section .textBlock.tall {
+  margin-bottom: 50px;
 }
 
 .section .textBlock span {
@@ -128,6 +136,10 @@
   margin-bottom: 2rem;
 }
 
+.section.details .editor .formSection.addressFields {
+  margin-bottom: 0;
+}
+
 .section .form .formControl {
   margin-bottom: 1rem;
 }
@@ -147,15 +159,141 @@
   width: calc(50% - 10px);
 }
 
+.section.details .editor.sectioned .formSection:not(.addressFields) {
+  max-width: 240px;
+}
+
+.section.details .editor.sectioned .formSection.addressFields {
+  max-width: 500px;
+}
+
+.section.details .editor.sectioned .formSection:not(.addressFields) .controlsGroup {
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.section.details .editor.sectioned .formSection:not(.addressFields) .controlsGroup > * {
+  width: 100%;
+}
+
 .section.details {
   display: flex;
   padding: 0;
+}
+
+.section.details .navigate {
+  width: 310;
+  min-width: 310px;
+  max-width: 310px;
+  padding: 2rem;
+  box-sizing: border-box;
+  border-right: 1px solid #F0F0F0;
+  background-color: #FBFBFD;
+}
+
+.section.details .navigate .navigateLinks div {
+  margin: 14px 0;
+}
+
+.section.details .navigate .navigateLinks span {
+  font-size: 1rem;
+  line-height: 28px;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: .5;
+}
+
+.section.details .navigate .navigateLinks div:not(.active) span:hover {
+  color: #000;
+  opacity: 1;
+}
+
+.section.details .navigate .navigateLinks div.active span {
+  color: #0D7997;
+  opacity: 1;
 }
 
 .section.details .editor {
   flex-grow: 1;
   padding: 2rem;
   box-sizing: border-box;
+}
+
+.section.details .editor.sectioned {
+  padding: 5rem 3rem 2rem 3rem;
+}
+
+.section.details .editor .avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section.details .editor .avatar .avatarLabel {
+  margin-bottom: 8px;
+  font-size: .75rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.section.details .editor .avatar .avatarUpload {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 1px solid #DFDFDF;
+  background-color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.section.details .editor .avatar .avatarUpload img {
+  width: 100%;
+  height: 100%;
+}
+
+.section.details .editor .avatar .avatarUpload .uploadOverlay {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #F7F7F7;
+  opacity: .6;
+}
+
+.section.details .editor .avatar .avatarUpload.hasAvatar .uploadOverlay {
+  background-color: #fff;
+}
+
+.section.details .editor .avatar .avatarUpload:hover .uploadOverlay {
+  visibility: visible;
+}
+
+.section.details .editor .avatar .avatarUpload .uploadTrigger {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: #0C7997;
+}
+
+.section.details .editor .avatar .avatarUpload.hasAvatar .uploadTrigger {
+  visibility: hidden;
+}
+
+.section.details .editor .avatar .avatarUpload.hasAvatar:hover .uploadTrigger {
+  visibility: visible;
 }
 
 .section.details .grant {

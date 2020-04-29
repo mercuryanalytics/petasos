@@ -3,6 +3,7 @@
   align-items: center;
   font-size: .875rem;
   line-height: 1.2rem;
+  user-select: none;
 }
 
 .value {

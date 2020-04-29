@@ -1,5 +1,6 @@
 .container {
   width: 100%;
+  user-select: none;
 }
 
 .container label {
@@ -18,6 +19,7 @@
   display: flex;
   justify-content: space-between;
   padding: 7.5px 15px;
+  line-height: .75rem;
 }
 
 .container:not(.disabled) .trigger {
@@ -81,6 +83,7 @@
   border: 1px solid #DFDFDF;
   border-radius: 3px;
   outline: none;
+  background-color: #fff;
   font-size: .75rem;
   color: #333;
 }
@@ -90,6 +93,10 @@
   border-color: #A0A0A0;
 }
 
+.container.disabled .control {
+  background-color: #F4F5F7;
+}
+
 .preview {
   font-size: .75rem;
   color: #333;
@@ -97,6 +104,6 @@
 
 .error {
   margin-top: .3rem;
-  color: rgb(231, 183, 187);
+  color: #B60010;
   font-size: .75rem;
 }

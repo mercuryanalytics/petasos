@@ -17,7 +17,7 @@
   width: 320px;
   min-width: 320px;
   min-height: calc(100vh - 72px);
-  padding: 0 18px 1rem 18px;
+  padding: 0 18px 2rem 18px;
   box-sizing: border-box;
   overflow-x: visible;
   overflow-y: auto;

@@ -38,6 +38,9 @@ const Index = props => {
 
   useEffect(() => {
     switch (content) {
+      case ContentTypes.CreateClient:
+        dispatch(setLocationData({ client: false, create: true }));
+        break;
       case ContentTypes.ManageClient:
         dispatch(setLocationData({ client: resId }));
         break;

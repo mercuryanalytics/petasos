@@ -11,7 +11,8 @@ import TemplateActions from './TemplateActions';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
 import Toggle from './Toggle';
-import { Bin } from './Icons';
+import ImageUploading from "react-images-uploading";
+import { Bin, Upload } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
@@ -33,15 +34,21 @@ const ContentTabs = {
   Accounts: 2,
 };
 
-const UsersTabs = {
-  Info: 1,
-  Permissions: 2,
+const FieldsTabs = {
+  Details: 1,
+  Contact: 2,
+  Addresses: 3,
 };
 
 const AccountsTabs = {
   Users: 1,
   Domains: 2,
   Template: 3,
+};
+
+const UsersTabs = {
+  Info: 1,
+  Permissions: 2,
 };
 
 const urlAccountsRegExp = /\/accounts\/([0-9]+)$/;
@@ -62,7 +69,9 @@ const ClientManage = props => {
     editMode ? state.clientsReducer.clients : null);
   const data = useSelector(state =>
     editMode ? state.clientsReducer.clients.filter(c => c.id === id)[0] : null);
+  const [avatar, setAvatar] = useState(null);
   const [tab, setTab] = useState(ContentTabs.Details);
+  const [fieldsTab, setFieldsTab] = useState(FieldsTabs.Details);
   const [accountsTab, setAccountsTab] = useState(AccountsTabs.Users);
   const [showTemplate, setShowTemplate] = useState(false);
   const [usersTab, setUsersTab] = useState(UsersTabs.Info);
@@ -92,6 +101,7 @@ const ClientManage = props => {
     setUsersTab(UsersTabs.Info);
     setTemplateActiveState(null);
     if (!editMode) {
+      setTab(ContentTabs.Details);
       setCanEdit(true);
       setIsLoading(false);
       return;
@@ -178,6 +188,15 @@ const ClientManage = props => {
       }
     }, () => {});
   }, [clients, data, history]);
+
+  const handleAvatarChange = useCallback((images) => {
+    console.log(images);
+    if (images && images.length) {
+      setAvatar(images[0]);
+    } else {
+      setAvatar(null);
+    }
+  });
 
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
@@ -304,7 +323,7 @@ const ClientManage = props => {
     if (templateActiveState === true || templateActiveState === false) {
       return templateActiveState;
     }
-    return !!data.default_template_enabled;
+    return data ? !!data.default_template_enabled : false;
   }, [templateActiveState, data]);
 
   const setTemplateStatus = useCallback((status) => {
@@ -314,23 +333,25 @@ const ClientManage = props => {
   }, [id]);
 
   return (!editMode || data) ? (
-    <div className={styles.container}>
-      <div className={styles.tabs}>
-        <div
-          className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
-          onClick={() => handleTabSelect(ContentTabs.Details)}
-        >
-          <span>Client details</span>
-        </div>
-        {editMode && canEdit && (
+    <div className={`${styles.container} ${!editMode ? styles.noTabs : ''}`}>
+      {editMode && (
+        <div className={styles.tabs}>
           <div
-            className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
-            onClick={() => handleTabSelect(ContentTabs.Accounts)}
+            className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
+            onClick={() => handleTabSelect(ContentTabs.Details)}
           >
-            <span>Accounts</span>
+            <span>Client details</span>
           </div>
-        )}
-      </div>
+          {editMode && canEdit && (
+            <div
+              className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
+              onClick={() => handleTabSelect(ContentTabs.Accounts)}
+            >
+              <span>Accounts</span>
+            </div>
+          )}
+        </div>
+      )}
       {isLoading ? (
         <div className={styles.section}>
           <Loader inline className={styles.loader} />
@@ -338,7 +359,28 @@ const ClientManage = props => {
       ) : (<>
       {(tab === ContentTabs.Details && (
         <div className={`${styles.section} ${styles.details}`}>
-          <div className={styles.editor}>
+          {!editMode && (
+            <div className={styles.navigate}>
+              <div className={`${styles.title} ${styles.big}`}>
+                <span>Create new client</span>
+              </div>
+              <div className={`${styles.textBlock} ${styles.tall}`}>
+                Follow the steps below in order to create a new client.
+              </div>
+              <div className={styles.navigateLinks}>
+                <div className={fieldsTab >= FieldsTabs.Details ? styles.active : ''}>
+                  <span onClick={() => setFieldsTab(FieldsTabs.Details)}>1. Client details</span>
+                </div>
+                <div className={fieldsTab >= FieldsTabs.Contact ? styles.active : ''}>
+                  <span onClick={() => setFieldsTab(FieldsTabs.Contact)}>2. Primary contact</span>
+                </div>
+                <div className={fieldsTab >= FieldsTabs.Addresses ? styles.active : ''}>
+                  <span onClick={() => setFieldsTab(FieldsTabs.Addresses)}>3. Addresses</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className={`${styles.editor} ${!editMode ? styles.sectioned : ''}`}>
             <form className={styles.form} onSubmit={handleSubmit}>
               {editMode && (
                 <div className={styles.actions}>
@@ -350,183 +392,223 @@ const ClientManage = props => {
                   )}
                 </div>
               )}
-              <div className={styles.formSection}>
-                <div className={styles.title}>
-                  <span>Name and type</span>
-                </div>
-                <div className={styles.controlsGroup}>
-                  <Input
-                    className={styles.formControl}
-                    field={name}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label={`Client name ${canEdit ? '*' : ''}`}
-                  />
-                  <Input
-                    className={styles.formControl}
-                    field={company_name}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label={`Company name ${canEdit ? '*' : ''}`}
-                  />
-                </div>
-                <Select
-                  className={styles.formControl}
-                  field={contact_type}
-                  preview={!canEdit}
-                  options={clientTypesOptions}
-                  disabled={isBusy}
-                  placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
-                  label={`Client type ${canEdit ? '*' : ''}`}
-                />
-              </div>
-              <div className={styles.formSection}>
-                <div className={styles.title}>
-                  <span>Primary contact</span>
-                </div>
-                <div className={styles.controlsGroup}>
-                  <Input
-                    className={styles.formControl}
-                    field={contact_name}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label={`Name ${canEdit ? '*' : ''}`}
-                  />
-                  <Input
-                    className={styles.formControl}
-                    field={contact_title}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label="Title"
-                  />
-                </div>
-                <div className={styles.controlsGroup}>
-                  <Input
-                    className={styles.formControl}
-                    field={contact_phone}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label={`Phone number ${canEdit ? '*' : ''}`}
-                  />
-                  <Input
-                    className={styles.formControl}
-                    field={contact_fax}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label="Fax number"
-                  />
-                </div>
-                <Input
-                  className={styles.formControl}
-                  field={contact_email}
-                  preview={!canEdit}
-                  disabled={isBusy}
-                  label={`Email ${canEdit ? '*' : ''}`}
-                />
-              </div>
-              <div className={styles.formSection}>
-                <div className={styles.controlsGroup}>
-                  <div>
-                    <div className={`${styles.title} ${canEdit ? styles.mailing : ''}`}>
-                      <span>Mailing address</span>
-                    </div>
-                    <Input
-                      className={styles.formControl}
-                      field={mailing_address_1}
-                      preview={!canEdit}
-                      disabled={isBusy}
-                      label={`Address ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={mailing_city}
-                      preview={!canEdit}
-                      disabled={isBusy}
-                      label={`City ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={mailing_state}
-                      preview={!canEdit}
-                      disabled={isBusy}
-                      label={`State ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={mailing_zip}
-                      preview={!canEdit}
-                      disabled={isBusy}
-                      label={`Zip code ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={mailing_country}
-                      preview={!canEdit}
-                      disabled={isBusy}
-                      label="Country"
-                    />
-                  </div>
-                  <div>
+              {(editMode || fieldsTab === FieldsTabs.Details) && (<>
+                <div className={styles.formSection}>
+                  {editMode ? (
                     <div className={styles.title}>
-                      <span>Billing address</span>
+                      <span>Name and type</span>
                     </div>
-                    <Checkbox
+                  ) : (
+                    <ImageUploading onChange={handleAvatarChange}>
+                      {({ onImageUpload }) => (
+                        <div className={styles.avatar}>
+                          <span className={styles.avatarLabel}>Upload photo</span>
+                          <div
+                            className={`${styles.avatarUpload} ${!!avatar ? styles.hasAvatar : ''}`}
+                            onClick={onImageUpload}
+                          >
+                            {!!avatar && <img src={avatar.dataURL} />}
+                            <div className={styles.uploadOverlay}></div>
+                            <div className={styles.uploadTrigger}><Upload /></div>
+                          </div>
+                        </div>
+                      )}
+                    </ImageUploading>
+                  )}
+                  <div className={styles.controlsGroup}>
+                    <Input
                       className={styles.formControl}
-                      field={billing_as_mailing}
+                      field={name}
                       preview={!canEdit}
                       disabled={isBusy}
-                      label="Same as the mailing address"
+                      label={`Client name ${canEdit ? '*' : ''}`}
                     />
                     <Input
                       className={styles.formControl}
-                      field={billing_address_1}
+                      field={company_name}
                       preview={!canEdit}
-                      disabled={isBusy || billingAsMailing}
-                      value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
-                      label={`Address ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={billing_city}
-                      preview={!canEdit}
-                      disabled={isBusy || billingAsMailing}
-                      value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
-                      label={`City ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={billing_state}
-                      preview={!canEdit}
-                      disabled={isBusy || billingAsMailing}
-                      value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
-                      label={`State ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={billing_zip}
-                      preview={!canEdit}
-                      disabled={isBusy || billingAsMailing}
-                      value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
-                      label={`Zip code ${canEdit ? '*' : ''}`}
-                    />
-                    <Input
-                      className={styles.formControl}
-                      field={billing_country}
-                      preview={!canEdit}
-                      disabled={isBusy || billingAsMailing}
-                      value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
-                      label="Country"
+                      disabled={isBusy}
+                      label={`Company name ${canEdit ? '*' : ''}`}
                     />
                   </div>
+                  <Select
+                    className={styles.formControl}
+                    field={contact_type}
+                    preview={!canEdit}
+                    options={clientTypesOptions}
+                    disabled={isBusy}
+                    placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
+                    label={`Client type ${canEdit ? '*' : ''}`}
+                  />
                 </div>
-              </div>
-              {canEdit && (
-                <div className={styles.formButtons}>
-                  <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-                    {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
-                  </Button>
+                {!editMode && (
+                  <div className={styles.formButtons}>
+                    <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Contact)}>
+                      <span>Continue</span>
+                    </Button>
+                  </div>
+                )}
+              </>)}
+              {(editMode || fieldsTab === FieldsTabs.Contact) && (<>
+                <div className={styles.formSection}>
+                  {editMode && (
+                    <div className={styles.title}>
+                      <span>Primary contact</span>
+                    </div>
+                  )}
+                  <div className={styles.controlsGroup}>
+                    <Input
+                      className={styles.formControl}
+                      field={contact_name}
+                      preview={!canEdit}
+                      disabled={isBusy}
+                      label={`Name ${canEdit ? '*' : ''}`}
+                    />
+                    <Input
+                      className={styles.formControl}
+                      field={contact_title}
+                      preview={!canEdit}
+                      disabled={isBusy}
+                      label="Title"
+                    />
+                  </div>
+                  <div className={styles.controlsGroup}>
+                    <Input
+                      className={styles.formControl}
+                      field={contact_phone}
+                      preview={!canEdit}
+                      disabled={isBusy}
+                      label={`Phone number ${canEdit ? '*' : ''}`}
+                    />
+                    <Input
+                      className={styles.formControl}
+                      field={contact_fax}
+                      preview={!canEdit}
+                      disabled={isBusy}
+                      label="Fax number"
+                    />
+                  </div>
+                  <Input
+                    className={styles.formControl}
+                    field={contact_email}
+                    preview={!canEdit}
+                    disabled={isBusy}
+                    label={`Email ${canEdit ? '*' : ''}`}
+                  />
                 </div>
-              )}
+                {!editMode && (
+                  <div className={styles.formButtons}>
+                    <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Addresses)}>
+                      <span>Continue</span>
+                    </Button>
+                  </div>
+                )}
+              </>)}
+              {(editMode || fieldsTab === FieldsTabs.Addresses) && (<>
+                <div className={`${styles.formSection} ${styles.addressFields}`}>
+                  <div className={styles.controlsGroup}>
+                    <div>
+                      <div className={`${styles.title} ${canEdit ? styles.mailing : ''}`}>
+                        <span>Mailing address</span>
+                      </div>
+                      <Input
+                        className={styles.formControl}
+                        field={mailing_address_1}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label={`Address ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={mailing_city}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label={`City ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={mailing_state}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label={`State ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={mailing_zip}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label={`Zip code ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={mailing_country}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label="Country"
+                      />
+                    </div>
+                    <div>
+                      <div className={styles.title}>
+                        <span>Billing address</span>
+                      </div>
+                      <Checkbox
+                        className={styles.formControl}
+                        field={billing_as_mailing}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label="Same as the mailing address"
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={billing_address_1}
+                        preview={!canEdit}
+                        disabled={isBusy || billingAsMailing}
+                        value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
+                        label={`Address ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={billing_city}
+                        preview={!canEdit}
+                        disabled={isBusy || billingAsMailing}
+                        value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
+                        label={`City ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={billing_state}
+                        preview={!canEdit}
+                        disabled={isBusy || billingAsMailing}
+                        value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
+                        label={`State ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={billing_zip}
+                        preview={!canEdit}
+                        disabled={isBusy || billingAsMailing}
+                        value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
+                        label={`Zip code ${canEdit ? '*' : ''}`}
+                      />
+                      <Input
+                        className={styles.formControl}
+                        field={billing_country}
+                        preview={!canEdit}
+                        disabled={isBusy || billingAsMailing}
+                        value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
+                        label="Country"
+                      />
+                    </div>
+                  </div>
+                </div>
+                {canEdit && (
+                  <div className={styles.formButtons}>
+                    <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                      {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Done' : 'Creating')}
+                    </Button>
+                  </div>
+                )}
+              </>)}
             </form>
           </div>
           {editMode && canManage && (

@@ -68,7 +68,7 @@
 .section .form .formButtons {
   display: flex;
   justify-content: flex-start;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .loading {

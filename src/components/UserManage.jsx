@@ -214,7 +214,7 @@ const UserManage = props => {
             </div>
           </div>
           {(!preview || isEditClicked) && (
-            <div className={styles.formSection}>
+            <div className={`${styles.formSection} ${styles.passwordSection}`}>
               <div className={styles.title}>
                 <span>{editMode ? 'Change password' : 'Password'}</span>
               </div>

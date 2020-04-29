@@ -17,6 +17,7 @@
   border: 1px solid #DFDFDF;
   border-radius: 3px;
   outline: none;
+  background-color: #fff;
   font-size: .75rem;
   color: #333;
 }
@@ -27,6 +28,10 @@
 
 .container:not(.disabled) .control:focus {
   border-color: #A0A0A0;
+}
+
+.container.disabled .control {
+  background-color: #F4F5F7;
 }
 
 .control::placeholder {

@@ -66,8 +66,16 @@
   color: #333;
 }
 
+.section .form {
+  max-width: 600px;
+}
+
 .section .form .formSection {
   margin-bottom: 2rem;
+}
+
+.section .form .formSection.passwordSection {
+  margin-bottom: 0;
 }
 
 .section .form .formControl {
