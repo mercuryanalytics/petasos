@@ -190,7 +190,6 @@ const ClientManage = props => {
   }, [clients, data, history]);
 
   const handleAvatarChange = useCallback((images) => {
-    console.log(images);
     if (images && images.length) {
       setAvatar(images[0]);
     } else {
