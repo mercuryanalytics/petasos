@@ -705,7 +705,11 @@ const ClientManage = props => {
                 </div>
                 <div
                   className={`${styles.innerTab} ${accountsTab === AccountsTabs.Domains ? styles.active : ''}`}
-                  onClick={() => setAccountsTab(AccountsTabs.Domains)}
+                  onClick={() => {
+                    setAccountsTab(AccountsTabs.Domains);
+                    setSelectedUserId(null);
+                    history.push(`${Routes.ManageClient.replace(':id', id)}`);
+                  }}
                 >
                   <span>Domains</span>
                 </div>

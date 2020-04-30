@@ -196,7 +196,8 @@ const UserActions = props => {
       } else if (reportId) {
         result.report_id = reportId;
       }
-      dispatch(createUser(result, clientId, mode === UserActionsModes.Manage)).then((action) => {
+      const contextId = clientId ? clientId : (limitClientId ? limitClientId : null);
+      dispatch(createUser(result, contextId, mode === UserActionsModes.Manage)).then((action) => {
         const user = action.payload;
         const handleSuccess = () => {
           form.reset();
@@ -204,7 +205,6 @@ const UserActions = props => {
           setIsAddUserOpen(false);
         };
         let promises = [];
-        const contextId = clientId ? clientId : (limitClientId ? limitClientId : null);
         // if (contextId) {
         //   promises.push(
         //     dispatch(authorizeUser(user.id, contextId, { clientId: contextId }, { authorize: true }))
