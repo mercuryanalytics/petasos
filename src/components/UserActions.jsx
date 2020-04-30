@@ -217,6 +217,11 @@ const UserActions = props => {
             // @TODO Revise; Update permissions (state)
             dispatch(getUserAuthorizations(user.id)).then(() => {}, () => {}),
           ] : [];
+          if (mode === UserActionsModes.Grant) {
+            promises.push(
+              dispatch(getAuthorizedUsers(clientId, authorizedOptions)).then(() => {}, () => {})
+            );
+          }
           Promise.all(promises).then(() => {
             handleSuccess();
           }, () => {

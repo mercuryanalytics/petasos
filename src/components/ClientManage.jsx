@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ClientManage.module.css';
 import { useHistory } from 'react-router-dom';
+import Constants from '../utils/constants';
 import Routes from '../utils/routes';
 import Button from './Button';
 import Loader from './Loader';
@@ -98,11 +99,11 @@ const ClientManage = props => {
 
   const init = useCallback(() => {
     setIsLoading(true);
+    setAvatar(null);
     setAccountsTab(AccountsTabs.Users);
     setUsersTab(UsersTabs.Info);
     setTemplateActiveState(null);
     if (!editMode) {
-      setAvatar(null);
       setTab(ContentTabs.Details);
       setCanEdit(true);
       setIsLoading(false);
@@ -204,7 +205,8 @@ const ClientManage = props => {
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
-      slogan: data.slogan || '',
+      motto: data.slogan || '',
+      subdomain: data.subdomain || '',
       company_name: data.company_name || '',
       contact_type: data.contact_type || '',
       contact_name: data.contact_name || '',
@@ -241,7 +243,8 @@ const ClientManage = props => {
       setIsBusy(true);
       const result = {
         name: values.name,
-        slogan: values.slogan,
+        slogan: values.motto,
+        subdomain: values.subdomain,
         company_name: values.company_name,
         contact_type: values.contact_type,
         contact_name: values.contact_name,
@@ -290,9 +293,10 @@ const ClientManage = props => {
   });
 
   const name = useField('name', form);
-  const slogan = useField('slogan', form);
   const company_name = useField('company_name', form);
   const contact_type = useField('contact_type', form);
+  const motto = useField('motto', form);
+  const subdomain = useField('subdomain', form);
 
   const contact_name = useField('contact_name', form);
   const contact_title = useField('contact_title', form);
@@ -352,6 +356,28 @@ const ClientManage = props => {
     dispatch(updateClient(id, { default_template_enabled: status }))
       .then(() => {}, () => {});
   }, [id]);
+
+  const renderAvatar = (centered) => {
+    const avatarUrl = !!avatar ? avatar.dataURL : (
+      data && data.logo_url !== Constants.DEFAULT_CLIENT_LOGO_URL ? data.logo_url : null);
+    return (
+      <ImageUploading onChange={handleAvatarChange}>
+        {({ onImageUpload }) => (
+          <div className={`${styles.avatar} ${centered ? styles.centered : ''}`}>
+            <span className={styles.avatarLabel}>Client logo</span>
+            <div
+              className={`${styles.avatarUpload} ${!!avatarUrl ? styles.hasAvatar : ''}`}
+              onClick={onImageUpload}
+            >
+              {!!avatarUrl && <img src={avatarUrl} />}
+              <div className={styles.uploadOverlay}></div>
+              <div className={styles.uploadTrigger}><Upload /></div>
+            </div>
+          </div>
+        )}
+      </ImageUploading>
+    );
+  };
 
   return (!editMode || data) ? (
     <div className={`${styles.container} ${!editMode ? styles.noTabs : ''}`}>
@@ -420,21 +446,7 @@ const ClientManage = props => {
                       <span>Name and type</span>
                     </div>
                   ) : (
-                    <ImageUploading onChange={handleAvatarChange}>
-                      {({ onImageUpload }) => (
-                        <div className={styles.avatar}>
-                          <span className={styles.avatarLabel}>Upload photo</span>
-                          <div
-                            className={`${styles.avatarUpload} ${!!avatar ? styles.hasAvatar : ''}`}
-                            onClick={onImageUpload}
-                          >
-                            {!!avatar && <img src={avatar.dataURL} />}
-                            <div className={styles.uploadOverlay}></div>
-                            <div className={styles.uploadTrigger}><Upload /></div>
-                          </div>
-                        </div>
-                      )}
-                    </ImageUploading>
+                    renderAvatar(true)
                   )}
                   <div className={styles.controlsGroup}>
                     <Input
@@ -452,22 +464,40 @@ const ClientManage = props => {
                       label={`Company name ${canEdit ? '*' : ''}`}
                     />
                   </div>
-                  <Input
-                    className={styles.formControl}
-                    field={slogan}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label="Slogan"
-                  />
-                  <Select
-                    className={styles.formControl}
-                    field={contact_type}
-                    preview={!canEdit}
-                    options={clientTypesOptions}
-                    disabled={isBusy}
-                    placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
-                    label={`Client type ${canEdit ? '*' : ''}`}
-                  />
+                  <div className={styles.controlsGroup}>
+                    <Select
+                      className={styles.formControl}
+                      field={contact_type}
+                      preview={!canEdit}
+                      options={clientTypesOptions}
+                      disabled={isBusy}
+                      placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
+                      label={`Type ${canEdit ? '*' : ''}`}
+                    />
+                  </div>
+                  <div className={styles.controlsGroup}>
+                    {editMode && (
+                      renderAvatar()
+                    )}
+                    <div>
+                      <Input
+                        className={styles.formControl}
+                        field={motto}
+                        preview={!canEdit}
+                        disabled={isBusy}
+                        label="Motto"
+                      />
+                      {contact_type.input.value === ClientTypes.Partner && (
+                        <Input
+                          className={styles.formControl}
+                          field={subdomain}
+                          preview={!canEdit}
+                          disabled={isBusy}
+                          label="Subdomain"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
                 {!editMode && (
                   <div className={styles.formButtons}>
@@ -516,13 +546,15 @@ const ClientManage = props => {
                       label="Fax number"
                     />
                   </div>
-                  <Input
-                    className={styles.formControl}
-                    field={contact_email}
-                    preview={!canEdit}
-                    disabled={isBusy}
-                    label={`Email ${canEdit ? '*' : ''}`}
-                  />
+                  <div className={styles.controlsGroup}>
+                    <Input
+                      className={styles.formControl}
+                      field={contact_email}
+                      preview={!canEdit}
+                      disabled={isBusy}
+                      label={`Email ${canEdit ? '*' : ''}`}
+                    />
+                  </div>
                 </div>
                 {!editMode && (
                   <div className={styles.formButtons}>

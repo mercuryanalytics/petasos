@@ -161,6 +161,7 @@
 
 .section.details .editor.sectioned .formSection:not(.addressFields) {
   max-width: 240px;
+  margin-bottom: 0;
 }
 
 .section.details .editor.sectioned .formSection.addressFields {
@@ -227,15 +228,22 @@
 .section.details .editor .avatar {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   margin-bottom: 16px;
 }
 
+.section.details .editor .avatar.centered {
+  align-items: center;
+}
+
 .section.details .editor .avatar .avatarLabel {
+  width: 82px;
   margin-bottom: 8px;
   font-size: .75rem;
   font-weight: bold;
   color: #333;
+  text-align: center;
 }
 
 .section.details .editor .avatar .avatarUpload {
