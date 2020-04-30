@@ -2,7 +2,7 @@ import * as React from "react";
 
 function SvgEmptyState(props) {
   return (
-    <svg width="193" height="auto" viewBox="0 0 193 145" {...props}>
+    <svg width="193" height="145" viewBox="0 0 193 145" {...props}>
       <defs>
         <path
           d="M38.575 0l4.833 8.564L70 8.568a6 6 0 015.973 5.422l.027.578V50a6 6 0 01-6 6H6a6 6 0 01-6-6V6a6 6 0 016-6h32.575zM72 23.642H4V50a2 2 0 001.85 1.995L6 52h64a2 2 0 002-2V23.642zM36.24 4H6a2 2 0 00-2 2v13.642h68v-5.074a2 2 0 00-1.85-1.995l-.15-.005H41.079L36.24 4z"
