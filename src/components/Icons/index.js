@@ -7,6 +7,7 @@ export { default as ArrowRightCircle } from './ArrowRightCircle';
 export { default as Bin } from './Bin';
 export { default as Calendar } from './Calendar';
 export { default as Close } from './Close';
+export { default as EmptyState } from './EmptyState';
 export { default as File } from './File';
 export { default as Folder } from './Folder';
 export { default as Globe } from './Globe';

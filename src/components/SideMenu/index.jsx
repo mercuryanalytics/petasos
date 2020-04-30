@@ -70,12 +70,24 @@ const SideMenu = props => {
   const [filteredClientReports, setFilteredClientReports] = useState([]);
 
   const init = useCallback(async () => {
+    let resultsCount = 0;
     return await Promise.all([
-      dispatch(getClients()).then(() => {}, () => {}),
-      dispatch(getOrphanProjects()).then(() => {}, () => {}),
-      dispatch(getOrphanReports()).then(() => {}, () => {}),
-    ]);
-  });
+      dispatch(getClients()).then((action) => {
+        resultsCount += action.payload.length;
+      }, () => {}),
+      dispatch(getOrphanProjects()).then((action) => {
+        resultsCount += action.payload.length;
+      }, () => {}),
+      dispatch(getOrphanReports()).then((action) => {
+        resultsCount += action.payload.length;
+      }, () => {}),
+    ]).then(() => {
+      if (props.onLoad) {
+        props.onLoad(!resultsCount);
+      }
+      return new Promise(resolve => resolve(null));
+    });
+  }, [props.onLoad]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -379,15 +391,21 @@ const SideMenu = props => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.search}>
-        <Search
-          placeholder="Search"
-          targets={searchComponentTargets}
-          hasShadows={true}
-          onSearch={handleSearch}
-        />
-      </div>
-      {((isLoading || (isSearching && !clientsSearch && !isLoadedSearchData)) && (
+      {!isLoading && (
+        (clients && !!clients.length) ||
+        (orphanProjects && !!orphanProjects.length) ||
+        (orphanReports && !!orphanReports.length)
+      ) && (
+        <div className={styles.search}>
+          <Search
+            placeholder="Search"
+            targets={searchComponentTargets}
+            hasShadows={true}
+            onSearch={handleSearch}
+          />
+        </div>
+      )}
+      {((!isLoading && (isSearching && !clientsSearch && !isLoadedSearchData)) && (
         <Loader inline className={styles.loader} />
       ))
       || (isSearching && !filteredClients.length && (
@@ -420,6 +438,11 @@ const SideMenu = props => {
                 onProjectClose={handleProjectClose}
               />
             ))
+          )}
+          {((orphanProjects && !!orphanProjects.length) || (orphanReports && !!orphanReports.length)) && (
+            <div className={styles.orphansSeparator}>
+              <span>Other reports</span>
+            </div>
           )}
           {orphanProjects && !!orphanProjects.length && (
             (isSearching ? filteredOrphanProjects : orphanProjects).map(project => (

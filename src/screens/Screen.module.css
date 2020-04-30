@@ -28,3 +28,25 @@
   min-height: calc(100vh - 72px);
   box-sizing: border-box;
 }
+
+.body .content .emptyState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.body .content .emptyState > svg {
+  margin-bottom: 25px;
+}
+
+.body .content .emptyState > span {
+  margin-bottom: 20px;
+  line-height: 1.25rem;
+  font-size: 1.25rem;
+  color: #333;
+}

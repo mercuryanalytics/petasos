@@ -11,15 +11,20 @@ import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
 import Loader from '../components/Loader';
+import Button from '../components/Button';
+import { EmptyState } from '../components/Icons';
 
 const Screen = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, isAuthenticated, user, getIdTokenClaims } = useAuth0();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSideMenuLoading, setIsSideMenuLoading] = useState(true);
   const [authUser, setAuthUser] = useState(null);
   const [localUser, setLocalUser] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
+  const [realEmptyState, setRealEmptyState] = useState(false);
+  const [emptyState, setEmptyState] = useState(false);
 
   useEffect(() => {
     dispatch(setLocationData({}));
@@ -63,6 +68,12 @@ const Screen = props => {
     }
   }, [localUser, authUser, props.onLoad]);
 
+  const handleSideMenuLoad = useCallback((emptyState) => {
+    setRealEmptyState(emptyState);
+    setEmptyState(emptyState && props.useEmptyState === true);
+    setIsSideMenuLoading(false);
+  }, [props.useEmptyState]);
+
   useEffect(() => {
     if (!isLoading) {
       handleOnLoad();
@@ -80,13 +91,26 @@ const Screen = props => {
           <Header authUser={authUser} localUser={localUser} />
         </div>
         <div className={styles.body}>
-          {props.showSideBar !== false && (
+          {props.showSideBar !== false && !realEmptyState && (
             <div className={styles.side}>
-              <SideMenu userId={localUser.id} />
+              <SideMenu userId={localUser.id} onLoad={handleSideMenuLoad} />
             </div>
           )}
           <div className={styles.content}>
-            {props.children}
+            {!emptyState ? (
+              (!isSideMenuLoading || props.showSideBar === false) ? (
+                <>{props.children}</>
+              ) : (
+                <Loader />
+              )
+            ) : (
+              <div className={styles.emptyState}>
+                <EmptyState />
+                <span>You don’t have access to any project or reports</span>
+                {/* @TODO Contact administrator action */}
+                <Button>Contact your administrator</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

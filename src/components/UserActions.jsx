@@ -214,6 +214,7 @@ const UserActions = props => {
         Promise.all(promises).then(() => {
           promises = contextId ? [
             dispatch(getUsers(contextId, true)).then(() => {}, () => {}),
+            // @TODO Revise; Update permissions (state)
             dispatch(getUserAuthorizations(user.id)).then(() => {}, () => {}),
           ] : [];
           Promise.all(promises).then(() => {

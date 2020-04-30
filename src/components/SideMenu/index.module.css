@@ -11,6 +11,14 @@
   justify-content: flex-start;
 }
 
+.orphansSeparator {
+  margin: 15px 10px 15px 10px;
+  padding: 20px 0 0 0;
+  border-top: 1px solid #E0E0E0;
+  font-size: .75rem;
+  color: #333;
+}
+
 .loader {
   display: flex !important;
   justify-content: center;

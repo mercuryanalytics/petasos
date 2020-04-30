@@ -216,7 +216,13 @@ const Index = props => {
   }, [content, resId, params]);
 
   return !isAccessBlocked ? (
-    <Screen className={styles.container} private keepLoading={isLoading} onLoad={handleScreenLoad}>
+    <Screen
+      className={styles.container}
+      private
+      useEmptyState={true}
+      keepLoading={isLoading}
+      onLoad={handleScreenLoad}
+    >
       <div className={styles.breadcrumbs}>
         <Breadcrumbs data={[ ...breadcrumbs, ...(clientBreadcrumbs || []) ]} />
       </div>
