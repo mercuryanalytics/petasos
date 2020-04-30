@@ -404,7 +404,7 @@ const ClientManage = props => {
           <Loader inline className={styles.loader} />
         </div>
       ) : (<>
-      {(tab === ContentTabs.Details && (
+      {((!editMode || tab === ContentTabs.Details) && (
         <div className={`${styles.section} ${styles.details}`}>
           {!editMode && (
             <div className={styles.navigate}>
