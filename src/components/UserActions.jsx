@@ -205,12 +205,12 @@ const UserActions = props => {
         };
         let promises = [];
         const contextId = clientId ? clientId : (limitClientId ? limitClientId : null);
-        if (contextId) {
-          promises.push(
-            dispatch(authorizeUser(user.id, contextId, { clientId: contextId }, { authorize: true }))
-              .then(() => {}, () => {})
-          );
-        }
+        // if (contextId) {
+        //   promises.push(
+        //     dispatch(authorizeUser(user.id, contextId, { clientId: contextId }, { authorize: true }))
+        //       .then(() => {}, () => {})
+        //   );
+        // }
         Promise.all(promises).then(() => {
           promises = contextId ? [
             dispatch(getUsers(contextId, true)).then(() => {}, () => {}),
