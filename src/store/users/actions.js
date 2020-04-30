@@ -63,9 +63,10 @@ export const getUserFailure = (error) => {
   }
 };
 
-export function createUser(data, noAuth) {
+export function createUser(data, clientId, noAuth) {
   const queryString = noAuth ? `?no_auth=1` : '';
-  const body = JSON.stringify({ user: data });
+  const params = hasValue(clientId) ? { client_id: clientId } : {};
+  const body = JSON.stringify(Object.assign({}, { user: data }, params));
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body })
       .then(

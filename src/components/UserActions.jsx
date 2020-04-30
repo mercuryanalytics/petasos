@@ -196,7 +196,7 @@ const UserActions = props => {
       } else if (reportId) {
         result.report_id = reportId;
       }
-      dispatch(createUser(result, mode === UserActionsModes.Manage)).then((action) => {
+      dispatch(createUser(result, clientId, mode === UserActionsModes.Manage)).then((action) => {
         const user = action.payload;
         const handleSuccess = () => {
           form.reset();
