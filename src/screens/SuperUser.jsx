@@ -47,6 +47,8 @@ const SuperUser = () => {
             showClients={false}
             selectedUserId={selectedUserId}
             onUserSelect={handleUserSelect}
+            canCreate={true}
+            canDelete={true}
           />
         </div>
         <div className={styles.right}>
@@ -70,7 +72,7 @@ const SuperUser = () => {
           `}>
             {(tab === Tabs.Info && (
               selectedUserId !== null && (
-                <UserManage id={selectedUserId} preview={true} embeded={true} />
+                <UserManage id={selectedUserId} preview={true} embeded={true} canEdit={true} />
               )
             )) ||
             (tab === Tabs.Permissions && (

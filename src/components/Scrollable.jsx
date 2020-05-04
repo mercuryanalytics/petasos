@@ -1,11 +1,13 @@
 import React from 'react';
 import styles from './Scrollable.module.css';
+import SimpleBarReact from 'simplebar-react';
+import 'simplebar/src/simplebar.css';
 
 const Scrollable = props => {
   return (
-    <div className={`${styles.container} ${props.className || ''}`}>
+    <SimpleBarReact className={`${styles.container} ${props.className || ''}`}>
       {props.children}
-    </div>
+    </SimpleBarReact>
   );
 };
 

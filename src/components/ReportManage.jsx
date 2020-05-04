@@ -23,6 +23,7 @@ const ReportManage = props => {
   const [canDelete, setCanDelete] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canManage, setCanManage] = useState(false);
+  const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
@@ -50,6 +51,7 @@ const ReportManage = props => {
           hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
         );
         setCanManage(hasRoleOnReport(user.id, id, UserRoles.ReportAdmin));
+        setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin));
         setIsLoading(false);
       });
     }
@@ -217,6 +219,7 @@ const ReportManage = props => {
             context={UserActionsContexts.Report}
             clientId={data.project.domain_id}
             reportId={data.id}
+            canCreate={canCreateUser}
           />
         </div>
       )}

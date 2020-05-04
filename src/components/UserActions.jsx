@@ -33,7 +33,10 @@ export const UserActionsModes = {
 };
 
 const UserActions = props => {
-  const { mode, context, clientId, projectId, reportId, selectedUserId, limitClientId } = props;
+  const {
+    mode, context, clientId, projectId, reportId,
+    selectedUserId, limitClientId, canCreate, canDelete,
+  } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [authorizedOptions, setAuthorizedOptions] = useState(null);
@@ -305,9 +308,11 @@ const UserActions = props => {
       <div className={styles.search}>
         <Search placeholder="Search user" onSearch={handleSearch} />
       </div>
-      <div className={styles.adders}>
-        <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
-      </div>
+      {!!canCreate && (
+        <div className={styles.adders}>
+          <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
+        </div>
+      )}
       <Modal
         className={styles.modal}
         title="Invite new user"
@@ -333,7 +338,7 @@ const UserActions = props => {
           </div>
         </form>
       </Modal>
-      <Scrollable className={styles.permissions}>
+      <Scrollable className={`${styles.permissions} ${!canCreate ? styles.tall : ''}`}>
         {!isLoading ? (
           (mode === UserActionsModes.Manage ? (
             <div className={styles.group}>
@@ -356,13 +361,15 @@ const UserActions = props => {
                     <span className={styles.itemName}>
                       {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
                     </span>
-                    {!!isDeleteBusy[user.id] ? (
-                      <Loader inline size={3} className={styles.busyLoader} />
-                    ) : (
-                      <Bin
-                        className={styles.itemDelete}
-                        onClick={e => handleItemDelete(user.id, e)}
-                      />
+                    {!!canDelete && (
+                      !!isDeleteBusy[user.id] ? (
+                        <Loader inline size={3} className={styles.busyLoader} />
+                      ) : (
+                        <Bin
+                          className={styles.itemDelete}
+                          onClick={e => handleItemDelete(user.id, e)}
+                        />
+                      )
                     )}
                   </label>
                 ))}

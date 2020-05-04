@@ -134,6 +134,8 @@
   display: flex;
   justify-content: center;
   width: 70px;
+  min-width: 70px;
+  max-width: 70px;
   margin-left: 14px;
 }
 
@@ -144,6 +146,7 @@
 
 .section .form {
   width: 100%;
+  max-width: 520px;
 }
 
 .section .form .formSection {
@@ -359,12 +362,17 @@
   height: calc(100% - 144px);
 }
 
+.section.accounts .userList .usersActions.tall {
+  height: calc(100% - 89px);
+}
+
 .section.accounts .userList .domainsActions {
   height: calc(100% - 89px);
 }
 
 .section.accounts .anyActions .templatesActions {
   height: calc(100% - 96px);
+  margin: 0 -10px;
 }
 
 .section.accounts .userActions {

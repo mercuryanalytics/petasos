@@ -390,7 +390,7 @@ const ClientManage = props => {
           >
             <span>Client details</span>
           </div>
-          {editMode && canEdit && (
+          {canEdit && (
             <div
               className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
               onClick={() => handleTabSelect(ContentTabs.Accounts)}
@@ -684,6 +684,7 @@ const ClientManage = props => {
                 mode={UserActionsModes.Grant}
                 context={UserActionsContexts.Client}
                 clientId={id}
+                canCreate={true}
               />
             </div>
           )}
@@ -726,16 +727,23 @@ const ClientManage = props => {
             </div>
             {(accountsTab === AccountsTabs.Users && (
               <UserActions
-                className={styles.usersActions}
+                className={`${styles.usersActions} ${!canManage ? styles.tall : ''}`}
                 mode={UserActionsModes.Manage}
                 showClients={false}
                 limitClientId={id}
                 selectedUserId={selectedUserId}
+                canCreate={canManage}
+                canDelete={canManage}
                 onUserSelect={handleUserSelect}
               />
             )) ||
             (accountsTab === AccountsTabs.Domains && (
-              <DomainActions className={styles.domainsActions} clientId={id} />
+              <DomainActions
+                className={styles.domainsActions}
+                clientId={id}
+                canCreate={canManage}
+                canDelete={canManage}
+              />
             ))}
           </div>
           {(accountsTab === AccountsTabs.Users && !showTemplate && (
@@ -767,6 +775,7 @@ const ClientManage = props => {
                       clientId={editMode ? id : null}
                       preview={true}
                       embeded={true}
+                      canEdit={canManage}
                     />
                   )
                 )) ||

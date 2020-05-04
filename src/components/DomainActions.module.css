@@ -28,6 +28,10 @@
   user-select: none;
 }
 
+.domains.tall {
+  height: 100%;
+}
+
 .domain {
   display: flex;
   align-items: center;

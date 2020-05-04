@@ -41,6 +41,7 @@ const ProjectManage = props => {
   const user = useSelector(state => state.authReducer.user);
   const [canEdit, setCanEdit] = useState(false);
   const [canManage, setCanManage] = useState(false);
+  const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
@@ -74,6 +75,7 @@ const ProjectManage = props => {
           hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager),
         );
         setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
+        setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
         setIsLoading(false);
       });
     }
@@ -287,6 +289,7 @@ const ProjectManage = props => {
             context={UserActionsContexts.Project}
             clientId={data ? data.domain_id : clientId}
             projectId={data.id}
+            canCreate={canCreateUser}
           />
         </div>
       )}

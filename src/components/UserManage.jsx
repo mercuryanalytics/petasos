@@ -10,7 +10,7 @@ import { Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
 
 const UserManage = props => {
-  const { id, embeded, preview, clientId } = props;
+  const { id, embeded, preview, clientId, canEdit } = props;
   const dispatch = useDispatch();
   const editMode = !!id;
   const [isLoading, setIsLoading] = useState(true);
@@ -132,7 +132,7 @@ const UserManage = props => {
           <span>My account</span>
         </div>
       )}
-      {preview && !isEditClicked && (
+      {preview && !isEditClicked && !!canEdit && (
         <Button className={styles.editButton} transparent onClick={() => setIsEditClicked(true)}>
           Edit <Pen />
         </Button>
@@ -225,7 +225,7 @@ const UserManage = props => {
               />
             </div>
           </div>
-          {(!preview || isEditClicked) && (
+          {/* {(!preview || isEditClicked) && (
             <div className={`${styles.formSection} ${styles.passwordSection}`}>
               <div className={styles.title}>
                 <span>{editMode ? 'Change password' : 'Password'}</span>
@@ -245,7 +245,7 @@ const UserManage = props => {
                 />
               </div>
             </div>
-          )}
+          )} */}
           {(!preview || isEditClicked) && (
             <div className={styles.formButtons}>
               <Button type="submit" disabled={submitting} loading={isBusy}>

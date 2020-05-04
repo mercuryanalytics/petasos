@@ -1,3 +1,5 @@
-.container {
-  overflow-y: auto;
+.container {}
+
+:global(.simplebar-track.simplebar-vertical) {
+  right: -15px !important;
 }
