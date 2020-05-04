@@ -21,7 +21,7 @@ const Account = () => {
         <Breadcrumbs data={['My account'].concat(user ? [user.email] : [])} />
       </div>
       <div className={styles.content}>
-        <UserManage id={user ? user.id : null} />
+        <UserManage id={user ? user.id : null} preview={true} />
       </div>
     </Screen>
   );

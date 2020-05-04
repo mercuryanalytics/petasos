@@ -5,7 +5,7 @@ const Input = props => {
   const { field, preview, label, type, disabled, placeholder } = props;
   const classes = `
     ${styles.container}
-    ${props.className}
+    ${props.className || ''}
     ${disabled ? styles.disabled : ''}
   `;
 

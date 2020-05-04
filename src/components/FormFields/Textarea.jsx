@@ -5,7 +5,7 @@ const Textarea = props => {
   const { field, preview, label, disabled, placeholder } = props;
   const classes = `
     ${styles.container}
-    ${props.className}
+    ${props.className || ''}
     ${disabled ? styles.disabled : ''}
   `;
 

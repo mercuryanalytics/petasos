@@ -7,10 +7,11 @@
 .actions {
   position: absolute;
   z-index: 3;
-  right: 0;
-  top: -11px;
+  right: 2rem;
+  top: 20px;
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 
 .actions > :not(:first-child) {
@@ -30,6 +31,7 @@
   position: relative;
   z-index: 2;
   display: inline-flex;
+  height: 46px;
   user-select: none;
   border-radius: 4px 4px 0 0;
   overflow: hidden;
@@ -43,6 +45,7 @@
   font-size: .875rem;
   font-weight: bold;
   color: #333;
+  white-space: nowrap;
 }
 
 .tab:not(:first-child) {
@@ -72,7 +75,6 @@
   padding: 2rem;
   box-sizing: border-box;
   box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
-  overflow: auto;
 }
 
 .container.noTabs .section {
@@ -82,16 +84,20 @@
 .section .title {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  height: 16px;
+  margin-bottom: 24px;
   font-size: 1rem;
   font-weight: bold;
   color: #333;
+  line-height: 1rem;
+  white-space: nowrap;
 }
 
 .section .title.big {
   display: flex;
-  margin-bottom: 1.5rem;
+  height: 20px;
   font-size: 1.25rem;
+  line-height: 1.25rem;
 }
 
 .section .title.mailing {
@@ -105,6 +111,8 @@
 }
 
 .section .textBlock.tall {
+  height: 40px;
+  max-height: 40px;
   margin-bottom: 50px;
 }
 
@@ -114,6 +122,8 @@
 
 .section .textBlock.split {
   display: flex;
+  height: 20px;
+  max-height: 20px;
 }
 
 .section .textBlock.split .left {
@@ -127,9 +137,13 @@
   margin-left: 14px;
 }
 
+.section .scrollableForm {
+  /* scrollable */
+  height: 100%;
+}
+
 .section .form {
-  position: relative;
-  max-width: 600px;
+  width: 100%;
 }
 
 .section .form .formSection {
@@ -192,6 +206,11 @@
   background-color: #FBFBFD;
 }
 
+.section.details .navigate .navigateLinks {
+  /* scrollable */
+  height: calc(100% - 134px);
+}
+
 .section.details .navigate .navigateLinks div {
   margin: 14px 0;
 }
@@ -216,6 +235,8 @@
 }
 
 .section.details .editor {
+  position: relative;
+  height: 100%;
   flex-grow: 1;
   padding: 2rem;
   box-sizing: border-box;
@@ -307,10 +328,16 @@
 .section.details .grant {
   width: 400px;
   min-width: 400px;
+  max-width: 400px;
+  height: 100%;
   padding: 2rem;
   box-sizing: border-box;
   border-left: 1px solid #F0F0F0;
   background-color: #FBFBFD;
+}
+
+.section.details .grant .grantActions {
+  height: calc(100% - 44px);
 }
 
 .section.accounts {
@@ -319,31 +346,51 @@
 }
 
 .section.accounts .userList {
-  width: 230px;
-  min-width: 260px;
-  padding: 0 2rem;
+  width: 325px;
+  min-width: 325px;
+  max-width: 325px;
+  height: 100%;
+  padding: 0 2rem 2rem 2rem;
   border-right: 1px solid #F0F0F0;
+  box-sizing: border-box;
+}
+
+.section.accounts .userList .usersActions {
+  height: calc(100% - 144px);
+}
+
+.section.accounts .userList .domainsActions {
+  height: calc(100% - 89px);
+}
+
+.section.accounts .anyActions .templatesActions {
+  height: calc(100% - 96px);
 }
 
 .section.accounts .userActions {
   flex-grow: 1;
+  height: 100%;
   overflow: hidden;
 }
 
 .section.accounts .anyActions {
+  height: 100%;
   flex-grow: 1;
   overflow: hidden;
   padding: 2rem;
+  box-sizing: border-box;
 }
 
 .accountsTabs {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .accountsTabs .template {
   margin: 0 -2rem;
-  padding: 1.2rem 2rem;
+  padding: 19px 32px;
   border-bottom: 1px solid #F0F0F0;
+  height: 55px;
+  box-sizing: border-box;
 }
 
 .accountsTabs .template span {
@@ -352,10 +399,11 @@
   padding: 9px 10px;
   border-radius: 14px;
   font-size: .9375rem;
-  line-height: .9375rem;
+  line-height: 17px;
   font-weight: bold;
   color: #0C7997;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .accountsTabs .template:not(.active) span:hover {
@@ -390,6 +438,7 @@
   font-size: 1rem;
   font-weight: bold;
   color: #555;
+  white-space: nowrap;
 }
 
 .innerTabs.stretch .innerTab {
@@ -419,7 +468,7 @@
 }
 
 .innerContent {
-  height: 100%;
+  height: calc(100% - 65px);
   box-sizing: border-box;
 }
 

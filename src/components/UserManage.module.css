@@ -1,33 +1,20 @@
 .container {
-  display: flex;
   height: 100%;
   position: relative;
   margin: 0 0 0 40px;
+  padding: 2rem;
   border-radius: 5px 0 0 0;
   box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 .container.embed {
-  width: 100%;
-  height: auto;
   margin: 0;
+  padding: 0;
   box-shadow: none;
   border: 0;
   border-radius: 0;
-}
-
-.container.embed .section {
-  padding: 0;
-}
-
-.container.embed .section .title {
-  margin-bottom: 1rem;
-  font-size: .95rem;
-}
-
-.container.embed .section .form .formSection {
-  margin-bottom: 1.6rem;
 }
 
 .editButton {
@@ -51,23 +38,48 @@
   font-size: 1.1rem;
 }
 
-.section {
-  flex-grow: 1;
-  padding: 2rem;
-  box-sizing: border-box;
+.container:not(.embed) .editButton {
+  right: 2rem;
+  top: 35px;
 }
 
-.section .title {
+.title {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  height: 16px;
+  margin-bottom: 16px;
   font-size: 1rem;
   font-weight: bold;
   color: #333;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.title.big {
+  display: flex;
+  height: 20px;
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+  margin-bottom: 32px;
+}
+
+.container.embed .title {
+  font-size: .95rem;
+}
+
+.section {
+  /* scrollable */
+  height: calc(100% - 52px);
+  flex-grow: 1;
+}
+
+.container.embed .section {
+  height: 100%;
 }
 
 .section .form {
-  max-width: 600px;
+  width: 100%;
+  max-width: 520px;
 }
 
 .section .form .formSection {
@@ -100,6 +112,10 @@
 
 .section .form .controlsGroup > * {
   width: calc(50% - 10px);
+}
+
+.container.embed .section .form .formSection {
+  margin-bottom: 1.6rem;
 }
 
 .loader {

@@ -10,6 +10,7 @@ import Client from './Client';
 import ClientAdd from './ClientAdd';
 import Project from './Project';
 import Report from './Report';
+import Scrollable from '../Scrollable';
 import { UserRoles, isSuperUser, hasRoleOnProject } from '../../store';
 
 const TaskTypes = {
@@ -405,14 +406,14 @@ const SideMenu = props => {
           />
         </div>
       )}
-      {((!isLoading && (isSearching && !clientsSearch && !isLoadedSearchData)) && (
-        <Loader inline className={styles.loader} />
-      ))
-      || (isSearching && !filteredClients.length && (
-        <div className={styles.noResults}>No results</div>
-      ))
-      || (
-        <>
+      <Scrollable className={styles.menu}>
+        {((!isLoading && (isSearching && !clientsSearch && !isLoadedSearchData)) && (
+          <Loader inline className={styles.loader} />
+        ))
+        || (isSearching && !filteredClients.length && (
+          <div className={styles.noResults}>No results</div>
+        ))
+        || (<>
           {clients && !!clients.length && (
             (isSearching ? filteredClients : clients).map(client => (
               <Client
@@ -472,13 +473,13 @@ const SideMenu = props => {
               />
             ))
           )}
-        </>
-      )}
-      {isSuperUser(userId) && (
-        <div className={styles.add}>
-          <ClientAdd />
-        </div>
-      )}
+        </>)}
+        {isSuperUser(userId) && (
+          <div className={styles.add}>
+            <ClientAdd />
+          </div>
+        )}
+      </Scrollable>
     </div>
   );
 };

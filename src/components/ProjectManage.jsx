@@ -6,6 +6,7 @@ import Routes from '../utils/routes';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
+import Scrollable from './Scrollable';
 import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker, Select } from './FormFields';
@@ -188,90 +189,92 @@ const ProjectManage = props => {
   return (
     <div className={styles.container}>
       <div className={`${styles.section} ${styles.left}`}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.title}>
-            <span>Project details</span>
-          </div>
-          {editMode && (
-            <div className={styles.actions}>
-              {canEdit && (
-                <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-                  <Bin className={styles.deleteIcon} />
-                  <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
-                </Button>
-              )}
-            </div>
-          )}
-          <Input
-            className={styles.formControl}
-            field={name}
-            preview={!canEdit}
-            disabled={isBusy}
-            label={`Project name ${canEdit ? '*' : ''}`}
-          />
-          <Input
-            className={styles.formControl}
-            field={project_number}
-            preview={!canEdit}
-            disabled={isBusy}
-            label="Project #"
-          />
-          <Select
-            className={styles.formControl}
-            field={project_type}
-            preview={!canEdit}
-            options={projectTypesOptions}
-            disabled={isBusy}
-            placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
-            label={`Project type ${canEdit ? '*' : ''}`}
-          />
-          <Textarea
-            className={styles.formControl}
-            field={description}
-            preview={!canEdit}
-            disabled={isBusy}
-            label="Description"
-          />
-          <Select
-            className={styles.formControl}
-            field={account_id}
-            preview={!canEdit}
-            options={contactsOptions}
-            disabled={isBusy}
-            placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
-            label="Research contact"
-          />
-          {!!contact && (<>
-            <Input
-              className={styles.formControl}
-              field={contact_phone}
-              preview={true}
-              value={!!contact ? contact.contact_phone : ''}
-              label="Phone"
-            />
-            <Input
-              className={styles.formControl}
-              field={contact_email}
-              preview={true}
-              value={!!contact ? contact.email : ''}
-              label="Email"
-            />
-          </>)}
-          <Datepicker
-            className={styles.formControl}
-            field={modified_on}
-            preview={!canEdit}
-            disabled={isBusy}
-            label={`Last modified on ${canEdit ? '*' : ''}`}
-          />
-          {canEdit && (
-            <div className={styles.formButtons}>
-              <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-                {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+        <div className={styles.title}>
+          <span>Project details</span>
+        </div>
+        {editMode && (
+          <div className={styles.actions}>
+            {canEdit && (
+              <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                <Bin className={styles.deleteIcon} />
+                <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
               </Button>
-            </div>
-          )}
-        </form>
+            )}
+          </div>
+        )}
+        <Scrollable className={styles.scrollableForm}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <Input
+              className={styles.formControl}
+              field={name}
+              preview={!canEdit}
+              disabled={isBusy}
+              label={`Project name ${canEdit ? '*' : ''}`}
+            />
+            <Input
+              className={styles.formControl}
+              field={project_number}
+              preview={!canEdit}
+              disabled={isBusy}
+              label="Project #"
+            />
+            <Select
+              className={styles.formControl}
+              field={project_type}
+              preview={!canEdit}
+              options={projectTypesOptions}
+              disabled={isBusy}
+              placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
+              label={`Project type ${canEdit ? '*' : ''}`}
+            />
+            <Textarea
+              className={styles.formControl}
+              field={description}
+              preview={!canEdit}
+              disabled={isBusy}
+              label="Description"
+            />
+            <Select
+              className={styles.formControl}
+              field={account_id}
+              preview={!canEdit}
+              options={contactsOptions}
+              disabled={isBusy}
+              placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
+              label="Research contact"
+            />
+            {!!contact && (<>
+              <Input
+                className={styles.formControl}
+                field={contact_phone}
+                preview={true}
+                value={!!contact ? contact.contact_phone : ''}
+                label="Phone"
+              />
+              <Input
+                className={styles.formControl}
+                field={contact_email}
+                preview={true}
+                value={!!contact ? contact.email : ''}
+                label="Email"
+              />
+            </>)}
+            <Datepicker
+              className={styles.formControl}
+              field={modified_on}
+              preview={!canEdit}
+              disabled={isBusy}
+              label={`Last modified on ${canEdit ? '*' : ''}`}
+            />
+            {canEdit && (
+              <div className={styles.formButtons}>
+                <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                  {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+                </Button>
+              </div>
+            )}
+          </form>
+        </Scrollable>
       </div>
       {editMode && canManage && (
         <div className={`${styles.section} ${styles.right}`}>
@@ -279,6 +282,7 @@ const ProjectManage = props => {
             <span>Project access</span>
           </div>
           <UserActions
+            className={styles.grantActions}
             mode={UserActionsModes.Grant}
             context={UserActionsContexts.Project}
             clientId={data ? data.domain_id : clientId}

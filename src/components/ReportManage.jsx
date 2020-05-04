@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import Button from './Button';
 import Loader from './Loader';
+import Scrollable from './Scrollable';
 import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input, Textarea, Datepicker } from './FormFields';
@@ -142,66 +143,68 @@ const ReportManage = props => {
   return (
     <div className={styles.container}>
       <div className={`${styles.section} ${styles.left}`}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.title}>
-            <span>Report details</span>
-          </div>
-          {editMode && (
-            <div className={styles.actions}>
-              {canDelete && (
-                <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
-                  <Bin className={styles.deleteIcon} />
-                  <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
-                </Button>
-              )}
-              {!!data.url && (
-                <Button link={data.url} target="_blank" action={true}>View report</Button>
-              )}
-            </div>
-          )}
-          <Input
-            className={styles.formControl}
-            field={name}
-            preview={!canEdit}
-            disabled={isBusy}
-            label={`Report name ${canEdit ? '*' : ''}`}
-          />
-          <Input
-            className={styles.formControl}
-            field={url}
-            preview={!canEdit}
-            disabled={isBusy}
-            label="URL"
-          />
-          <Textarea
-            className={styles.formControl}
-            field={description}
-            preview={!canEdit}
-            disabled={isBusy}
-            label="Description"
-          />
-          <Datepicker
-            className={styles.formControl}
-            field={presented_on}
-            preview={!canEdit}
-            disabled={isBusy}
-            label="Last presented on"
-          />
-          <Datepicker
-            className={styles.formControl}
-            field={modified_on}
-            preview={!canEdit}
-            disabled={isBusy}
-            label={`Last modified on ${canEdit ? '*' : ''}`}
-          />
-          {canEdit && (
-            <div className={styles.formButtons}>
-              <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
-                {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+        <div className={styles.title}>
+          <span>Report details</span>
+        </div>
+        {editMode && (
+          <div className={styles.actions}>
+            {canDelete && (
+              <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                <Bin className={styles.deleteIcon} />
+                <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
-            </div>
-          )}
-        </form>
+            )}
+            {!!data.url && (
+              <Button link={data.url} target="_blank" action={true}>View report</Button>
+            )}
+          </div>
+        )}
+        <Scrollable className={styles.scrollableForm}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <Input
+              className={styles.formControl}
+              field={name}
+              preview={!canEdit}
+              disabled={isBusy}
+              label={`Report name ${canEdit ? '*' : ''}`}
+            />
+            <Input
+              className={styles.formControl}
+              field={url}
+              preview={!canEdit}
+              disabled={isBusy}
+              label="URL"
+            />
+            <Textarea
+              className={styles.formControl}
+              field={description}
+              preview={!canEdit}
+              disabled={isBusy}
+              label="Description"
+            />
+            <Datepicker
+              className={styles.formControl}
+              field={presented_on}
+              preview={!canEdit}
+              disabled={isBusy}
+              label="Last presented on"
+            />
+            <Datepicker
+              className={styles.formControl}
+              field={modified_on}
+              preview={!canEdit}
+              disabled={isBusy}
+              label={`Last modified on ${canEdit ? '*' : ''}`}
+            />
+            {canEdit && (
+              <div className={styles.formButtons}>
+                <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
+                  {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
+                </Button>
+              </div>
+            )}
+          </form>
+        </Scrollable>
       </div>
       {editMode && canManage && (
         <div className={`${styles.section} ${styles.right}`}>
@@ -209,6 +212,7 @@ const ReportManage = props => {
             <span>Report access</span>
           </div>
           <UserActions
+            className={styles.grantActions}
             mode={UserActionsModes.Grant}
             context={UserActionsContexts.Report}
             clientId={data.project.domain_id}

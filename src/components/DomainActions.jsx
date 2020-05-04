@@ -7,6 +7,7 @@ import Loader from './Loader';
 import { Bin } from './Icons';
 import Modal from './Modal';
 import Button from './Button';
+import Scrollable from './Scrollable';
 import { Input } from './FormFields';
 
 const DomainActions = props => {
@@ -66,7 +67,7 @@ const DomainActions = props => {
   const addDomainField = useField('add_domain_name', form);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.className || ''}`}>
       <Modal
         className={styles.modal}
         title="Add new domain"
@@ -97,32 +98,34 @@ const DomainActions = props => {
       <div className={styles.adders}>
         <button onClick={() => setIsAddDomainOpen(true)}>+ Add domain</button>
       </div>
-      {!isLoading ? (
-        domains && !!domains.length ? (
-          domains.map(domain => (
-            <div
-              key={`client-domain-${domain.id}`}
-              className={`${styles.domain} ${selectedDomain === domain.id ? styles.selected : ''}`}
-              title={domain.name}
-              // onClick={() => handleDomainSelect(domain.id)}
-            >
-              <span className={styles.name}>@{domain.name}</span>
-              {!!isDeleteBusy[domain.id] ? (
-                <Loader inline size={3} className={styles.busyLoader} />
-              ) : (
-                <Bin
-                  className={styles.delete}
-                  onClick={e => handleDomainDelete(domain.id, e)}
-                />
-              )}
-            </div>
-          ))
+      <Scrollable className={styles.domains}>
+        {!isLoading ? (
+          domains && !!domains.length ? (
+            domains.map(domain => (
+              <div
+                key={`client-domain-${domain.id}`}
+                className={`${styles.domain} ${selectedDomain === domain.id ? styles.selected : ''}`}
+                title={domain.name}
+                // onClick={() => handleDomainSelect(domain.id)}
+              >
+                <span className={styles.name}>@{domain.name}</span>
+                {!!isDeleteBusy[domain.id] ? (
+                  <Loader inline size={3} className={styles.busyLoader} />
+                ) : (
+                  <Bin
+                    className={styles.delete}
+                    onClick={e => handleDomainDelete(domain.id, e)}
+                  />
+                )}
+              </div>
+            ))
+          ) : (
+            <div className={styles.noResults}>No results</div>
+          )
         ) : (
-          <div className={styles.noResults}>No results</div>
-        )
-      ) : (
-        <Loader inline className={styles.loader} />
-      )}
+          <Loader inline className={styles.loader} />
+        )}
+      </Scrollable>
     </div>
   );
 };

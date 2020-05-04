@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styles from './UserManage.module.css';
 import Loader from './Loader';
 import Button from './Button';
+import Scrollable from './Scrollable';
 import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Input } from './FormFields';
@@ -126,12 +127,17 @@ const UserManage = props => {
 
   return !isLoading ? (
     <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
+      {!embeded && (
+        <div className={`${styles.title} ${styles.big}`}>
+          <span>My account</span>
+        </div>
+      )}
       {preview && !isEditClicked && (
         <Button className={styles.editButton} transparent onClick={() => setIsEditClicked(true)}>
           Edit <Pen />
         </Button>
       )}
-      <div className={styles.section}>
+      <Scrollable className={styles.section}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formSection}>
             <div className={styles.title}>
@@ -248,7 +254,7 @@ const UserManage = props => {
             </div>
           )}
         </form>
-      </div>
+      </Scrollable>
     </div>
   ) : (
     <Loader inline className={styles.loader} />

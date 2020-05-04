@@ -10,7 +10,7 @@ const Datepicker = props => {
   const [isOpen, setIsOpen] = useState(false);
   const classes = `
     ${styles.container}
-    ${props.className}
+    ${props.className || ''}
     ${isOpen ? styles.open : ''}
     ${disabled ? styles.disabled : ''}
   `;

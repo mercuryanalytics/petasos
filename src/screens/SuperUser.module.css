@@ -12,10 +12,17 @@
 .title {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  height: 20px;
+  margin-bottom: 24px;
   font-size: 1.25rem;
   font-weight: bold;
   color: #333;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.usersActions {
+  height: calc(100% - 44px);
 }
 
 .left {
@@ -36,9 +43,11 @@
 .tabs {
   display: flex;
   flex-grow: 1;
+  height: 65px;
   padding: 1rem 2rem 0 2rem;
   border-bottom: 1px solid #F0F0F0;
   user-select: none;
+  box-sizing: border-box;
 }
 
 .tab {
@@ -49,6 +58,7 @@
   font-size: 1rem;
   font-weight: bold;
   color: #555;
+  white-space: nowrap;
 }
 
 .tab:not(:last-child) {

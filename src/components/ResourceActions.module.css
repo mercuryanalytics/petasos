@@ -1,26 +1,46 @@
 .container {
   display: flex;
   flex-direction: column;
-  /* height: 100%; */
-  padding: 25px 1.8rem 2rem 1.8rem;
+  height: 100%;
+  padding: 25px 22px 32px 22px;
+  box-sizing: border-box;
   background-color: #fff;
 }
 
-.section {
+.globals {
+  height: 86px;
   border-bottom: 1px solid #F0F0F0;
   margin-bottom: 25px;
   padding-bottom: 25px;
+  box-sizing: border-box;
 }
 
 .bigTitle {
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin-bottom: 24px;
   font-size: 1.25rem;
   font-weight: bold;
   color: #333;
+  line-height: 1.25rem;
+  white-space: nowrap;
 }
 
 .resources {
+  height: 100%;
   position: relative;
+}
+
+.container.complete .resources {
+  height: calc(100% - 155px);
+}
+
+.resources .resourcesActions {
+  /* scrollable */
+  position: relative;
+  height: calc(100% - 37px);
+  padding: 0 10px;
 }
 
 .arrow {
@@ -182,6 +202,7 @@
 .checkboxesTitles {
   display: flex;
   justify-content: flex-end;
+  height: 13px;
   padding: 0 5px;
   margin-bottom: 24px;
 }
@@ -193,6 +214,7 @@
 .verticalSeparator {
   content: "";
   position: absolute;
+  z-index: 1;
   right: 0;
   top: 0;
   width: 0px;

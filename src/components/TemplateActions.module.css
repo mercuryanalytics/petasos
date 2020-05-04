@@ -14,6 +14,12 @@
   transform: rotate(90deg);
 }
 
+.templatesActions {
+  /* scrollable */
+  height: calc(100% - 37px);
+  padding: 0 10px;
+}
+
 .client {
   margin-bottom: 5px;
 }
@@ -149,6 +155,7 @@
 .checkboxesTitles {
   display: flex;
   justify-content: flex-end;
+  height: 13px;
   padding: 0 5px;
   margin-bottom: 24px;
 }

@@ -8,7 +8,7 @@ const Select = props => {
   const [selectedOption, setSelectedOption] = useState(null);
   const classes = `
     ${styles.container}
-    ${props.className}
+    ${props.className || ''}
     ${isOpen ? styles.open : ''}
     ${disabled ? styles.disabled : ''}
   `;

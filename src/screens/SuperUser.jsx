@@ -42,6 +42,7 @@ const SuperUser = () => {
             <span>Users</span>
           </div>
           <UserActions
+            className={styles.usersActions}
             mode={UserActionsModes.Manage}
             showClients={false}
             selectedUserId={selectedUserId}

@@ -4,6 +4,7 @@ import styles from './ResourceActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
+import Scrollable from './Scrollable';
 import { Checkbox } from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
@@ -238,9 +239,9 @@ const ResourceActions = props => {
   };
 
   return !isLoading ? (
-    <div className={styles.container}>
-      {!clientId && <>
-        <div className={styles.section}>
+    <div className={`${styles.container} ${!clientId ? styles.complete : ''}`}>
+      {!clientId && (<>
+        <div className={styles.globals}>
           <div className={styles.bigTitle}>
             <span>Global</span>
           </div>
@@ -258,114 +259,116 @@ const ResourceActions = props => {
         <div className={styles.bigTitle}>
           <span>Client / Project / Report</span>
         </div>
-      </>}
+      </>)}
       <div className={styles.resources}>
       {renderCheckboxesTitles()}
-      {!!clients.length ? <>
-        {clients.map(client => (
-          <div key={client.id} className={styles.client}>
-            <div
-              className={styles.title}
-              title={client.name}
-              onClick={() => !clientId && handleClientToggle(client.id)}
-            >
-              {!clientId && (
-                <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
-              )}
-              <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
-              <span className={styles.name}>{client.name}</span>
-              <Toggle
-                id={`client-toggle-${client.id}`}
-                className={styles.itemToggle}
-                checked={getItemStatus('client', client.id)}
-                onChange={status => setItemStatus('client', client.id, client.id, status)}
-              />
-              {renderCheckboxes('client', client.id, client.id)}
-            </div>
-            {!!openClients[client.id] && (!!loadedClients[client.id] ? (
-              (
-                (!!projects[client.id] && !!projects[client.id].length) ||
-                (!!clientReports[client.id] && !!clientReports[client.id].length)
-              ) ? <>
-                {projects[client.id].map(project => (
-                  <div key={project.id} className={`${styles.project} ${!clientId ? styles.indented : ''}`}>
-                    <div
-                      className={styles.title}
-                      title={project.name}
-                      onClick={() => handleProjectToggle(project.id)}
-                    >
-                      <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-                      <Folder className={styles.icon} />
-                      <span className={styles.name}>{project.name}</span>
-                      <Toggle
-                        id={`project-toggle-${project.id}`}
-                        className={styles.itemToggle}
-                        checked={getItemStatus('project', project.id)}
-                        onChange={status => setItemStatus('project', project.id, project.domain_id, status)}
-                      />
-                      {renderCheckboxes('project', project.id, project.domain_id)}
-                    </div>
-                    {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
-                      (!!reports[project.id] && !!reports[project.id].length) ? (
-                        reports[project.id].map(report => (
-                          <div
-                            key={report.id}
-                            className={styles.report}
-                            title={report.name}
-                          >
-                            <div className={styles.title}>
-                              <File className={styles.icon} />
-                              <span className={styles.name}>{report.name}</span>
-                              <Toggle
-                                id={`report-toggle-${report.id}`}
-                                className={styles.itemToggle}
-                                checked={getItemStatus('report', report.id)}
-                                onChange={status =>
-                                  setItemStatus('report', report.id, report.project.domain_id, status)}
-                              />
-                              {renderCheckboxes('report', report.id, report.project.domain_id)}
+      <Scrollable className={styles.resourcesActions}>
+        {!!clients.length ? (<>
+          {clients.map(client => (
+            <div key={client.id} className={styles.client}>
+              <div
+                className={styles.title}
+                title={client.name}
+                onClick={() => !clientId && handleClientToggle(client.id)}
+              >
+                {!clientId && (
+                  <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
+                )}
+                <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
+                <span className={styles.name}>{client.name}</span>
+                <Toggle
+                  id={`client-toggle-${client.id}`}
+                  className={styles.itemToggle}
+                  checked={getItemStatus('client', client.id)}
+                  onChange={status => setItemStatus('client', client.id, client.id, status)}
+                />
+                {renderCheckboxes('client', client.id, client.id)}
+              </div>
+              {!!openClients[client.id] && (!!loadedClients[client.id] ? (
+                (
+                  (!!projects[client.id] && !!projects[client.id].length) ||
+                  (!!clientReports[client.id] && !!clientReports[client.id].length)
+                ) ? (<>
+                  {projects[client.id].map(project => (
+                    <div key={project.id} className={`${styles.project} ${!clientId ? styles.indented : ''}`}>
+                      <div
+                        className={styles.title}
+                        title={project.name}
+                        onClick={() => handleProjectToggle(project.id)}
+                      >
+                        <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
+                        <Folder className={styles.icon} />
+                        <span className={styles.name}>{project.name}</span>
+                        <Toggle
+                          id={`project-toggle-${project.id}`}
+                          className={styles.itemToggle}
+                          checked={getItemStatus('project', project.id)}
+                          onChange={status => setItemStatus('project', project.id, project.domain_id, status)}
+                        />
+                        {renderCheckboxes('project', project.id, project.domain_id)}
+                      </div>
+                      {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
+                        (!!reports[project.id] && !!reports[project.id].length) ? (
+                          reports[project.id].map(report => (
+                            <div
+                              key={report.id}
+                              className={styles.report}
+                              title={report.name}
+                            >
+                              <div className={styles.title}>
+                                <File className={styles.icon} />
+                                <span className={styles.name}>{report.name}</span>
+                                <Toggle
+                                  id={`report-toggle-${report.id}`}
+                                  className={styles.itemToggle}
+                                  checked={getItemStatus('report', report.id)}
+                                  onChange={status =>
+                                    setItemStatus('report', report.id, report.project.domain_id, status)}
+                                />
+                                {renderCheckboxes('report', report.id, report.project.domain_id)}
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          ))
+                        ) : (
+                          <div className={styles.noResults}>No results</div>
+                        )
                       ) : (
-                        <div className={styles.noResults}>No results</div>
-                      )
-                    ) : (
-                      <Loader inline className={styles.loader} />
-                    ))}
-                  </div>
-                ))}
-                {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
-                  <div
-                    key={clientReport.id}
-                    className={`${styles.report} ${styles.orphan}`}
-                    title={clientReport.name}
-                  >
-                    <div className={styles.title}>
-                      <File className={styles.icon} />
-                      <span className={styles.name}>{clientReport.name}</span>
-                      <Toggle
-                        id={`client-report-toggle-${clientReport.id}`}
-                        className={styles.itemToggle}
-                        checked={getItemStatus('report', clientReport.id)}
-                        onChange={status =>
-                          setItemStatus('report', clientReport.id, clientReport.project.domain_id, status)}
-                      />
-                      {renderCheckboxes('report', clientReport.id, clientReport.project.domain_id)}
+                        <Loader inline className={styles.loader} />
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </> : (
-                <div className={styles.noResults}>No results</div>
-              )
-            ) : (
-              <Loader inline className={styles.loader} />
-            ))}
-          </div>
-        ))}
-      </> : (
-        <div className={styles.noResults}>No results</div>
-      )}
+                  ))}
+                  {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
+                    <div
+                      key={clientReport.id}
+                      className={`${styles.report} ${styles.orphan}`}
+                      title={clientReport.name}
+                    >
+                      <div className={styles.title}>
+                        <File className={styles.icon} />
+                        <span className={styles.name}>{clientReport.name}</span>
+                        <Toggle
+                          id={`client-report-toggle-${clientReport.id}`}
+                          className={styles.itemToggle}
+                          checked={getItemStatus('report', clientReport.id)}
+                          onChange={status =>
+                            setItemStatus('report', clientReport.id, clientReport.project.domain_id, status)}
+                        />
+                        {renderCheckboxes('report', clientReport.id, clientReport.project.domain_id)}
+                      </div>
+                    </div>
+                  ))}
+                </>) : (
+                  <div className={styles.noResults}>No results</div>
+                )
+              ) : (
+                <Loader inline className={styles.loader} />
+              ))}
+            </div>
+          ))}
+        </>) : (
+          <div className={styles.noResults}>No results</div>
+        )}
+      </Scrollable>
       </div>
     </div>
   ) : (

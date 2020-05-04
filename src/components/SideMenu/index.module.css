@@ -1,9 +1,16 @@
 .container {
+  height: 100%;
   user-select: none;
 }
 
 .search {
+  height: 34px;
   margin-bottom: 25px;
+}
+
+.menu {
+  /* scrollable */
+  height: calc(100% - 59px);
 }
 
 .add {

@@ -4,6 +4,7 @@ import styles from './TemplateActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
+import Scrollable from './Scrollable';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
 import { getTemplates, updateTemplate } from '../store/clients/actions';
@@ -70,64 +71,66 @@ const TemplateActions = props => {
   }, [activeStates, clientId]);
 
   return !isLoading ? (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.className || ''}`}>
       {!!client && (<>
         <div className={styles.checkboxesTitles}>
           <div className={styles.checkboxTitle}>
             <div>View<span title=""><InfoStroke /></span></div>
           </div>
         </div>
-        <div className={styles.client}>
-          <div className={styles.title} title={client.name}>
-            <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
-            <span className={styles.name}>{client.name}</span>
-            <Toggle
-              id={`client-toggle-${client.id}`}
-              className={styles.itemToggle}
-              checked={getItemStatus('client', client.id)}
-              onChange={status => setItemStatus('client', client.id, status)}
-            />
-          </div>
-          {!!client.projects && client.projects.map(project => (<div key={project.id}>
-            <div className={styles.project}>
-              <div
-                className={styles.title}
-                title={project.name}
-                onClick={() => handleProjectToggle(project.id)}
-              >
-                <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
-                <Folder className={styles.icon} />
-                <span className={styles.name}>{project.name}</span>
-                <Toggle
-                  id={`project-toggle-${project.id}`}
-                  className={styles.itemToggle}
-                  checked={getItemStatus('project', project.id)}
-                  onChange={status => setItemStatus('project', project.id, status)}
-                />
-              </div>
+        <Scrollable className={styles.templatesActions}>
+          <div className={styles.client}>
+            <div className={styles.title} title={client.name}>
+              <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
+              <span className={styles.name}>{client.name}</span>
+              <Toggle
+                id={`client-toggle-${client.id}`}
+                className={styles.itemToggle}
+                checked={getItemStatus('client', client.id)}
+                onChange={status => setItemStatus('client', client.id, status)}
+              />
             </div>
-            {!!openProjects[project.id] && (
-              !!project.reports && !!project.reports.length ? (
-                project.reports.map(report => (
-                  <div key={report.id} className={styles.report} title={report.name}>
-                    <div className={styles.title}>
-                      <File className={styles.icon} />
-                      <span className={styles.name}>{report.name}</span>
-                      <Toggle
-                        id={`report-toggle-${report.id}`}
-                        className={styles.itemToggle}
-                        checked={getItemStatus('report', report.id, project.id)}
-                        onChange={status => setItemStatus('report', report.id, status)}
-                      />
+            {!!client.projects && client.projects.map(project => (<div key={project.id}>
+              <div className={styles.project}>
+                <div
+                  className={styles.title}
+                  title={project.name}
+                  onClick={() => handleProjectToggle(project.id)}
+                >
+                  <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
+                  <Folder className={styles.icon} />
+                  <span className={styles.name}>{project.name}</span>
+                  <Toggle
+                    id={`project-toggle-${project.id}`}
+                    className={styles.itemToggle}
+                    checked={getItemStatus('project', project.id)}
+                    onChange={status => setItemStatus('project', project.id, status)}
+                  />
+                </div>
+              </div>
+              {!!openProjects[project.id] && (
+                !!project.reports && !!project.reports.length ? (
+                  project.reports.map(report => (
+                    <div key={report.id} className={styles.report} title={report.name}>
+                      <div className={styles.title}>
+                        <File className={styles.icon} />
+                        <span className={styles.name}>{report.name}</span>
+                        <Toggle
+                          id={`report-toggle-${report.id}`}
+                          className={styles.itemToggle}
+                          checked={getItemStatus('report', report.id, project.id)}
+                          onChange={status => setItemStatus('report', report.id, status)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className={styles.noResults}>No results</div>
-              )
-            )}
-          </div>))}
-        </div>
+                  ))
+                ) : (
+                  <div className={styles.noResults}>No results</div>
+                )
+              )}
+            </div>))}
+          </div>
+        </Scrollable>
       </>)}
     </div>
   ) : (

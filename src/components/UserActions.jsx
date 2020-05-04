@@ -18,6 +18,7 @@ import { Bin, Menu } from './Icons';
 import Toggle from './Toggle';
 import Modal from './Modal';
 import Button from './Button';
+import Scrollable from './Scrollable';
 import { Input } from './FormFields';
 
 export const UserActionsContexts = {
@@ -300,7 +301,7 @@ const UserActions = props => {
   }, [userNameFilter, mode]);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.className || ''}`}>
       <div className={styles.search}>
         <Search placeholder="Search user" onSearch={handleSearch} />
       </div>
@@ -332,7 +333,7 @@ const UserActions = props => {
           </div>
         </form>
       </Modal>
-      <div className={styles.permissions}>
+      <Scrollable className={styles.permissions}>
         {!isLoading ? (
           (mode === UserActionsModes.Manage ? (
             <div className={styles.group}>
@@ -424,7 +425,7 @@ const UserActions = props => {
         ) : (
           <Loader inline className={styles.loader} />
         )}
-      </div>
+      </Scrollable>
     </div>
   );
 };
