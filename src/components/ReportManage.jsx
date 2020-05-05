@@ -44,14 +44,14 @@ const ReportManage = props => {
         dispatch(getReport(id)).then((action) => (report = action.payload), () => {}),
       ] : [];
       Promise.all(promises).then(() => {
-        setCanDelete(hasRoleOnProject(user.id, projectId, UserRoles.ProjectManager));
+        setCanDelete(hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager));
         setCanEdit(
           hasRoleOnReport(user.id, id, UserRoles.ReportManager) ||
-          hasRoleOnProject(user.id, report.projectId, UserRoles.ProjectManager) ||
+          hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager) ||
           hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
         );
         setCanManage(hasRoleOnReport(user.id, id, UserRoles.ReportAdmin));
-        setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin));
+        setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager));
         setIsLoading(false);
       });
     }

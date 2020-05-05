@@ -75,7 +75,7 @@ const ProjectManage = props => {
           hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager),
         );
         setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
-        setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
+        setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager));
         setIsLoading(false);
       });
     }

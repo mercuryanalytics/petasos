@@ -700,7 +700,7 @@ const ClientManage = props => {
                 mode={UserActionsModes.Grant}
                 context={UserActionsContexts.Client}
                 clientId={id}
-                canCreate={true}
+                canCreate={canEdit}
               />
             </div>
           )}
@@ -748,8 +748,8 @@ const ClientManage = props => {
                 showClients={false}
                 limitClientId={id}
                 selectedUserId={selectedUserId}
-                canCreate={canManage}
-                canDelete={canManage}
+                canCreate={canEdit}
+                canDelete={canEdit}
                 onUserSelect={handleUserSelect}
               />
             )) ||
@@ -757,8 +757,8 @@ const ClientManage = props => {
               <DomainActions
                 className={styles.domainsActions}
                 clientId={id}
-                canCreate={canManage}
-                canDelete={canManage}
+                canCreate={canEdit}
+                canDelete={canEdit}
               />
             ))}
           </div>
@@ -791,7 +791,7 @@ const ClientManage = props => {
                       clientId={editMode ? id : null}
                       preview={true}
                       embeded={true}
-                      canEdit={canManage}
+                      canEdit={canEdit}
                     />
                   )
                 )) ||
