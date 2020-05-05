@@ -16,7 +16,7 @@ import ImageUploading from "react-images-uploading";
 import Scrollable from './Scrollable';
 import { Bin, Upload } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Select, Checkbox } from './FormFields';
+import { Validators, Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
 import { refreshAuthorizations, getUsers } from '../store/users/actions';
 import { UserRoles, hasRoleOnClient } from '../store';
@@ -234,10 +234,13 @@ const ClientManage = props => {
         'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
         'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
       ].forEach(key => {
-        if (!values[key]) {
+        if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.'
         }
       });
+      if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
+        errors.contact_email = 'Field value must be a valid email format.';
+      }
       return errors;
     },
     onSubmit: (values) => {
@@ -380,6 +383,16 @@ const ClientManage = props => {
     );
   };
 
+  const renderCreateCancelButton = () => (
+    <Button transparent disabled={submitting || isBusy} onClick={() => {
+      setFieldsTab(FieldsTabs.Details);
+      form.reset();
+      handleAvatarChange([]);
+    }}>
+      <span>Cancel</span>
+    </Button>
+  );
+
   return (!editMode || data) ? (
     <div className={`${styles.container} ${!editMode ? styles.noTabs : ''}`}>
       {editMode && (
@@ -417,13 +430,13 @@ const ClientManage = props => {
               </div>
               <Scrollable className={styles.navigateLinks}>
                 <div className={fieldsTab >= FieldsTabs.Details ? styles.active : ''}>
-                  <span onClick={() => setFieldsTab(FieldsTabs.Details)}>1. Client details</span>
+                  <span>1. Client details</span>
                 </div>
                 <div className={fieldsTab >= FieldsTabs.Contact ? styles.active : ''}>
-                  <span onClick={() => setFieldsTab(FieldsTabs.Contact)}>2. Primary contact</span>
+                  <span>2. Primary contact</span>
                 </div>
                 <div className={fieldsTab >= FieldsTabs.Addresses ? styles.active : ''}>
-                  <span onClick={() => setFieldsTab(FieldsTabs.Addresses)}>3. Addresses</span>
+                  <span>3. Addresses</span>
                 </div>
               </Scrollable>
             </div>
@@ -506,6 +519,7 @@ const ClientManage = props => {
                       <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Contact)}>
                         <span>Continue</span>
                       </Button>
+                      {renderCreateCancelButton()}
                     </div>
                   )}
                 </>)}
@@ -563,6 +577,7 @@ const ClientManage = props => {
                       <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Addresses)}>
                         <span>Continue</span>
                       </Button>
+                      {renderCreateCancelButton()}
                     </div>
                   )}
                 </>)}
@@ -625,7 +640,7 @@ const ClientManage = props => {
                           field={billing_address_1}
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
-                          value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || '')}
+                          value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || undefined)}
                           label={`Address ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -633,7 +648,7 @@ const ClientManage = props => {
                           field={billing_city}
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
-                          value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || '')}
+                          value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || undefined)}
                           label={`City ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -641,7 +656,7 @@ const ClientManage = props => {
                           field={billing_state}
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
-                          value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || '')}
+                          value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || undefined)}
                           label={`State ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -649,7 +664,7 @@ const ClientManage = props => {
                           field={billing_zip}
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
-                          value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || '')}
+                          value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || undefined)}
                           label={`Zip code ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -657,7 +672,7 @@ const ClientManage = props => {
                           field={billing_country}
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
-                          value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || '')}
+                          value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || undefined)}
                           label="Country"
                         />
                       </div>
@@ -668,6 +683,7 @@ const ClientManage = props => {
                       <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
                         {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Done' : 'Creating')}
                       </Button>
+                      {!editMode && renderCreateCancelButton()}
                     </div>
                   )}
                 </>)}

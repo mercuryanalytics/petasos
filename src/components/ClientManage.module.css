@@ -167,6 +167,10 @@
   margin-top: 1rem;
 }
 
+.section .form .formButtons > *:not(:first-child) {
+  margin-left: 10px;
+}
+
 .section .form .controlsGroup {
   display: flex;
   justify-content: space-between;
@@ -216,6 +220,7 @@
 
 .section.details .navigate .navigateLinks div {
   margin: 14px 0;
+  user-select: none;
 }
 
 .section.details .navigate .navigateLinks span {
@@ -223,13 +228,9 @@
   line-height: 28px;
   color: #333;
   font-weight: bold;
-  cursor: pointer;
+  cursor: default;
   opacity: .5;
-}
-
-.section.details .navigate .navigateLinks div:not(.active) span:hover {
-  color: #000;
-  opacity: 1;
+  white-space: nowrap;
 }
 
 .section.details .navigate .navigateLinks div.active span {

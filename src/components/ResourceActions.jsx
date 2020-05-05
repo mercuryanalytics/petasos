@@ -274,7 +274,7 @@ const ResourceActions = props => {
                 {!clientId && (
                   <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
                 )}
-                <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
+                <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
                 <span className={styles.name}>{client.name}</span>
                 <Toggle
                   id={`client-toggle-${client.id}`}

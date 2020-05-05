@@ -9,7 +9,7 @@ import Loader from './Loader';
 import Scrollable from './Scrollable';
 import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Textarea, Datepicker, Select } from './FormFields';
+import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers, refreshAuthorizations } from '../store/users/actions';
@@ -119,7 +119,7 @@ const ProjectManage = props => {
     validate: (values) => {
       let errors = {};
       ['name', 'modified_on'].forEach(key => {
-        if (!values[key]) {
+        if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.'
         }
       });

@@ -6,7 +6,7 @@ import Button from './Button';
 import Scrollable from './Scrollable';
 import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input } from './FormFields';
+import { Validators, Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
 
 const UserManage = props => {
@@ -44,28 +44,31 @@ const UserManage = props => {
     } : {},
     validate: (values) => {
       let errors = {};
-      let isChangingPassword = false;
+      // let isChangingPassword = false;
       let requiredFields = [
         'email', 'contact_name', 'contact_phone', 'contact_email',
         'mailing_address_1', 'mailing_city', 'mailing_state', 'mailing_zip',
       ];
-      if (!!values.new_password) {
-        isChangingPassword = true;
-        requiredFields.push('new_password_confirm');
-      }
+      // if (!!values.new_password) {
+      //   isChangingPassword = true;
+      //   requiredFields.push('new_password_confirm');
+      // }
       requiredFields.forEach(key => {
-        if (!values[key]) {
+        if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
         }
       });
-      if (!errors.email && !/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.email)) {
+      if (!errors.email && !Validators.isEmail(values.email)) {
         errors.email = 'Field value must be a valid email format.';
       }
-      if (isChangingPassword && !errors.new_password_confirm) {
-        if (values.new_password !== values.new_password_confirm) {
-          errors.new_password_confirm = 'Password does not match.';
-        }
+      if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
+        errors.contact_email = 'Field value must be a valid email format.';
       }
+      // if (isChangingPassword && !errors.new_password_confirm) {
+      //   if (values.new_password !== values.new_password_confirm) {
+      //     errors.new_password_confirm = 'Password does not match.';
+      //   }
+      // }
       return errors;
     },
     onSubmit: (values) => {
@@ -122,8 +125,9 @@ const UserManage = props => {
   const new_password = useField('new_password', form);
   const new_password_confirm = useField('new_password_confirm', form);
 
-  const renderRequiredFieldLabel = (label) =>
-    <>{label}{!preview || isEditClicked ? ' *' : ''}</>;
+  const renderRequiredFieldLabel = (label) => (
+    <>{label}{!preview || isEditClicked ? ' *' : ''}</>
+  );
 
   return !isLoading ? (
     <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
@@ -225,6 +229,16 @@ const UserManage = props => {
               />
             </div>
           </div>
+          {(!preview || isEditClicked) && !embeded && (
+            <div className={`${styles.formSection} ${styles.passwordSection}`}>
+              <div className={styles.title}>
+                <span>Reset password</span>
+              </div>
+              <a className={styles.passwordLink} href="#">
+                <span>Send me a reset password link</span>
+              </a>
+            </div>
+          )}
           {/* {(!preview || isEditClicked) && (
             <div className={`${styles.formSection} ${styles.passwordSection}`}>
               <div className={styles.title}>

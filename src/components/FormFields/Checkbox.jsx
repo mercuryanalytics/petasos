@@ -36,7 +36,7 @@ const Checkbox = props => {
           <span data-checkbox-label className={styles.label}>{label}</span>
         )}
       </label>
-      {!!field && field.meta.touched && field.meta.error && (
+      {!!field && field.meta.dirty && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>

@@ -87,6 +87,10 @@
   margin-top: 2rem;
 }
 
+.section .form .formButtons > *:not(:first-child) {
+  margin-left: 10px;
+}
+
 .loading {
   display: flex;
   justify-content: center;

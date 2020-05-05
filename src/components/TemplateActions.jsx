@@ -81,7 +81,7 @@ const TemplateActions = props => {
         <Scrollable className={styles.templatesActions}>
           <div className={styles.client}>
             <div className={styles.title} title={client.name}>
-              <Avatar className={styles.logo} avatar={client.logo} alt={client.name[0].toUpperCase()} />
+              <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
               <span className={styles.name}>{client.name}</span>
               <Toggle
                 id={`client-toggle-${client.id}`}

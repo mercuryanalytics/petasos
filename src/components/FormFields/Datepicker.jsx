@@ -23,10 +23,10 @@ const Datepicker = props => {
   };
 
   const handleChange = (date) => {
-    setValue(date);
+    setValue(date || new Date());
     setIsOpen(false);
     if (field) {
-      field.input.onChange(date.toString());
+      field.input.onChange((date || new Date()).toString());
     }
   };
 
@@ -72,7 +72,7 @@ const Datepicker = props => {
           {field.input.value !== '' ? field.input.value : 'N/A'}
         </span>
       )}
-      {!preview && field.meta.touched && field.meta.error && (
+      {!preview && field.meta.dirty && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>

@@ -19,7 +19,7 @@ import Toggle from './Toggle';
 import Modal from './Modal';
 import Button from './Button';
 import Scrollable from './Scrollable';
-import { Input } from './FormFields';
+import { Validators, Input } from './FormFields';
 
 export const UserActionsContexts = {
   Client: 'client',
@@ -168,12 +168,11 @@ const UserActions = props => {
   }, [clientId, selectedUserId]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
-    initialValues: { add_user_email: '' },
     validate: (values) => {
       let err;
-      if (!values.add_user_email) {
+      if (!Validators.hasValue(values.add_user_email)) {
         err = 'Field value is required.';
-      } else if (!/^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.add_user_email)) {
+      } else if (!Validators.isEmail(values.add_user_email)) {
         err = 'Field value must be a valid email format.';
       }
       return err ? { add_user_email: err } : {};
@@ -303,6 +302,11 @@ const UserActions = props => {
     }
   }, [userNameFilter, mode]);
 
+  const handleAddUserClose = useCallback(() => {
+    setIsAddUserOpen(false);
+    form.reset();
+  }, [form]);
+
   return (
     <div className={`${styles.container} ${props.className || ''}`}>
       <div className={styles.search}>
@@ -317,7 +321,7 @@ const UserActions = props => {
         className={styles.modal}
         title="Invite new user"
         open={isAddUserOpen}
-        onClose={() => setIsAddUserOpen(false)}
+        onClose={() => handleAddUserClose()}
       >
         <div className={styles.modalText}>
           Enter an email address for which to send an invitation.
@@ -332,7 +336,7 @@ const UserActions = props => {
             <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
               {!isBusy ? 'Invite new user' : 'Inviting new user'}
             </Button>
-            <Button transparent onClick={() => setIsAddUserOpen(false)}>
+            <Button transparent onClick={() => handleAddUserClose()}>
               <span>Cancel</span>
             </Button>
           </div>

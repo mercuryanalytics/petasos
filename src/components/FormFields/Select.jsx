@@ -92,7 +92,7 @@ const Select = props => {
           {selectedOption ? selectedOption.text : 'N/A'}
         </span>
       )}
-      {!preview && field.meta.touched && field.meta.error && (
+      {!preview && field.meta.dirty && field.meta.error && (
         <div className={styles.error}>{field.meta.error}</div>
       )}
     </div>

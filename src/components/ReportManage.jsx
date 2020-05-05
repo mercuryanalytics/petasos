@@ -10,7 +10,7 @@ import Loader from './Loader';
 import Scrollable from './Scrollable';
 import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
-import { Input, Textarea, Datepicker } from './FormFields';
+import { Validators, Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
 import { refreshAuthorizations } from '../store/users/actions';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
@@ -83,7 +83,7 @@ const ReportManage = props => {
     validate: (values) => {
       let errors = {};
       ['name', 'modified_on'].forEach(key => {
-        if (!values[key]) {
+        if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.'
         }
       });

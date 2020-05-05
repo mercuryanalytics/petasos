@@ -8,7 +8,7 @@ import { Bin } from './Icons';
 import Modal from './Modal';
 import Button from './Button';
 import Scrollable from './Scrollable';
-import { Input } from './FormFields';
+import { Validators, Input } from './FormFields';
 
 const DomainActions = props => {
   const { clientId, canCreate, canDelete } = props;
@@ -41,10 +41,9 @@ const DomainActions = props => {
   }, [clientId]);
 
   const { form, handleSubmit, pristine, submitting } = useForm({
-    initialValues: { add_domain_name: '' },
     validate: (values) => {
       let err;
-      if (!values.add_domain_name) {
+      if (!Validators.hasValue(values.add_domain_name)) {
         err = 'Field value is required.';
       }
       return err ? { add_domain_name: err } : {};
@@ -66,13 +65,18 @@ const DomainActions = props => {
 
   const addDomainField = useField('add_domain_name', form);
 
+  const handleAddDomainClose = useCallback(() => {
+    setIsAddDomainOpen(false);
+    form.reset();
+  }, [form]);
+
   return (
     <div className={`${styles.container} ${props.className || ''}`}>
       <Modal
         className={styles.modal}
         title="Add new domain"
         open={isAddDomainOpen}
-        onClose={() => setIsAddDomainOpen(false)}
+        onClose={() => handleAddDomainClose()}
       >
         <div className={styles.modalText}>
           Enter domain address.
@@ -89,7 +93,7 @@ const DomainActions = props => {
             <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
               {!isBusy ? 'Add new domain' : 'Adding new domain'}
             </Button>
-            <Button transparent onClick={() => setIsAddDomainOpen(false)}>
+            <Button transparent onClick={() => handleAddDomainClose()}>
               <span>Cancel</span>
             </Button>
           </div>
