@@ -12,7 +12,6 @@ const Routes = {
   Login: '/login',
   LoginCallback: '/auth/auth0/callback',
   Logout: '/logout',
-  LogoutCallback: '/',
 };
 
 export default Routes;

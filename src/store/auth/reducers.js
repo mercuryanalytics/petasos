@@ -1,6 +1,8 @@
 const initialState = {
   user: null,
   authKey: null,
+  authUser: null,
+  partner: null,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -15,6 +17,18 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         authKey: action.payload,
+      };
+    }
+    case 'SET_AUTH_USER': {
+      return {
+        ...state,
+        authUser: action.payload,
+      };
+    }
+    case 'SET_PARTNER': {
+      return {
+        ...state,
+        partner: action.payload,
       };
     }
     default: {

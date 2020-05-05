@@ -6,18 +6,20 @@ function apiCall (method, url, options) {
   const state = store.getState();
   const authKey = state.authReducer.authKey;
 
-  if (!authKey) {
+  options = options || {};
+
+  if (!authKey && !options.noAuth) {
     return new Promise((resolve) => {
       return resolve('');
     });
   }
 
-  options = options || {};
-
   let fetchOptions = {
     method: method,
     headers: new Headers({
-      'Authorization': `Bearer ${authKey}`,
+      ...(authKey ? {
+        'Authorization': `Bearer ${authKey}`,
+      } : {}),
       'Content-Type': 'application/json',
     }),
   };

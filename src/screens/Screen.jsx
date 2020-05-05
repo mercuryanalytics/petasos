@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
+import { isLoggedIn } from '../App';
 import { setLocationData } from '../store/location/actions';
-import { setUser, setAuthKey } from '../store/auth/actions';
+import { setUser } from '../store/auth/actions';
 import { getUsers, getMyAuthorizations } from '../store/users/actions';
-import { useAuth0 } from '../react-auth0-spa';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
@@ -17,10 +17,9 @@ import { EmptyState } from '../components/Icons';
 const Screen = props => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { loading, isAuthenticated, user, getIdTokenClaims } = useAuth0();
   const [isLoading, setIsLoading] = useState(true);
   const [isSideMenuLoading, setIsSideMenuLoading] = useState(true);
-  const [authUser, setAuthUser] = useState(null);
+  const authUser = useSelector(state => state.authReducer.authUser);
   const [localUser, setLocalUser] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
   const [realEmptyState, setRealEmptyState] = useState(false);
@@ -31,38 +30,28 @@ const Screen = props => {
   }, []);
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
     if (!props.private) {
       setIsLoading(false);
     } else {
-      if (isAuthenticated) {
-        let authUserEmail;
-        getIdTokenClaims().then(async (res) => {
-          if (res) {
-            authUserEmail = res.email;
-            setAuthUser(res);
-            await dispatch(setAuthKey(res.__raw));
-          }
-        }).then(() => {
-          dispatch(getUsers()).then(action => {
-            const users = Array.isArray(action.payload) ? action.payload : [];
-            const user = users.filter(u => u.email === authUserEmail)[0];
-            if (user) {
-              setLocalUser(user);
-              dispatch(setUser(user));
-              dispatch(getMyAuthorizations(user.id)).then(() => {
-                setIsLoading(false);
-              }, () => {});
-            }
-          }, () => {});
-        });
-      } else {
+      if (!isLoggedIn()) {
         setDoRedirect(true);
+        return;
+      }
+      if (authUser) {
+        dispatch(getUsers()).then(action => {
+          const users = Array.isArray(action.payload) ? action.payload : [];
+          const user = users.filter(u => u.email === authUser.email)[0];
+          if (user) {
+            setLocalUser(user);
+            dispatch(setUser(user));
+            dispatch(getMyAuthorizations(user.id)).then(() => {
+              setIsLoading(false);
+            }, () => {});
+          }
+        }, () => {});
       }
     }
-  }, [props.private, isAuthenticated, loading]);
+  }, [props.private, authUser]);
 
   const handleOnLoad = useCallback(() => {
     if (props.onLoad) {

@@ -11,6 +11,7 @@ const dev = {
 };
 
 const Constants = Object.assign({}, (ENV !== 'development' ? prod : dev), {
+  DEFAULT_APP_LOGO_URL: 'https://mercury-analytics-api.herokuapp.com/images/mercury-analytics-logo.png',
   DEFAULT_CLIENT_LOGO_URL: 'https://mercury-analytics-api.herokuapp.com/images/mercury-analytics-logo.png',
 });
 
