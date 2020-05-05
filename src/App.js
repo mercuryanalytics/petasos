@@ -20,15 +20,18 @@ import PageNotFound from './screens/PageNotFound';
 const auth0StorageKey = 'authData';
 
 export const isLoggedIn = () => {
-  // @TODO Handle expired_at (false if expired)
-  return !!localStorage.getItem(auth0StorageKey);
+  try {
+    let authData = JSON.parse(localStorage.getItem(auth0StorageKey));
+    return +authData.expiresAt > new Date().getTime();
+  } catch (e) {
+    return false;
+  }
 };
 
 export const login = async (options) => {
   options = Object.assign({}, {
     from: null,
     logo: null,
-    onSuccess: null,
   }, (options || {}));
 
   const lock = createAuth0Lock(options.logo);
@@ -37,15 +40,12 @@ export const login = async (options) => {
     localStorage.setItem(auth0StorageKey, JSON.stringify({
       key: res.idToken,
       user: res.idTokenPayload,
-      expires_at: (res.expiresIn * 1000) + new Date().getTime(),
+      expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
     }));
     await store.dispatch(setAuthKey(res.idToken));
     await store.dispatch(setAuthUser(res.idTokenPayload));
-    if (options.onSuccess) {
-      await options.onSuccess();
-    }
     lock.hide();
-    history.push(options.from || Constants.APP_URL);
+    history.push(options.from || Routes.Home);
   });
 
   lock.show();
@@ -59,19 +59,16 @@ export const logout = async () => {
 
 export const getLogo = async () => {
   const partner = store.getState().authReducer.partner;
-  return new Promise((resolve) => {
-    let logo = Constants.DEFAULT_APP_LOGO_URL;
-    if (partner) {
-      return apiCall('GET', `${Constants.API_URL}/logo?subdomain=${partner}`, { noAuth: true })
-        .then((res) => res.logo);
-    }
-    return resolve(logo);
-  });
+  if (partner) {
+    return apiCall('GET', `${Constants.API_URL}/logo?subdomain=${partner}`, { noAuth: true })
+      .then((res) => res.logo);
+  }
+  return new Promise((resolve) => resolve(Constants.DEFAULT_APP_LOGO_URL));
 };
 
 const App = () => {
-  const authUser = useSelector(state => state.authReducer.authUser);
   const partner = useSelector(state => state.authReducer.partner);
+  const authUser = useSelector(state => state.authReducer.authUser);
 
   const init = useCallback(() => {
     if (!partner) {
@@ -93,12 +90,14 @@ const App = () => {
         authData = JSON.parse(localStorage.getItem(auth0StorageKey));
       } catch (e) {}
       if (authData) {
-        // @TODO Handle expired_at (force logout/refresh if expired)
-        if (authData.key && authData.user) {
+        if (
+          (!authData.expiresAt || !authData.key || !authData.user) ||
+          (+authData.expiresAt <= new Date().getTime())
+        ) {
+          logout();
+        } else {
           store.dispatch(setAuthKey(authData.key));
           store.dispatch(setAuthUser(authData.user));
-        } else {
-          logout();
         }
       }
     }
