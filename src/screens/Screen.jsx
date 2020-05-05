@@ -40,9 +40,11 @@ const Screen = props => {
       if (isAuthenticated) {
         let authUserEmail;
         getIdTokenClaims().then(async (res) => {
-          authUserEmail = res.email;
-          setAuthUser(res);
-          await dispatch(setAuthKey(res.__raw));
+          if (res) {
+            authUserEmail = res.email;
+            setAuthUser(res);
+            await dispatch(setAuthKey(res.__raw));
+          }
         }).then(() => {
           dispatch(getUsers()).then(action => {
             const users = Array.isArray(action.payload) ? action.payload : [];
