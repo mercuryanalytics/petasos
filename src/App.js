@@ -9,6 +9,7 @@ import { Route, Switch } from 'react-router-dom';
 import { createAuth0Lock } from './index';
 import store from './store';
 import { setAuthKey, setAuthUser, setPartner } from './store/auth/actions';
+import { getClients } from './store/clients/actions';
 import Loader from './components/Loader';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
@@ -104,6 +105,18 @@ const App = () => {
   }, [partner, authUser]);
 
   useEffect(init, []);
+
+  // useEffect(() => {
+  //   if (partner && authUser) {
+  //     store.dispatch(getClients()).then((action) => {
+  //       const res = action.payload;
+  //       for (let i = 0; i < res.length; i++) {
+  //         // console.log(res)
+  //         // if (res[i].subdomain)
+  //       }
+  //     }, () => {});
+  //   }
+  // }, [partner, authUser]);
 
   return (
     <Switch>
