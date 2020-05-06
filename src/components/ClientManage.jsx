@@ -80,6 +80,7 @@ const ClientManage = props => {
   const [usersTab, setUsersTab] = useState(UsersTabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [templateActiveState, setTemplateActiveState] = useState(null);
+  const [persistFieldsErrors, setPersistFieldsErrors] = useState(false);
 
   const initSelection = useCallback(() => {
     const pathname = history.location.pathname;
@@ -203,7 +204,7 @@ const ClientManage = props => {
     }
   });
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, pristine, submitting, errors } = useForm({
     initialValues: data ? {
       name: data.name || '',
       slogan: data.slogan || '',
@@ -383,6 +384,25 @@ const ClientManage = props => {
     );
   };
 
+  const changeFieldsTab = useCallback((tab) => {
+    const fields = ({
+      [FieldsTabs.Details]: ['name', 'company_name', 'contact_type',],
+      [FieldsTabs.Contact]: ['contact_name', 'contact_phone', 'contact_email'],
+      [FieldsTabs.Addresses]: [
+        'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
+        'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
+      ],
+    })[tab-1] || [];
+    for (let i = 0; i < fields.length; i++) {
+      if (errors && errors.hasOwnProperty(fields[i]) && errors[fields[i]]) {
+        setPersistFieldsErrors(true);
+        return;
+      }
+    }
+    setPersistFieldsErrors(false);
+    setFieldsTab(tab);
+  }, [errors]);
+
   const renderCreateCancelButton = () => (
     <Button transparent disabled={submitting || isBusy} onClick={() => {
       setFieldsTab(FieldsTabs.Details);
@@ -469,6 +489,7 @@ const ClientManage = props => {
                         field={name}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label={`Client name ${canEdit ? '*' : ''}`}
                       />
                       <Input
@@ -476,6 +497,7 @@ const ClientManage = props => {
                         field={company_name}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label={`Company name ${canEdit ? '*' : ''}`}
                       />
                     </div>
@@ -486,6 +508,7 @@ const ClientManage = props => {
                         preview={!canEdit}
                         options={clientTypesOptions}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
                         label={`Type ${canEdit ? '*' : ''}`}
                       />
@@ -500,6 +523,7 @@ const ClientManage = props => {
                           field={slogan}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label="Motto"
                         />
                         {contact_type.input.value === ClientTypes.Partner && (
@@ -508,6 +532,7 @@ const ClientManage = props => {
                             field={subdomain}
                             preview={!canEdit}
                             disabled={isBusy}
+                            persistErrors={persistFieldsErrors}
                             label="Subdomain"
                           />
                         )}
@@ -516,7 +541,7 @@ const ClientManage = props => {
                   </div>
                   {!editMode && (
                     <div className={styles.formButtons}>
-                      <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Contact)}>
+                      <Button disabled={submitting || isBusy} onClick={() => changeFieldsTab(FieldsTabs.Contact)}>
                         <span>Continue</span>
                       </Button>
                       {renderCreateCancelButton()}
@@ -536,6 +561,7 @@ const ClientManage = props => {
                         field={contact_name}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label={`Name ${canEdit ? '*' : ''}`}
                       />
                       <Input
@@ -543,6 +569,7 @@ const ClientManage = props => {
                         field={contact_title}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label="Title"
                       />
                     </div>
@@ -552,6 +579,7 @@ const ClientManage = props => {
                         field={contact_phone}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label={`Phone number ${canEdit ? '*' : ''}`}
                       />
                       <Input
@@ -559,6 +587,7 @@ const ClientManage = props => {
                         field={contact_fax}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label="Fax number"
                       />
                     </div>
@@ -568,13 +597,14 @@ const ClientManage = props => {
                         field={contact_email}
                         preview={!canEdit}
                         disabled={isBusy}
+                        persistErrors={persistFieldsErrors}
                         label={`Email ${canEdit ? '*' : ''}`}
                       />
                     </div>
                   </div>
                   {!editMode && (
                     <div className={styles.formButtons}>
-                      <Button disabled={submitting || isBusy} onClick={() => setFieldsTab(FieldsTabs.Addresses)}>
+                      <Button disabled={submitting || isBusy} onClick={() => changeFieldsTab(FieldsTabs.Addresses)}>
                         <span>Continue</span>
                       </Button>
                       {renderCreateCancelButton()}
@@ -593,6 +623,7 @@ const ClientManage = props => {
                           field={mailing_address_1}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label={`Address ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -600,6 +631,7 @@ const ClientManage = props => {
                           field={mailing_city}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label={`City ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -607,6 +639,7 @@ const ClientManage = props => {
                           field={mailing_state}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label={`State ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -614,6 +647,7 @@ const ClientManage = props => {
                           field={mailing_zip}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label={`Zip code ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -621,6 +655,7 @@ const ClientManage = props => {
                           field={mailing_country}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label="Country"
                         />
                       </div>
@@ -633,6 +668,7 @@ const ClientManage = props => {
                           field={billing_as_mailing}
                           preview={!canEdit}
                           disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
                           label="Same as the mailing address"
                         />
                         <Input
@@ -641,6 +677,7 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || undefined)}
+                          persistErrors={persistFieldsErrors}
                           label={`Address ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -649,6 +686,7 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_city.input.value : (billingDefaults.billing_city || undefined)}
+                          persistErrors={persistFieldsErrors}
                           label={`City ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -657,6 +695,7 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_state.input.value : (billingDefaults.billing_state || undefined)}
+                          persistErrors={persistFieldsErrors}
                           label={`State ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -665,6 +704,7 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_zip.input.value : (billingDefaults.billing_zip || undefined)}
+                          persistErrors={persistFieldsErrors}
                           label={`Zip code ${canEdit ? '*' : ''}`}
                         />
                         <Input
@@ -673,6 +713,7 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_country.input.value : (billingDefaults.billing_country || undefined)}
+                          persistErrors={persistFieldsErrors}
                           label="Country"
                         />
                       </div>

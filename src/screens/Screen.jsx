@@ -117,8 +117,8 @@ const Screen = props => {
               <div className={styles.emptyState}>
                 <EmptyState />
                 <span>You don’t have access to any project or reports</span>
-                {/* @TODO Contact administrator action */}
-                <Button>Contact your administrator</Button>
+                {/* @TODO Add contact email */}
+                <Button mailto="test@test">Contact your administrator</Button>
               </div>
             )}
           </div>

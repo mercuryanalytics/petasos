@@ -17,12 +17,12 @@ const Button = props => {
     ${props.className || ''}
   `;
 
-  const link = !!props.link ?
+  const href = !!props.mailto ? `mailto:${props.mailto}` : (!!props.link ?
     (props.link.match(/^.+\:\/\//) ? props.link : `http://${props.link}`)
-    : null;
+    : null);
 
-  return (!!link && (
-    <a className={`${baseClasses} ${styles.link}`} href={link} target={props.target || '_self'}>
+  return (!!href && (
+    <a className={`${baseClasses} ${styles.link}`} href={href} target={props.target || '_self'}>
       {props.children}
       {!!loading && renderLoader()}
     </a>

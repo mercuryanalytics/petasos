@@ -92,9 +92,11 @@ const Select = props => {
           {selectedOption ? selectedOption.text : 'N/A'}
         </span>
       )}
-      {!preview && field.meta.dirty && field.meta.error && (
-        <div className={styles.error}>{field.meta.error}</div>
-      )}
+      {!preview &&
+        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
+        field.meta.error && (
+          <div className={styles.error}>{field.meta.error}</div>
+        )}
     </div>
   );
 };
