@@ -206,7 +206,7 @@ const ClientManage = props => {
   const { form, handleSubmit, pristine, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
-      motto: data.slogan || '',
+      slogan: data.slogan || '',
       subdomain: data.subdomain || '',
       company_name: data.company_name || '',
       contact_type: data.contact_type || '',
@@ -247,7 +247,7 @@ const ClientManage = props => {
       setIsBusy(true);
       const result = {
         name: values.name,
-        slogan: values.motto,
+        slogan: values.slogan,
         subdomain: values.subdomain,
         company_name: values.company_name,
         contact_type: values.contact_type,
@@ -299,7 +299,7 @@ const ClientManage = props => {
   const name = useField('name', form);
   const company_name = useField('company_name', form);
   const contact_type = useField('contact_type', form);
-  const motto = useField('motto', form);
+  const slogan = useField('slogan', form);
   const subdomain = useField('subdomain', form);
 
   const contact_name = useField('contact_name', form);
@@ -497,7 +497,7 @@ const ClientManage = props => {
                       <div>
                         <Input
                           className={styles.formControl}
-                          field={motto}
+                          field={slogan}
                           preview={!canEdit}
                           disabled={isBusy}
                           label="Motto"

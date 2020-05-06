@@ -77,15 +77,21 @@ const App = () => {
 
   const init = useCallback(() => {
     if (!partner) {
-      let parts = window.location.hostname.split('.');
+      let parts = window.location.hostname.split('.'), subdomain;
       if (parts.length > 1) {
-        store.dispatch(setPartner(parts[0]));
+        subdomain = parts[0];
       } else {
         // @TODO Remove (testing purposes)
         parts = history.location.search.split(/[\?|\&]subdomain\=/i);
         if (parts.length > 1) {
           const end = parts[1].indexOf('&');
-          store.dispatch(setPartner(end === -1 ? parts[1] : parts[1].substr(0, end)));
+          subdomain = end === -1 ? parts[1] : parts[1].substr(0, end);
+        }
+      }
+      if (subdomain) {
+        subdomain = subdomain.toLowerCase();
+        if (subdomain !== 'www') {
+          store.dispatch(setPartner(subdomain));
         }
       }
     }
