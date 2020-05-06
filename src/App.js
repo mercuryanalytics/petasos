@@ -37,15 +37,20 @@ export const login = async (options) => {
   const lock = createAuth0Lock(options.logo);
 
   lock.on('authenticated', async (res) => {
-    localStorage.setItem(auth0StorageKey, JSON.stringify({
-      key: res.idToken,
-      user: res.idTokenPayload,
-      expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
-    }));
-    await store.dispatch(setAuthKey(res.idToken));
-    await store.dispatch(setAuthUser(res.idTokenPayload));
-    lock.hide();
-    history.push(options.from || Routes.Home);
+    lock.getUserInfo(res.accessToken, async (error, profile) => {
+      if (error) {
+        throw new Error(error);
+      }
+      localStorage.setItem(auth0StorageKey, JSON.stringify({
+        key: res.idToken,
+        user: profile,
+        expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
+      }));
+      await store.dispatch(setAuthKey(res.idToken));
+      await store.dispatch(setAuthUser(profile));
+      lock.hide();
+      history.push(options.from || Routes.Home);
+    });
   });
 
   lock.show();
