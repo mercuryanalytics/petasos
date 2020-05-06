@@ -218,7 +218,7 @@ For setting Google Social login you need to follow the steps here: https://auth0
     * Modify the `domain` value with the one generated in your Auth0 frontend app
 * Open `src/utils/constants.js`
     * Modify the `API_URL` from prod constant with your API url
-    * Modify the `APP_URL` ====
+    * Modify the `APP_URL` with your frontend url
 * Run the `BUCKET_NAME=www.example.com DISTRIBUTION_ID=YOUR_DISTRIBUTION_ID npm run-script s3deploy`
 
 After this is done it should be up & running
@@ -248,13 +248,14 @@ After this is done it should be up & running
         RDS_PORT: RDS PORT
 * Open `config/environments/production`
     * add `config.hosts << YOUR_HOSTNAME`
-Note: You'll need to manually create the database if it does not exist, since capistrano will not do this
+
 
 * Go to mercury-analytics-api project root and open `config/deploy/production.rb`
     * Set your IP and SSH key location for connecting to ec2 instance
 * Open `config/deploy.rb` and make changes if you have other settings than the default ones
-Note: don't forget to add your SSH key for deploy user in github!
-
+Notes: 
+  * don't forget to add your SSH key for deploy user in github!
+  * You'll need to manually create the database if it does not exist, since capistrano will not do this
 Run `cap production deploy` and it should deploy the app based on your settings
 Ssh into your machine to create a super user using the following rake task
 `RAILS_ENV=production bundle exec rails users:create_admin_user\['your-email','MyPassword123'\]`
