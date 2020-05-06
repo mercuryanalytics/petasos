@@ -7,6 +7,7 @@ import { isLoggedIn } from '../App';
 import { setLocationData } from '../store/location/actions';
 import { setUser } from '../store/auth/actions';
 import { getUsers, getMyAuthorizations } from '../store/users/actions';
+import { getClients } from '../store/clients/actions';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
@@ -20,10 +21,28 @@ const Screen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSideMenuLoading, setIsSideMenuLoading] = useState(true);
   const authUser = useSelector(state => state.authReducer.authUser);
+  const partner = useSelector(state => state.authReducer.partner);
+  const partnerClient = useSelector(state => !partner ? null :
+    (state.clientsReducer.clients.filter(c => c.subdomain === partner)[0] || null));
+  const [customLogo, setCustomLogo] = useState(null);
+  const [customSlogan, setCustomSlogan] = useState(null);
   const [localUser, setLocalUser] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
   const [realEmptyState, setRealEmptyState] = useState(false);
   const [emptyState, setEmptyState] = useState(false);
+
+  useEffect(() => {
+    if (partner && authUser) {
+      dispatch(getClients()).then(() => {}, () => {});
+    }
+  }, [partner, authUser]);
+
+  useEffect(() => {
+    if (partnerClient) {
+      partnerClient.logo_url && setCustomLogo(partnerClient.logo_url);
+      partnerClient.slogan && setCustomSlogan(partnerClient.slogan);
+    }
+  }, [partnerClient]);
 
   useEffect(() => {
     dispatch(setLocationData({}));
@@ -79,7 +98,7 @@ const Screen = props => {
     !props.blank ? (
       <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>
-          <Header authUser={authUser} localUser={localUser} />
+          <Header authUser={authUser} localUser={localUser} logo={customLogo} slogan={customSlogan} />
         </div>
         <div className={styles.body}>
           {props.showSideBar !== false && !realEmptyState && (

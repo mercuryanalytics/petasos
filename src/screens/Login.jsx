@@ -14,7 +14,7 @@ const Login = () => {
         from: history.location.hash.substr(1),
         logo: logo,
       });
-    });
+    }, () => {});
   } else {
     return <Redirect to={Routes.Home} />;
   }

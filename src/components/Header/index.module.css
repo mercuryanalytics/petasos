@@ -15,9 +15,22 @@
   text-decoration: none;
 }
 
+.logoContainer {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
 .logo {
   width: auto;
   height: 40px;
+}
+
+.slogan {
+  margin-left: 14px;
+  font-size: .75rem;
+  color: #333;
+  font-weight: bold;
 }
 
 .controls {
