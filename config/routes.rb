@@ -1,0 +1,47 @@
+Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+  get 'test', to: 'test#hello'
+
+  namespace :api do
+    namespace :v1 do
+      resources :clients do
+        resources :domains
+        resources :templates, only: %i(create index)
+
+        member do
+          get :orphans
+          get :authorized
+          post :authorize
+        end
+      end
+      resources :projects do
+        collection { get :orphans }
+        member do
+          get :authorized
+          post :authorize
+        end
+      end
+      resources :reports do
+        collection { get :orphans }
+        member do
+          get :authorized
+          post :authorize
+        end
+      end
+      resources :users do
+        collection do
+          get :researchers
+          get :me
+        end
+        member do
+          get :authorized
+          post :scopes
+        end
+      end
+
+      resources :scopes, only: %i(index)
+      resources :logo, only: %i(index)
+    end
+  end
+end
