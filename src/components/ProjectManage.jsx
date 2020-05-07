@@ -39,6 +39,7 @@ const ProjectManage = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(state => state.authReducer.user);
+  const [canDelete, setCanDelete] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
@@ -72,15 +73,16 @@ const ProjectManage = props => {
       Promise.all(promises).then(() => {
         if (project) {
           dispatch(getProjects(project.domain_id)).then((action) => {
-            let projects = action.payload, _canEdit;
+            let projects = action.payload, authorized = false;
             for (let i = 0; i < projects.length; i++) {
               if (hasRoleOnProject(user.id, projects[i].id, UserRoles.ProjectManager)) {
-                _canEdit = true;
+                authorized = true;
                 break;
               }
             }
+            setCanDelete(authorized);
             setCanEdit(
-              _canEdit ||
+              authorized ||
               hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager)
             );
             setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
@@ -205,7 +207,7 @@ const ProjectManage = props => {
         </div>
         {editMode && (
           <div className={styles.actions}>
-            {canEdit && (
+            {canDelete && (
               <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
                 <Bin className={styles.deleteIcon} />
                 <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
