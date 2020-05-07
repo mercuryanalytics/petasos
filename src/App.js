@@ -72,6 +72,7 @@ export const getLogo = async () => {
 };
 
 const App = () => {
+  const dispatch = store.dispatch;
   const partner = useSelector(state => state.authReducer.partner);
   const authUser = useSelector(state => state.authReducer.authUser);
 
@@ -91,7 +92,7 @@ const App = () => {
       if (subdomain) {
         subdomain = subdomain.toLowerCase();
         if (subdomain !== 'www') {
-          store.dispatch(setPartner(subdomain));
+          dispatch(setPartner(subdomain));
         }
       }
     }
@@ -107,8 +108,8 @@ const App = () => {
         ) {
           logout();
         } else {
-          store.dispatch(setAuthKey(authData.key));
-          store.dispatch(setAuthUser(authData.user));
+          dispatch(setAuthKey(authData.key));
+          dispatch(setAuthUser(authData.user));
         }
       }
     }

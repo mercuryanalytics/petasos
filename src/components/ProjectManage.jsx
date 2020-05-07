@@ -79,7 +79,10 @@ const ProjectManage = props => {
                 break;
               }
             }
-            setCanEdit(_canEdit);
+            setCanEdit(
+              _canEdit ||
+              hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager)
+            );
             setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
             setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager));
             setIsLoading(false);
