@@ -9,6 +9,7 @@ import Button from './Button';
 import Loader from './Loader';
 import Scrollable from './Scrollable';
 import { Bin } from './Icons';
+import { confirm } from './Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker } from './FormFields';
 import { getReport, createReport, updateReport, deleteReport } from '../store/reports/actions';
@@ -151,7 +152,14 @@ const ReportManage = props => {
         {editMode && (
           <div className={styles.actions}>
             {canDelete && (
-              <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+              <Button
+                transparent
+                loading={isDeleteBusy}
+                onClick={() => confirm({
+                  text: 'Are you sure you want to delete this report ?',
+                  onConfirm: handleDelete,
+                })}
+              >
                 <Bin className={styles.deleteIcon} />
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>

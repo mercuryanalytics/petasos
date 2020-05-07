@@ -15,6 +15,7 @@ import Loader from './Loader';
 import Search from './Search';
 import { MdPlayArrow } from 'react-icons/md';
 import { Bin, Menu } from './Icons';
+import { confirm } from './Confirm';
 import Toggle from './Toggle';
 import Modal from './Modal';
 import Button from './Button';
@@ -365,7 +366,10 @@ const UserActions = props => {
                       ) : (
                         <Bin
                           className={styles.itemDelete}
-                          onClick={e => handleItemDelete(user.id, e)}
+                          onClick={e => confirm({
+                            text: 'Are you sure you want to delete this user ?',
+                            onConfirm: () => handleItemDelete(user.id, e),
+                          })}
                         />
                       )
                     )}

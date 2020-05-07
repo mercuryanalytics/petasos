@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
+import Constants from '../utils/constants';
 import Routes from '../utils/routes';
 import { isLoggedIn } from '../App';
 import { setLocationData } from '../store/location/actions';
@@ -128,7 +129,7 @@ const Screen = props => {
                 <EmptyState />
                 <span>You don’t have access to any project or reports</span>
                 {/* @TODO Add contact email */}
-                <Button mailto="test@test">Contact your administrator</Button>
+                <Button mailto={Constants.APP_CONTACT_EMAIL}>Contact your administrator</Button>
               </div>
             )}
           </div>

@@ -5,6 +5,7 @@ import { getDomains, createDomain, deleteDomain } from '../store/clients/actions
 import { useForm, useField } from 'react-final-form-hooks';
 import Loader from './Loader';
 import { Bin } from './Icons';
+import { confirm } from './Confirm';
 import Modal from './Modal';
 import Button from './Button';
 import Scrollable from './Scrollable';
@@ -121,7 +122,10 @@ const DomainActions = props => {
                   ) : (
                     <Bin
                       className={styles.delete}
-                      onClick={e => handleDomainDelete(domain.id, e)}
+                      onClick={e => confirm({
+                        text: 'Are you sure you want to delete this domain ?',
+                        onConfirm: () => handleDomainDelete(domain.id, e),
+                      })}
                     />
                   )
                 )}

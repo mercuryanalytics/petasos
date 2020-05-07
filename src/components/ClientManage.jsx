@@ -15,6 +15,7 @@ import Toggle from './Toggle';
 import ImageUploading from "react-images-uploading";
 import Scrollable from './Scrollable';
 import { Bin, Upload } from './Icons';
+import { confirm } from './Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
@@ -468,7 +469,14 @@ const ClientManage = props => {
             {editMode && (
               <div className={styles.actions}>
                 {isSuperUser(user.id) && (
-                  <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+                  <Button
+                    transparent
+                    loading={isDeleteBusy}
+                    onClick={() => confirm({
+                      text: 'Are you sure you want to delete this client ?',
+                      onConfirm: handleDelete,
+                    })}
+                  >
                     <Bin className={styles.deleteIcon} />
                     <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
                   </Button>

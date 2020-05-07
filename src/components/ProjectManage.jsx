@@ -8,6 +8,7 @@ import Button from './Button';
 import Loader from './Loader';
 import Scrollable from './Scrollable';
 import { Bin } from './Icons';
+import { confirm } from './Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
@@ -208,7 +209,14 @@ const ProjectManage = props => {
         {editMode && (
           <div className={styles.actions}>
             {canDelete && (
-              <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
+              <Button
+                transparent
+                loading={isDeleteBusy}
+                onClick={() => confirm({
+                  text: 'Are you sure you want to delete this project ?',
+                  onConfirm: handleDelete,
+                })}
+              >
                 <Bin className={styles.deleteIcon} />
                 <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
               </Button>
