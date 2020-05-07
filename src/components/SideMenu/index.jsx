@@ -104,14 +104,18 @@ const SideMenu = props => {
         }
       }, () => {}),
     ]).then(() => {
-      if (props.autoselect && !activeClient && !activeProject && !activeReport && defaultRoute) {
+      const noActiveRes = !activeClient && !activeProject && !activeReport;
+      if (props.autoselect && noActiveRes && !isActiveAddLink && defaultRoute) {
         setAwaitRoute(defaultRoute);
         history.push(defaultRoute);
       } else {
         handleSuccess();
       }
     });
-  }, [props.autoselect, props.onLoad, activeClient, activeProject, activeReport]);
+  }, [
+    props.autoselect, props.onLoad,
+    activeClient, activeProject, activeReport, isActiveAddLink
+  ]);
 
   useEffect(init, []);
 
