@@ -11,7 +11,7 @@ import { Bin } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
-import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
+import { getProject, createProject, updateProject, deleteProject, getProjects } from '../store/projects/actions';
 import { getResearchers, refreshAuthorizations } from '../store/users/actions';
 import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
@@ -70,20 +70,26 @@ const ProjectManage = props => {
         dispatch(getProject(id)).then((action) => (project = action.payload), () => {}),
       ] : [];
       Promise.all(promises).then(() => {
-        setCanEdit(
-          hasRoleOnProject(user.id, id, UserRoles.ProjectManager) ||
-          hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager),
-        );
-        setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
-        setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager));
-        setIsLoading(false);
+        if (project) {
+          dispatch(getProjects(project.domain_id)).then((action) => {
+            let projects = action.payload, _canEdit;
+            for (let i = 0; i < projects.length; i++) {
+              if (hasRoleOnProject(user.id, projects[i].id, UserRoles.ProjectManager)) {
+                _canEdit = true;
+                break;
+              }
+            }
+            setCanEdit(_canEdit);
+            setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
+            setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager));
+            setIsLoading(false);
+          }, () => {});
+        }
       });
     }
-  }, [editMode, id, clientId, user, data]);
+  }, [editMode, id, user, data]);
 
-  useEffect(() => {
-    init();
-  }, [id]);
+  useEffect(init, [id]);
 
   useEffect(() => {
     if (contacts) {

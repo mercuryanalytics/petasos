@@ -1,5 +1,6 @@
 import store from '../store';
 
+let ongoing = {};
 let called = {};
 
 function apiCall (method, url, options) {
@@ -28,9 +29,14 @@ function apiCall (method, url, options) {
     fetchOptions.body = options.body;
   }
 
-  return fetch(url, fetchOptions)
+  if (!!ongoing[url]) {
+    return ongoing[url];
+  }
+
+  let handler = fetch(url, fetchOptions)
     .then(response => {
       if (method.toUpperCase() === 'GET') {
+        delete ongoing[url];
         if (!response.ok) {
           return Promise.reject(`Fetch error: ${response.status} ${response.statusText}`);
         }
@@ -57,6 +63,12 @@ function apiCall (method, url, options) {
         return Promise.reject(reason);
       }
     );
+
+  if (method.toUpperCase() === 'GET') {
+    ongoing[url] = handler;
+  }
+
+  return handler;
 };
 
 apiCall.isCalled = (urls) => {
