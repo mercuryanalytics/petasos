@@ -59,6 +59,7 @@ const Datepicker = props => {
             }
             selected={value}
             dateFormat={'EEEE, MMMM dd, yyyy'}
+            // {...(!!props.maxToday ? { maxDate: new Date() } : {})}
             disabled={!!disabled}
             open={isOpen}
             onChange={handleChange}

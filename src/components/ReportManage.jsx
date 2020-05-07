@@ -189,6 +189,7 @@ const ReportManage = props => {
               field={presented_on}
               preview={!canEdit}
               disabled={isBusy}
+              maxToday={true}
               label="Last presented on"
             />
             <Datepicker
@@ -196,6 +197,7 @@ const ReportManage = props => {
               field={modified_on}
               preview={!canEdit}
               disabled={isBusy}
+              maxToday={true}
               label={`Last modified on ${canEdit ? '*' : ''}`}
             />
             {canEdit && (

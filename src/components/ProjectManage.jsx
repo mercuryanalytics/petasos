@@ -266,6 +266,7 @@ const ProjectManage = props => {
               field={modified_on}
               preview={!canEdit}
               disabled={isBusy}
+              maxToday={true}
               label={`Last modified on ${canEdit ? '*' : ''}`}
             />
             {canEdit && (

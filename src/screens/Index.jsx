@@ -123,8 +123,8 @@ const Index = props => {
         setIsAccessBlocked(!hasRoleOnClient(user.id, resId, UserRoles.Viewer));
         break;
       case ContentTypes.CreateProject:
-        let authorized = false;
-        if (clientProjects) {
+        let authorized = isSuperUser(user.id);
+        if (!authorized && clientProjects) {
           for (let i = 0; i < clientProjects.length; i++) {
             if (hasRoleOnProject(user.id, clientProjects[i].id, UserRoles.ProjectManager)) {
               authorized = true;
