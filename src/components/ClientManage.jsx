@@ -19,7 +19,7 @@ import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
 import { refreshAuthorizations, getUsers } from '../store/users/actions';
-import { UserRoles, hasRoleOnClient } from '../store';
+import { UserRoles, hasRoleOnClient, isSuperUser } from '../store';
 
 const ClientTypes = {
   Client: 'Client',
@@ -204,7 +204,7 @@ const ClientManage = props => {
     }
   });
 
-  const { form, handleSubmit, pristine, submitting, errors } = useForm({
+  const { form, handleSubmit, submitting, errors } = useForm({
     initialValues: data ? {
       name: data.name || '',
       slogan: data.slogan || '',
@@ -362,28 +362,6 @@ const ClientManage = props => {
       .then(() => {}, () => {});
   }, [id]);
 
-  const renderAvatar = (centered) => {
-    const avatarUrl = !!avatar ? avatar.dataURL : (
-      data && data.logo_url !== Constants.DEFAULT_CLIENT_LOGO_URL ? data.logo_url : null);
-    return (
-      <ImageUploading onChange={handleAvatarChange}>
-        {({ onImageUpload }) => (
-          <div className={`${styles.avatar} ${centered ? styles.centered : ''}`}>
-            <span className={styles.avatarLabel}>Client logo</span>
-            <div
-              className={`${styles.avatarUpload} ${!!avatarUrl ? styles.hasAvatar : ''}`}
-              onClick={onImageUpload}
-            >
-              {!!avatarUrl && <img src={avatarUrl} />}
-              <div className={styles.uploadOverlay}></div>
-              <div className={styles.uploadTrigger}><Upload /></div>
-            </div>
-          </div>
-        )}
-      </ImageUploading>
-    );
-  };
-
   const changeFieldsTab = useCallback((tab) => {
     const fields = ({
       [FieldsTabs.Details]: ['name', 'company_name', 'contact_type',],
@@ -403,9 +381,34 @@ const ClientManage = props => {
     setFieldsTab(tab);
   }, [errors]);
 
+  const renderAvatarUploader = (centered, preview) => {
+    const avatarUrl = !!avatar ? avatar.dataURL : (
+      data && data.logo_url !== Constants.DEFAULT_CLIENT_LOGO_URL ? data.logo_url : null);
+    return (
+      <ImageUploading onChange={handleAvatarChange}>
+        {({ onImageUpload }) => (
+          <div className={`${styles.avatar} ${centered ? styles.centered : ''}`}>
+            <span className={styles.avatarLabel}>Client logo</span>
+            <div
+              className={`${styles.avatarUpload} ${!!avatarUrl ? styles.hasAvatar : ''}`}
+              {...(!preview ? { onClick: onImageUpload } : {})}
+            >
+              {!!avatarUrl && <img src={avatarUrl} />}
+              {!preview && (<>
+                <div className={styles.uploadOverlay}></div>
+                <div className={styles.uploadTrigger}><Upload /></div>
+              </>)}
+            </div>
+          </div>
+        )}
+      </ImageUploading>
+    );
+  };
+
   const renderCreateCancelButton = () => (
     <Button transparent disabled={submitting || isBusy} onClick={() => {
       setFieldsTab(FieldsTabs.Details);
+      setPersistFieldsErrors(false);
       form.reset();
       handleAvatarChange([]);
     }}>
@@ -481,7 +484,7 @@ const ClientManage = props => {
                         <span>Name and type</span>
                       </div>
                     ) : (
-                      renderAvatar(true)
+                      renderAvatarUploader(true)
                     )}
                     <div className={styles.controlsGroup}>
                       <Input
@@ -501,21 +504,23 @@ const ClientManage = props => {
                         label={`Company name ${canEdit ? '*' : ''}`}
                       />
                     </div>
-                    <div className={styles.controlsGroup}>
-                      <Select
-                        className={styles.formControl}
-                        field={contact_type}
-                        preview={!canEdit}
-                        options={clientTypesOptions}
-                        disabled={isBusy}
-                        persistErrors={persistFieldsErrors}
-                        placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
-                        label={`Type ${canEdit ? '*' : ''}`}
-                      />
-                    </div>
+                    {isSuperUser(user.id) && (
+                      <div className={styles.controlsGroup}>
+                        <Select
+                          className={styles.formControl}
+                          field={contact_type}
+                          preview={!canEdit}
+                          options={clientTypesOptions}
+                          disabled={isBusy}
+                          persistErrors={persistFieldsErrors}
+                          placeholder={editMode ? 'UNASSIGNED' : 'Contact type...'}
+                          label={`Type ${canEdit ? '*' : ''}`}
+                        />
+                      </div>
+                    )}
                     <div className={styles.controlsGroup}>
                       {editMode && (
-                        renderAvatar()
+                        renderAvatarUploader(false, !canEdit)
                       )}
                       <div>
                         <Input
@@ -526,7 +531,7 @@ const ClientManage = props => {
                           persistErrors={persistFieldsErrors}
                           label="Motto"
                         />
-                        {contact_type.input.value === ClientTypes.Partner && (
+                        {contact_type.input.value === ClientTypes.Partner && isSuperUser(user.id) && (
                           <Input
                             className={styles.formControl}
                             field={subdomain}

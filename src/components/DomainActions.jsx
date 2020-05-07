@@ -40,7 +40,7 @@ const DomainActions = props => {
     dispatch(deleteDomain(id, clientId)).then(stopLoading, stopLoading);
   }, [clientId]);
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
       let err;
       if (!Validators.hasValue(values.add_domain_name)) {

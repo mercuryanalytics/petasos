@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './AccessRestricted.module.css';
 import Routes from '../utils/routes';
 import Screen from './Screen';
-import { NavLink } from 'react-router-dom';
 
 const AccessRestricted = () => {
   return (

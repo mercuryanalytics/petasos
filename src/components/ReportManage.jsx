@@ -72,7 +72,7 @@ const ReportManage = props => {
     });
   }, [data, history]);
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
       url: data.url || '',

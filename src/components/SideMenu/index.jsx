@@ -114,6 +114,7 @@ const SideMenu = props => {
   }, [props.onLoad, activeClient, activeProject, activeReport]);
 
   useEffect(init, []);
+
   useEffect(() => {
     if (awaitRoute && awaitRoute === history.location.pathname) {
       init(true);
@@ -214,18 +215,11 @@ const SideMenu = props => {
             handleProjectOpen(p);
             setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
           } else {
-            dispatch(getProject(task.target)).then(action => {
-              if (action.type === 'GET_PROJECT_FAILURE' && task.clientId) {
-                dispatch(getClientReports(task.clientId)).then((action) => {
-                  if (
-                    Array.isArray(action.payload) &&
-                    action.payload.filter(cr => cr.id === task.reportId).length
-                  ) {
-                    setTask({ type: TaskTypes.OpenClient, target: task.clientId });
-                  }
-                }, () => {});
+            dispatch(getProject(task.target)).then(() => {}, () => {
+              if (task.clientId) {
+                handleClientOpen({ id: task.clientId });
               }
-            }, () => {});
+            });
           }
           break;
         case TaskTypes.OpenClient:

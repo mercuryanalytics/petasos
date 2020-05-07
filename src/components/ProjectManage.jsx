@@ -105,7 +105,7 @@ const ProjectManage = props => {
     });
   }, [data, history]);
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {
       name: data.name || '',
       project_number: data.project_number || '',

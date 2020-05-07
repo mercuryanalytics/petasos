@@ -167,7 +167,7 @@ const UserActions = props => {
     }, stopLoading);
   }, [clientId, selectedUserId]);
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
       let err;
       if (!Validators.hasValue(values.add_user_email)) {
@@ -208,12 +208,6 @@ const UserActions = props => {
           setIsAddUserOpen(false);
         };
         let promises = [];
-        // if (contextId) {
-        //   promises.push(
-        //     dispatch(authorizeUser(user.id, contextId, { clientId: contextId }, { authorize: true }))
-        //       .then(() => {}, () => {})
-        //   );
-        // }
         Promise.all(promises).then(() => {
           promises = contextId ? [
             dispatch(getUsers(contextId, true)).then(() => {}, () => {}),

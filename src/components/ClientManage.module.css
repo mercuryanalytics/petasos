@@ -267,7 +267,7 @@
   font-size: .75rem;
   font-weight: bold;
   color: #333;
-  text-align: center;
+  text-align: left;
 }
 
 .section.details .editor .avatar .avatarUpload {
@@ -278,7 +278,6 @@
   box-sizing: border-box;
   border: 1px solid #DFDFDF;
   background-color: #fff;
-  cursor: pointer;
   overflow: hidden;
 }
 
@@ -297,6 +296,7 @@
   height: 100%;
   background-color: #F7F7F7;
   opacity: .6;
+  cursor: pointer;
 }
 
 .section.details .editor .avatar .avatarUpload.hasAvatar .uploadOverlay {

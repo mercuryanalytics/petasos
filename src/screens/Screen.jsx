@@ -14,6 +14,7 @@ import SideMenu from '../components/SideMenu';
 import Loader from '../components/Loader';
 import Button from '../components/Button';
 import { EmptyState } from '../components/Icons';
+import { isSuperUser } from '../store';
 
 const Screen = props => {
   const dispatch = useDispatch();
@@ -101,13 +102,13 @@ const Screen = props => {
           <Header authUser={authUser} localUser={localUser} logo={customLogo} slogan={customSlogan} />
         </div>
         <div className={styles.body}>
-          {props.showSideBar !== false && !realEmptyState && (
+          {props.showSideBar !== false && (!realEmptyState || isSuperUser(localUser.id)) && (
             <div className={styles.side}>
               <SideMenu userId={localUser.id} onLoad={handleSideMenuLoad} />
             </div>
           )}
           <div className={styles.content}>
-            {!emptyState ? (
+            {(!emptyState || isSuperUser(localUser.id)) ? (
               (!isSideMenuLoading || props.showSideBar === false) ? (
                 <>{props.children}</>
               ) : (

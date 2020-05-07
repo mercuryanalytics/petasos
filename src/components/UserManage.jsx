@@ -27,10 +27,9 @@ const UserManage = props => {
     }
   }, [id]);
 
-  const { form, handleSubmit, pristine, submitting } = useForm({
+  const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {
       email: data.email || '',
-      // company_name: data.company_name || '',
       contact_name: data.contact_name || '',
       contact_title: data.contact_title || '',
       contact_phone: data.contact_phone || '',
@@ -44,15 +43,10 @@ const UserManage = props => {
     } : {},
     validate: (values) => {
       let errors = {};
-      // let isChangingPassword = false;
       let requiredFields = [
         'email', 'contact_name', 'contact_phone', 'contact_email',
         'mailing_address_1', 'mailing_city', 'mailing_state', 'mailing_zip',
       ];
-      // if (!!values.new_password) {
-      //   isChangingPassword = true;
-      //   requiredFields.push('new_password_confirm');
-      // }
       requiredFields.forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
@@ -64,18 +58,12 @@ const UserManage = props => {
       if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
         errors.contact_email = 'Field value must be a valid email format.';
       }
-      // if (isChangingPassword && !errors.new_password_confirm) {
-      //   if (values.new_password !== values.new_password_confirm) {
-      //     errors.new_password_confirm = 'Password does not match.';
-      //   }
-      // }
       return errors;
     },
     onSubmit: (values) => {
       setIsBusy(true);
       const result = {
         email: values.email,
-        // company_name: values.company_name,
         contact_name: values.contact_name,
         contact_title: values.contact_title,
         contact_phone: values.contact_phone,
@@ -111,7 +99,6 @@ const UserManage = props => {
   });
 
   const email = useField('email', form);
-  // const company_name = useField('company_name', form);
   const contact_name = useField('contact_name', form);
   const contact_title = useField('contact_title', form);
   const contact_phone = useField('contact_phone', form);
@@ -122,8 +109,6 @@ const UserManage = props => {
   const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_country = useField('mailing_country', form);
-  const new_password = useField('new_password', form);
-  const new_password_confirm = useField('new_password_confirm', form);
 
   const renderRequiredFieldLabel = (label) => (
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>
@@ -239,27 +224,6 @@ const UserManage = props => {
               </a>
             </div>
           )}
-          {/* {(!preview || isEditClicked) && (
-            <div className={`${styles.formSection} ${styles.passwordSection}`}>
-              <div className={styles.title}>
-                <span>{editMode ? 'Change password' : 'Password'}</span>
-              </div>
-              <div className={styles.controlsGroup}>
-                <Input
-                  className={styles.formControl}
-                  type="password"
-                  field={new_password}
-                  label="Password"
-                />
-                <Input
-                  className={styles.formControl}
-                  type="password"
-                  field={new_password_confirm}
-                  label={`Confirm password ${!!new_password.input.value.length ? '*' : ''}`}
-                />
-              </div>
-            </div>
-          )} */}
           {(!preview || isEditClicked) && (
             <div className={styles.formButtons}>
               <Button type="submit" disabled={submitting} loading={isBusy}>
