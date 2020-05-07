@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styles from './index.module.css';
+import Routes from '../../utils/routes';
 import { getClients } from '../../store/clients/actions';
 import { getProject, getProjects, getOrphanProjects } from '../../store/projects/actions';
 import { getReport, getReports, getOrphanReports, getClientReports } from '../../store/reports/actions';
@@ -33,6 +35,7 @@ const searchComponentTargets = [
 
 const SideMenu = props => {
   const { userId } = props;
+  const history = useHistory();
   const dispatch = useDispatch();
   const [task, setTask] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +49,7 @@ const SideMenu = props => {
   const activeProject = useSelector(state => state.locationReducer.data.project);
   const activeReport = useSelector(state => state.locationReducer.data.report);
   const isActiveAddLink = useSelector(state => state.locationReducer.data.create);
+  const [awaitRoute, setAwaitRoute] = useState(null);
   const [openClients, setOpenClients] = useState({});
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
@@ -70,38 +74,64 @@ const SideMenu = props => {
   const [filteredOrphanReports, setFilteredOrphanReports] = useState([]);
   const [filteredClientReports, setFilteredClientReports] = useState([]);
 
-  const init = useCallback(async () => {
-    let resultsCount = 0;
-    return await Promise.all([
+  const init = useCallback((complete) => {
+    const handleSuccess = () => {
+      if (props.onLoad) {
+        props.onLoad(false);
+      }
+      setIsLoading(false);
+    };
+    if (complete) {
+      handleSuccess();
+      return;
+    }
+    setIsLoading(true);
+    let defaultRoute;
+    Promise.all([
       dispatch(getClients()).then((action) => {
-        resultsCount += action.payload.length;
+        if (action.payload.length) {
+          defaultRoute = Routes.ManageClient.replace(':id', action.payload[0].id);
+        }
       }, () => {}),
       dispatch(getOrphanProjects()).then((action) => {
-        resultsCount += action.payload.length;
+        if (action.payload.length) {
+          defaultRoute = Routes.ManageProject.replace(':id', action.payload[0].id);
+        }
       }, () => {}),
       dispatch(getOrphanReports()).then((action) => {
-        resultsCount += action.payload.length;
+        if (action.payload.length) {
+          defaultRoute = Routes.ManageReport.replace(':id', action.payload[0].id);
+        }
       }, () => {}),
     ]).then(() => {
-      if (props.onLoad) {
-        props.onLoad(!resultsCount);
+      if (!activeClient && !activeProject && !activeReport && defaultRoute) {
+        setAwaitRoute(defaultRoute);
+        history.push(defaultRoute);
+      } else {
+        handleSuccess();
       }
-      return new Promise(resolve => resolve(null));
     });
-  }, [props.onLoad]);
+  }, [props.onLoad, activeClient, activeProject, activeReport]);
 
+  useEffect(init, []);
   useEffect(() => {
-    setIsLoading(true);
-    init().then(() => setIsLoading(false));
-  }, []);
+    if (awaitRoute && awaitRoute === history.location.pathname) {
+      init(true);
+      setAwaitRoute(null);
+    }
+  }, [awaitRoute, history.location.pathname]);
 
   const initProjectCreationRights = useCallback((clientId, clientProjects) => {
     let canCreate = false;
-    for (let i = 0; i < clientProjects.length; i++) {
-      if (hasRoleOnProject(userId, clientProjects[i].id, UserRoles.ProjectManager)) {
-        canCreate = true;
-        break;
+    if (clientProjects.length) {
+      for (let i = 0; i < clientProjects.length; i++) {
+        if (hasRoleOnProject(userId, clientProjects[i].id, UserRoles.ProjectManager)) {
+          canCreate = true;
+          break;
+        }
       }
+    } else {
+      canCreate = isSuperUser(userId);
     }
     setCanCreateProjects(prev => ({ ...prev, [clientId]: canCreate }));
   }, [userId]);
@@ -413,7 +443,7 @@ const SideMenu = props => {
         || (isSearching && !filteredClients.length && (
           <div className={styles.noResults}>No results</div>
         ))
-        || (<>
+        || (!isLoading && (<>
           {clients && !!clients.length && (
             (isSearching ? filteredClients : clients).map(client => (
               <Client
@@ -440,7 +470,10 @@ const SideMenu = props => {
               />
             ))
           )}
-          {((orphanProjects && !!orphanProjects.length) || (orphanReports && !!orphanReports.length)) && (
+          {!!clients.length && (
+            (orphanProjects && !!orphanProjects.length) ||
+            (orphanReports && !!orphanReports.length)
+          ) && (
             <div className={styles.orphansSeparator}>
               <span>Other reports</span>
             </div>
@@ -473,8 +506,8 @@ const SideMenu = props => {
               />
             ))
           )}
-        </>)}
-        {isSuperUser(userId) && (
+        </>))}
+        {!isLoading && isSuperUser(userId) && (
           <div className={styles.add}>
             <ClientAdd />
           </div>

@@ -34,11 +34,11 @@ const Textarea = props => {
           {field.input.value !== '' ? field.input.value : 'N/A'}
         </span>
       )}
-      {!preview &&
-        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
-        field.meta.error && (
-          <div className={styles.error}>{field.meta.error}</div>
-        )}
+      {!!field && !preview && (
+        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
+      ) && field.meta.error && (
+        <div className={styles.error}>{field.meta.error}</div>
+      )}
     </div>
   );
 };

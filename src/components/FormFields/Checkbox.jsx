@@ -36,11 +36,11 @@ const Checkbox = props => {
           <span data-checkbox-label className={styles.label}>{label}</span>
         )}
       </label>
-      {!preview &&
-        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
-        field.meta.error && (
-          <div className={styles.error}>{field.meta.error}</div>
-        )}
+      {!!field && !preview && (
+        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
+      ) && field.meta.error && (
+        <div className={styles.error}>{field.meta.error}</div>
+      )}
     </div>
   ) : '';
 };
