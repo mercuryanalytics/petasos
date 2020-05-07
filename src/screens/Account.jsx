@@ -16,7 +16,7 @@ const Account = () => {
   });
 
   return (
-    <Screen className={styles.container} private onLoad={handleScreenLoad}>
+    <Screen className={styles.container} private independent onLoad={handleScreenLoad}>
       <div className={styles.breadcrumbs}>
         <Breadcrumbs data={['My account'].concat(user ? [user.email] : [])} />
       </div>

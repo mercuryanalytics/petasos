@@ -99,12 +99,21 @@ const Screen = props => {
     !props.blank ? (
       <div className={`${styles.container} ${props.className || ''}`}>
         <div className={styles.head}>
-          <Header authUser={authUser} localUser={localUser} logo={customLogo} slogan={customSlogan} />
+          <Header
+            authUser={authUser}
+            localUser={localUser}
+            logo={customLogo}
+            slogan={customSlogan}
+          />
         </div>
         <div className={styles.body}>
           {props.showSideBar !== false && (!realEmptyState || isSuperUser(localUser.id)) && (
             <div className={styles.side}>
-              <SideMenu userId={localUser.id} onLoad={handleSideMenuLoad} />
+              <SideMenu
+                userId={localUser.id}
+                autoselect={!props.independent}
+                onLoad={handleSideMenuLoad}
+              />
             </div>
           )}
           <div className={styles.content}>
