@@ -40,7 +40,7 @@
   /* scrollable */
   position: relative;
   height: calc(100% - 37px);
-  margin: 0 10px;
+  padding: 0 10px;
 }
 
 .arrow {
