@@ -467,7 +467,7 @@ const ClientManage = props => {
           <div className={`${styles.editor} ${!editMode ? styles.sectioned : ''}`}>
             {editMode && (
               <div className={styles.actions}>
-                {canEdit && (
+                {isSuperUser(user.id) && (
                   <Button transparent onClick={handleDelete} loading={isDeleteBusy}>
                     <Bin className={styles.deleteIcon} />
                     <span>{!isDeleteBusy ? 'Delete client' : 'Deleting client'}</span>
