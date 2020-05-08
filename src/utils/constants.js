@@ -1,14 +1,14 @@
 const APP_HOST = window.location.host;
 
 const APP_URL = (() => {
-  return `http://${APP_HOST}`;
+  return `${APP_HOST.indexOf('localhost') === 0 ? 'http' : 'https'}://${APP_HOST}`;
 })();
 
 const API_HOST = (() => {
   if (APP_HOST.indexOf('aurelianb.com') > -1) {
-    return 'http://api.aurelianb.com';
+    return 'https://api.aurelianb.com';
   }
-  return 'http://mercury-analytics-api.herokuapp.com';
+  return 'https://mercury-analytics-api.herokuapp.com';
 })();
 
 const API_URL = (() => {
