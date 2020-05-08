@@ -74,15 +74,15 @@ const SideMenu = props => {
   const [filteredOrphanReports, setFilteredOrphanReports] = useState([]);
   const [filteredClientReports, setFilteredClientReports] = useState([]);
 
-  const init = useCallback((complete) => {
-    const handleSuccess = () => {
+  const init = useCallback((status) => {
+    const handleSuccess = (isEmptyState) => {
       if (props.onLoad) {
-        props.onLoad(false);
+        props.onLoad(isEmptyState);
       }
       setIsLoading(false);
     };
-    if (complete) {
-      handleSuccess();
+    if (status === true || status === false) {
+      handleSuccess(status);
       return;
     }
     setIsLoading(true);
@@ -109,7 +109,7 @@ const SideMenu = props => {
         setAwaitRoute(defaultRoute);
         history.push(defaultRoute);
       } else {
-        handleSuccess();
+        handleSuccess(!defaultRoute);
       }
     });
   }, [
