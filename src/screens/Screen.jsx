@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
-import Constants from '../utils/constants';
 import Routes from '../utils/routes';
 import { isLoggedIn } from '../App';
 import { setLocationData } from '../store/location/actions';
@@ -13,7 +12,6 @@ import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
 import Loader from '../components/Loader';
-import Button from '../components/Button';
 import { EmptyState } from '../components/Icons';
 import { isSuperUser } from '../store';
 

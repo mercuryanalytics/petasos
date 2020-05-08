@@ -18,7 +18,7 @@ const Button = props => {
   `;
 
   const href = !!props.mailto ? `mailto:${props.mailto}` : (!!props.link ?
-    (props.link.match(/^.+\:\/\//) ? props.link : `http://${props.link}`)
+    (props.link.match(/^.+:\/\//) ? props.link : `http://${props.link}`)
     : null);
 
   return (!!href && (

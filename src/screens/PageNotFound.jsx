@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './PageNotFound.module.css';
 import Routes from '../utils/routes';
 import Screen from './Screen';
-import { Link } from 'react-router-dom';
 
 const PageNotFound = () => {
   return (
