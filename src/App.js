@@ -58,7 +58,9 @@ export const login = async (options) => {
 
 export const logout = async () => {
   const lock = createAuth0Lock();
-  await lock.logout();
+  await lock.logout({
+    returnTo: Constants.APP_URL,
+  });
   localStorage.removeItem(auth0StorageKey);
 };
 

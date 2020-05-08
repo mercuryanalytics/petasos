@@ -214,7 +214,7 @@ const UserManage = props => {
               />
             </div>
           </div>
-          {(!preview || isEditClicked) && !embeded && (
+          {/* {(!preview || isEditClicked) && !embeded && (
             <div className={`${styles.formSection} ${styles.passwordSection}`}>
               <div className={styles.title}>
                 <span>Reset password</span>
@@ -223,7 +223,7 @@ const UserManage = props => {
                 <span>Send me a reset password link</span>
               </a>
             </div>
-          )}
+          )} */}
           {(!preview || isEditClicked) && (
             <div className={styles.formButtons}>
               <Button type="submit" disabled={submitting} loading={isBusy}>
