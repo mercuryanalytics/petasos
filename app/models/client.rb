@@ -32,7 +32,12 @@ class Client < ApplicationRecord
   def logo_url
     return logo.blob.service_url(expires_in: 1.week) if partner? && logo.attached?
 
-    image_url('mercury-analytics-logo.png', host: Rails.application.credentials[:app_host])
+    parsed_url = URI.parse(Rails.application.credentials[:app_host])
+
+    image_url(
+      'mercury-analytics-logo.png',
+      host: "#{parsed_url.scheme}://api.#{parsed_url.hostname.delete_prefix('www.')}"
+    )
   end
 
   private

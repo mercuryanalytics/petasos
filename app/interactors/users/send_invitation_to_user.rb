@@ -86,7 +86,7 @@ module Users
 
       parsed_url = URI.parse(Rails.application.credentials[:app_host])
 
-      "#{parsed_url.scheme}://#{client.subdomain}.#{parsed_url.hostname}"
+      "#{parsed_url.scheme}://#{client.subdomain}.#{parsed_url.hostname.delete_prefix('wwww.')}"
     end
 
     def client
