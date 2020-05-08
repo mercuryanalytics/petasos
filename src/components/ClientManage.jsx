@@ -386,7 +386,7 @@ const ClientManage = props => {
     const avatarUrl = !!avatar ? avatar.dataURL : (
       data && data.logo_url !== Constants.DEFAULT_CLIENT_LOGO_URL ? data.logo_url : null);
     return (
-      <ImageUploading onChange={handleAvatarChange}>
+      <ImageUploading acceptType={['jpg','gif','png','gif']} onChange={handleAvatarChange}>
         {({ onImageUpload }) => (
           <div className={`${styles.avatar} ${centered ? styles.centered : ''}`}>
             <span className={styles.avatarLabel}>Client logo</span>
