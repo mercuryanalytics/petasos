@@ -11,6 +11,7 @@ module Users
       update_user_metadata
       send_invitation_email
       clear_user_metadata
+      update_user_metadata_with_base_url
     end
 
     def update_user_metadata
@@ -27,6 +28,17 @@ module Users
       RestClient.patch(
         URI.encode(endpoint),
         { user_metadata: {} }.to_json,
+        authorization_header
+      ) do |response, _, _|
+        context.fail!(message: JSON.parse(response)['message']) unless response.code == 200
+      end
+    end
+
+
+    def update_user_metadata_with_base_url
+      RestClient.patch(
+        URI.encode(endpoint),
+        base_url,
         authorization_header
       ) do |response, _, _|
         context.fail!(message: JSON.parse(response)['message']) unless response.code == 200
@@ -54,9 +66,27 @@ module Users
           {
             logo_url:   client.logo_url,
             invited_by: current_user.contact_name,
-            invited_to: client.name
+            invited_to: client.name,
+            base_url: client_url
           }
       }
+    end
+
+    def base_url
+      {
+        user_metadata: {
+          logo_url: client.logo_url,
+          base_url: client_url
+        }
+      }
+    end
+
+    def client_url
+      return Rails.application.credentials[:app_host] unless client.partner?
+
+      parsed_url = URI.parse(Rails.application.credentials[:app_host])
+
+      "#{parsed_url.scheme}://#{client.subdomain}.#{parsed_url.hostname}"
     end
 
     def client
