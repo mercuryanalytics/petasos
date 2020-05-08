@@ -128,8 +128,6 @@ const Screen = props => {
               <div className={styles.emptyState}>
                 <EmptyState />
                 <span>You don’t have access to any project or reports</span>
-                {/* @TODO Add contact email */}
-                <Button mailto={Constants.APP_CONTACT_EMAIL}>Contact your administrator</Button>
               </div>
             )}
           </div>
