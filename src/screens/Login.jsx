@@ -7,16 +7,17 @@ import Loader from '../components/Loader';
 
 const Login = () => {
   const history = useHistory();
+  const from = history.location.hash.substr(1);
 
   if (!isLoggedIn()) {
     getLogo().then((logo) => {
       login({
-        from: history.location.hash.substr(1),
+        from: from,
         logo: logo,
       });
     }, () => {});
   } else {
-    return <Redirect to={Routes.Home} />;
+    return <Redirect to={from || Routes.Home} />;
   }
 
   return <Loader />;
