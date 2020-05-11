@@ -1,0 +1,13 @@
+:global([role="tooltip"] > div > div:first-child > div) {
+  padding: 8px !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  background-color: #0B7693 !important;
+  color: #fff;
+  font-size: .75rem;
+  line-height: 20px;
+}
+
+:global([role="tooltip"] > div > div:last-child) {
+  border-bottom-color: #0B7693 !important;
+}

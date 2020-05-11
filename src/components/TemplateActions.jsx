@@ -4,6 +4,7 @@ import styles from './TemplateActions.module.css';
 import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
+import Tooltip from './Tooltip';
 import Scrollable from './Scrollable';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
@@ -75,7 +76,15 @@ const TemplateActions = props => {
       {!!client && (<>
         <div className={styles.checkboxesTitles}>
           <div className={styles.checkboxTitle}>
-            <div>View<span title=""><InfoStroke /></span></div>
+            <div>
+              <span>View</span>
+              <div>
+                <Tooltip id="view-permission-tt" location="bottom" zIndex={5}>
+                  <span>PERMISSION_DESC</span>
+                </Tooltip>
+                <InfoStroke />
+              </div>
+            </div>
           </div>
         </div>
         <Scrollable className={styles.templatesActions}>

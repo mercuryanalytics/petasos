@@ -5,6 +5,7 @@ import Loader from './Loader';
 import Avatar from './Avatar';
 import Toggle from './Toggle';
 import Scrollable from './Scrollable';
+import Tooltip from './Tooltip';
 import { Checkbox } from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
@@ -186,32 +187,44 @@ const ResourceActions = props => {
     setActiveStates(prev => ({ ...prev, ...newStates }));
   }, [userId, getItemStatus]);
 
-  const renderCheckboxesTitles = useCallback(() => (
-    <div className={styles.checkboxesTitles}>
+  const renderColumnCheckboxesTitles = useCallback(() => {
+    const renderTitle = (label, description) => (
       <div className={styles.checkboxTitle}>
-        <div>View<span title=""><InfoStroke /></span></div>
-      </div>
-      <div className={styles.checkboxTitle}>
-        <div>Edit<span title=""><InfoStroke /></span></div>
-      </div>
-      <div className={styles.checkboxTitle}>
-        <div>Admin<span title=""><InfoStroke /></span></div>
-      </div>
-      {!clientId && !!scopes.dynamic && <>
-        <div className={styles.verticalSeparator} style={{ right: `${(scopes.dynamic.length * 100) + 40}px` }}></div>
-        {scopes.dynamic.map((s, i) => (
-          <div
-            key={`scope-title-${s.id}`}
-            className={`${styles.checkboxTitle} ${styles.scoped} ${i === 0 ? styles.separator : ''}`}
-          >
-            <div>{s.name}<span title={s.description}><InfoStroke /></span></div>
+        <div>
+          <span>{label}</span>
+          <div>
+            <Tooltip id={`${label.toLowerCase()}-permission-tt`} location="bottom" zIndex={5}>
+              <span>{description}</span>
+            </Tooltip>
+            <InfoStroke />
           </div>
-        ))}
-      </>}
-    </div>
-  ));
+        </div>
+      </div>
+    );
+    return (
+      <div className={styles.checkboxesTitles}>
+        {renderTitle('View', 'PERMISSION_DESC')}
+        {renderTitle('Edit', 'PERMISSION_DESC')}
+        {renderTitle('Admin', 'PERMISSION_DESC')}
+        {!clientId && !!scopes.dynamic && <>
+          <div
+            className={styles.verticalSeparator}
+            style={{ right: `${(scopes.dynamic.length * 100) + 40}px` }}
+          />
+          {scopes.dynamic.map((s, i) => (
+            <div
+              key={`scope-title-${s.id}`}
+              className={`${styles.checkboxTitle} ${styles.scoped} ${i === 0 ? styles.separator : ''}`}
+            >
+              <div>{s.name}</div>
+            </div>
+          ))}
+        </>}
+      </div>
+    );
+  });
 
-  const renderCheckboxes = (resType, resId, parentId) => {
+  const renderColumnCheckboxes = (resType, resId, parentId) => {
     const rolePrefix = resType[0].toUpperCase() + resType.substr(1);
     const managerRole = UserRoles[`${rolePrefix}Manager`];
     const adminRole = UserRoles[`${rolePrefix}Admin`];
@@ -249,6 +262,7 @@ const ResourceActions = props => {
             {!!scopes.global && scopes.global.map(s => (
               <Checkbox
                 key={`global-scope-${s.id}`}
+                className={['admin','research'].includes(s.action) ? styles.local : ''}
                 label={s.name}
                 checked={getItemStatus(null, null, null, s.id, true)}
                 onChange={e => setItemStatus(null, null, null, !!e.target.checked, null, s.id, true)}
@@ -261,7 +275,7 @@ const ResourceActions = props => {
         </div>
       </>)}
       <div className={styles.resources}>
-      {renderCheckboxesTitles()}
+      {renderColumnCheckboxesTitles()}
       <Scrollable className={styles.resourcesActions}>
         {!!clients.length ? (<>
           {clients.map(client => (
@@ -282,7 +296,7 @@ const ResourceActions = props => {
                   checked={getItemStatus('client', client.id)}
                   onChange={status => setItemStatus('client', client.id, client.id, status)}
                 />
-                {renderCheckboxes('client', client.id, client.id)}
+                {renderColumnCheckboxes('client', client.id, client.id)}
               </div>
               {!!openClients[client.id] && (!!loadedClients[client.id] ? (
                 (
@@ -305,7 +319,7 @@ const ResourceActions = props => {
                           checked={getItemStatus('project', project.id)}
                           onChange={status => setItemStatus('project', project.id, project.domain_id, status)}
                         />
-                        {renderCheckboxes('project', project.id, project.domain_id)}
+                        {renderColumnCheckboxes('project', project.id, project.domain_id)}
                       </div>
                       {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
                         (!!reports[project.id] && !!reports[project.id].length) ? (
@@ -325,7 +339,7 @@ const ResourceActions = props => {
                                   onChange={status =>
                                     setItemStatus('report', report.id, report.project.domain_id, status)}
                                 />
-                                {renderCheckboxes('report', report.id, report.project.domain_id)}
+                                {renderColumnCheckboxes('report', report.id, report.project.domain_id)}
                               </div>
                             </div>
                           ))
@@ -353,7 +367,7 @@ const ResourceActions = props => {
                           onChange={status =>
                             setItemStatus('report', clientReport.id, clientReport.project.domain_id, status)}
                         />
-                        {renderCheckboxes('report', clientReport.id, clientReport.project.domain_id)}
+                        {renderColumnCheckboxes('report', clientReport.id, clientReport.project.domain_id)}
                       </div>
                     </div>
                   ))}
