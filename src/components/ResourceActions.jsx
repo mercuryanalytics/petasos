@@ -158,9 +158,9 @@ const ResourceActions = props => {
           }
         } else {
           skipCollections = true;
-          if (role === adminRole) {
-            newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
-            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }))
+          if (role === managerRole) {
+            newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
+            dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
               .then(() => {}, () => {});
           }
         }
