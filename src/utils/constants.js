@@ -1,25 +1,39 @@
-const APP_HOST = window.location.host;
+import Env, { EnvTypes } from './env';
 
-const APP_URL = (() => {
-  return `${APP_HOST.indexOf('localhost') === 0 ? 'http' : 'https'}://${APP_HOST}`;
-})();
+const EnvTypeToUrlsMap = {
+  [EnvTypes.PRODUCTION]: {
+    APP_URL: '',
+    API_HOST: '',
+    API_URL: '',
+  },
+  [EnvTypes.DEVELOPMENT]: {
+    APP_URL: Env.publicUrl,
+    API_HOST: 'https://mercury-analytics-api.herokuapp.com',
+    API_URL: 'https://mercury-analytics-api.herokuapp.com/api/v1',
+  },
+  [EnvTypes.STAGING_HEROKU]: {
+    APP_URL: Env.publicUrl,
+    API_HOST: 'https://mercury-analytics-api.herokuapp.com',
+    API_URL: 'https://mercury-analytics-api.herokuapp.com/api/v1',
+  },
+  [EnvTypes.STAGING_AWS]: {
+    APP_URL: Env.publicUrl,
+    API_HOST: 'https://api.aurelianb.com',
+    API_URL: 'https://api.aurelianb.com/api/v1',
+  },
+};
 
-const API_HOST = (() => {
-  if (APP_HOST.indexOf('aurelianb.com') > -1) {
-    return 'https://api.aurelianb.com';
-  }
-  return 'https://mercury-analytics-api.herokuapp.com';
-})();
+const Urls = EnvTypeToUrlsMap[Env.type];
 
-const API_URL = (() => {
-  return `${API_HOST}/api/v1`;
-})();
+if (!Urls) {
+  throw new Error('Invalid application environment');
+}
 
 const Constants = {
-  APP_URL: APP_URL,
-  API_URL: API_URL,
-  DEFAULT_APP_LOGO_URL: `${API_HOST}/images/mercury-analytics-logo.png`,
-  DEFAULT_CLIENT_LOGO_URL: `${API_HOST}/images/mercury-analytics-logo.png`,
+  APP_URL: Urls.APP_URL,
+  API_URL: Urls.API_URL,
+  DEFAULT_APP_LOGO_URL: `${Urls.API_HOST}/images/mercury-analytics-logo.png`,
+  DEFAULT_CLIENT_LOGO_URL: `${Urls.API_HOST}/images/mercury-analytics-logo.png`,
 };
 
 export default Constants;
