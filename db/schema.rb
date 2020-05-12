@@ -10,9 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_045541) do
+ActiveRecord::Schema.define(version: 2020_05_11_104456) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -33,7 +36,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "authorizations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "authorizations", force: :cascade do |t|
     t.integer "user_id"
     t.string "subject_class"
     t.integer "subject_id"
@@ -45,14 +48,14 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.index ["user_id"], name: "index_authorizations_on_user_id"
   end
 
-  create_table "authorizations_scopes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "authorizations_scopes", force: :cascade do |t|
     t.bigint "authorization_id", null: false
     t.bigint "scope_id", null: false
     t.index ["authorization_id"], name: "index_authorizations_scopes_on_authorization_id"
     t.index ["scope_id"], name: "index_authorizations_scopes_on_scope_id"
   end
 
-  create_table "client_accesses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "client_accesses", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.string "account_id"
     t.datetime "created_at", precision: 6, null: false
@@ -60,7 +63,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.index ["client_id"], name: "index_client_accesses_on_client_id"
   end
 
-  create_table "clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "clients", force: :cascade do |t|
     t.string "name"
     t.string "uuid"
     t.datetime "created_at", precision: 6, null: false
@@ -90,7 +93,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.string "subdomain"
   end
 
-  create_table "domains", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "domains", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -98,26 +101,19 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.index ["client_id"], name: "index_domains_on_client_id"
   end
 
-  create_table "memberships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "client_id", null: false
     t.index ["client_id"], name: "index_memberships_on_client_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
-  create_table "memberships_scopes", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "membership_id"
-    t.bigint "scope_id"
-    t.index ["membership_id"], name: "index_memberships_scopes_on_membership_id"
-    t.index ["scope_id"], name: "index_memberships_scopes_on_scope_id"
-  end
-
-  create_table "project_accesses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "project_accesses", force: :cascade do |t|
     t.string "account_id"
     t.integer "project_id"
   end
 
-  create_table "projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "projects", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.string "project_number"
@@ -129,12 +125,12 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "report_accesses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "report_accesses", force: :cascade do |t|
     t.string "account_id"
     t.integer "report_id"
   end
 
-  create_table "reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "reports", force: :cascade do |t|
     t.string "name"
     t.string "url"
     t.text "description"
@@ -145,7 +141,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "scopes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "scopes", force: :cascade do |t|
     t.string "scope"
     t.string "action"
     t.text "description"
@@ -156,14 +152,14 @@ ActiveRecord::Schema.define(version: 2020_04_30_045541) do
     t.string "name"
   end
 
-  create_table "scopes_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "scopes_users", id: false, force: :cascade do |t|
     t.bigint "scope_id"
     t.bigint "user_id"
     t.index ["scope_id"], name: "index_scopes_users_on_scope_id"
     t.index ["user_id"], name: "index_scopes_users_on_user_id"
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "auth_id"
     t.datetime "created_at", precision: 6, null: false
