@@ -31,9 +31,9 @@ module Authorizations
     def parent
       case instance
       when Report
-        [Project, instance.project_id]
+        ['Project', instance.project_id]
       when Project
-        [Client, instance.domain_id]
+        ['Client', instance.domain_id]
       else
         [nil, nil]
       end
