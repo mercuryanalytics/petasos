@@ -4,7 +4,7 @@ class AddScopeNameAndCorrectGlobalDynamicScopes < ActiveRecord::Migration[6.0]
 
     reversible do |dir|
       dir.up do
-§        add_column :scopes, :name, :string unless column_exists?(:scopes, :name)
+        add_column :scopes, :name, :string unless column_exists?(:scopes, :name)
 
         Scope.create!(name: 'Mercury Analytics Admin', action: 'admin', scope: 'admin', description: 'Global admin', global: true)
         Scope.create!(name: 'Researcher', action: 'research', scope: 'user', description: 'Research project', global: true)
