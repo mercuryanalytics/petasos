@@ -4,6 +4,6 @@ module Users
 
     organize ValidateUser, CreateAuth0User, CreateUser, AddUserToClient,
              SetAuthorizationType, Authorizations::AddAuthorization, Authorizations::AddClientDefaultAuthorizations,
-             SendInvitationToUser
+             SendInvitationToUser, SendResetPasswordToUser
   end
 end

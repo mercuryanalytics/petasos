@@ -4,9 +4,12 @@ module Users
 
     AUTH0_CONNECTION_TYPE = 'Username-Password-Authentication'
 
-    delegate :user, to: :context
+    delegate :user, :no_auth, :client_id, :client, to: :context
 
     def call
+      return if client_id.present? || client.present?
+      return if context.new_user == 0 && no_auth.to_i == 1
+
       RestClient.post(reset_password_endpoint, payload, authorization_header) do |response, _, _|
         context.fail!(message: response.body) if response.code != 200
       end
