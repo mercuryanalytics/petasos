@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './ClientAdd.module.css';
-import Button from '../Button';
+import Button from '../common/Button';
 import Routes from '../../utils/routes';
 
 const ClientAdd = () => {

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
 import { getLogo, isLoggedIn, login } from '../App';
 import { Redirect } from 'react-router-dom';
-import Loader from '../components/Loader';
+import Loader from '../components/common/Loader';
 
 const Login = () => {
   const history = useHistory();

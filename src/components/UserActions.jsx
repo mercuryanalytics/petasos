@@ -11,15 +11,15 @@ import {
   getUserAuthorizations,
 } from '../store/users/actions';
 import { useForm, useField } from 'react-final-form-hooks';
-import Loader from './Loader';
-import Search from './Search';
+import Loader from './common/Loader';
+import Search from './common/Search';
 import { MdPlayArrow } from 'react-icons/md';
 import { Bin, Menu } from './Icons';
-import { confirm } from './Confirm';
-import Toggle from './Toggle';
-import Modal from './Modal';
-import Button from './Button';
-import Scrollable from './Scrollable';
+import { confirm } from './common/Confirm';
+import Toggle from './common/Toggle';
+import Modal from './common/Modal';
+import Button from './common/Button';
+import Scrollable from './common/Scrollable';
 import { Validators, Input } from './FormFields';
 
 export const UserActionsContexts = {

@@ -5,7 +5,7 @@ import Routes from '../utils/routes';
 import { setLocationData } from '../store/location/actions';
 import Screen from './Screen';
 import AccessRestricted from './AccessRestricted';
-import Breadcrumbs from '../components/Breadcrumbs';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';

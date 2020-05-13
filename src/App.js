@@ -9,7 +9,7 @@ import { Route, Switch } from 'react-router-dom';
 import { createAuth0Lock } from './index';
 import store from './store';
 import { setAuthKey, setAuthUser, setPartner } from './store/auth/actions';
-import Loader from './components/Loader';
+import Loader from './components/common/Loader';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
 import SuperUser from './screens/SuperUser';

@@ -6,13 +6,13 @@ import Routes from '../../utils/routes';
 import { getClients } from '../../store/clients/actions';
 import { getProject, getProjects, getOrphanProjects } from '../../store/projects/actions';
 import { getReport, getReports, getOrphanReports, getClientReports } from '../../store/reports/actions';
-import Search from '../Search';
-import Loader from '../Loader';
+import Search from '../common/Search';
+import Loader from '../common/Loader';
 import Client from './Client';
 import ClientAdd from './ClientAdd';
 import Project from './Project';
 import Report from './Report';
-import Scrollable from '../Scrollable';
+import Scrollable from '../common/Scrollable';
 import { UserRoles, isSuperUser, hasRoleOnProject } from '../../store';
 
 const TaskTypes = {

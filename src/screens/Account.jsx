@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import styles from './Account.module.css';
 import { setLocationData } from '../store/location/actions';
 import Screen from './Screen';
-import Breadcrumbs from '../components/Breadcrumbs';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 import UserManage from '../components/UserManage';
 
 const Account = () => {

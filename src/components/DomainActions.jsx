@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './DomainActions.module.css';
 import { getDomains, createDomain, deleteDomain } from '../store/clients/actions';
 import { useForm, useField } from 'react-final-form-hooks';
-import Loader from './Loader';
+import Loader from './common/Loader';
 import { Bin } from './Icons';
-import { confirm } from './Confirm';
-import Modal from './Modal';
-import Button from './Button';
-import Scrollable from './Scrollable';
+import { confirm } from './common/Confirm';
+import Modal from './common/Modal';
+import Button from './common/Button';
+import Scrollable from './common/Scrollable';
 import { Validators, Input } from './FormFields';
 
 const DomainActions = props => {

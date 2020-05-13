@@ -11,7 +11,7 @@ import { getClients } from '../store/clients/actions';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
-import Loader from '../components/Loader';
+import Loader from '../components/common/Loader';
 import { EmptyState } from '../components/Icons';
 import { isSuperUser } from '../store';
 

@@ -4,7 +4,7 @@ import Routes from '../../utils/routes';
 import { Link } from 'react-router-dom';
 import { MdPlayArrow } from 'react-icons/md';
 import { Folder } from '../Icons';
-import Loader from '../Loader';
+import Loader from '../common/Loader';
 import Report from './Report';
 import ReportAdd from './ReportAdd';
 

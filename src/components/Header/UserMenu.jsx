@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './UserMenu.module.css';
 import Routes from '../../utils/routes';
 import HeaderControl from './HeaderControl';
-import Avatar from '../Avatar';
+import Avatar from '../common/Avatar';
 import { Link } from 'react-router-dom';
 
 const UserMenu = props => {

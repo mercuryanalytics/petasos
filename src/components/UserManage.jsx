@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './UserManage.module.css';
-import Loader from './Loader';
-import Button from './Button';
-import Scrollable from './Scrollable';
+import Loader from './common/Loader';
+import Button from './common/Button';
+import Scrollable from './common/Scrollable';
 import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input } from './FormFields';
