@@ -1,3 +1,5 @@
+/* Universal browser resets */
+
 html,
 body,
 div,
@@ -121,4 +123,10 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+/* Application */
+
+body {
+  background-color: #EFF0F4;
 }

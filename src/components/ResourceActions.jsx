@@ -187,25 +187,59 @@ const ResourceActions = props => {
     setActiveStates(prev => ({ ...prev, ...newStates }));
   }, [userId, getItemStatus]);
 
-  const renderColumnCheckboxesTitles = useCallback(() => {
-    const renderTitle = (label, description) => (
-      <div className={styles.checkboxTitle}>
+  const renderCheckboxTitle = useCallback((label, tooltip) => {
+    return (
+      <div className={`${styles.checkboxTitle} ${!tooltip ? styles.noTooltip : ''}`}>
         <div>
           <span>{label}</span>
-          <div>
-            <Tooltip id={`${label.toLowerCase()}-permission-tt`} location="bottom" zIndex={5}>
-              <span>{description}</span>
-            </Tooltip>
-            <InfoStroke />
-          </div>
+          {!!tooltip && (
+            <div>
+              <Tooltip id={`${label.toLowerCase()}-permission-tt`} location="bottom" zIndex={5}>
+                {tooltip}
+              </Tooltip>
+              <InfoStroke />
+            </div>  
+          )}
         </div>
       </div>
     );
+  });
+
+  const renderColumnCheckboxesTitles = useCallback(() => {
     return (
       <div className={styles.checkboxesTitles}>
-        {renderTitle('View', 'PERMISSION_DESC')}
-        {renderTitle('Edit', 'PERMISSION_DESC')}
-        {renderTitle('Admin', 'PERMISSION_DESC')}
+        {renderCheckboxTitle('View', (
+          <div className={styles.tooltip}>
+            <span className={`${styles.item} ${styles.clean}`}>
+              Client/Project/Report visibility on/off
+            </span>
+          </div>
+        ))}
+        {renderCheckboxTitle('Edit', (
+          <div className={styles.tooltip}>
+            <div className={styles.title}>Client level Edit Permissions:</div>
+            <span className={styles.item}>Manage Users and Domains</span>
+            <span className={styles.item}>Edit Client/Project/Report details</span>
+            <div className={styles.title}>Project level Edit Permissions:</div>
+            <span className={styles.item}>Manage Projects & Reports</span>
+            <span className={styles.item}>Edit Project & Reports details</span>
+            <div className={styles.title}>Report level Edit Permissions:</div>
+            <span className={styles.item}>Edit Report details</span>
+          </div>
+        ))}
+        {renderCheckboxTitle('Admin', (
+          <div className={`${styles.tooltip} ${styles.fixed}`}>
+            <div className={styles.title}>Client level Admin Permissions:</div>
+            <span className={styles.item}>Manage the Client's visibility</span>
+            <span className={styles.item}>
+              Manage the Client's User Template (the data new users are provisioned with)
+            </span>
+            <div className={styles.title}>Project level Admin Permissions:</div>
+            <span className={styles.item}>Manage the Project's visibility</span>
+            <div className={styles.title}>Report level Admin Permissions:</div>
+            <span className={styles.item}>Manage the Report's visibility</span>
+          </div>
+        ))}
         {!clientId && !!scopes.dynamic && <>
           <div
             className={styles.verticalSeparator}
@@ -214,7 +248,12 @@ const ResourceActions = props => {
           {scopes.dynamic.map((s, i) => (
             <div
               key={`scope-title-${s.id}`}
-              className={`${styles.checkboxTitle} ${styles.scoped} ${i === 0 ? styles.separator : ''}`}
+              className={`
+                ${styles.checkboxTitle}
+                ${styles.noTooltip}
+                ${styles.scoped}
+                ${i === 0 ? styles.separator : ''}
+              `}
             >
               <div>{s.name}</div>
             </div>
@@ -263,7 +302,29 @@ const ResourceActions = props => {
               <Checkbox
                 key={`global-scope-${s.id}`}
                 className={['admin','research'].includes(s.action) ? styles.local : ''}
-                label={s.name}
+                label={renderCheckboxTitle(s.name,
+                  (s.action === 'admin' && (
+                    <div className={styles.tooltip}>
+                      <span className={`${styles.item} ${styles.clean}`}>
+                        Full View/Edit/Admin rights throughout the application
+                      </span>
+                      <span className={`${styles.item} ${styles.clean}`}>
+                        Ability to create/delete Clients
+                      </span>
+                      <span className={`${styles.item} ${styles.clean}`}>
+                        Super Admin interface
+                      </span>
+                    </div>
+                  )) ||
+                  (s.action === 'research' && (
+                    <div className={`${styles.tooltip} ${styles.fixed}`}>
+                      <span className={`${styles.item} ${styles.clean}`}>
+                      {'The Researcher flag defines which users show up as Research Contact '}
+                      {'option when creating a new Project'}
+                      </span>
+                    </div>
+                  ))
+                )}
                 checked={getItemStatus(null, null, null, s.id, true)}
                 onChange={e => setItemStatus(null, null, null, !!e.target.checked, null, s.id, true)}
               />

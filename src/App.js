@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import './static/base.css';
+import './static/global.css';
 import history from './utils/history';
 import Constants from './utils/constants';
 import Routes from './utils/routes';

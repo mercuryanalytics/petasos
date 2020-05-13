@@ -76,15 +76,7 @@ const TemplateActions = props => {
       {!!client && (<>
         <div className={styles.checkboxesTitles}>
           <div className={styles.checkboxTitle}>
-            <div>
-              <span>View</span>
-              <div>
-                <Tooltip id="view-permission-tt" location="bottom" zIndex={5}>
-                  <span>PERMISSION_DESC</span>
-                </Tooltip>
-                <InfoStroke />
-              </div>
-            </div>
+            <div>View</div>
           </div>
         </div>
         <Scrollable className={styles.templatesActions}>

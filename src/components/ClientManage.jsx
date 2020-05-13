@@ -862,11 +862,22 @@ const ClientManage = props => {
           )) ||
           (accountsTab === AccountsTabs.Domains && (
             <div className={styles.anyActions}>
-              <div className={styles.textBlock}>
-                {'By adding a new domain you allow all users from that domain to authenticate as a '}
-                <span>{data.name}</span>
-                {' user and inherit the default user permissions.'}
-              </div>
+              <Scrollable className={styles.domainsTexts}>
+                <div className={`${styles.textBlock} ${styles.narrow}`}>
+                  {'By adding a new domain you allow all users from that domain to authenticate as a '}
+                  <span>{data.name}</span>
+                  {' user and inherit the default user permissions.'}
+                </div>
+                <div className={`${styles.textBlock} ${styles.narrow}`}>
+                  {'Edit and admin permissions can be granted to these users only after they have '}
+                  {'logged in for the first time.'}
+                </div>
+                <div className={`${styles.textBlock} ${styles.narrow}`}>
+                  {'Adding a domain does NOT automatically distribute an invite to all users in the domain. '}
+                  {'The login URL will have to be manually shared with all new domain users who need '}
+                  {'to access the application.'}
+                </div>
+              </Scrollable>
             </div>
           )) ||
           (showTemplate && (
