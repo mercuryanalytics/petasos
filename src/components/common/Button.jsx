@@ -34,7 +34,12 @@ const Button = props => {
     </Link>
   )) ||
   (
-    <button type={props.type || 'button'} disabled={!!props.disabled} className={`${baseClasses}`} onClick={props.onClick}>
+    <button
+      className={`${baseClasses}`}
+      type={props.type || 'button'}
+      disabled={!!props.disabled}
+      onClick={props.onClick}
+    >
       {props.children}
       {!!loading && renderLoader()}
     </button>

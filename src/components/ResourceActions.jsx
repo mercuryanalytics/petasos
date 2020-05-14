@@ -243,7 +243,7 @@ const ResourceActions = props => {
         {!clientId && !!scopes.dynamic && <>
           <div
             className={styles.verticalSeparator}
-            style={{ right: `${(scopes.dynamic.length * 100) + 40}px` }}
+            style={{ right: `${(scopes.dynamic.length * 70) + 40}px` }}
           />
           {scopes.dynamic.map((s, i) => (
             <div
@@ -405,10 +405,12 @@ const ResourceActions = props => {
                             </div>
                           ))
                         ) : (
-                          <div className={styles.noResults}>No results</div>
+                          <div className={`${styles.noResults} ${!clientId ? styles.left : ''}`}>
+                            No results
+                          </div>
                         )
                       ) : (
-                        <Loader inline className={styles.loader} />
+                        <Loader inline className={`${styles.loader} ${!clientId ? styles.left : ''}`} />
                       ))}
                     </div>
                   ))}
@@ -433,10 +435,12 @@ const ResourceActions = props => {
                     </div>
                   ))}
                 </>) : (
-                  <div className={styles.noResults}>No results</div>
+                  <div className={`${styles.noResults} ${!clientId ? styles.left : ''}`}>
+                    No results
+                  </div>
                 )
               ) : (
-                <Loader inline className={styles.loader} />
+                <Loader inline className={`${styles.loader} ${!clientId ? styles.left : ''}`} />
               ))}
             </div>
           ))}

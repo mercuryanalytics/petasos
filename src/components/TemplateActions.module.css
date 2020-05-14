@@ -196,7 +196,7 @@
 
 .noResults {
   display: block;
-  padding: 5px;
+  padding: 10px 5px;
   text-align: center;
   font-size: .875rem;
   color: #A9A9A9;

@@ -309,9 +309,9 @@
 }
 
 .itemCheckbox.scoped, .checkboxesTitles .checkboxTitle.scoped {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
 }
 
 .itemCheckbox[data-checkbox-disabled] label {
@@ -337,15 +337,21 @@
   margin: 5px 0 !important;
 }
 
+.loader.left {
+  justify-content: left;
+  padding-left: 28px;
+  box-sizing: border-box;
+}
+
 .noResults {
   display: block;
-  padding: 5px;
+  padding: 10px 5px;
   text-align: center;
   font-size: .875rem;
   color: #A9A9A9;
 }
 
-.noResults.alignLeft {
-  margin-left: 57px;
+.noResults.left {
+  margin-left: 23px;
   text-align: left;
 }
