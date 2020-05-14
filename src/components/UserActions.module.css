@@ -42,20 +42,16 @@
 }
 
 .permissions .group .groupTitle {
+  position: relative;
   display: flex;
   align-items: center;
   margin: 5px 0;
-  padding: 0 15px 0 10px;
+  padding: 0 48px 0 10px;
   cursor: pointer;
   border-radius: 12px;
 }
 
-.permissions .group .groupTitle:hover {
-  background-color: #0C7997;
-  color: #fff;
-}
-
-.permissions .group .groupTitle > div {
+.permissions .group .groupTitle > :first-child {
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -64,7 +60,28 @@
   font-weight: bold;
 }
 
-.permissions .group .groupTitle span {
+.permissions .group .groupTitle:hover,
+.permissions .group .groupTitle.active {
+  background-color: #0C7997;
+  color: #fff;
+}
+
+.permissions .group .groupTitle .arrow {
+  margin-right: .5rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.permissions .group .groupTitle:hover .arrow,
+.permissions .group .groupTitle.active .arrow {
+  color: #fff;
+}
+
+.permissions .group .groupTitle .arrow.open {
+  transform: rotate(90deg);
+}
+
+.permissions .group .groupTitle > div > span {
   flex-grow: 1;
   width: 1px;
   display: block;
@@ -74,6 +91,17 @@
 }
 
 .permissions .group .groupTitle .groupSettings {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.permissions .group .groupTitle .groupSettings .groupSettingsIcon {
   font-size: 1.3rem;
 }
 
@@ -82,23 +110,46 @@
   font-size: 1.3rem;
 }
 
-.permissions .group .groupTitle .arrow {
-  margin-right: .5rem;
-  font-size: 1.2rem;
-  color: #333;
+.permissions .group .groupTitle .settings {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  right: 0;
+  width: 140px;
+  margin-top: 10px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  cursor: default;
 }
 
-.permissions .group .groupTitle:hover .arrow {
-  color: #fff;
+.permissions .group .groupTitle .settings.hidden {
+  display: none;
 }
 
-.permissions .group .groupTitle .arrow.open {
-  transform: rotate(90deg);
+.permissions .group .groupTitle .settings button {
+  width: 100%;
+  margin: 2px -10px;
+  padding: 4px 10px;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  box-sizing: content-box;
+  background-color: transparent;
+  font-size: .9375rem;
+  font-weight: bold;
+  color: #0C7997;
+  text-align: left;
 }
 
-.permissions .group .items {
-  /* margin-left: 1.7rem; */
+.permissions .group .groupTitle .settings button:hover {
+  background-color: #F7F7F7;
 }
+
 
 .permissions .group .items .item {
   display: flex;

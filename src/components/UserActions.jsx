@@ -56,6 +56,7 @@ const UserActions = props => {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [blockedClients, setBlockedClients] = useState([]);
   const [openClientsBackup, setOpenClientsBackup] = useState(null);
+  const [visibleSettings, setVisibleSettings] = useState(null);
 
   const handleItemSelect = useCallback((id) => {
     if (mode === UserActionsModes.Manage) {
@@ -152,9 +153,29 @@ const UserActions = props => {
   }, [isLoading, mode, selectedUserId]);
 
   const handleSettingsToggle = useCallback((id, event) => {
-    // @TODO Open, implement settings
+    setVisibleSettings(prev => prev === id ? null : id);
     event.stopPropagation();
   });
+
+  const grantAll = useCallback((id, event) => {
+    users.forEach(user => {
+      if (user.client_ids.indexOf(id) > -1) {
+        setItemStatus(id, user.id, true);
+      }
+    });
+    setVisibleSettings(null);
+    event.stopPropagation();
+  }, [users]);
+
+  const revokeAll = useCallback((id, event) => {
+    users.forEach(user => {
+      if (user.client_ids.indexOf(id) > -1) {
+        setItemStatus(id, user.id, false);
+      }
+    });
+    setVisibleSettings(null);
+    event.stopPropagation();
+  }, [users]);
 
   const handleItemDelete = useCallback((id, event) => {
     const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
@@ -383,18 +404,32 @@ const UserActions = props => {
           ) && (
             <div className={styles.group} key={`permissions-group-${client.id}`}>
               <div
-                className={styles.groupTitle}
-                title={client.name}
+                className={`${styles.groupTitle} ${visibleSettings === client.id ? styles.active : ''}`}
                 onClick={() => handleClientToggle(client.id)}
               >
-                <div>
+                <div title={client.name}>
                   <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
                   <span className={styles.groupName}>{client.name}</span>
                 </div>
-                <Menu
-                  className={styles.groupSettings}
-                  onClick={e => handleSettingsToggle(client.id, e)}
-                />
+                {!!users.filter(u => u.client_ids.indexOf(client.id) > -1).length && (
+                  <div
+                    className={styles.groupSettings}
+                    onClick={e => handleSettingsToggle(client.id, e)}
+                  >
+                    <Menu className={styles.groupSettingsIcon} />
+                    <div
+                      className={`${styles.settings} ${visibleSettings !== client.id ? styles.hidden : ''}`}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <div>
+                        <button onClick={e => grantAll(client.id, e)}>Select all</button>
+                      </div>
+                      <div>
+                        <button onClick={e => revokeAll(client.id, e)}>Clear all</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               {!!openClients[client.id] && (
                 !!loadedClients[client.id] ? (
