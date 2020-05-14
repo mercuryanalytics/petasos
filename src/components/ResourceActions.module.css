@@ -16,6 +16,7 @@
 }
 
 .bigTitle {
+  position: relative;
   display: flex;
   align-items: center;
   height: 20px;
@@ -24,7 +25,91 @@
   font-weight: bold;
   color: #333;
   line-height: 1.25rem;
+}
+
+.filter {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% + 5px);
+  right: 0;
+  transform: translateY(-50%);
+  user-select: none;
+}
+
+.filter .trigger {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  color: #0C7997;
+  cursor: default;
+}
+
+.filter .trigger .triggerIcon {
+  margin-right: 12px;
+  font-size: 1.4rem;
+}
+
+.filter .trigger .triggerTitle {
+  margin-right: 6px;
+  font-size: .9375rem;
   white-space: nowrap;
+}
+
+.filter .trigger .triggerTotal {
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  text-align: center;
+  color: #fff;
+  font-size: .75rem;
+  line-height: 21px;
+  font-weight: normal;
+  background-color: #0C7997;
+}
+
+.filter .items {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  right: 0;
+  width: 280px;
+  padding: 15px 20px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+}
+
+.filter .items .controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 18px;
+  margin: 5px 0 15px 0;
+}
+
+.filter .items .controls button {
+  padding: 0;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  font-size: .9375rem;
+  font-weight: bold;
+  color: #0C7997;
+}
+
+.filter .items .itemRow label {
+  padding: 5px 10px;
+  margin: 0 -10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.filter .items .itemRow:hover label {
+  background-color: #F7F7F7;
 }
 
 .resources {
@@ -194,7 +279,7 @@
   margin-right: 40px;
 }
 
-.globalCheckboxes [data-checkbox-label] {
+[data-checkbox-label] {
   font-size: .875rem;
   font-weight: normal;
 }

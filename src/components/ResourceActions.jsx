@@ -8,7 +8,7 @@ import Scrollable from './common/Scrollable';
 import Tooltip from './common/Tooltip';
 import { Checkbox } from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
-import { MdPlayArrow } from 'react-icons/md';
+import { MdPlayArrow, MdFilterList } from 'react-icons/md';
 import { getClients, getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports, getClientReports } from '../store/reports/actions';
@@ -30,6 +30,8 @@ const ResourceActions = props => {
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
   const [activeStates, setActiveStates] = useState({});
+  const [filters, setFilters] = useState({});
+  const [showFilters, setShowFilters] = useState(false);
 
   const init = useCallback(async () => {
     let clientToOpen;
@@ -40,7 +42,17 @@ const ResourceActions = props => {
         clientToOpen = clientId || (data.length ? data[0].id : null);
         setClients(data);
       }, () => {}),
-      dispatch(getScopes()).then(() => {}, () => {}),
+      dispatch(getScopes()).then((action) => {
+        const data = action.payload.dynamic;
+        let initialFilters = {};
+        for (let i = 0; i < data.length; i++) {
+          initialFilters[data[i].id] = true;
+          if (i === 2) {
+            break;
+          }
+        }
+        setFilters(initialFilters);
+      }, () => {}),
       dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
     ]).then(() => {
       if (clientToOpen) {
@@ -187,6 +199,32 @@ const ResourceActions = props => {
     setActiveStates(prev => ({ ...prev, ...newStates }));
   }, [userId, getItemStatus]);
 
+  const setFiltersStatus = useCallback((status, id) => {
+    let newState = {};
+    if (id) {
+      newState[id] = status;
+    } else {
+      for (let i = 0; i < scopes.dynamic.length; i++) {
+        newState[scopes.dynamic[i].id] = status;
+      }
+    }
+    setFilters(prev => ({ ...prev, ...newState }));
+  }, [scopes]);
+
+  const getActiveFiltersCount = useCallback(() => {
+    return Object.keys(filters).filter(k => !!filters[k]).length;
+  }, [filters]);
+
+  const getFirstActiveFilterId = useCallback(() => {
+    const keys = Object.keys(filters);
+    for (let i = 0; i < keys.length; i++) {
+      if (!!filters[keys[i]]) {
+        return +keys[i];
+      }
+    }
+    return null;
+  }, [filters]);
+
   const renderCheckboxTitle = useCallback((label, tooltip) => {
     return (
       <div className={`${styles.checkboxTitle} ${!tooltip ? styles.noTooltip : ''}`}>
@@ -240,19 +278,19 @@ const ResourceActions = props => {
             <span className={styles.item}>Manage the Report's visibility</span>
           </div>
         ))}
-        {!clientId && !!scopes.dynamic && <>
+        {!clientId && !!scopes.dynamic && !!getActiveFiltersCount() && <>
           <div
             className={styles.verticalSeparator}
-            style={{ right: `${(scopes.dynamic.length * 70) + 40}px` }}
+            style={{ right: `${(getActiveFiltersCount() * 70) + 40}px` }}
           />
-          {scopes.dynamic.map((s, i) => (
+          {scopes.dynamic.map((s, i) => !!filters[s.id] && (
             <div
               key={`scope-title-${s.id}`}
               className={`
                 ${styles.checkboxTitle}
                 ${styles.noTooltip}
                 ${styles.scoped}
-                ${i === 0 ? styles.separator : ''}
+                ${s.id === getFirstActiveFilterId() ? styles.separator : ''}
               `}
             >
               <div>{s.name}</div>
@@ -278,10 +316,14 @@ const ResourceActions = props => {
         checked={getItemStatus(resType, resId, adminRole)}
         onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, adminRole)}
       />
-      {!clientId && !!scopes.dynamic && scopes.dynamic.map((s, i) => (
+      {!clientId && !!scopes.dynamic && scopes.dynamic.map((s, i) => !!filters[s.id] && (
         <Checkbox
           key={`scope-${s.id}`}
-          className={`${styles.itemCheckbox} ${styles.scoped} ${i === 0 ? styles.separator : ''}`}
+          className={`
+            ${styles.itemCheckbox}
+            ${styles.scoped}
+            ${s.id === getFirstActiveFilterId() ? styles.separator : ''}
+          `}
           disabled={s.scope !== `${resType}s`}
           checked={getItemStatus(resType, resId, null, s.id)}
           onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, null, s.id)}
@@ -333,6 +375,32 @@ const ResourceActions = props => {
         </div>
         <div className={styles.bigTitle}>
           <span>Client / Project / Report</span>
+          {!!scopes && !!clients.length && (
+            <div className={styles.filter} onMouseLeave={() => setShowFilters(false)}>
+              <div className={styles.trigger} onMouseOver={() => setShowFilters(true)}>
+                <MdFilterList className={styles.triggerIcon} />
+                <span className={styles.triggerTitle}>All Permissions</span>
+                <span className={styles.triggerTotal}>{getActiveFiltersCount()}</span>
+              </div>
+              {showFilters && (
+                <div className={styles.items}>
+                  <div className={styles.controls}>
+                    <button onClick={() => setFiltersStatus(true)}>Select all</button>
+                    <button onClick={() => setFiltersStatus(false)}>Clear all</button>
+                  </div>
+                  {scopes.dynamic.map((s, i) => (
+                    <Checkbox
+                      key={`permissions-filter-${i}`}
+                      className={styles.itemRow}
+                      label={renderCheckboxTitle(s.name)}
+                      checked={!!filters[s.id]}
+                      onChange={e => setFiltersStatus(!!e.target.checked, s.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </>)}
       <div className={styles.resources}>
