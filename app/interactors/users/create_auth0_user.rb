@@ -9,7 +9,7 @@ module Users
     delegate :params, :user, to: :context
 
     def call
-      return if user.persisted?
+      return if user && user.persisted?
 
       RestClient.post(users_endpoint, create_params, authorization_header) do |response, _, _|
         context.fail!(message: JSON.parse(response.body)['message']) if response.code != 201

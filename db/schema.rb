@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_104456) do
+ActiveRecord::Schema.define(version: 2020_05_15_052158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,9 @@ ActiveRecord::Schema.define(version: 2020_05_11_104456) do
     t.boolean "default_template_enabled", default: false
     t.text "slogan"
     t.string "subdomain"
+    t.text "client_text"
+    t.string "closing"
+    t.string "homepage"
   end
 
   create_table "domains", force: :cascade do |t|
