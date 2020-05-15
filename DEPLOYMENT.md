@@ -217,8 +217,14 @@ For setting Google Social login you need to follow the steps here: https://auth0
     * Modify the `client_id` value with the one generated in your Auth0 frontend app
     * Modify the `domain` value with the one generated in your Auth0 frontend app
 * Open `src/utils/constants.js`
-    * Modify the `API_URL` from prod constant with your API url
-    * Modify the `APP_URL` with your frontend url
+    * Modify the prod `[EnvTypes.PRODUCTION]` with the following
+        ```
+        [EnvTypes.PRODUCTION]: {
+               APP_URL: Env.publicUrl,
+               API_HOST: 'https://api.example.com',
+               API_URL: 'https://api.example.com/api/v1',
+             },
+      ``` 
 * Run the `BUCKET_NAME=www.example.com DISTRIBUTION_ID=YOUR_DISTRIBUTION_ID npm run-script s3deploy`
 
 After this is done it should be up & running
