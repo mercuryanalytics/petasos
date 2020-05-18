@@ -4,6 +4,7 @@ import styles from './Index.module.css';
 import Routes from '../utils/routes';
 import { setLocationData } from '../store/location/actions';
 import Screen from './Screen';
+import PageNotFound from './PageNotFound';
 import AccessRestricted from './AccessRestricted';
 import Breadcrumbs from '../components/common/Breadcrumbs';
 import ClientManage from '../components/ClientManage';
@@ -29,6 +30,7 @@ const Index = props => {
   const resId = +params.id;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataMissing, setIsDataMissing] = useState(false);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [clientBreadcrumbs, setClientBreadcrumbs] = useState(null);
@@ -151,63 +153,97 @@ const Index = props => {
     let clientProjects;
     let project = getCurrentProject();
     let report = getCurrentReport();
-    let promises = [], bc = [];
+    let promises = [], bc = [], dataError;
     switch (content) {
       case ContentTypes.CreateClient:
         bc.push('Create client');
         break;
       case ContentTypes.ManageClient:
-        !client && promises.push(dispatch(getClient(resId))
-          .then((action) => (client = action.payload), () => {}));
+        !client && promises.push(dispatch(getClient(resId)).then(
+          (action) => (client = action.payload),
+          (error) => (dataError = error),
+        ));
         break;
       case ContentTypes.CreateProject:
         bc.push('Create project');
-        !client && promises.push(dispatch(getClient(+params.clientId))
-          .then((action) => (client = action.payload), () => {}));
-        promises.push(dispatch(getProjects(+params.clientId))
-          .then((action) => (clientProjects = action.payload), () => {}));
+        !client && promises.push(dispatch(getClient(+params.clientId)).then(
+          (action) => (client = action.payload),
+          (error) => (dataError = error),
+        ));
+        promises.push(dispatch(getProjects(+params.clientId)).then(
+          (action) => (clientProjects = action.payload),
+          (error) => (dataError = error),
+        ));
         break;
       case ContentTypes.ManageProject:
-        !project && promises.push(dispatch(getProject(resId)).then(async (action) => {
-          project = action.payload;
-          return await dispatch(getClient(project.domain_id))
-            .then((action) => (client = action.payload), () => {});
-        }, () => {}));
+        !project && promises.push(dispatch(getProject(resId)).then(
+          async (action) => {
+            project = action.payload;
+            return await dispatch(getClient(project.domain_id)).then(
+              (action) => (client = action.payload),
+              (error) => (dataError = error),
+            );
+          },
+          (error) => (dataError = error),
+        ));
         break;
       case ContentTypes.CreateReport:
         bc.push('Create report');
-        !project && promises.push(dispatch(getProject(+params.projectId)).then(async (action) => {
-          project = action.payload;
-          return await dispatch(getClient(project.domain_id))
-            .then((action) => (client = action.payload), () => {});
-        }, () => {}));
+        !project && promises.push(dispatch(getProject(+params.projectId)).then(
+          async (action) => {
+            project = action.payload;
+            return await dispatch(getClient(project.domain_id)).then(
+              (action) => (client = action.payload),
+              (error) => (dataError = error),
+            );
+          },
+          (error) => (dataError = error),
+        ));
         break;
       case ContentTypes.ManageReport:
         !report && promises.push(dispatch(getReport(resId)).then(async (action) => {
           report = action.payload;
           return await Promise.all([
-            dispatch(getProject(report.project_id))
-              .then((action) => (project = action.payload), () => {}),
-            dispatch(getClient(report.project.domain_id))
-              .then((action) => (client = action.payload), () => {}),
+            dispatch(getProject(report.project_id)).then(
+              (action) => (project = action.payload),
+              (error) => (dataError = error),
+            ),
+            dispatch(getClient(report.project.domain_id)).then(
+              (action) => (client = action.payload),
+              (error) => (dataError = error),
+            ),
           ]);
         }, () => {}));
         break;
     }
     Promise.all(promises).then(() => {
+      if (dataError) {
+        if (dataError.xhrHttpCode === 404) {
+          setBreadcrumbs([]);
+          setIsDataMissing(true);
+          setIsLoading(false);
+          return;
+        }
+      }
       let finalBc = [];
-      !!client && !!client.name && finalBc.push({
-        text: client.name,
-        link: Routes.ManageClient.replace(':id', client.id),
-      });
-      !!project && !!project.name && finalBc.push({
-        text: project.name,
-        link: Routes.ManageProject.replace(':id', project.id),
-      });
-      !!report && !!report.name && finalBc.push({
-        text: report.name,
-        link: Routes.ManageReport.replace(':id', report.id),
-      });
+      if (client && client.name) {
+        finalBc.push({
+          text: client.name,
+          link: Routes.ManageClient.replace(':id', client.id),
+        });
+      }
+      if (project && project.name) {
+        finalBc.push({
+          text: project.name,
+          link: Routes.ManageProject.replace(':id', project.id),
+        });
+      }
+      if (report && report.name) {
+        finalBc.push({
+          text: report.name,
+          link: Routes.ManageReport.replace(':id', report.id),
+        });
+      }
       finalBc = finalBc.concat(bc);
       setBreadcrumbs(finalBc);
       checkAuthorizations(user, clientProjects);
@@ -215,7 +251,7 @@ const Index = props => {
     });
   }, [content, resId, params]);
 
-  return !isAccessBlocked ? (
+  return (!isAccessBlocked && !isDataMissing) ? (
     <Screen
       className={styles.container}
       private
@@ -238,7 +274,8 @@ const Index = props => {
       </div>
     </Screen>
   ) : (
-    <AccessRestricted />
+    (isDataMissing && <PageNotFound />) ||
+    (isAccessBlocked && <AccessRestricted />)
   );
 };
 

@@ -34,18 +34,25 @@ function apiCall (method, url, options) {
   }
 
   let handler = fetch(url, fetchOptions)
-    .then(response => {
-      if (method.toUpperCase() === 'GET') {
-        delete ongoing[url];
-        if (!response.ok) {
-          return Promise.reject(`Fetch error: ${response.status} ${response.statusText}`);
-        }
-        called[url] = true;
-      }
-      return response.text();
-    })
     .then(
-      response => {
+      (response) => {
+        if (method.toUpperCase() === 'GET') {
+          delete ongoing[url];
+          if (!response.ok) {
+            return Promise.reject({
+              xhrHttpCode: response.status,
+              message: `Fetch error: ${response.status} ${response.statusText}`,
+            });
+          }
+          called[url] = true;
+        }
+        return response.text();
+      },
+      (reason) => {
+        return Promise.reject(reason);
+      },
+    ).then(
+      (response) => {
         if (response.trim().length) {
           try {
             let result = JSON.parse(response);
@@ -59,9 +66,6 @@ function apiCall (method, url, options) {
         }
         return '';
       },
-      reason => {
-        return Promise.reject(reason);
-      }
     );
 
   if (method.toUpperCase() === 'GET') {
@@ -86,7 +90,6 @@ apiCall.forget = (criteria) => {
     const calledUrls = Object.keys(called);
     for (let i = 0; i < calledUrls.length; i++) {
       if (calledUrls[i].match(criteria)) {
-        console.log('deleting', calledUrls[i]);
         delete called[calledUrls[i]];
       }
     }

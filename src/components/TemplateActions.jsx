@@ -5,7 +5,7 @@ import Loader from './common/Loader';
 import Avatar from './common/Avatar';
 import Toggle from './common/Toggle';
 import Scrollable from './common/Scrollable';
-import { File, Folder, InfoStroke } from './Icons';
+import { File, Folder } from './Icons';
 import { MdPlayArrow } from 'react-icons/md';
 import { getTemplates, updateTemplate } from '../store/clients/actions';
 

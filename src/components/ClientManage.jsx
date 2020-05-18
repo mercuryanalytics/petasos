@@ -88,12 +88,14 @@ const ClientManage = props => {
     const accountMatch = pathname.match(urlAccountsRegExp);
     if (accountMatch && accountMatch[1].length) {
       const user = users.filter(u => u.id === +accountMatch[1])[0];
-      if (tab !== ContentTabs.Accounts) {
-        setTab(ContentTabs.Accounts);
-      }
       if (user) {
+        if (tab !== ContentTabs.Accounts) {
+          setTab(ContentTabs.Accounts);
+        }
         setSelectedUserId(user.id);
         return;
+      } else {
+        history.push(`${Routes.ManageClient.replace(':id', id)}`);
       }
     }
     setTab(ContentTabs.Details);
