@@ -102,12 +102,8 @@
 }
 
 .busyLoader {
-  margin-left: 10px !important;
-}
-
-.busyLoader, .busyLoader > div {
-  width: 25px !important;
   height: 25px !important;
+  margin-left: 10px !important;
 }
 
 .noResults {

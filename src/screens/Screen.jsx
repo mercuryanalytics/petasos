@@ -120,7 +120,7 @@ const Screen = props => {
               (!isSideMenuLoading || props.showSideBar === false) ? (
                 <>{props.children}</>
               ) : (
-                <Loader />
+                <Loader size={5} />
               )
             ) : (
               <div className={styles.emptyState}>
@@ -135,7 +135,7 @@ const Screen = props => {
       <>{props.children}</>
     )
   ) : (
-    <Loader />
+    <Loader size={5} />
   );
 };
 

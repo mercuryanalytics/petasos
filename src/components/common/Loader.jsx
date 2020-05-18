@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Loader.module.css';
 
 const Loader = props => {
-  const size = props.size || 5;
+  const size = props.size || 3;
   const segments = [];
 
   for (let i = 0; i < size; i++) {

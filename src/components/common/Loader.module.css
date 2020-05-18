@@ -12,25 +12,26 @@
 
 .container.inline {
   position: static;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   width: auto;
-  height: 35px;
+  height: 30px;
   margin: 0;
 }
 
 .loader {
-  /* width: 50px; */
-  height: 35px;
+  height: 10px;
   text-align: center;
-  font-size: 10px;
 }
 
 .loader > div {
-  background-color: #333;
+  background-color: #777;
   height: 100%;
-  width: 6px;
+  width: 10px;
   display: inline-block;
   margin: 0 1px;
+  border-radius: 50%;
+  vertical-align: top;
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }
@@ -56,16 +57,16 @@
 }
 
 @-webkit-keyframes sk-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
-  20% { -webkit-transform: scaleY(1.0) }
+  0%, 40%, 100% { -webkit-transform: scale(0.4) }  
+  20% { -webkit-transform: scale(1.0) }
 }
 
 @keyframes sk-stretchdelay {
   0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
+    transform: scale(0.4);
+    -webkit-transform: scale(0.4);
   }  20% { 
-    transform: scaleY(1.0);
-    -webkit-transform: scaleY(1.0);
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
   }
 }

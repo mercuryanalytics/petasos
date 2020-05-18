@@ -50,12 +50,8 @@
 }
 
 .loader {
-  margin-left: 10px !important;
-}
-
-.loader, .loader > div {
-  width: 25px !important;
   height: 25px !important;
+  margin-left: 10px !important;
 }
 
 .loader > div > div {
