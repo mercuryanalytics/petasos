@@ -70,7 +70,10 @@ export function createUser(data, clientId, noAuth) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/users${queryString}`, { body })
       .then(
-        res => dispatch(createUserSuccess(res)),
+        res => {
+          apiCall.forget(/\/authorized\?client_id=[0-9]+/);
+          return dispatch(createUserSuccess(res));
+        },
         err => handleActionFailure(err, dispatch(createUserFailure(err))),
       );
   };

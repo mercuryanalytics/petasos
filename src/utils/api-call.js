@@ -81,11 +81,21 @@ apiCall.isCalled = (urls) => {
   return false;
 };
 
-apiCall.forget = (urls) => {
-  urls = Array.isArray(urls) ? urls : [urls];
-  for (let i = 0; i < urls.length; i++) {
-    if (called.hasOwnProperty(urls[i])) {
-      delete called[urls[i]];
+apiCall.forget = (criteria) => {
+  if (criteria instanceof RegExp) {
+    const calledUrls = Object.keys(called);
+    for (let i = 0; i < calledUrls.length; i++) {
+      if (calledUrls[i].match(criteria)) {
+        console.log('deleting', calledUrls[i]);
+        delete called[calledUrls[i]];
+      }
+    }
+  } else {
+    const urls = Array.isArray(criteria) ? criteria : [criteria];
+    for (let i = 0; i < urls.length; i++) {
+      if (called.hasOwnProperty(urls[i])) {
+        delete called[urls[i]];
+      }
     }
   }
 };

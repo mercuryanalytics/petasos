@@ -83,13 +83,6 @@ const App = () => {
       let parts = window.location.hostname.split('.'), subdomain;
       if (parts.length > 1) {
         subdomain = parts[0];
-      } else {
-        // @TODO Remove (testing purposes)
-        parts = history.location.search.split(/[?|&]subdomain=/i);
-        if (parts.length > 1) {
-          const end = parts[1].indexOf('&');
-          subdomain = end === -1 ? parts[1] : parts[1].substr(0, end);
-        }
       }
       if (subdomain) {
         subdomain = subdomain.toLowerCase();
