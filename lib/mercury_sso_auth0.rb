@@ -14,6 +14,10 @@ module MercurySsoAuth0
   mattr_accessor :domain
   @@domain = nil
 
+  # Auth0 requested scopes
+  mattr_accessor :scopes
+  @@scopes = 'openid email profile'
+
   def self.setup
     yield self
   end
