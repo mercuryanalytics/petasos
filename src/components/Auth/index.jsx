@@ -172,11 +172,11 @@ const Auth = props => {
     }
   }, [passwordResetHandler]);
 
-  const handlePasswordChange = useCallback(async (password) => {
+  const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     clearErrors();
     if (passwordChangeHandler) {
       // @TODO Handle complete
-      passwordChangeHandler(password);
+      passwordChangeHandler(password, password_confirmation);
     }
   }, [passwordChangeHandler]);
 

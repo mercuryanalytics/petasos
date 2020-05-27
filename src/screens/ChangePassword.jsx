@@ -9,9 +9,9 @@ import parse from 'url-parse';
 const ChangePassword = () => {
   const dispatch = useDispatch();
 
-  const handlePasswordChange = useCallback(async (password) => {
+  const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     const token = parse(window.location.href, true).query.token;
-    return dispatch(changePassword(token, password));
+    return dispatch(changePassword(token, password, password_confirmation));
   });
 
   return (

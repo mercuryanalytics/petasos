@@ -8,12 +8,14 @@ function apiCall (method, url, options) {
   const authKey = state.authReducer.authKey;
 
   options = options || {};
-
-  if (!authKey && !options.noAuth) {
-    return new Promise((resolve) => {
-      return resolve('');
-    });
-  }
+  // @TODO: Check if this is needed - the passowrd_reset routes are non-authorized calls -
+  //  thus when clicking the Reset Password button the request is not sent
+  //
+  // if (!authKey && !options.noAuth) {
+  //   return new Promise((resolve) => {
+  //     return resolve('');
+  //   });
+  // }
 
   let fetchOptions = {
     method: method,

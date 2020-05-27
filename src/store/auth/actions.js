@@ -52,16 +52,19 @@ export const resetPasswordFailure = (error) => {
   }
 };
 
-export function changePassword(token, password) {
+export function changePassword(token, password, password_confirmation) {
   // @TODO Change body, route
   const body = JSON.stringify({
     token: token,
     password: password,
+    password_confirmation: password_confirmation
   });
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/change-password`, { body })
       .then(
+        // @todo: handle the redirect when password was updated!
         res => dispatch(changePasswordSuccess(res)),
+        // @todo: handle if errors, take data from body and display it on page
         err => handleActionFailure(err, dispatch(changePasswordFailure(err))),
       );
   };

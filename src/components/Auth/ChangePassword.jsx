@@ -31,7 +31,7 @@ const ChangePassword = props => {
     onSubmit: (values) => {
       setIsBusy(true);
       if (onPasswordChange) {
-        onPasswordChange(values.password);
+        onPasswordChange(values.password, values.confirm_password);
       }
     },
   });
