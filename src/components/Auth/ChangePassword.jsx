@@ -45,12 +45,14 @@ const ChangePassword = props => {
         <Input
           className={styles.control}
           field={password}
+          type="password"
           disabled={isBusy || submitting}
           label="New password"
         />
         <Input
           className={`${styles.control} ${styles.nopad}`}
           field={confirm_password}
+          type="password"
           disabled={isBusy || submitting}
           label="Confirm new password"
         />

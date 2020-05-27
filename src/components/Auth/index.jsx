@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import styles from './index.module.css';
 import auth0 from 'auth0-js';
 import Loader from '../common/Loader';
+import Button from '../common/Button';
+import { MdDone } from 'react-icons/md';
 import Login, { LoginViewTypes } from './Login';
 import ChangePassword from './ChangePassword';
 
@@ -65,6 +67,7 @@ const Auth = props => {
   const [loginError, setLoginError] = useState(null);
   const [passwordResetError, setPasswordResetError] = useState(null);
   const [passwordChangeError, setPasswordChangeError] = useState(null);
+  const hasSuccess = passwordResetSuccessMessage || passwordChangeSuccessMessage;
   const hasError = loginError || passwordResetError || passwordChangeError;
   const isConnected = isLoggedIn();
   const isCallback = (
@@ -177,7 +180,6 @@ const Auth = props => {
       connection: connector.type,
     }, (err, res) => {
       if (err) {
-        // @TODO err.description ?
         setLoginError(err);
         localStorage.removeItem(auth0PendingSocialLoginKey);
         localStorage.removeItem(auth0ReturnUrlKey);
@@ -193,7 +195,7 @@ const Auth = props => {
     clearErrors();
     if (passwordResetHandler) {
       passwordResetHandler(user).then(() => {
-        setPasswordResetSuccessMessage('Password successfully reset!');
+        setPasswordResetSuccessMessage('Password successfully reset.');
       }, (err) => {
         setPasswordResetError(err);
       });
@@ -204,7 +206,7 @@ const Auth = props => {
     clearErrors();
     if (passwordChangeHandler) {
       passwordChangeHandler(password, password_confirmation).then(() => {
-        setPasswordChangeSuccessMessage('Password successfully changed!');
+        setPasswordChangeSuccessMessage('Password successfully changed.');
       }, (err) => {
         setPasswordChangeError(err);
       });;
@@ -251,30 +253,41 @@ const Auth = props => {
           </div>
         </div>
         <div className={styles.form}>
-          {hasError && (
+          {(hasError && (
             <div className={styles.errors}>
               <span>{(loginError || passwordResetError || passwordChangeError).description}</span>
             </div>
-          )}
-          {(viewType === AuthViewTypes.Login && (
-            <Login
-              socialConnectors={config.socialConnectors}
-              loginError={loginError}
-              passwordResetError={passwordResetError}
-              successMessage={passwordResetSuccessMessage}
-              onViewChange={handleViewChange}
-              onLogin={handleLogin}
-              onSocialLogin={handleSocialLogin}
-              onPasswordReset={handlePasswordReset}
-            />
           )) ||
-          (viewType === AuthViewTypes.ChangePassword && (
-            <ChangePassword
-              error={passwordChangeError}
-              successMessage={passwordChangeSuccessMessage}
-              onPasswordChange={handlePasswordChange}
-            />
-          ))}
+          (hasSuccess && (<>
+            <div className={styles.success}>
+              <MdDone classNae={styles.icon} />
+              <span>{passwordResetSuccessMessage || passwordChangeSuccessMessage}</span>
+            </div>
+            <div className={styles.buttons}>
+              <Button link={config.loginUrl}>Back to Login</Button>
+            </div>
+          </>))}
+          {!hasSuccess && (
+            (viewType === AuthViewTypes.Login && (
+              <Login
+                socialConnectors={config.socialConnectors}
+                loginError={loginError}
+                passwordResetError={passwordResetError}
+                successMessage={passwordResetSuccessMessage}
+                onViewChange={handleViewChange}
+                onLogin={handleLogin}
+                onSocialLogin={handleSocialLogin}
+                onPasswordReset={handlePasswordReset}
+              />
+            )) ||
+            (viewType === AuthViewTypes.ChangePassword && (
+              <ChangePassword
+                error={passwordChangeError}
+                successMessage={passwordChangeSuccessMessage}
+                onPasswordChange={handlePasswordChange}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

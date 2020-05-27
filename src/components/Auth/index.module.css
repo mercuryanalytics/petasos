@@ -69,3 +69,35 @@
 .errors span:not(:first-child) {
   margin-top: 8px;
 }
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.success svg {
+  margin-bottom: 18px;
+  color: #333330;
+  font-size: 3rem;
+}
+
+.success span {
+  color: #333330;
+  font-size: .75rem;
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons > * {
+  width: 100%;
+}
+
+.buttons > *:not(:first-child) {
+  margin-top: 16px;
+}
