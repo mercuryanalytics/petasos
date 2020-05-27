@@ -8,14 +8,12 @@ function apiCall (method, url, options) {
   const authKey = state.authReducer.authKey;
 
   options = options || {};
-  // @TODO: Check if this is needed - the passowrd_reset routes are non-authorized calls -
-  //  thus when clicking the Reset Password button the request is not sent
-  //
-  // if (!authKey && !options.noAuth) {
-  //   return new Promise((resolve) => {
-  //     return resolve('');
-  //   });
-  // }
+  
+  if (!authKey && !options.noAuth) {
+    return new Promise((resolve) => {
+      return resolve('');
+    });
+  }
 
   let fetchOptions = {
     method: method,
@@ -40,13 +38,15 @@ function apiCall (method, url, options) {
       (response) => {
         if (method.toUpperCase() === 'GET') {
           delete ongoing[url];
-          if (!response.ok) {
-            return Promise.reject({
-              xhrHttpCode: response.status,
-              message: `Fetch error: ${response.status} ${response.statusText}`,
-            });
+          if (response.ok) {
+            called[url] = true;
           }
-          called[url] = true;
+        }
+        if (!response.ok) {
+          return Promise.reject({
+            xhrHttpCode: response.status,
+            message: `Request error: ${response.status} ${response.statusText}`,
+          });
         }
         return response.text();
       },

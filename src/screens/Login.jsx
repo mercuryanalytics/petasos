@@ -8,6 +8,10 @@ import { setAuthKey, setAuthUser, resetPassword } from '../store/auth/actions';
 import { getLogo } from '../App';
 import Auth, { AuthViewTypes, isLoggedIn } from '../components/Auth';
 
+const translateError = (err) => {
+  return { description: err.errors || 'An error occured.' };
+};
+
 const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -34,7 +38,11 @@ const Login = () => {
   });
 
   const handlePasswordReset = useCallback(async (email) => {
-    return dispatch(resetPassword(email, partner));
+    return dispatch(resetPassword(email, partner)).then(() => {
+      return Promise.resolve(true);
+    }, (err) => {
+      return Promise.reject(translateError(err));
+    });
   }, [partner]);
 
   return (

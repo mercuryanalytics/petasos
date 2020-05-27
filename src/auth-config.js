@@ -15,7 +15,7 @@ const authConfig = {
       logo: FcGoogle,
     },
     {
-      type: 'microsoft',
+      type: 'windowslive',
       label: 'Microsoft',
       logo: FaWindows,
     },

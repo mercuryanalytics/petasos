@@ -6,12 +6,20 @@ import { getLogo } from '../App';
 import Auth, { AuthViewTypes } from '../components/Auth';
 import parse from 'url-parse';
 
+const translateError = (err) => {
+  return { description: err.errors || 'An error occured.' };
+};
+
 const ChangePassword = () => {
   const dispatch = useDispatch();
 
   const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     const token = parse(window.location.href, true).query.token;
-    return dispatch(changePassword(token, password, password_confirmation));
+    return dispatch(changePassword(token, password, password_confirmation)).then(() => {
+      return Promise.resolve(true);
+    }, (err) => {
+      return Promise.reject(translateError(err));
+    });;
   });
 
   return (

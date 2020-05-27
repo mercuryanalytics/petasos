@@ -5,14 +5,14 @@ import { Validators, Input } from '../FormFields';
 import Button from '../common/Button';
 
 const ChangePassword = props => {
-  const { error, onPasswordChange } = props;
+  const { successMessage, error, onPasswordChange } = props;
   const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
-    if (error) {
+    if (successMessage || error) {
       setIsBusy(false);
     }
-  }, [error]);
+  }, [successMessage, error]);
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {

@@ -12,6 +12,7 @@ export const AuthViewTypes = {
 };
 
 export const auth0StorageKey = 'authData';
+export const auth0PendingSocialLoginKey = 'pendingSocialLogin';
 export const auth0ReturnUrlKey = 'authReturnUrl';
 
 export const isLoggedIn = () => {
@@ -59,6 +60,8 @@ const Auth = props => {
   const callbackUrl = config ? config.callbackUrl : null;
   const [logo, setLogo] = useState(null);
   const [loginViewType, setLoginViewType] = useState(LoginViewTypes.Login);
+  const [passwordResetSuccessMessage, setPasswordResetSuccessMessage] = useState(null);
+  const [passwordChangeSuccessMessage, setPasswordChangeSuccessMessage] = useState(null);
   const [loginError, setLoginError] = useState(null);
   const [passwordResetError, setPasswordResetError] = useState(null);
   const [passwordChangeError, setPasswordChangeError] = useState(null);
@@ -86,41 +89,52 @@ const Auth = props => {
     setPasswordChangeError(null);
   });
 
-  const handleLoginCallback = useCallback(() => {
+  const login = useCallback(async (res) => {
     const webAuth = getWebAuth();
-    webAuth.parseHash({ hash: history.location.hash }, (err, res) => {
-      const redirectTo = localStorage.getItem(auth0ReturnUrlKey);
-      localStorage.removeItem(auth0ReturnUrlKey);
+    const redirectTo = localStorage.getItem(auth0ReturnUrlKey);
+    localStorage.removeItem(auth0ReturnUrlKey);
+    await webAuth.client.userInfo(res.accessToken, async (err, user) => {
       if (err) {
         console.log(err);
-        // window.location.href = config.loginUrl;
+        window.location.href = config.loginUrl;
         return;
       }
-      webAuth.client.userInfo(res.accessToken, async (err, user) => {
-        if (err) {
-          console.log(err);
-          // window.location.href = config.loginUrl;
-          return;
+      localStorage.setItem(auth0StorageKey, JSON.stringify({
+        accessToken: res.accessToken,
+        key: res.idToken,
+        user: user,
+        expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
+      }));
+      if (onSuccess) {
+        await onSuccess(res.idToken, user);
+      }
+      if (redirectTo) {
+        if (redirectTo.indexOf('http') === 0) {
+          window.location.href = redirectTo;
+        } else {
+          history.push(redirectTo);
         }
-        localStorage.setItem(auth0StorageKey, JSON.stringify({
-          accessToken: res.accessToken,
-          key: res.idToken,
-          user: user,
-          expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
-        }));
-        if (onSuccess) {
-          await onSuccess(res.idToken, user);
-        }
-        if (redirectTo) {
-          if (redirectTo.indexOf('http') === 0) {
-            window.location.href = redirectTo;
-          } else {
-            history.push(redirectTo);
-          }
-        }
-      });
+      }
     });
-  }, [history, config, onSuccess]);
+  }, [onSuccess]);
+
+  const handleLoginCallback = useCallback(() => {
+    const webAuth = getWebAuth();
+    const isSocial = localStorage.getItem(auth0PendingSocialLoginKey);
+    localStorage.removeItem(auth0PendingSocialLoginKey);
+    if (isSocial) {
+      webAuth.popup.callback();
+      return;
+    }
+    webAuth.parseHash({ hash: history.location.hash }, (err, res) => {
+      if (err) {
+        console.log(err);
+        window.location.href = config.loginUrl;
+        return;
+      }
+      login(res);
+    });
+  }, [history, config]);
 
   useEffect(() => {
     if (isCallback) {
@@ -157,26 +171,43 @@ const Auth = props => {
 
   const handleSocialLogin = useCallback((connector) => {
     clearErrors();
+    localStorage.setItem(auth0PendingSocialLoginKey, 'yes');
+    localStorage.setItem(auth0ReturnUrlKey, redirectTo);
     getWebAuth().popup.authorize({
       connection: connector.type,
-    }, function(err, authResult) {
-      console.log(err, authResult)
+    }, (err, res) => {
+      if (err) {
+        // @TODO err.description ?
+        setLoginError(err);
+        localStorage.removeItem(auth0PendingSocialLoginKey);
+        localStorage.removeItem(auth0ReturnUrlKey);
+        console.log(err);
+        window.location.href = config.loginUrl;
+        return;
+      }
+      login(res);
     });
-  });
+  }, [redirectTo]);
 
   const handlePasswordReset = useCallback(async (user) => {
     clearErrors();
     if (passwordResetHandler) {
-      // @TODO Handle complete
-      passwordResetHandler(user);
+      passwordResetHandler(user).then(() => {
+        setPasswordResetSuccessMessage('Password successfully reset!');
+      }, (err) => {
+        setPasswordResetError(err);
+      });
     }
   }, [passwordResetHandler]);
 
   const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     clearErrors();
     if (passwordChangeHandler) {
-      // @TODO Handle complete
-      passwordChangeHandler(password, password_confirmation);
+      passwordChangeHandler(password, password_confirmation).then(() => {
+        setPasswordChangeSuccessMessage('Password successfully changed!');
+      }, (err) => {
+        setPasswordChangeError(err);
+      });;
     }
   }, [passwordChangeHandler]);
 
@@ -230,6 +261,7 @@ const Auth = props => {
               socialConnectors={config.socialConnectors}
               loginError={loginError}
               passwordResetError={passwordResetError}
+              successMessage={passwordResetSuccessMessage}
               onViewChange={handleViewChange}
               onLogin={handleLogin}
               onSocialLogin={handleSocialLogin}
@@ -239,6 +271,7 @@ const Auth = props => {
           (viewType === AuthViewTypes.ChangePassword && (
             <ChangePassword
               error={passwordChangeError}
+              successMessage={passwordChangeSuccessMessage}
               onPasswordChange={handlePasswordChange}
             />
           ))}

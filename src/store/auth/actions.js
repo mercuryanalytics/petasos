@@ -23,14 +23,13 @@ export const setPartner = (partner) => ({
 });
 
 export function resetPassword(user, partner) {
-  // @TODO Change route
   let body = { email: user };
   if (partner) {
     body.subdomain = partner;
   }
   body = JSON.stringify(body);
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/reset-password`, { body })
+    return apiCall('POST', `${Constants.API_URL}/reset-password`, { body, noAuth: true })
       .then(
         res => dispatch(resetPasswordSuccess(res)),
         err => handleActionFailure(err, dispatch(resetPasswordFailure(err))),
@@ -53,18 +52,15 @@ export const resetPasswordFailure = (error) => {
 };
 
 export function changePassword(token, password, password_confirmation) {
-  // @TODO Change body, route
   const body = JSON.stringify({
     token: token,
     password: password,
     password_confirmation: password_confirmation
   });
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/change-password`, { body })
+    return apiCall('POST', `${Constants.API_URL}/change-password`, { body, noAuth: true })
       .then(
-        // @todo: handle the redirect when password was updated!
         res => dispatch(changePasswordSuccess(res)),
-        // @todo: handle if errors, take data from body and display it on page
         err => handleActionFailure(err, dispatch(changePasswordFailure(err))),
       );
   };

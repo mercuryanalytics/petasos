@@ -11,17 +11,17 @@ export const LoginViewTypes = {
 
 const Login = props => {
   const {
-    socialConnectors, loginError, passwordResetError,
+    socialConnectors, successMessage, loginError, passwordResetError,
     onLogin, onSocialLogin, onPasswordReset, onViewChange,
   } = props;
   const [view, setView] = useState(LoginViewTypes.Login);
   const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
-    if (loginError || passwordResetError) {
+    if (successMessage || loginError || passwordResetError) {
       setIsBusy(false);
     }
-  }, [loginError, passwordResetError]);
+  }, [successMessage, loginError, passwordResetError]);
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
