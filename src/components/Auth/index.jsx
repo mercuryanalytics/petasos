@@ -33,7 +33,7 @@ export const logout = (options) => {
       options.onSuccess();
     }
   }
-  window.location.href = options.redirectTo || options.config.loginUrl;
+  window.location.replace(options.redirectTo || options.config.loginUrl);
 };
 
 export const initFromStorage = (options) => {
@@ -99,7 +99,7 @@ const Auth = props => {
     await webAuth.client.userInfo(res.accessToken, async (err, user) => {
       if (err) {
         console.log(err);
-        window.location.href = config.loginUrl;
+        window.location.replace(config.loginUrl);
         return;
       }
       localStorage.setItem(auth0StorageKey, JSON.stringify({
@@ -113,7 +113,7 @@ const Auth = props => {
       }
       if (redirectTo) {
         if (redirectTo.indexOf('http') === 0) {
-          window.location.href = redirectTo;
+          window.location.replace(redirectTo);
         } else {
           history.push(redirectTo);
         }
@@ -132,7 +132,7 @@ const Auth = props => {
     webAuth.parseHash({ hash: history.location.hash }, (err, res) => {
       if (err) {
         console.log(err);
-        window.location.href = config.loginUrl;
+        window.location.replace(config.loginUrl);
         return;
       }
       login(res);
@@ -184,7 +184,7 @@ const Auth = props => {
         localStorage.removeItem(auth0PendingSocialLoginKey);
         localStorage.removeItem(auth0ReturnUrlKey);
         console.log(err);
-        window.location.href = config.loginUrl;
+        window.location.replace(config.loginUrl);
         return;
       }
       login(res);

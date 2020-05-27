@@ -7,6 +7,7 @@ import authConfig from '../auth-config';
 import { setAuthKey, setAuthUser, resetPassword } from '../store/auth/actions';
 import { getLogo } from '../App';
 import Auth, { AuthViewTypes, isLoggedIn } from '../components/Auth';
+import parse from 'url-parse';
 
 const translateError = (err) => {
   return { description: err.errors || 'An error occured.' };
@@ -17,10 +18,20 @@ const Login = () => {
   const history = useHistory();
   const partner = useSelector(state => state.authReducer.partner);
   const isCallback = window.location.href.indexOf(Routes.LoginCallback) > -1;
-  const from = history.location.hash.substr(1) || '';
-  const redirectTo = (from.length > 1 && !isCallback) ?
-    `${Constants.APP_URL}${from}` :
-    Routes.Home;
+
+  let from = history.location.hash.substr(1) || '';
+  let redirectTo = Routes.Home;
+
+  if (from) {
+    if (from.length > 1 && !isCallback) {
+      redirectTo = `${Constants.APP_URL}${from}`;
+    }
+  } else {
+    from = parse(window.location.href, true).query.return_url;
+    if (from) {
+      redirectTo = from;
+    }
+  }
 
   const leaveIfLoggedIn = useCallback(() => {
     if (isLoggedIn()) {
