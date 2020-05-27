@@ -1,20 +1,16 @@
 import React from 'react';
-import Routes from '../utils/routes';
-import { isLoggedIn, logout } from '../App';
+import Constants from '../utils/constants';
 import { clearCache } from '../store';
-import { Redirect } from 'react-router-dom';
-import Loader from '../components/common/Loader';
+import authConfig from '../auth-config';
+import { logout } from '../components/Auth';
 
 const Logout = () => {
-
-  if (isLoggedIn()) {
-    clearCache();
-    logout();
-  } else {
-    return <Redirect to={Routes.Login} />;
-  }
-
-  return <Loader />;
+  logout({
+    config: authConfig,
+    onSuccess: clearCache,
+    redirectTo: Constants.APP_URL,
+  });
+  return '';
 };
 
 export default Logout;

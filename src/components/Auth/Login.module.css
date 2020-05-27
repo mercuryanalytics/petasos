@@ -1,0 +1,115 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container *:not(input) {
+  user-select: none;
+}
+
+.connectors {
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.connectors .connector {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 38px;
+  margin-bottom: 10px;
+  border: 1px solid #DFDFDF;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.connectors .connector img,
+.connectors .connector svg {
+  width: 22px;
+  height: 22px;
+  margin-left: 14px;
+}
+
+.connectors .connector span {
+  margin-left: 16px;
+  font-size: .875rem;
+  color: #555;
+}
+
+.connectors .connector:last-child {
+  margin-bottom: 0;
+}
+
+.connectors .connector:hover {
+  border-color: #A0A0A0;
+  background-color: #FBFBFD;
+}
+
+.separator {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  margin-bottom: 28px;
+  background-color: #DFDFDF;
+  user-select: none;
+}
+
+.separator > span {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  height: 12px;
+  padding: 0 14px;
+  background-color: #fff;
+  font-size: .75rem;
+  line-height: 12px;
+  color: #A2A2A2;
+}
+
+.control:not(.nopad) {
+  margin-bottom: 16px;
+}
+
+.control input {
+  line-height: 16px !important;
+  padding-top: 11px !important;
+  padding-bottom: 11px !important;
+}
+
+.loginSection, .resetSection {
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.loginSection .passwordReset {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.loginSection .passwordReset span {
+  font-size: .75rem;
+  color: #0C7997;
+  cursor: pointer;
+}
+
+.loginSection .passwordReset span:hover {
+  text-decoration: underline;
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons > * {
+  width: 100%;
+}
+
+.buttons > *:not(:first-child) {
+  margin-top: 16px;
+}

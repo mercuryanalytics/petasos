@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import { isLoggedIn } from '../App';
+import { isLoggedIn } from '../components/Auth';
 import { setLocationData } from '../store/location/actions';
 import { setUser } from '../store/auth/actions';
 import { getUsers, getMyAuthorizations } from '../store/users/actions';

@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "auth0-lock": "^11.23.1",
+    "auth0-js": "^9.13.2",
     "date-fns": "^2.11.0",
     "final-form": "^4.18.7",
     "react": "^16.12.0",
     "react-datepicker": "^2.14.0",
     "react-dom": "^16.12.0",
     "react-final-form-hooks": "^2.0.2",
-    "react-icons": "^3.9.0",
+    "react-icons": "^3.10.0",
     "react-images-uploading": "^2.1.1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
@@ -18,10 +18,11 @@
     "react-tt": "^1.1.8",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "simplebar-react": "^2.1.0"
+    "simplebar-react": "^2.1.0",
+    "url-parse": "^1.4.7"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3003 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

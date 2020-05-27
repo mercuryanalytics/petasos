@@ -85,7 +85,7 @@ const ReportManage = props => {
       let errors = {};
       ['name', 'modified_on'].forEach(key => {
         if (!Validators.hasValue(values[key])) {
-          errors[key] = 'Field value is required.'
+          errors[key] = 'Field value is required.';
         }
       });
       return errors;

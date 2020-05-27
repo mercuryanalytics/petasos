@@ -1,68 +1,21 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './static/global.css';
-import history from './utils/history';
 import Constants from './utils/constants';
 import Routes from './utils/routes';
 import apiCall from './utils/api-call';
 import { Route, Switch } from 'react-router-dom';
-import { createAuth0Lock } from './index';
 import store from './store';
+import authConfig from './auth-config';
+import { initFromStorage } from './components/Auth';
 import { setAuthKey, setAuthUser, setPartner } from './store/auth/actions';
-import Loader from './components/common/Loader';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
 import SuperUser from './screens/SuperUser';
 import Login from './screens/Login';
 import Logout from './screens/Logout';
+import ChangePassword from './screens/ChangePassword';
 import PageNotFound from './screens/PageNotFound';
-
-const auth0StorageKey = 'authData';
-
-export const isLoggedIn = () => {
-  try {
-    let authData = JSON.parse(localStorage.getItem(auth0StorageKey));
-    return +authData.expiresAt > new Date().getTime();
-  } catch (e) {
-    return false;
-  }
-};
-
-export const login = async (options) => {
-  options = Object.assign({}, {
-    from: null,
-    logo: null,
-  }, (options || {}));
-
-  const lock = createAuth0Lock(options.logo);
-
-  lock.on('authenticated', async (res) => {
-    lock.getUserInfo(res.accessToken, async (error, profile) => {
-      if (error) {
-        throw new Error(error);
-      }
-      localStorage.setItem(auth0StorageKey, JSON.stringify({
-        key: res.idToken,
-        user: profile,
-        expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
-      }));
-      await store.dispatch(setAuthKey(res.idToken));
-      await store.dispatch(setAuthUser(profile));
-      lock.hide();
-      history.push(options.from || Routes.Home);
-    });
-  });
-
-  lock.show();
-};
-
-export const logout = async () => {
-  const lock = createAuth0Lock();
-  await lock.logout({
-    returnTo: Constants.APP_URL,
-  });
-  localStorage.removeItem(auth0StorageKey);
-};
 
 export const getLogo = async () => {
   const partner = store.getState().authReducer.partner;
@@ -70,7 +23,7 @@ export const getLogo = async () => {
     return apiCall('GET', `${Constants.API_URL}/logo?subdomain=${partner}`, { noAuth: true })
       .then((res) => res.logo);
   }
-  return new Promise((resolve) => resolve(Constants.DEFAULT_APP_LOGO_URL));
+  return new Promise(resolve => resolve(Constants.DEFAULT_APP_LOGO_URL));
 };
 
 const App = () => {
@@ -92,21 +45,13 @@ const App = () => {
       }
     }
     if (!authUser) {
-      let authData;
-      try {
-        authData = JSON.parse(localStorage.getItem(auth0StorageKey));
-      } catch (e) {}
-      if (authData) {
-        if (
-          (!authData.expiresAt || !authData.key || !authData.user) ||
-          (+authData.expiresAt <= new Date().getTime())
-        ) {
-          logout();
-        } else {
-          dispatch(setAuthKey(authData.key));
-          dispatch(setAuthUser(authData.user));
-        }
-      }
+      initFromStorage({
+        config: authConfig,
+        onSuccess: async (authKey, authUser) => {
+          await dispatch(setAuthKey(authKey));
+          await dispatch(setAuthUser(authUser));
+        },
+      });
     }
   }, [partner, authUser]);
 
@@ -142,8 +87,9 @@ const App = () => {
       <Route path={Routes.Account} component={Account} />
       <Route path={Routes.SuperUser} component={SuperUser} />
       <Route path={Routes.Login} component={Login} />
-      <Route path={Routes.LoginCallback} component={Loader} />
+      <Route path={Routes.LoginCallback} component={Login} />
       <Route path={Routes.Logout} component={Logout} />
+      <Route path={Routes.ChangePassword} component={ChangePassword} />
       <Route path="*" component={PageNotFound} />
     </Switch>
   );

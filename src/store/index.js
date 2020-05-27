@@ -44,7 +44,7 @@ export const UserRolesWriteToRead = {
 };
 
 export const clearCache = () => {
-  return apiCall.forgetAll();
+  apiCall.forgetAll();
 };
 
 export const handleActionFailure = (err) => {

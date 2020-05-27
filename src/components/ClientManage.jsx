@@ -239,7 +239,7 @@ const ClientManage = props => {
         'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
       ].forEach(key => {
         if (!Validators.hasValue(values[key])) {
-          errors[key] = 'Field value is required.'
+          errors[key] = 'Field value is required.';
         }
       });
       if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
