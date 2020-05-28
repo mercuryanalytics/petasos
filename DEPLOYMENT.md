@@ -16,7 +16,7 @@ We will use the `www.domain.com` as the main bucket for our project
 * Go to `www.domain.com` bucket properties and select `Static Website Hosting`
 * Fill in the `index document` with `index.html`
 * Fill in the error document with `index.html`
-* Fill in the redirection rule with the following value
+* ~~Fill in the redirection rule with the following value~~ - not needed anymore, but let's keep it here
 ```
 <RoutingRules>
     <RoutingRule>
@@ -85,11 +85,40 @@ Let's start with `www.domain.com` bucket
 * Press the `Get started` button for the `Web` distribution
 * Click the `Origin domain name` input and select your `www.domain.com` bucket
 * Check the `Redirect HTTP to HTTPS` in the `Viewer protocol policy`
-* In `Distribution Settings` select `Custom SSL Certificate` and select your issued Amazon Certificate Manager for your domain 
+* In `Distribution Settings` select `Custom SSL Certificate` and select your issued Amazon Certificate Manager for your domain
 * Type `index.html` in the `Default Root Object`
 * After creating the distribution go to Edit Distribution
+* Go to Behavior and edit the following:
+    * In  `Forward Query String params` select `Forward all, cache all`
 * Change the s3 url from default bucket to `www.domain.com.s3-website.{region}.amazonaws.com` -  this is needed for the redirect rule set in the bucket to apply
 Repeat the above steps for the `domain.com` bucket
+
+Changes only for the main cloudfront distribution - the `www` one in our case
+* Edit your distribution
+* Go to `Error page` and add the 404 page with response page path to `/index.html` and response code `200` - this will help cloudfront deal with 404 pages redirection back to React router instead of pointing that to a 404 page
+
+# AWS Lambda setup
+We will need to setup a Lambda@Edge function to correctly redirect the non-www domain to www one and keeping query parameters
+Move to `us-virginia-1` and create a lambda function with the following content:
+```
+const path = require('path')
+ 
+ exports.handler = (evt, ctx, cb) => {
+    var cf = evt.Records[0].cf;
+     var request = cf.request;
+     var response = cf.response;
+ 
+     if (response.status[0] === "3" && response.headers.location && response.headers.location[0] && request.querystring) {
+         response.headers.location[0].value = response.headers.location[0].value.split('?')[0] + '?' + request.querystring;
+     }
+     
+     cb(null, response);
+ }
+```
+
+Deploy this function to your `non-www` cloudfront distribution as `origin response` event
+We need this since the redirect from non-www to www strips duplicates the query parameters, thus the reset-password token or redirect-url will be lost during the redirection
+
 
 # Domain setup
 * Go to your `Hosted Zone` in Amazon Route 53
@@ -252,6 +281,13 @@ After this is done it should be up & running
         RDS_PASSWORD: RDS password
         RDS_HOSTNAME: RDS hostname
         RDS_PORT: RDS PORT
+    smtp: 
+      host: SMTP_HOST
+      port: SMTP_PORT
+      username: SMTP_USERNAME
+      password: SMTP_PASSWOR
+      tls: true
+      from: DEFAULT_FROM_EMAIL
 * Open `config/environments/production`
     * add `config.hosts << YOUR_HOSTNAME`
 
