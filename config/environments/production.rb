@@ -86,6 +86,14 @@ Rails.application.configure do
   config.hosts << 'mercury-analytics-api.herokuapp.com'
   config.hosts << 'api.aurelianb.com'
 
+  config.action_mailer.smtp_settings = {
+    :address              => Rails.application.credentials[:smtp][:host],
+    :port                 => Rails.application.credentials[:smtp][:port],
+    :user_name            => Rails.application.credentials[:smtp][:username],
+    :password             => Rails.application.credentials[:smtp][:password],
+    :authentication       => :login,
+    :enable_starttls_auto => Rails.application.credentials[:smtp][:tls]
+  }
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
   # middleware. The `delay` is used to determine how long to wait after a write

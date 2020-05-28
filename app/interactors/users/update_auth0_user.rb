@@ -9,7 +9,7 @@ module Users
     delegate :user, :params, to: :context
 
     def call
-      if user.email_changed? || params.include?('password')
+      if user.email_changed? || params.key?(:password)
         RestClient.patch(
           URI.encode(endpoint),
           payload,
@@ -28,8 +28,7 @@ module Users
       {
         email:          params[:email],
         password:       params[:password],
-        connection:     AUTH0_CONNECTION_TYPE,
-        email_verified: true
+        connection:     AUTH0_CONNECTION_TYPE
       }.delete_if { |_, v| v.blank? }
     end
 

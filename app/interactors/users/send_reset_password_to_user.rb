@@ -10,9 +10,12 @@ module Users
       return if client_id.present? || client.present?
       return if context.new_user == 0 && no_auth.to_i == 1
 
-      RestClient.post(reset_password_endpoint, payload, authorization_header) do |response, _, _|
-        context.fail!(message: response.body) if response.code != 200
-      end
+      user.password_reset_token      = SecureRandom.hex(16)
+      user.password_reset_expires_at = 1.week.from_now
+      user.password_reset_domain     = nil
+      user.save
+
+      UserMailer.forgot_password_email(user, Client.new).deliver_now
     end
 
     private

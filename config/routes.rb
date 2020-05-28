@@ -40,6 +40,9 @@ Rails.application.routes.draw do
         end
       end
 
+      post 'reset-password', action: :create, controller: 'password_reset'
+      post 'change-password', action: :update, controller: 'password_reset'
+
       resources :scopes, only: %i(index)
       resources :logo, only: %i(index)
     end

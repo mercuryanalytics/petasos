@@ -7,7 +7,7 @@ module Authorized
         <<-SQL
           INNER JOIN authorizations ON 
             #{table_name}.id = authorizations.subject_id AND 
-            authorizations.subject_class = "#{name}" AND
+            authorizations.subject_class = '#{name.to_s}' AND
             authorizations.membership_id IN (#{membership_ids.join(',')})
         SQL
       )
