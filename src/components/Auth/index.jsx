@@ -28,7 +28,6 @@ export const isLoggedIn = () => {
 
 export const logout = (options) => {
   localStorage.removeItem(auth0StorageKey);
-
   if (isLoggedIn()) {
     if (options.onSuccess) {
       options.onSuccess();
@@ -196,7 +195,7 @@ const Auth = props => {
     clearErrors();
     if (passwordResetHandler) {
       passwordResetHandler(user).then(() => {
-        setPasswordResetSuccessMessage('Password successfully reset.');
+        setPasswordResetSuccessMessage('An e-mail will be sent to you containing the reset instructions.');
       }, (err) => {
         setPasswordResetError(err);
       });

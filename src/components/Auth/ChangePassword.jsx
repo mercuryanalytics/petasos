@@ -22,10 +22,15 @@ const ChangePassword = props => {
           errors[key] = 'Field value is required.';
         }
       });
-      if (values.password !== values.confirm_password) {
+      if (!errors.password) {
+        const err = Validators.validateAuth0Password(values.password);
+        if (err) {
+          errors.password = Array.isArray(err) ? JSON.stringify(err) : err;
+        }
+      }
+      if (!errors.confirm_password && values.password !== values.confirm_password) {
         errors.confirm_password = 'Field value doesn\'t match password.';
       }
-      // @TODO Add more password validations
       return errors;
     },
     onSubmit: (values) => {

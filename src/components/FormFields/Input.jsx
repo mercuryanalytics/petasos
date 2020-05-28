@@ -38,7 +38,13 @@ const Input = props => {
       {!!field && !preview && (
         !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
       ) && field.meta.error && (
-        <div className={styles.error}>{field.meta.error}</div>
+        field.meta.error.indexOf('[') === 0 ? (
+          JSON.parse(field.meta.error).map((error, i) => (
+            <div key={i} className={styles.error}>{error}</div>
+          ))
+        ) : (
+          <div className={styles.error}>{field.meta.error}</div>
+        )
       )}
     </div>
   );

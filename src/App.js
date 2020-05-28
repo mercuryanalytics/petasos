@@ -19,6 +19,7 @@ import PageNotFound from './screens/PageNotFound';
 
 export const getLogo = async () => {
   const partner = store.getState().authReducer.partner;
+  console.log('partner', partner) // @TODO Remove
   if (partner) {
     return apiCall('GET', `${Constants.API_URL}/logo?subdomain=${partner}`, { noAuth: true })
       .then((res) => res.logo);
