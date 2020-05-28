@@ -17,9 +17,16 @@ import Logout from './screens/Logout';
 import ChangePassword from './screens/ChangePassword';
 import PageNotFound from './screens/PageNotFound';
 
+export const getPartner = () => {
+  let parts = window.location.hostname.split('.'), subdomain = null;
+  if (parts.length > 2) {
+    subdomain = parts[0].toLowerCase();
+  }
+  return subdomain === 'www' ? null : subdomain;
+};
+
 export const getLogo = async () => {
-  const partner = store.getState().authReducer.partner;
-  console.log('partner', partner) // @TODO Remove
+  const partner = getPartner();
   if (partner) {
     return apiCall('GET', `${Constants.API_URL}/logo?subdomain=${partner}`, { noAuth: true })
       .then((res) => res.logo);
@@ -33,19 +40,10 @@ const App = () => {
   const authUser = useSelector(state => state.authReducer.authUser);
 
   const init = useCallback(() => {
-    console.log('init -partner', partner)
     if (!partner) {
-      let parts = window.location.hostname.split('.'), subdomain;
-      console.log('init -parts', parts)
-      if (parts.length > 1) {
-        subdomain = parts[0];
-      }
-      if (subdomain) {
-        subdomain = subdomain.toLowerCase();
-        if (subdomain !== 'www') {
-          console.log('init -subdomain', subdomain)
-          dispatch(setPartner(subdomain));
-        }
+      const p = getPartner();
+      if (p) {
+        dispatch(setPartner(p));
       }
     }
     if (!authUser) {
