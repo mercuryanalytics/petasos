@@ -27,8 +27,9 @@ export const isLoggedIn = () => {
 };
 
 export const logout = (options) => {
+  localStorage.removeItem(auth0StorageKey);
+
   if (isLoggedIn()) {
-    localStorage.removeItem(auth0StorageKey);
     if (options.onSuccess) {
       options.onSuccess();
     }
