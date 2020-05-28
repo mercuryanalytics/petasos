@@ -33,14 +33,17 @@ const App = () => {
   const authUser = useSelector(state => state.authReducer.authUser);
 
   const init = useCallback(() => {
+    console.log('init -partner', partner)
     if (!partner) {
       let parts = window.location.hostname.split('.'), subdomain;
+      console.log('init -parts', parts)
       if (parts.length > 1) {
         subdomain = parts[0];
       }
       if (subdomain) {
         subdomain = subdomain.toLowerCase();
         if (subdomain !== 'www') {
+          console.log('init -subdomain', subdomain)
           dispatch(setPartner(subdomain));
         }
       }
