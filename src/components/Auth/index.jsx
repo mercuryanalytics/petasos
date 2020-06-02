@@ -16,6 +16,7 @@ export const AuthViewTypes = {
 export const auth0StorageKey = 'authData';
 export const auth0PendingSocialLoginKey = 'pendingSocialLogin';
 export const auth0ReturnUrlKey = 'authReturnUrl';
+export const auth0StateKey = 'auth0StateKey';
 
 export const isLoggedIn = () => {
   try {
@@ -28,6 +29,7 @@ export const isLoggedIn = () => {
 
 export const logout = (options) => {
   localStorage.removeItem(auth0StorageKey);
+  localStorage.removeItem(auth0StateKey);
   if (isLoggedIn()) {
     if (options.onSuccess) {
       options.onSuccess();
@@ -57,7 +59,7 @@ const Auth = props => {
   const history = useHistory();
   const {
     config, viewType, redirectTo, logoSrc,
-    onSuccess, passwordResetHandler, passwordChangeHandler,
+    onSuccess, passwordResetHandler, passwordChangeHandler, state
   } = props;
   const callbackUrl = config ? config.callbackUrl : null;
   const [logo, setLogo] = useState(null);
@@ -77,13 +79,25 @@ const Auth = props => {
   );
 
   const getWebAuth = useCallback(() => {
-    return new auth0.WebAuth({
-      domain: config.domain,
-      clientID: config.clientId,
-      responseType: 'token id_token',
-      responseMode: 'fragment',
-      redirectUri: callbackUrl,
-    });
+    let authConfig;
+    if (state !== '') {
+      authConfig = {
+        responseType: 'code',
+        state: state
+      }
+    } else {
+      authConfig = {
+        responseType: 'token id_token',
+        responseMode: 'fragment'
+      };
+    }
+    return new auth0.WebAuth(
+        Object.assign({
+          domain: config.domain,
+          clientID: config.clientId,
+          redirectUri: redirectTo !== '/' ? redirectTo : callbackUrl,
+        }, authConfig)
+    );
   }, [config, callbackUrl]);
 
   const clearErrors = useCallback(() => {
@@ -96,6 +110,7 @@ const Auth = props => {
     const webAuth = getWebAuth();
     const redirectTo = localStorage.getItem(auth0ReturnUrlKey);
     localStorage.removeItem(auth0ReturnUrlKey);
+    localStorage.removeItem(auth0StateKey);
     await webAuth.client.userInfo(res.accessToken, async (err, user) => {
       if (err) {
         console.log(err);
@@ -162,6 +177,7 @@ const Auth = props => {
   const handleLogin = useCallback((user, password) => {
     clearErrors();
     localStorage.setItem(auth0ReturnUrlKey, redirectTo);
+    localStorage.setItem(auth0StateKey, state);
     getWebAuth().login({
       email: user,
       password: password,

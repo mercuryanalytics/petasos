@@ -21,6 +21,7 @@ const Login = () => {
 
   let from = history.location.hash.substr(1) || '';
   let redirectTo = Routes.Home;
+  let state = '';
 
   if (from) {
     if (from.length > 1 && !isCallback) {
@@ -28,6 +29,7 @@ const Login = () => {
     }
   } else {
     from = parse(window.location.href, true).query.return_url;
+    state = parse(window.location.href, true).query.state;
     if (from) {
       redirectTo = from;
     }
@@ -64,6 +66,7 @@ const Login = () => {
       onSuccess={handleLoginSuccess}
       passwordResetHandler={handlePasswordReset}
       redirectTo={redirectTo}
+      state={state}
     />
   );
 };
