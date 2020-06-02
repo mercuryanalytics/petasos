@@ -29,7 +29,6 @@ export const isLoggedIn = () => {
 
 export const logout = (options) => {
   localStorage.removeItem(auth0StorageKey);
-  localStorage.removeItem(auth0StateKey);
   if (isLoggedIn()) {
     if (options.onSuccess) {
       options.onSuccess();
@@ -80,25 +79,26 @@ const Auth = props => {
 
   const getWebAuth = useCallback(() => {
     let authConfig;
-    if (state !== '') {
+    if (state) {
       authConfig = {
         responseType: 'code',
-        state: state
+        state: state,
+        redirectUri: redirectTo,
       }
     } else {
       authConfig = {
         responseType: 'token id_token',
-        responseMode: 'fragment'
+        responseMode: 'fragment',
+        redirectUri: callbackUrl,
       };
     }
     return new auth0.WebAuth(
-        Object.assign({
-          domain: config.domain,
-          clientID: config.clientId,
-          redirectUri: redirectTo !== '/' ? redirectTo : callbackUrl,
-        }, authConfig)
+      Object.assign({
+        domain: config.domain,
+        clientID: config.clientId,
+      }, authConfig)
     );
-  }, [config, callbackUrl]);
+  }, [config, callbackUrl, state]);
 
   const clearErrors = useCallback(() => {
     setLoginError(null);
@@ -110,7 +110,6 @@ const Auth = props => {
     const webAuth = getWebAuth();
     const redirectTo = localStorage.getItem(auth0ReturnUrlKey);
     localStorage.removeItem(auth0ReturnUrlKey);
-    localStorage.removeItem(auth0StateKey);
     await webAuth.client.userInfo(res.accessToken, async (err, user) => {
       if (err) {
         console.log(err);
@@ -177,7 +176,9 @@ const Auth = props => {
   const handleLogin = useCallback((user, password) => {
     clearErrors();
     localStorage.setItem(auth0ReturnUrlKey, redirectTo);
-    localStorage.setItem(auth0StateKey, state);
+    if (!state) {
+      localStorage.setItem(auth0StateKey, state);
+    }
     getWebAuth().login({
       email: user,
       password: password,
@@ -186,7 +187,7 @@ const Auth = props => {
       setLoginError(err);
       localStorage.removeItem(auth0ReturnUrlKey);
     });
-  }, [redirectTo]);
+  }, [state, redirectTo]);
 
   const handleSocialLogin = useCallback((connector) => {
     clearErrors();
