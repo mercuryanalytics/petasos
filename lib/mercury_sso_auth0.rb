@@ -18,6 +18,10 @@ module MercurySsoAuth0
   mattr_accessor :scopes
   @@scopes = 'openid email profile'
 
+  # RAM login url
+  mattr_accessor :login_url
+  @@login_url = nil
+
   def self.setup
     yield self
   end
