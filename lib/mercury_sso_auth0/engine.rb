@@ -1,5 +1,6 @@
 require 'omniauth'
 require 'omniauth-auth0'
+require 'rest-client'
 
 module MercurySsoAuth0
   class Engine < ::Rails::Engine
