@@ -19,7 +19,7 @@ const ChangePassword = () => {
       return Promise.resolve(true);
     }, (err) => {
       return Promise.reject(translateError(err));
-    });;
+    });
   });
 
   return (

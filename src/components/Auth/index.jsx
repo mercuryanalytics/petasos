@@ -16,7 +16,6 @@ export const AuthViewTypes = {
 export const auth0StorageKey = 'authData';
 export const auth0PendingSocialLoginKey = 'pendingSocialLogin';
 export const auth0ReturnUrlKey = 'authReturnUrl';
-export const auth0StateKey = 'auth0StateKey';
 
 export const isLoggedIn = () => {
   try {
@@ -159,6 +158,12 @@ const Auth = props => {
     }
   }, [isCallback]);
 
+  useEffect(() => {
+    if (isConnected && !isCallback && state) {
+      getWebAuth().authorize();
+    }
+  }, [isCallback, isConnected, state]);
+
   const initLogo = useCallback(async (source) => {
     let logoUrl = null;
     if (typeof source === 'function') {
@@ -176,9 +181,6 @@ const Auth = props => {
   const handleLogin = useCallback((user, password) => {
     clearErrors();
     localStorage.setItem(auth0ReturnUrlKey, redirectTo);
-    if (!state) {
-      localStorage.setItem(auth0StateKey, state);
-    }
     getWebAuth().login({
       email: user,
       password: password,
@@ -226,7 +228,7 @@ const Auth = props => {
         setPasswordChangeSuccessMessage('Password successfully changed.');
       }, (err) => {
         setPasswordChangeError(err);
-      });;
+      });
     }
   }, [passwordChangeHandler]);
 

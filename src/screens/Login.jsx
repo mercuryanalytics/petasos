@@ -36,7 +36,7 @@ const Login = () => {
   }
 
   const leaveIfLoggedIn = useCallback(() => {
-    if (isLoggedIn()) {
+    if (isLoggedIn() && !state) {
       history.push(Routes.Home);
     }
   }, [history]);
