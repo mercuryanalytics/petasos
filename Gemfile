@@ -37,6 +37,9 @@ gem 'interactor', '~> 3.1', '>= 3.1.2'
 gem 'active_model_serializers', '~> 0.10.10'
 gem 'aws-sdk-s3', require: false
 gem 'active_storage_base64'
+gem 'ed25519', '>= 1.2', '< 2.0'
+gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
