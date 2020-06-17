@@ -7,11 +7,11 @@
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 
-server '18.156.177.153', user: 'ubuntu', roles: %w{web app db}
+server 'staging.us-east-1', user: 'ubuntu', roles: %w{web app db}
 set :ssh_options, {
   forward_agent: true,
   auth_methods: %w[publickey],
-  keys: %w[/Users/Relu/server-accesses/ram-api.pem]
+  # keys: %w[/Users/Relu/server-accesses/ram-api.pem]
 }
 
 # role-based syntax

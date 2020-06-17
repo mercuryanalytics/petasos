@@ -83,8 +83,8 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.hosts << 'mercury-analytics-api.herokuapp.com'
-  config.hosts << 'api.aurelianb.com'
+  config.hosts << 'staging.mercuryanalytics.com'
+  # config.hosts << 'api.aurelianb.com'
 
   config.action_mailer.smtp_settings = {
     :address              => Rails.application.credentials[:smtp][:host],
