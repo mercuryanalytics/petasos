@@ -59,6 +59,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rbenv'
   gem 'capistrano-passenger'
+  gem 'capistrano-rails-collection'
 end
 
 
