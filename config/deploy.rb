@@ -10,7 +10,7 @@ set :repo_url, 'git@github.com:e-spres-oh/mercury-analytics-api.git'
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/ubuntu/mercury-analytics-api'
 set :use_sudo, true
-set :branch, 'develop'
+set :branch, 'master'
 set :puma_conf, '/home/ubuntu/mercury-analytics-api/shared/config/puma.rb'
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
 set :linked_files, %w{config/master.key}
