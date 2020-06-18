@@ -289,7 +289,7 @@ After this is done it should be up & running
       tls: true
       from: DEFAULT_FROM_EMAIL
 * Open `config/environments/production`
-    * add `config.hosts << YOUR_HOSTNAME`
+    * add `config.hosts << api.researchresultswebsite.com`
 
 
 * Go to mercury-analytics-api project root and open `config/deploy/production.rb`
@@ -394,3 +394,8 @@ Alternative, you could use `react-scripts build` to build the package, then copy
 
 After the invalidation is finished, you should be able to access your staging environment
 ![](deploymentinfo/staging-up.png)
+
+# Deploy backend
+Follow the above steps for it and add a subdomain to your Route53, called `api`, and point it to EC2 public IP
+![](deploymentinfo/ec2-public-ip.png)
+![](deploymentinfo/route-53-api-subdomain.png)
