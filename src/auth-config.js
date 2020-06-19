@@ -4,8 +4,8 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaWindows } from 'react-icons/fa';
 
 const authConfig = {
-  domain: 'dev-relu.auth0.com',
-  clientId: 'ze875woECaoiRt7Vp2561p4uf57zp9e1',
+  domain: 'dev-oxtggqjp.auth0.com',
+  clientId: 'fpp4BTYmrW5gOKT04zAR5Y4W3Uu4kC2P',
   loginUrl: `${Constants.APP_URL}${Routes.Login}`,
   callbackUrl: `${Constants.APP_URL}${Routes.LoginCallback}`,
   socialConnectors: [
