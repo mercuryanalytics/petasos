@@ -83,7 +83,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.hosts << 'www.researchresultswebsite.com'
+  config.hosts << 'api.researchresultswebsite.com'
   # config.hosts << 'api.aurelianb.com'
 
   config.action_mailer.smtp_settings = {
