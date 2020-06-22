@@ -36,7 +36,7 @@ class Client < ApplicationRecord
 
     image_url(
       'mercury-analytics-logo.png',
-      host: "#{parsed_url.scheme}://api.#{parsed_url.hostname.delete_prefix('www.')}"
+      host: "#{parsed_url.scheme}://api.#{parsed_url.hostname}"
     )
   end
 
