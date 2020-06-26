@@ -52,7 +52,7 @@ const Project = props => {
           onClick={toggleOpen}
         />
         <Folder className={styles.icon} />
-        <span className={styles.name}>{data.name}</span>
+        <span className={styles.name}>{data.project_number ? data.project_number + ':' : null} {data.name}</span>
       </Link>
       {isOpen && (
         <div className={styles.content}>
