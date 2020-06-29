@@ -8,6 +8,7 @@ import { getProject, getProjects, getOrphanProjects } from '../../store/projects
 import { getReport, getReports, getOrphanReports, getClientReports } from '../../store/reports/actions';
 import Search from '../common/Search';
 import Loader from '../common/Loader';
+import Tooltip from '../common/Tooltip';
 import Client from './Client';
 import ClientAdd from './ClientAdd';
 import Project from './Project';
@@ -474,6 +475,9 @@ const SideMenu = props => {
             (orphanReports && !!orphanReports.length)
           ) && (
             <div className={styles.orphansSeparator}>
+              <Tooltip id="other-reports-tt" location="bottom" zIndex={5}>
+                <span>These are reports for which the parent client is unknown.</span>
+              </Tooltip>
               <span>Other reports</span>
             </div>
           )}
