@@ -1,7 +1,7 @@
 .container {
   height: 100%;
   position: relative;
-  margin: 0 0 0 40px;
+  margin: 0 0 0 30px;
 }
 
 .actions {
@@ -149,6 +149,16 @@
   height: 100%;
 }
 
+.section .editor.sectioned .scrollableForm {
+  margin-left: -46px !important;
+  margin-right: -46px !important;
+}
+
+.section .editor.sectioned .scrollableForm [data-scrollable-content] {
+  margin-left: 46px !important;
+  margin-right: 46px !important;
+}
+
 .section .form {
   width: 100%;
   max-width: 520px;
@@ -219,10 +229,8 @@
 }
 
 .section.details .navigate .navigateLinks {
-  /* scrollable */
   height: calc(100% - 134px);
 }
-
 .section.details .navigate .navigateLinks div {
   margin: 14px 0;
   user-select: none;

@@ -454,7 +454,7 @@ const ClientManage = props => {
               <div className={`${styles.textBlock} ${styles.tall}`}>
                 Follow the steps below in order to create a new client.
               </div>
-              <Scrollable className={styles.navigateLinks}>
+              <div className={styles.navigateLinks}>
                 <div className={fieldsTab >= FieldsTabs.Details ? styles.active : ''}>
                   <span>1. Client details</span>
                 </div>
@@ -464,7 +464,7 @@ const ClientManage = props => {
                 <div className={fieldsTab >= FieldsTabs.Addresses ? styles.active : ''}>
                   <span>3. Addresses</span>
                 </div>
-              </Scrollable>
+              </div>
             </div>
           )}
           <div className={`${styles.editor} ${!editMode ? styles.sectioned : ''}`}>

@@ -11,6 +11,13 @@
 .menu {
   /* scrollable */
   height: calc(100% - 59px);
+  margin-left: -16px !important;
+  margin-right: -26px !important;
+}
+
+.menu [data-scrollable-content] {
+  margin-left: 16px !important;
+  margin-right: 26px !important;
 }
 
 .add {

@@ -1,5 +1,27 @@
-.container {}
+:global([data-scrollable]) {
+  margin-left: -30px;
+  margin-right: -30px;
+}
+
+:global(.simplebar-content) {
+  margin-left: 30px;
+  margin-right: 30px;
+  overflow-x: hidden;
+}
 
 :global(.simplebar-track.simplebar-vertical) {
-  right: -15px !important;
+  width: 14px !important;
+}
+
+:global(.simplebar-track.simplebar-horizontal) {
+  display: none;
+}
+
+:global(.simplebar-scrollbar::before) {
+  background-color: #707070 !important;
+}
+
+:global(.simplebar-scrollbar.simplebar-hover::before),
+:global(.simplebar-dragging .simplebar-scrollbar::before) {
+  background-color: #333 !important;
 }

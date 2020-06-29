@@ -126,6 +126,13 @@
   position: relative;
   height: calc(100% - 37px);
   padding: 0 10px;
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+}
+
+.resources .resourcesActions [data-scrollable-content] {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
 }
 
 .arrow {

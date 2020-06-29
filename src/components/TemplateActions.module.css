@@ -18,6 +18,13 @@
   /* scrollable */
   height: calc(100% - 37px);
   padding: 0 10px;
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+}
+
+.templatesActions [data-scrollable-content] {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
 }
 
 .client {

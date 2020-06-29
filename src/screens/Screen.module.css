@@ -14,11 +14,11 @@
 }
 
 .body .side {
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
+  width: 330px;
+  min-width: 330px;
+  max-width: 330px;
   height: calc(100vh - 72px);
-  padding: 0 18px 2rem 18px;
+  padding: 0 28px 2rem 18px;
   box-sizing: border-box;
   overflow-x: visible;
   overflow-y: auto;
