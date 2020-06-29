@@ -475,8 +475,8 @@ const SideMenu = props => {
             (orphanReports && !!orphanReports.length)
           ) && (
             <div className={styles.orphansSeparator}>
-              <Tooltip id="other-reports-tt" location="bottom" zIndex={5}>
-                <span>These are reports for which the parent client is unknown.</span>
+              <Tooltip id="other-reports-tt" location="top" zIndex={5}>
+                <span>Reports for which the parent client is unknown.</span>
               </Tooltip>
               <span>Other reports</span>
             </div>

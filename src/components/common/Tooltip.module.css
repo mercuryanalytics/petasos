@@ -8,6 +8,10 @@
   line-height: 20px;
 }
 
-:global([role="tooltip"] > div > div:last-child) {
+:global([role="tooltip"]:not([data-tt-location="top"]) > div > div:last-child) {
   border-bottom-color: #0B7693 !important;
+}
+
+:global([role="tooltip"][data-tt-location="top"] > div > div:last-child) {
+  border-top-color: #0B7693 !important;
 }

@@ -33,6 +33,12 @@
   color: #333;
 }
 
+.orphansSeparator [role="tooltip"] {
+  width: 290px;
+  min-width: 290px;
+  max-width: 290px;
+}
+
 .loader {
   display: flex !important;
   justify-content: center;
