@@ -71,9 +71,9 @@ namespace :import do
     memberships  = []
 
     mapped_users = user_results.collect do |row|
-      user = User.find_or_initialize_by(email: row['contact_email']).tap do |u|
-        u.email             = row['contact_email']
-        u.contact_email     = row['contact_email']
+      user = User.find_or_initialize_by(email: row['contact_email'].downcase).tap do |u|
+        u.email             = row['contact_email'].downcase
+        u.contact_email     = row['contact_email'].downcase
         u.contact_name      = row['contact_name']
         u.company_name      = row['company_name']
         u.contact_title     = row['contact_title']
@@ -138,6 +138,8 @@ namespace :import do
       }
     end
 
+    puts 'migration reports'
+
     reports_results = db_client.query('SELECT * FROM reports')
 
     missing_reports_projects = []
@@ -148,9 +150,22 @@ namespace :import do
         project_id = project_row[:new_id]
         client_id  = project_row[:old_domain_id]
       rescue NoMethodError
-        puts "cant find project for #{row.inspect}"
-        missing_reports_projects << [row['id'], row['name'], row['project_id']]
-        next
+        puts "cant find project for #{row.inspect}, assigning to MercuryAnalytics"
+        missing_reports_projects << { id: row['id'], name: row['name'], project_id: row['project_id'] }
+
+        cl_id = Client.find_by(name: 'Mercury Analytics').id
+        project_id = Project.find_or_create_by(
+          name: 'Reports without project form migration', domain_id: cl_id
+        ).id
+
+        mapped_projects << {
+          old_id: row['project_id'],
+          new_id: project_id,
+          new_domain_id: cl_id,
+          old_domain_id: nil
+        }
+
+        client_id = clients_mapped.select { |i| i[:new_id] == cl_id }.first[:old_id]
       end
 
       report = Report.find_or_initialize_by(name: row['name'], project_id: row['project_id']).tap do |r|
@@ -171,8 +186,16 @@ namespace :import do
         old_client_id = client_row.fetch(:old_id, project_row[:old_domain_id])
         new_client_id = client_row.fetch(:new_id, project_row[:new_domain_id])
       rescue NoMethodError
-        puts "Cannot find the client for #{row.inspect}"
-        next
+        puts "Cannot find the client for #{row.inspect}, using default MercuryAnalytics client"
+
+        {
+          new_id:         report.id,
+          old_id:         row['id'],
+          old_project_id: row['project_id'],
+          new_project_id: report.project_id,
+          old_domain_id:  nil,
+          new_domain_id:  Client.find_by(name: 'Mercury Analytics').id
+        }
       end
       {
         new_id:         report.id,
