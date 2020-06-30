@@ -62,6 +62,10 @@ const ReportManage = props => {
     init();
   }, [id]);
 
+  const getAccessibleUrl = useCallback((url, name) => {
+    return url.replace(/\#\{report_name\}/, name);
+  });
+
   const handleDelete = useCallback(() => {
     setIsDeleteBusy(true);
     const parent = data.project_id;
@@ -165,7 +169,7 @@ const ReportManage = props => {
               </Button>
             )}
             {!!data.url && (
-              <Button link={data.url} target="_blank" action={true}>View report</Button>
+              <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>
         )}

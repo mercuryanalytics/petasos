@@ -122,7 +122,7 @@ const SideMenu = props => {
 
   useEffect(() => {
     if (awaitRoute && awaitRoute === history.location.pathname) {
-      init(true);
+      init(false);
       setAwaitRoute(null);
     }
   }, [awaitRoute, history.location.pathname]);
@@ -273,7 +273,7 @@ const SideMenu = props => {
     filter = filter ? filter.toLowerCase() : null;
     return stack.filter(item => (
       (filter && item.name.toLowerCase().includes(filter)) ||
-      (filter && item.hasOwnProperty('project_number') && item.project_number.toLowerCase().includes(filter)) ||
+      (filter && item.project_number && item.project_number.toLowerCase().includes(filter)) ||
       (values || []).indexOf(item[key || 'id']) > -1
     ));
   });
