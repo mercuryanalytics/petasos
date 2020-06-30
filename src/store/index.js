@@ -79,6 +79,35 @@ export const filterStack = (stack, filters) => {
   });
 };
 
+export const orderStack = (stack, options) => {
+  options = Object.assign({}, {
+    valueProperty: null,
+    descending: false,
+    valueFormatter: null,
+  }, options);
+  return [
+    ...stack.sort((a, b) => {
+      let va = a[options.valueProperty];
+      let vb = b[options.valueProperty];
+      if (options.valueFormatter) {
+        va = options.valueFormatter(va);
+        vb = options.valueFormatter(vb);
+      }
+      if (typeof va === 'string' || va instanceof String) {
+        va = va.toLowerCase();
+        vb = vb.toLowerCase();
+      }
+      if (va > vb) {
+        return options.descending ? -1 : 1;
+      }
+      if (vb > va) {
+        return options.descending ? 1 : -1;
+      }
+      return 0;
+    })
+  ];
+};
+
 export const pushToStack = (stack, data, options) => {
   if (!data) {
     return stack;

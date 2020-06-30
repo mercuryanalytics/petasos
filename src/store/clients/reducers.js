@@ -1,4 +1,4 @@
-import { pushToStack } from '../index';
+import { pushToStack, orderStack } from '../index';
 
 const initialState = {
   clients: [],
@@ -6,31 +6,36 @@ const initialState = {
   templates: {},
 };
 
+const sortClients = (stack) => orderStack(stack, {
+  descending: false,
+  valueProperty: 'name',
+});
+
 const clientsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_CLIENTS_SUCCESS': {
-      const clients = pushToStack(state.clients, action.payload);
+      const clients = sortClients(pushToStack(state.clients, action.payload));
       return {
         ...state,
         clients: clients,
       };
     }
     case 'GET_CLIENT_SUCCESS': {
-      const clients = pushToStack(state.clients, action.payload);
+      const clients = sortClients(pushToStack(state.clients, action.payload));
       return {
         ...state,
         clients: clients,
       };
     }
     case 'CREATE_CLIENT_SUCCESS': {
-      const clients = pushToStack(state.clients, action.payload);
+      const clients = sortClients(pushToStack(state.clients, action.payload));
       return {
         ...state,
         clients: clients,
       };
     }
     case 'UPDATE_CLIENT_SUCCESS': {
-      const clients = pushToStack(state.clients, action.payload, { updateOnly: true });
+      const clients = sortClients(pushToStack(state.clients, action.payload, { updateOnly: true }));
       return {
         ...state,
         clients: clients,

@@ -1,4 +1,4 @@
-import { pushToStack } from '../index';
+import { pushToStack, orderStack } from '../index';
 
 const initialState = {
   reports: [],
@@ -6,18 +6,24 @@ const initialState = {
   clientReports: [],
 };
 
+const sortReports = (stack) => orderStack(stack, {
+  descending: true,
+  valueProperty: 'updated_at',
+  valueFormatter: value => value ? +(new Date(value)) : 0,
+});
+
 const reportsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_REPORTS_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload);
+      const reports = sortReports(pushToStack(state.reports, action.payload));
       return {
         ...state,
         reports: reports,
       };
     }
     case 'GET_ORPHAN_REPORTS_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload);
-      const orphans = pushToStack(state.orphans, action.payload);
+      const reports = sortReports(pushToStack(state.reports, action.payload));
+      const orphans = sortReports(pushToStack(state.orphans, action.payload));
       return {
         ...state,
         reports: reports,
@@ -25,8 +31,8 @@ const reportsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_CLIENT_REPORTS_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload);
-      const clientReports = pushToStack(state.clientReports, action.payload);
+      const reports = sortReports(pushToStack(state.reports, action.payload));
+      const clientReports = sortReports(pushToStack(state.clientReports, action.payload));
       return {
         ...state,
         reports: reports,
@@ -34,21 +40,21 @@ const reportsReducer = (state = initialState, action) => {
       };
     }
     case 'GET_REPORT_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload);
+      const reports = sortReports(pushToStack(state.reports, action.payload));
       return {
         ...state,
         reports: reports,
       };
     }
     case 'CREATE_REPORT_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload);
+      const reports = sortReports(pushToStack(state.reports, action.payload));
       return {
         ...state,
         reports: reports,
       };
     }
     case 'UPDATE_REPORT_SUCCESS': {
-      const reports = pushToStack(state.reports, action.payload, { updateOnly: true });
+      const reports = sortReports(pushToStack(state.reports, action.payload, { updateOnly: true }));
       return {
         ...state,
         reports: reports,
