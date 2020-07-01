@@ -63,7 +63,7 @@ const ReportManage = props => {
   }, [id]);
 
   const getAccessibleUrl = useCallback((url, name) => {
-    return url.replace(/\#\{report_name\}/, name);
+    return url.replace(/\#\{report\.name\}/, name);
   });
 
   const handleDelete = useCallback(() => {
