@@ -8,10 +8,15 @@ import { isSuperUser } from '../../store';
 
 const Header = props => {
   const { authUser, localUser, logo, slogan } = props;
+
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
-        <a className={styles.link} href={Routes.Home}>
+        <a
+          className={styles.link}
+          href={Routes.Home}
+          title={`Report Access Manager v${process.env.REACT_APP_VERSION}`}
+        >
           <img src={logo || defaultLogo} alt='' className={styles.logo} />
         </a>
         {!!slogan && <span className={styles.slogan}>{slogan}</span>}
