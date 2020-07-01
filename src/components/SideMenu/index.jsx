@@ -147,7 +147,8 @@ const SideMenu = props => {
     setCanCreateReports(prev => ({ ...prev, [projectId]: canCreate }));
   }, [userId]);
 
-  const handleClientOpen = useCallback(async (client) => {
+  const handleClientOpen = useCallback(async (client, onReady) => {
+    onReady = onReady ? onReady : () => {};
     if (!openClients[client.id]) {
       setOpenClients(prev => ({ ...prev, [client.id]: true }));
     }
@@ -160,7 +161,10 @@ const SideMenu = props => {
       ]).then(() => {
         initProjectCreationRights(client.id, clientProjects);
         setLoadedClients(prev => ({ ...prev, [client.id]: true }));
+        onReady();
       });
+    } else {
+      onReady();
     }
   }, [openClients, loadedClients, userId]);
 
@@ -170,15 +174,19 @@ const SideMenu = props => {
     }
   }, [openClients]);
 
-  const handleProjectOpen = useCallback((project) => {
+  const handleProjectOpen = useCallback(async (project, onReady) => {
+    onReady = onReady ? onReady : () => {};
     if (!openProjects[project.id]) {
       setOpenProjects(prev => ({ ...prev, [project.id]: true }));
     }
     if (!loadedProjects[project.id]) {
-      dispatch(getReports(project.id)).then(() => {
+      await dispatch(getReports(project.id)).then(() => {
         initReportCreationRights(project.id);
         setLoadedProjects(prev => ({ ...prev, [project.id]: true }));
+        onReady();
       }, () => {});
+    } else {
+      onReady();
     }
   }, [openProjects, loadedProjects]);
 
@@ -187,6 +195,28 @@ const SideMenu = props => {
       setOpenProjects(prev => ({ ...prev, [project.id]: false }));
     }
   }, [openProjects]);
+
+  const scrollToActive = useCallback(() => {
+    let type, id;
+    if (activeReport) {
+      type = 'report';
+      id = activeReport;
+    } else if (activeProject) {
+      type = 'project';
+      id = activeProject;
+    } else if (activeClient) {
+      type = 'client';
+      id = activeClient;
+    }
+    if (type && id) {
+      setTimeout(() => {
+        let el = window.document.getElementById(`sidemenu-${type}-${id}`);
+        if (el) {
+          el.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+        }
+      }, 0);
+    }
+  }, [activeClient, activeProject, activeReport]);
 
   useEffect(() => {
     if (activeReport !== null) {
@@ -217,12 +247,16 @@ const SideMenu = props => {
         case TaskTypes.OpenProject:
           let p = projects.filter(p => p.id === task.target)[0];
           if (p) {
-            handleProjectOpen(p);
-            setTask({ type: TaskTypes.OpenClient, target: p.domain_id });
+            handleProjectOpen(p, () => setTask({
+              type: TaskTypes.OpenClient,
+              target: p.domain_id,
+            }));
           } else {
             dispatch(getProject(task.target)).then(() => {}, () => {
-              if (task.clientId) {
-                handleClientOpen({ id: task.clientId });
+              if (task.clientId && clients.filter(c => c.id === task.clientId)[0]) {
+                handleClientOpen({ id: task.clientId }, scrollToActive);
+              } else {
+                scrollToActive();
               }
             });
           }
@@ -230,9 +264,11 @@ const SideMenu = props => {
         case TaskTypes.OpenClient:
           let c = clients.filter(c => c.id === task.target)[0];
           if (c) {
-            handleClientOpen(c);
-            setTask(null);
+            handleClientOpen(c, scrollToActive);
+          } else {
+            scrollToActive();
           }
+          setTask(null);
           break;
       }
     }

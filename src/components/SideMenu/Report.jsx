@@ -10,6 +10,7 @@ const Report = props => {
   return (
     <Link
       className={`${styles.container} ${active ? styles.active : ''} ${orphan ? styles.orphan : ''}`}
+      id={`sidemenu-report-${data.id}`}
       to={Routes.ManageReport.replace(':id', data.id)}
       title={data.name}
     >

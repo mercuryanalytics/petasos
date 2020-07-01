@@ -58,7 +58,10 @@ const Client = props => {
   }, [props.active, props.isActiveAddLink]);
 
   return (
-    <div className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}>
+    <div
+      className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}
+      id={`sidemenu-client-${data.id}`}
+    >
       <Link className={styles.title} to={Routes.ManageClient.replace(':id', data.id)} title={data.name}>
         <MdPlayArrow
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}

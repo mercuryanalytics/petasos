@@ -45,7 +45,10 @@ const Project = props => {
   }, [props.active, props.isActiveAddLink]);
 
   return (
-    <div className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}>
+    <div
+      className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}
+      id={`sidemenu-project-${data.id}`}
+    >
       <Link className={styles.title} to={Routes.ManageProject.replace(':id', data.id)} title={data.name}>
         <MdPlayArrow
           className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
