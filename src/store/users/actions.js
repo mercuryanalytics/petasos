@@ -5,10 +5,10 @@ import Constants from '../../utils/constants';
 export function getUsers(clientId, force) {
   const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
   return dispatch => (
-    force || !apiCall.isCalled([
-      `${Constants.API_URL}/users`,
-      `${Constants.API_URL}/users${queryString}`,
-    ])
+    force || !apiCall.isCalled(
+      !queryString ? [`${Constants.API_URL}/users`] :
+      [`${Constants.API_URL}/users${queryString}`]
+    )
       ? apiCall('GET', `${Constants.API_URL}/users${queryString}`)
       : queryState(state => ({
         target: state.usersReducer.users,

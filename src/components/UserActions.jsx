@@ -300,7 +300,10 @@ const UserActions = props => {
       let filter = userNameFilter.toLowerCase();
       let buids = {}, bcids = {}, cids = {};
       users.forEach(u => {
-        if ((u.contact_name || u.email || '').toLowerCase().includes(filter)) {
+        if (
+          (u.contact_name && u.contact_name.toLowerCase().includes(filter)) ||
+          (u.email && u.email.toLowerCase().includes(filter))
+        ) {
           u.client_ids.forEach(cid => cids[cid] = true);
         } else {
           buids[u.id] = true;

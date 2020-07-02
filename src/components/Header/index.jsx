@@ -15,7 +15,7 @@ const Header = props => {
         <a
           className={styles.link}
           href={Routes.Home}
-          title={`Report Access Manager v${process.env.REACT_APP_VERSION}`}
+          title={`Reports Access Manager\n${process.env.REACT_APP_VERSION}`}
         >
           <img src={logo || defaultLogo} alt='' className={styles.logo} />
         </a>

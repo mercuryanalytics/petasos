@@ -212,7 +212,7 @@ const SideMenu = props => {
       setTimeout(() => {
         let el = window.document.getElementById(`sidemenu-${type}-${id}`);
         if (el) {
-          el.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+          el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       }, 0);
     }
