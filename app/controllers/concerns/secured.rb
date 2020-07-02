@@ -30,7 +30,7 @@ module Secured
     @current_user = User.find_or_initialize_by(email: email)
 
     # TODO(@relu): move this piece in other part
-    if @current_user.new_record?
+    if @current_user.new_record? || @current_user.auth_id.nil?
       @current_user.auth_id = auth_id
       email_domain = email.split('@').last
       client_ids = Domain.where(name: email_domain).pluck(:client_id)

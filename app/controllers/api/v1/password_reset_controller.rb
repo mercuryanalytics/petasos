@@ -16,7 +16,7 @@ module Api
 
         client = Client.find_or_initialize_by(subdomain: create_params.fetch(:subdomain, SecureRandom.hex(6)))
 
-        UserMailer.forgot_password_email(user, client).deliver_now if user.auth_id.start_with?('auth0')
+        UserMailer.forgot_password_email(user, client).deliver_now if user.auth_id&.start_with?('auth0')
 
         render json: { data: { message: 'done' } }, status: :created
       end
