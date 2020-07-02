@@ -70,6 +70,8 @@ namespace :import do
     user_results = db_client.query('SELECT * FROM accounts')
     memberships  = []
 
+    admin_scope = Scope.find_by(action: 'admin')
+
     mapped_users = user_results.collect do |row|
       user = User.find_or_initialize_by(email: row['contact_email'].downcase).tap do |u|
         u.email             = row['contact_email'].downcase
@@ -88,6 +90,8 @@ namespace :import do
 
         u.save
       end
+
+      user.scopes << admin_scope if user.email.split('@').last.downcase == 'mercuryanalytics.com'
 
       membership = Membership.find_or_initialize_by(
         client_id: get_client(row['domain_id'], clients_mapped),
