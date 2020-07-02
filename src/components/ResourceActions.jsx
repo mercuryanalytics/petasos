@@ -33,6 +33,43 @@ const ResourceActions = props => {
   const [filters, setFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
 
+  const handleProjectToggle = useCallback(async (id, forced) => {
+    const status = forced ? !forced : !!openProjects[id];
+    setOpenProjects(prev => ({ ...prev, [id]: !status }));
+    if (!loadedProjects[id]) {
+      await dispatch(getReports(id)).then(async (action) => {
+        setReports(prev => ({ ...prev, [id]: action.payload }));
+        setLoadedProjects(prev => ({ ...prev, [id]: true }));
+      }, () => {});
+    }
+  }, [openProjects, loadedProjects, dispatch]);
+
+  const handleClientToggle = useCallback(async (id, openFirstProject, forced) => {
+    const status = forced ? !forced : !!openClients[id];
+    setOpenClients(prev => ({ ...prev, [id]: !status }));
+    if (!loadedClients[id]) {
+      let _projects;
+      await Promise.all([
+        dispatch(getProjects(id)).then(async (action) => {
+          _projects = action.payload;
+          setProjects(prev => ({ ...prev, [id]: action.payload }));
+        }, () => {}),
+        dispatch(getClientReports(id)).then(async (action) => {
+          setClientReports(prev => ({ ...prev, [id]: action.payload }));
+        }, () => {}),
+      ]).then(() => {
+        setLoadedClients(prev => ({ ...prev, [id]: true }));
+        if (openFirstProject && _projects && _projects.length) {
+          handleProjectToggle(_projects[0].id, true);
+        }
+      });
+    } else if (openFirstProject) {
+      try {
+        handleProjectToggle(projects[id][0].id, true);
+      } catch (e) {}
+    }
+  }, [openClients, loadedClients, projects, dispatch, handleProjectToggle]);
+
   const init = useCallback(async () => {
     let clientToOpen;
     await Promise.all([
@@ -59,7 +96,7 @@ const ResourceActions = props => {
         handleClientToggle(clientToOpen, !!clientId, true);
       }
     });
-  }, [clientId, userId]);
+  }, [clientId, userId, dispatch, handleClientToggle]);
 
   useEffect(() => {
     if (userId) {
@@ -68,44 +105,8 @@ const ResourceActions = props => {
       setOpenProjects({});
       init().then(() => setIsLoading(false));
     }
+  // eslint-disable-next-line
   }, [clientId, userId]);
-
-  const handleClientToggle = useCallback(async (id, openFirstProject, forced) => {
-    const status = forced ? !forced : !!openClients[id];
-    setOpenClients(prev => ({ ...prev, [id]: !status }));
-    if (!loadedClients[id]) {
-      let _projects;
-      await Promise.all([
-        dispatch(getProjects(id)).then(async (action) => {
-          _projects = action.payload;
-          setProjects(prev => ({ ...prev, [id]: action.payload }));
-        }, () => {}),
-        dispatch(getClientReports(id)).then(async (action) => {
-          setClientReports(prev => ({ ...prev, [id]: action.payload }));
-        }, () => {}),
-      ]).then(() => {
-        setLoadedClients(prev => ({ ...prev, [id]: true }));
-        if (openFirstProject && _projects && _projects.length) {
-          handleProjectToggle(_projects[0].id, true);
-        }
-      });
-    } else if (openFirstProject) {
-      try {
-        handleProjectToggle(projects[id][0].id, true);
-      } catch (e) {}
-    }
-  }, [openClients, loadedClients, projects]);
-
-  const handleProjectToggle = useCallback(async (id, forced) => {
-    const status = forced ? !forced : !!openProjects[id];
-    setOpenProjects(prev => ({ ...prev, [id]: !status }));
-    if (!loadedProjects[id]) {
-      await dispatch(getReports(id)).then(async (action) => {
-        setReports(prev => ({ ...prev, [id]: action.payload }));
-        setLoadedProjects(prev => ({ ...prev, [id]: true }));
-      }, () => {});
-    }
-  }, [openProjects, loadedProjects]);
 
   const getItemStatus = useCallback((type, id, role, scopeId, isGlobal) => {
     const currentState = activeStates[`${userId}-${type}-${id}-${role || scopeId || 'viewer'}`];
@@ -197,7 +198,7 @@ const ResourceActions = props => {
       }
     }
     setActiveStates(prev => ({ ...prev, ...newStates }));
-  }, [userId, getItemStatus]);
+  }, [userId, getItemStatus, dispatch]);
 
   const setFiltersStatus = useCallback((status, id) => {
     let newState = {};
@@ -241,7 +242,7 @@ const ResourceActions = props => {
         </div>
       </div>
     );
-  });
+  }, []);
 
   const renderColumnCheckboxesTitles = useCallback(() => {
     return (
@@ -299,7 +300,7 @@ const ResourceActions = props => {
         </>}
       </div>
     );
-  });
+  }, [clientId, filters, getActiveFiltersCount, getFirstActiveFilterId, renderCheckboxTitle, scopes]);
 
   const renderColumnCheckboxes = (resType, resId, parentId) => {
     const rolePrefix = resType[0].toUpperCase() + resType.substr(1);

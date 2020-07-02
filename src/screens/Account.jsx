@@ -13,7 +13,7 @@ const Account = () => {
   const handleScreenLoad = useCallback((user) => {
     setUser(user);
     dispatch(setLocationData({ account: user.email }));
-  });
+  }, [dispatch]);
 
   return (
     <Screen className={styles.container} private independent onLoad={handleScreenLoad}>

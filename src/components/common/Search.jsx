@@ -19,12 +19,13 @@ const Search = props => {
     if (isTouched && props.onSearch) {
       props.onSearch(value, searchTargets);
     }
+  // eslint-disable-next-line
   }, [isTouched, value, searchTargets]);
 
   const handleChange = useCallback((event) => {
     setValue(event.target.value);
     setIsTouched(true);
-  });
+  }, []);
 
   const handleTargetChange = useCallback((targetKey, value) => {
     valueRef.current.focus();
@@ -36,7 +37,7 @@ const Search = props => {
       }
     }
     setSearchTargets(newTargets);
-  }, [valueRef, searchTargets]);
+  }, [valueRef, targets]);
 
   return (
     <div className={`${styles.container} ${hasShadows ? styles.shadows : ''}`}>

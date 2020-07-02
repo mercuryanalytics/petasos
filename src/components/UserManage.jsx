@@ -25,6 +25,7 @@ const UserManage = props => {
       setIsLoading(true);
       dispatch(getUser(id)).then(() => setIsLoading(false), () => {});
     }
+  // eslint-disable-next-line
   }, [id]);
 
   const { form, handleSubmit, submitting } = useForm({

@@ -16,7 +16,7 @@ const Toggle = props => {
         timeout[id] = null;
       }
     }, 50);
-  }, [timeout, props.onChange, checked]);
+  }, [props, checked, id]);
 
   const handleChange = useCallback((event) => {
     throttleChange(!!event.target.checked);

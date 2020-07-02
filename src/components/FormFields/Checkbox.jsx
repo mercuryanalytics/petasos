@@ -15,6 +15,7 @@ const Checkbox = props => {
     if (field && typeof props.checked !== 'undefined') {
       field.input.onChange(props.checked);
     }
+  // eslint-disable-next-line
   }, [props.checked]);
 
   return !preview ? (

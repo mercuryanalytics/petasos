@@ -65,7 +65,7 @@ const UserActions = props => {
         props.onUserSelect(id);
       }
     }
-  }, [mode, props.onUserSelect, selectedUserId]);
+  }, [mode, props]);
 
   const handleClientToggle = useCallback(async (id, forced) => {
     const status = forced ? !forced : !!openClients[id];
@@ -78,7 +78,7 @@ const UserActions = props => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
       });
     }
-  }, [mode, openClients, loadedClients, authorizedOptions]);
+  }, [openClients, loadedClients, authorizedOptions, dispatch]);
 
   useEffect(() => {
     if (clientId || projectId || reportId) {
@@ -109,7 +109,7 @@ const UserActions = props => {
         handleClientToggle(clientId, true);
       }
     });
-  }, [mode, clientId, limitClientId, authorizedOptions]);
+  }, [mode, clientId, limitClientId, authorizedOptions, dispatch, handleClientToggle]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -117,6 +117,7 @@ const UserActions = props => {
     if (mode && (authorizedOptions || !clientId)) {
       init().then(() => setIsLoading(false));
     }
+  // eslint-disable-next-line
   }, [mode, clientId, authorizedOptions]);
 
   useEffect(() => {
@@ -144,18 +145,43 @@ const UserActions = props => {
       )[0];
       handleItemSelect(u ? u.id : null);
     }
-  }, [users, clientId, limitClientId, selectedItem]);
+  }, [users, clientId, limitClientId, selectedItem, handleItemSelect]);
 
   useEffect(() => {
     if (!isLoading && mode === UserActionsModes.Manage) {
       ensureSelectedItem(selectedUserId);
     }
+  // eslint-disable-next-line
   }, [isLoading, mode, selectedUserId]);
 
   const handleSettingsToggle = useCallback((id, event) => {
     setVisibleSettings(prev => prev === id ? null : id);
     event.stopPropagation();
-  });
+  }, []);
+
+  const getItemStatus = useCallback((parentId, itemId) => {
+    const currentState = activeStates[`${parentId}-${itemId}`];
+    if (currentState === true || currentState === false) {
+      return currentState;
+    }
+    const resId = reportId || projectId || clientId;
+    const _users = authorizedUsers[`${context}-${resId}@${parentId}`];
+    if (_users) {
+      for (let i = 0; i < _users.length; i++) {
+        const user = _users[i];
+        if (user.id === itemId && user.authorized) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, [clientId, projectId, reportId, authorizedUsers, activeStates, context]);
+
+  const setItemStatus = useCallback((parentId, itemId, status) => {
+    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }))
+      .then(() => {}, () => {});
+    setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
+  }, [authorizedOptions, dispatch]);
 
   const grantAll = useCallback((id, event) => {
     users.forEach(user => {
@@ -165,7 +191,7 @@ const UserActions = props => {
     });
     setVisibleSettings(null);
     event.stopPropagation();
-  }, [users]);
+  }, [users, setItemStatus]);
 
   const revokeAll = useCallback((id, event) => {
     users.forEach(user => {
@@ -175,7 +201,7 @@ const UserActions = props => {
     });
     setVisibleSettings(null);
     event.stopPropagation();
-  }, [users]);
+  }, [users, setItemStatus]);
 
   const handleItemDelete = useCallback((id, event) => {
     const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
@@ -187,7 +213,7 @@ const UserActions = props => {
       }
       stopLoading();
     }, stopLoading);
-  }, [clientId, selectedUserId]);
+  }, [clientId, selectedUserId, dispatch, ensureSelectedItem]);
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
@@ -254,30 +280,6 @@ const UserActions = props => {
 
   const addUserField = useField('add_user_email', form);
 
-  const getItemStatus = useCallback((parentId, itemId) => {
-    const currentState = activeStates[`${parentId}-${itemId}`];
-    if (currentState === true || currentState === false) {
-      return currentState;
-    }
-    const resId = reportId || projectId || clientId;
-    const _users = authorizedUsers[`${context}-${resId}@${parentId}`];
-    if (_users) {
-      for (let i = 0; i < _users.length; i++) {
-        const user = _users[i];
-        if (user.id === itemId && user.authorized) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }, [clientId, projectId, reportId, authorizedUsers, activeStates]);
-
-  const setItemStatus = useCallback((parentId, itemId, status) => {
-    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }))
-      .then(() => {}, () => {});
-    setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
-  }, [clientId, projectId, reportId, authorizedOptions]);
-
   const handleSearch = useCallback((value) => {
     if (!!value.length) {
       if (userNameFilter === null) {
@@ -318,6 +320,7 @@ const UserActions = props => {
         }
       }
     }
+  // eslint-disable-next-line
   }, [userNameFilter, mode]);
 
   const handleAddUserClose = useCallback(() => {

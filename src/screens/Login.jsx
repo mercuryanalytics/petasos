@@ -39,16 +39,17 @@ const Login = () => {
     if (isLoggedIn() && !state) {
       history.push(Routes.Home);
     }
-  }, [history]);
+  }, [history, state]);
 
   useEffect(() => {
     leaveIfLoggedIn();
+  // eslint-disable-next-line
   }, []);
 
   const handleLoginSuccess = useCallback(async (key, user) => {
     await dispatch(setAuthKey(key));
     await dispatch(setAuthUser(user));
-  });
+  }, [dispatch]);
 
   const handlePasswordReset = useCallback(async (email) => {
     return dispatch(resetPassword(email, partner)).then(() => {
@@ -56,7 +57,7 @@ const Login = () => {
     }, (err) => {
       return Promise.reject(translateError(err));
     });
-  }, [partner]);
+  }, [partner, dispatch]);
 
   return (
     <Auth

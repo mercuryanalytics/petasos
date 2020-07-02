@@ -22,11 +22,12 @@ const SuperUser = () => {
 
   useEffect(() => {
     dispatch(setLocationData({ superUser: true }));
+  // eslint-disable-next-line
   }, []);
 
   const handleScreenLoad = useCallback((user) => {
     setIsAccessBlocked(!isSuperUser(user.id));
-  });
+  }, []);
 
   const handleUserSelect = useCallback((id) => {
     if (selectedUserId !== id) {

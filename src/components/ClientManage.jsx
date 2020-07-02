@@ -100,7 +100,7 @@ const ClientManage = props => {
     }
     setTab(ContentTabs.Details);
     setSelectedUserId(null);
-  }, [history.location.pathname, tab, users]);
+  }, [history, tab, users, id]);
 
   const init = useCallback(() => {
     setIsLoading(true);
@@ -126,10 +126,11 @@ const ClientManage = props => {
         setIsLoading(false);
       });
     }
-  }, [editMode, id, user, initSelection, data]);
+  }, [editMode, id, user, initSelection, data, dispatch]);
 
   useEffect(() => {
     init();
+  // eslint-disable-next-line
   }, [id]);
 
   const handleBreadcrumbsChange = useCallback(() => {
@@ -143,12 +144,13 @@ const ClientManage = props => {
     if (props.onBreadcrumbsChange) {
       props.onBreadcrumbsChange(bc);
     }
-  }, [tab, users, selectedUserId, props.onBreadcrumbsChange]);
+  }, [tab, users, selectedUserId, props]);
 
   useEffect(() => {
     if (editMode) {
       handleBreadcrumbsChange();
     }
+  // eslint-disable-next-line
   }, [editMode, selectedUserId, tab]);
 
   const handleTabSelect = useCallback((tabId) => {
@@ -164,7 +166,7 @@ const ClientManage = props => {
     setSelectedUserId(false);
     setShowTemplate(true);
     history.push(`${Routes.ManageClient.replace(':id', id)}`);
-  });
+  }, [id, history]);
 
   const handleUserSelect = useCallback((uid) => {
     if (tab === ContentTabs.Accounts && selectedUserId !== uid) {
@@ -197,7 +199,7 @@ const ClientManage = props => {
     }, () => {
       setIsDeleteBusy(false);
     });
-  }, [clients, data, history]);
+  }, [clients, data, history, dispatch]);
 
   const handleAvatarChange = useCallback((images) => {
     if (images && images.length) {
@@ -205,7 +207,7 @@ const ClientManage = props => {
     } else {
       setAvatar(null);
     }
-  });
+  }, []);
 
   const { form, handleSubmit, submitting, errors } = useForm({
     initialValues: data ? {
@@ -350,6 +352,7 @@ const ClientManage = props => {
       });
     }
     setBillingAsMailing(!!status);
+  // eslint-disable-next-line
   }, [billing_as_mailing.input.value]);
 
   const getTemplateStatus = useCallback(() => {
@@ -363,7 +366,7 @@ const ClientManage = props => {
     setTemplateActiveState(status);
     dispatch(updateClient(id, { default_template_enabled: status }))
       .then(() => {}, () => {});
-  }, [id]);
+  }, [id, dispatch]);
 
   const changeFieldsTab = useCallback((tab) => {
     const fields = ({
@@ -396,7 +399,7 @@ const ClientManage = props => {
               className={`${styles.avatarUpload} ${!!avatarUrl ? styles.hasAvatar : ''}`}
               {...(!preview ? { onClick: onImageUpload } : {})}
             >
-              {!!avatarUrl && <img src={avatarUrl} />}
+              {!!avatarUrl && <img src={avatarUrl} alt="" />}
               {!preview && (<>
                 <div className={styles.uploadOverlay}></div>
                 <div className={styles.uploadTrigger}><Upload /></div>

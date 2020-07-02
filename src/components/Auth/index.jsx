@@ -97,13 +97,13 @@ const Auth = props => {
         clientID: config.clientId,
       }, authConfig)
     );
-  }, [config, callbackUrl, state]);
+  }, [config, callbackUrl, state, redirectTo]);
 
   const clearErrors = useCallback(() => {
     setLoginError(null);
     setPasswordResetError(null);
     setPasswordChangeError(null);
-  });
+  }, []);
 
   const login = useCallback(async (res) => {
     const webAuth = getWebAuth();
@@ -132,7 +132,7 @@ const Auth = props => {
         }
       }
     });
-  }, [onSuccess]);
+  }, [config, onSuccess, getWebAuth, history]);
 
   const handleLoginCallback = useCallback(() => {
     const webAuth = getWebAuth();
@@ -150,18 +150,20 @@ const Auth = props => {
       }
       login(res);
     });
-  }, [history, config]);
+  }, [history, config, getWebAuth, login]);
 
   useEffect(() => {
     if (isCallback) {
       handleLoginCallback();
     }
+  // eslint-disable-next-line
   }, [isCallback]);
 
   useEffect(() => {
     if (isConnected && !isCallback && state) {
       getWebAuth().authorize();
     }
+  // eslint-disable-next-line
   }, [isCallback, isConnected, state]);
 
   const initLogo = useCallback(async (source) => {
@@ -172,10 +174,11 @@ const Auth = props => {
       logoUrl = String(source);
     }
     setLogo(logoUrl);
-  });
+  }, [setLogo]);
 
   useEffect(() => {
     initLogo(logoSrc);
+  // eslint-disable-next-line
   }, [logoSrc]);
 
   const handleLogin = useCallback((user, password) => {
@@ -189,7 +192,7 @@ const Auth = props => {
       setLoginError(err);
       localStorage.removeItem(auth0ReturnUrlKey);
     });
-  }, [state, redirectTo]);
+  }, [redirectTo, clearErrors, getWebAuth, setLoginError]);
 
   const handleSocialLogin = useCallback((connector) => {
     clearErrors();
@@ -208,7 +211,7 @@ const Auth = props => {
       }
       login(res);
     });
-  }, [redirectTo]);
+  }, [redirectTo, clearErrors, config, getWebAuth, login]);
 
   const handlePasswordReset = useCallback(async (user) => {
     clearErrors();
@@ -219,7 +222,7 @@ const Auth = props => {
         setPasswordResetError(err);
       });
     }
-  }, [passwordResetHandler]);
+  }, [passwordResetHandler, clearErrors]);
 
   const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     clearErrors();
@@ -230,12 +233,12 @@ const Auth = props => {
         setPasswordChangeError(err);
       });
     }
-  }, [passwordChangeHandler]);
+  }, [passwordChangeHandler, clearErrors]);
 
   const handleViewChange = useCallback((type) => {
     clearErrors();
     setLoginViewType(type);
-  });
+  }, [clearErrors]);
 
   const renderTitle = useCallback(() => {
     let value = '';
@@ -261,7 +264,7 @@ const Auth = props => {
           {!!logoSrc && (
             <div className={styles.logoContainer}>
               {!!logo ? (
-                <img className={styles.logo} src={logo} />
+                <img className={styles.logo} src={logo} alt="" />
               ) : (
                 <Loader inline size={3} />
               )}

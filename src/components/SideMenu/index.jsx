@@ -113,10 +113,7 @@ const SideMenu = props => {
         handleSuccess(!defaultRoute);
       }
     });
-  }, [
-    props.autoselect, props.onLoad,
-    activeClient, activeProject, activeReport, isActiveAddLink
-  ]);
+  }, [props, activeClient, activeProject, activeReport, isActiveAddLink, dispatch, history]);
 
   useEffect(init, []);
 
@@ -125,6 +122,7 @@ const SideMenu = props => {
       init(false);
       setAwaitRoute(null);
     }
+  // eslint-disable-next-line
   }, [awaitRoute, history.location.pathname]);
 
   const initProjectCreationRights = useCallback((clientId, clientProjects) => {
@@ -166,7 +164,7 @@ const SideMenu = props => {
     } else {
       onReady();
     }
-  }, [openClients, loadedClients, userId]);
+  }, [openClients, loadedClients, dispatch, initProjectCreationRights]);
 
   const handleClientClose = useCallback((client) => {
     if (openClients[client.id]) {
@@ -188,7 +186,7 @@ const SideMenu = props => {
     } else {
       onReady();
     }
-  }, [openProjects, loadedProjects]);
+  }, [openProjects, loadedProjects, dispatch, initReportCreationRights]);
 
   const handleProjectClose = useCallback((project) => {
     if (openProjects[project.id]) {
@@ -230,6 +228,7 @@ const SideMenu = props => {
 
   useEffect(() => {
     if (!isLoading && task) {
+      // eslint-disable-next-line
       switch (task.type) {
         case TaskTypes.ShowReport:
           let r = reports.filter(r => r.id === task.target)[0];
@@ -272,7 +271,10 @@ const SideMenu = props => {
           break;
       }
     }
-  }, [isLoading, task, reports, projects, orphanReports, orphanProjects, clients]);
+  }, [
+    isLoading, task, reports, projects, orphanReports, orphanProjects, clients,
+    dispatch, handleClientOpen, handleProjectOpen, scrollToActive,
+  ]);
 
   const handleSearch = useCallback(async (value, targets) => {
     setIsSearching(!!value.length);
@@ -303,7 +305,7 @@ const SideMenu = props => {
       shouldGetData && setIsLoadedSearchData(true);
       return res;
     });
-  }, [isLoadedSearchData]);
+  }, [isLoadedSearchData, dispatch]);
 
   const filterStack = useCallback((stack, filter, values, key) => {
     filter = filter ? filter.toLowerCase() : null;
@@ -312,7 +314,7 @@ const SideMenu = props => {
       (filter && item.project_number && item.project_number.toLowerCase().includes(filter)) ||
       (values || []).indexOf(item[key || 'id']) > -1
     ));
-  });
+  }, []);
 
   useEffect(() => {
     if (isSearching && isLoadedSearchData && searchFilters.query.length) {
@@ -400,6 +402,7 @@ const SideMenu = props => {
       setFilteredOrphanReports(orphanReportsResult);
       setFilteredClientReports(clientReportsResult);
     }
+  // eslint-disable-next-line
   }, [
     isSearching, isLoadedSearchData, searchFilters,
     clients, projects, orphanProjects, reports, orphanReports, clientReports,
@@ -429,7 +432,7 @@ const SideMenu = props => {
       }
     }
   }, [
-    clientsSearch, projectsSearch, openClients, openProjects,
+    clientsSearch, projectsSearch, activeClient, activeProject,
     filteredClients, filteredProjects, filteredOrphanProjects,
   ]);
 
@@ -437,6 +440,7 @@ const SideMenu = props => {
     if (isSearching) {
       decorateSearchResults();
     }
+  // eslint-disable-next-line
   }, [isSearching, filteredClients, filteredProjects, filteredOrphanProjects]);
 
   useEffect(() => {
@@ -454,6 +458,7 @@ const SideMenu = props => {
       setLoadedProjects(statesBackup.projects.loaded);
       setStatesBackup(null);
     }
+  // eslint-disable-next-line
   }, [isSearching, isLoadedSearchData]);
 
   return (

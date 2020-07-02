@@ -55,7 +55,7 @@ const App = () => {
         },
       });
     }
-  }, [partner, authUser]);
+  }, [partner, authUser, dispatch]);
 
   useEffect(init, []);
 

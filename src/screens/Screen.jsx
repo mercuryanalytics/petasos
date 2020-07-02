@@ -35,6 +35,7 @@ const Screen = props => {
     if (partner && authUser) {
       dispatch(getClients()).then(() => {}, () => {});
     }
+  // eslint-disable-next-line
   }, [partner, authUser]);
 
   useEffect(() => {
@@ -46,6 +47,7 @@ const Screen = props => {
 
   useEffect(() => {
     dispatch(setLocationData({}));
+  // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -70,13 +72,14 @@ const Screen = props => {
         }, () => {});
       }
     }
+  // eslint-disable-next-line
   }, [props.private, authUser]);
 
   const handleOnLoad = useCallback(() => {
     if (props.onLoad) {
       props.onLoad(localUser, authUser);
     }
-  }, [localUser, authUser, props.onLoad]);
+  }, [localUser, authUser, props]);
 
   const handleSideMenuLoad = useCallback((emptyState) => {
     setRealEmptyState(emptyState);
@@ -88,6 +91,7 @@ const Screen = props => {
     if (!isLoading) {
       handleOnLoad();
     }
+  // eslint-disable-next-line
   }, [isLoading, history.location.pathname]);
 
   if (doRedirect) {

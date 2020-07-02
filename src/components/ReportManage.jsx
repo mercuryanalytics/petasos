@@ -56,15 +56,16 @@ const ReportManage = props => {
         setIsLoading(false);
       });
     }
-  }, [editMode, id, projectId, user, data]);
+  }, [editMode, id, user, data, dispatch]);
 
   useEffect(() => {
     init();
+  // eslint-disable-next-line
   }, [id]);
 
   const getAccessibleUrl = useCallback((url, name) => {
-    return url.replace(/\#\{report\.name\}/, name);
-  });
+    return url.replace(/#\{report\.name\}/, name);
+  }, []);
 
   const handleDelete = useCallback(() => {
     setIsDeleteBusy(true);
@@ -75,7 +76,7 @@ const ReportManage = props => {
     }, () => {
       setIsDeleteBusy(false);
     });
-  }, [data, history]);
+  }, [data, history, dispatch]);
 
   const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {

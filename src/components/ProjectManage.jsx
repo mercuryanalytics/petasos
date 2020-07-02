@@ -57,6 +57,7 @@ const ProjectManage = props => {
   useEffect(() => {
     dispatch(getClients()).then(() => {}, () => {});
     dispatch(getResearchers()).then(() => {}, () => {});
+  // eslint-disable-next-line
   }, []);
 
   const init = useCallback(() => {
@@ -93,7 +94,7 @@ const ProjectManage = props => {
         }
       });
     }
-  }, [editMode, id, user, data]);
+  }, [editMode, id, user, data, dispatch]);
 
   useEffect(init, [id]);
 
@@ -115,7 +116,7 @@ const ProjectManage = props => {
     }, () => {
       setIsDeleteBusy(false);
     });
-  }, [data, history]);
+  }, [data, history, dispatch]);
 
   const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {

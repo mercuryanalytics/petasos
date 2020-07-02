@@ -24,7 +24,7 @@ const TemplateActions = props => {
         setOpenProjects({ [action.payload.projects[0].id]: true });
       } catch (e) {}
     }, () => {});
-  }, [clientId]);
+  }, [clientId, dispatch]);
 
   useEffect(() => {
     if (clientId) {
@@ -32,6 +32,7 @@ const TemplateActions = props => {
       setOpenProjects({});
       init().then(() => setIsLoading(false));
     }
+  // eslint-disable-next-line
   }, [clientId]);
 
   const handleProjectToggle = useCallback(async (id) => {
@@ -45,6 +46,7 @@ const TemplateActions = props => {
       return currentState;
     }
     try {
+      // eslint-disable-next-line
       switch (type) {
         case 'client':
           return !!client.authorized;
@@ -68,7 +70,7 @@ const TemplateActions = props => {
         state: status ? 1 : 0,
       }, clientId)).then(() => {}, () => {});
     }
-  }, [activeStates, clientId]);
+  }, [activeStates, clientId, dispatch]);
 
   return !isLoading ? (
     <div className={`${styles.container} ${props.className || ''}`}>

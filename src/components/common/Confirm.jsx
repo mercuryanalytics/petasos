@@ -12,18 +12,18 @@ const Confirm = ({ text, onConfirm }) => {
       const container = document.getElementById(containerId);
       container.parentNode.removeChild(container);
     } catch (e) {}
-  });
+  }, []);
 
   const handleClose = useCallback(() => {
     destroy();
-  });
+  }, [destroy]);
 
   const handleConfirm = useCallback(() => {
     if (onConfirm) {
       onConfirm();
     }
     destroy();
-  }, [onConfirm]);
+  }, [onConfirm, destroy]);
 
   return (
     <Modal title="Confirm action" open={true} onClose={handleClose}>

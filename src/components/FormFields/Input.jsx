@@ -15,6 +15,7 @@ const Input = props => {
         field.input.onChange(props.value);
       } catch (e) {}
     }
+  // eslint-disable-next-line
   }, [props]);
 
   return (

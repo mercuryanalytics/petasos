@@ -18,6 +18,7 @@ const DomainActions = props => {
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState({});
   const [isAddDomainOpen, setIsAddDomainOpen] = useState(false);
+  // eslint-disable-next-line
   const [selectedDomain, setSelectedDomain] = useState(null);
   const domains = useSelector(state =>
     state.clientsReducer.domains.filter(d => d.client_id === clientId));
@@ -32,6 +33,7 @@ const DomainActions = props => {
   useEffect(() => {
     setIsLoading(true);
     dispatch(getDomains(clientId)).then(() => setIsLoading(false), () => {});
+  // eslint-disable-next-line
   }, [clientId]);
 
   const handleDomainDelete = useCallback((id, event) => {
@@ -39,7 +41,7 @@ const DomainActions = props => {
     event.stopPropagation();
     setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
     dispatch(deleteDomain(id, clientId)).then(stopLoading, stopLoading);
-  }, [clientId]);
+  }, [clientId, dispatch]);
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {

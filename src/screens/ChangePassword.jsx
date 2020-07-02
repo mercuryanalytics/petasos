@@ -20,7 +20,7 @@ const ChangePassword = () => {
     }, (err) => {
       return Promise.reject(translateError(err));
     });
-  });
+  }, [dispatch]);
 
   return (
     <Auth

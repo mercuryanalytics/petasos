@@ -19,6 +19,7 @@ const Select = props => {
         field.input.onChange(props.value);
       } catch (e) {}
     }
+  // eslint-disable-next-line
   }, [props.value]);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const Select = props => {
       }
     }
     setSelectedOption(null);
+  // eslint-disable-next-line
   }, [field]);
 
   const handleToggle = () => {

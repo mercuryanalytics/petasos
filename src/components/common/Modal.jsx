@@ -16,12 +16,14 @@ const Modal = props => {
     } else if (props.onClose && isTouched) {
       props.onClose();
     }
+  // eslint-disable-next-line
   }, [isOpen]);
 
   useEffect(() => {
     if (!!open !== isOpen) {
       setIsOpen(!!open);
     }
+  // eslint-disable-next-line
   }, [open]);
 
   return isOpen ? (

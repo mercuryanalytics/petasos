@@ -19,7 +19,7 @@ export const Validators = {
       /[a-z]/.test(value) && matches++;
       /[A-Z]/.test(value) && matches++;
       /[0-9]/.test(value) && matches++;
-      /[ \!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]/.test(value) && matches++;
+      /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(value) && matches++;
       if (matches < 3) {
         return [
           'The password must contain at least 3 of the following 4 types of characters:',

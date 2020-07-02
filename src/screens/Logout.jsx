@@ -1,4 +1,3 @@
-import React from 'react';
 import Constants from '../utils/constants';
 import { clearCache } from '../store';
 import authConfig from '../auth-config';

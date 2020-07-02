@@ -68,14 +68,14 @@ const Login = props => {
       form.reset();
       setView(type);
     }
-  }, [form, isBusy, submitting]);
+  }, [form, isBusy, submitting, onViewChange]);
 
   const renderSocialConnectorLogo = useCallback((logo) => {
     if (typeof logo === 'string' || logo instanceof String) {
-      return <img src={logo} />;
+      return <img src={logo} alt="" />;
     }
     return logo();
-  });
+  }, []);
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>

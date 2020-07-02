@@ -39,6 +39,7 @@ const Index = props => {
   const reports = useSelector(state => state.reportsReducer.reports);
 
   useEffect(() => {
+    // eslint-disable-next-line
     switch (content) {
       case ContentTypes.CreateClient:
         dispatch(setLocationData({ client: false, create: true }));
@@ -62,6 +63,7 @@ const Index = props => {
     if (content !== ContentTypes.ManageClient) {
       setClientBreadcrumbs(null);
     }
+  // eslint-disable-next-line
   }, [content, params]);
 
   const getCurrentReport = useCallback(() => {
@@ -73,7 +75,7 @@ const Index = props => {
       result = reports.filter(r => r.id === id)[0];
     }
     return result ? result : null;
-  }, [content, resId, params, reports]);
+  }, [content, resId, reports]);
 
   const getCurrentProject = useCallback(() => {
     let id, result;
@@ -91,7 +93,7 @@ const Index = props => {
       result = projects.filter(p => p.id === id)[0];
     }
     return result ? result : null;
-  }, [content, resId, params, projects]);
+  }, [content, resId, params, projects, getCurrentReport]);
 
   const getCurrentClient = useCallback(() => {
     let id, result;
@@ -114,9 +116,10 @@ const Index = props => {
       result = clients.filter(c => c.id === id)[0];
     }
     return result ? result : null;
-  }, [content, resId, params, clients]);
+  }, [content, resId, params, clients, getCurrentReport, getCurrentProject]);
 
   const checkAuthorizations = useCallback((user, clientProjects) => {
+    // eslint-disable-next-line
     switch (content) {
       case ContentTypes.CreateClient:
         setIsAccessBlocked(!isSuperUser(user.id));
@@ -154,6 +157,7 @@ const Index = props => {
     let project = getCurrentProject();
     let report = getCurrentReport();
     let promises = [], bc = [], dataError;
+    // eslint-disable-next-line
     switch (content) {
       case ContentTypes.CreateClient:
         bc.push('Create client');
@@ -249,7 +253,10 @@ const Index = props => {
       checkAuthorizations(user, clientProjects);
       setIsLoading(false);
     });
-  }, [content, resId, params]);
+  }, [
+    content, resId, params, checkAuthorizations, dispatch,
+    getCurrentClient, getCurrentProject, getCurrentReport,
+  ]);
 
   return (!isAccessBlocked && !isDataMissing) ? (
     <Screen

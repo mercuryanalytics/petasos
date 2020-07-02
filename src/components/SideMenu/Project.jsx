@@ -23,12 +23,14 @@ const Project = props => {
     } else if (props.onClose && isTouched) {
       props.onClose(data);
     }
+  // eslint-disable-next-line
   }, [isOpen]);
 
   useEffect(() => {
     if (!!open !== isOpen) {
       setIsOpen(!!open);
     }
+  // eslint-disable-next-line
   }, [open]);
 
   const toggleOpen = (event) => {
