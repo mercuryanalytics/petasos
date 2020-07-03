@@ -34,7 +34,7 @@ module Api
 
         json_response([]) && return unless memberships_ids
 
-        authorizations = Authorization.preload(:scopes)
+        auths = Authorization.preload(:scopes)
                            .preload(:dynamic_scopes)
                            .left_joins(:scopes)
                            .where(membership_id: memberships_ids)
@@ -42,7 +42,7 @@ module Api
                            .distinct
 
 
-        authorizations = authorizations.map do |authorization|
+        authorizations = auths.map do |authorization|
           [
             authorization,
             get_role_from_scopes(authorization, authorization.scopes),
@@ -56,7 +56,12 @@ module Api
 
         client, report, project = authorizations
         global_scopes = { global: current_user.scopes }
-        json_response((client || {}).merge(report || {}).merge(project || {}).merge(global_scopes))
+
+        dynamic_scopes = {
+          dynamic: auths.map { |authorization| authorization.dynamic_scopes }.flatten
+        }
+
+        json_response((client || {}).merge(report || {}).merge(project || {}).merge(global_scopes || {}).merge(dynamic_scopes))
       end
 
       def create
