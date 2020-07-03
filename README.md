@@ -30,6 +30,87 @@ Defined methods:
     * sends a GET request to RAM Api and saves the returned scopes in session
     * you can use this in your cancancan ability files to assign permissions
 
+Sample of scopes you can get:
+```
+{
+    "data": {
+        "global": [
+            {
+                "id": 44,
+                "scope": "admin",
+                "action": "admin",
+                "description": "Global admin",
+                "created_at": "2020-06-29T12:29:34.645Z",
+                "updated_at": "2020-06-29T12:29:34.645Z",
+                "global": true,
+                "dynamic": false,
+                "name": "Mercury Analytics Admin"
+            }
+        ],
+        "dynamic": [
+            {
+                "id": 47,
+                "scope": "projects",
+                "action": "financial_access",
+                "description": "Financial access scope",
+                "created_at": "2020-06-29T12:29:34.655Z",
+                "updated_at": "2020-06-29T12:29:34.655Z",
+                "global": false,
+                "dynamic": true,
+                "name": "Financial Manager"
+            },
+            {
+                "id": 48,
+                "scope": "reports",
+                "action": "view_report",
+                "description": "Report dynamic permission",
+                "created_at": "2020-06-29T12:29:34.658Z",
+                "updated_at": "2020-06-29T12:29:34.658Z",
+                "global": false,
+                "dynamic": true,
+                "name": "Report viewer"
+            }
+        ]
+    }
+}
+```
+
+You can use the `dynamic` key to set your cancan abilities. A sample file would be
+
+* user_ability.rb
+```
+class UserAbility
+  include CanCan::Ability
+
+  attr_reader :user
+
+  def initialize(user, session)
+    @user = user
+    
+    # setting the admin
+    can :manage, :all if @user.scopes(session)['data']['global'].any? { |permission| permission['action'] == 'admin' }
+
+    # Setting the dynamic access
+    @user.scopes(session)['data']['dynamic'].each do |permission|
+       can permission['action'].to_sym, Model
+    end
+  end
+end
+```
+
+* users_controller.rb
+```
+class UsersController < ApplicationController
+
+  def index
+    can? :permission_name, User
+  end
+
+  def current_ability
+    UserAbility.new(current_user, session)
+  end
+end
+```
 ## Installation
 Add this line to your application's Gemfile:
 
