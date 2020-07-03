@@ -283,6 +283,10 @@
   text-align: left;
 }
 
+.section.details .editor .avatar.centered .avatarLabel {
+  text-align: center;
+}
+
 .section.details .editor .avatar .avatarUpload {
   position: relative;
   width: 82px;
@@ -331,6 +335,7 @@
   width: 100%;
   height: 100%;
   color: #0C7997;
+  cursor: pointer;
 }
 
 .section.details .editor .avatar .avatarUpload.hasAvatar .uploadTrigger {
