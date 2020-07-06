@@ -282,7 +282,7 @@ const Auth = props => {
           )) ||
           (hasSuccess && (<>
             <div className={styles.success}>
-              <MdDone classNae={styles.icon} />
+              <MdDone className={styles.icon} />
               <span>{passwordResetSuccessMessage || passwordChangeSuccessMessage}</span>
             </div>
             <div className={styles.buttons}>

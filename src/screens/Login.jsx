@@ -9,6 +9,11 @@ import { getLogo } from '../App';
 import Auth, { AuthViewTypes, isLoggedIn } from '../components/Auth';
 import parse from 'url-parse';
 
+const PasswordResetErrorTypes = {
+  NotFound: 'not_found',
+  UseSso: 'use_sso',
+};
+
 const translateError = (err) => {
   return { description: err.errors || 'An error occured.' };
 };
@@ -52,8 +57,15 @@ const Login = () => {
   }, [dispatch]);
 
   const handlePasswordReset = useCallback(async (email) => {
-    return dispatch(resetPassword(email, partner)).then(() => {
-      return Promise.resolve(true);
+    return dispatch(resetPassword(email, partner)).then((res) => {
+      const msg = res.payload.message;
+      if (msg === PasswordResetErrorTypes.NotFound) {
+        return Promise.reject({ description: 'User was not found.' });
+      }
+      if (msg === PasswordResetErrorTypes.UseSso) {
+        return Promise.reject({ description: 'User domain error.' });
+      }
+      return Promise.resolve(res);
     }, (err) => {
       return Promise.reject(translateError(err));
     });
