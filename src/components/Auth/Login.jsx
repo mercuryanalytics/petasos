@@ -118,6 +118,9 @@ const Login = props => {
       </>)) ||
       (view === LoginViewTypes.Reset && (<>
         <div className={styles.resetSection}>
+          <div className={styles.resetInfo}>
+            <span>Domain User should use Domain Authentication and will not receive a password reset email.</span>
+          </div>
           <Input
             className={`${styles.control} ${styles.nopad}`}
             field={reset_user}

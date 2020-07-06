@@ -84,6 +84,12 @@
   margin-bottom: 32px;
 }
 
+.loginSection, .resetSection .resetInfo {
+  width: 100%;
+  margin-bottom: 32px;
+  font-size: .8rem;
+}
+
 .loginSection .passwordReset {
   display: flex;
   justify-content: flex-end;
