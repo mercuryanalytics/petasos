@@ -29,7 +29,7 @@ const SearchTargets = {
 };
 
 const searchComponentTargets = [
-  { key: SearchTargets.Clients, label: 'Clients', value: false },
+  { key: SearchTargets.Clients, label: 'Clients', value: true },
   { key: SearchTargets.Projects, label: 'Projects', value: true },
   { key: SearchTargets.Reports, label: 'Reports', value: true },
 ];
@@ -278,31 +278,33 @@ const SideMenu = props => {
 
   const handleSearch = useCallback(async (value, targets) => {
     setIsSearching(!!value.length);
-    let promises = [], shouldGetData = false;
-    let hasProjects = false, hasReports = 0;
+    let promises = [];
+    let hasClients = false, hasProjects = false, hasReports = false;
     let filters = { query: value };
     for (let i = 0; i < targets.length; i++) {
       const target = targets[i];
       filters[target.key] = target.value;
       if (target.value) {
-        if (target.key === SearchTargets.Projects) {
+        if (target.key === SearchTargets.Clients) {
+          hasClients = true;
+        } else if (target.key === SearchTargets.Projects) {
           hasProjects = true;
-          shouldGetData = true;
         } else if (target.key === SearchTargets.Reports) {
           hasReports = true;
-          shouldGetData = true;
         }
       }
     }
     setSearchFilters(filters);
-    setClientsSearch(!shouldGetData);
+    setClientsSearch(!hasProjects && !hasReports);
     setProjectsSearch(hasProjects && !hasReports);
-    if (!isLoadedSearchData && shouldGetData && value.length) {
+    if (!isLoadedSearchData && (hasProjects || hasReports) && value.length) {
       promises.push(dispatch(getProjects()).then(() => {}, () => {}));
       promises.push(dispatch(getReports()).then(() => {}, () => {}));
     }
     await Promise.all(promises).then((res) => {
-      shouldGetData && setIsLoadedSearchData(true);
+      if (hasClients || hasProjects || hasReports) {
+        setIsLoadedSearchData(true);
+      }
       return res;
     });
   }, [isLoadedSearchData, dispatch]);
@@ -414,6 +416,7 @@ const SideMenu = props => {
       filteredClients.forEach(c => {
         states[c.id] = state || (c.id === activeClient);
       });
+      console.log('decorate', states);
       setOpenClients(states);
       if (state) {
         setLoadedClients(states);
@@ -440,8 +443,7 @@ const SideMenu = props => {
     if (isSearching) {
       decorateSearchResults();
     }
-  // eslint-disable-next-line
-  }, [isSearching, filteredClients, filteredProjects, filteredOrphanProjects]);
+  }, [isSearching]);
 
   useEffect(() => {
     if (isSearching) {

@@ -85,7 +85,9 @@ const ReportManage = props => {
       description: data.description || '',
       presented_on: data.presented_on || '',
       modified_on: data.modified_on || '',
-    } : {},
+    } : {
+      modified_on: format(new Date(), 'yyyy-MM-dd'),
+    },
     validate: (values) => {
       let errors = {};
       ['name', 'modified_on'].forEach(key => {

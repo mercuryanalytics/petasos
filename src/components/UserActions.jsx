@@ -207,13 +207,13 @@ const UserActions = props => {
     const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
     event.stopPropagation();
     setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
-    dispatch(deleteUser(id, clientId)).then(() => {
+    dispatch(deleteUser(id, limitClientId)).then(() => {
       if (id === selectedUserId) {
         ensureSelectedItem(true);
       }
       stopLoading();
     }, stopLoading);
-  }, [clientId, selectedUserId, dispatch, ensureSelectedItem]);
+  }, [limitClientId, selectedUserId, dispatch, ensureSelectedItem]);
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
@@ -300,18 +300,24 @@ const UserActions = props => {
   useEffect(() => {
     if (userNameFilter) {
       let filter = userNameFilter.toLowerCase();
-      let buids = {}, bcids = {}, cids = {};
+      let mcids = {}, buids = {}, bcids = {}, cids = {};
+      clients.forEach(c => {
+        if (c.name.toLowerCase().includes(filter)) {
+          mcids[c.id] = true;
+        }
+      });
       users.forEach(u => {
         if (
           (u.contact_name && u.contact_name.toLowerCase().includes(filter)) ||
-          (u.email && u.email.toLowerCase().includes(filter))
+          (u.email && u.email.toLowerCase().includes(filter)) ||
+          u.client_ids.filter(id => !!mcids[id]).length > 0
         ) {
           u.client_ids.forEach(cid => cids[cid] = true);
         } else {
           buids[u.id] = true;
         }
       });
-      clients.forEach(c => !cids[c.id] && (bcids[c.id] = true));
+      clients.forEach(c => !mcids[c.id] && !cids[c.id] && (bcids[c.id] = true));
       setBlockedClients(Object.keys(bcids).map(id => +id));
       setBlockedUsers(Object.keys(buids).map(id => +id));
       if (mode === UserActionsModes.Grant) {

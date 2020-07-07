@@ -442,7 +442,8 @@ const ResourceActions = props => {
                       >
                         <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
                         <Folder className={styles.icon} />
-                        <span className={styles.name}>{project.name}</span>
+                        <span className={styles.name}>{project.project_number ?
+                          project.project_number + ': ' : ''}{project.name}</span>
                         <Toggle
                           id={`project-toggle-${project.id}`}
                           className={styles.itemToggle}

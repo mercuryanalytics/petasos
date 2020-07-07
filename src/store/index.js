@@ -87,8 +87,21 @@ export const orderStack = (stack, options) => {
   }, options);
   return [
     ...stack.sort((a, b) => {
-      let va = a[options.valueProperty];
-      let vb = b[options.valueProperty];
+      let va, vb, foundA, foundB, properties = options.valueProperty;
+      if (!Array.isArray(properties)) {
+        properties = [properties];
+      }
+      for (let i = 0; i < properties.length; i++) {
+        const property = properties[i];
+        if (!foundA && a[property]) {
+          va = a[property];
+          foundA = true;
+        }
+        if (!foundB && b[property]) {
+          vb = b[property];
+          foundB = true;
+        }
+      }
       if (options.valueFormatter) {
         va = options.valueFormatter(va);
         vb = options.valueFormatter(vb);

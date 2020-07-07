@@ -128,6 +128,7 @@ const ProjectManage = props => {
       modified_on: data.modified_on || '',
     } : {
       project_type: ProjectTypes.CommercialTest,
+      modified_on: format(new Date(), 'yyyy-MM-dd'),
     },
     validate: (values) => {
       let errors = {};
