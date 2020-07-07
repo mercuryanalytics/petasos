@@ -16,5 +16,5 @@ phases:
       - yarn
   build:
     commands:
-      - echo Building...
+      - echo Building.........
       - npm run-script s3deploy
