@@ -82,7 +82,7 @@
                 <td>
                   <table class="w20" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="width: 600px; min-width: 600px; margin: 0 auto;">
                     <tbody>
-
+                    <% if @user.auth_id&.start_with?('auth0') %>
                     <tr>
                       <td align="center" style="padding-left:7px;padding-right:7px;height:1px;line-height:1px;font-size:1px;">
                         <div class="w20" style="width: 25%;display:block;height:1px;background-color:#0d7997;line-height:1px;font-size:1px;">&nbsp;</div>
@@ -154,12 +154,12 @@
             </table>
           </td>
         </tr>
+                    <% end %>
         <tr style="background: #fff;">
           <td>&nbsp;</td>
         </tr>
         <tr>
-          <td align="center" style="background: #fff;"
-          ">
+          <td align="center" style="background: #fff;">
           <a href="<%= @link %> " style="font-size: 14px !important;color: #0d7997 !important;text-decoration: none !important;text-decoration: none; ">Login
             with domain</a>
           </td>
