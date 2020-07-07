@@ -25,7 +25,7 @@ module Authorizations
         }
       end
 
-      Authorization.insert_all(mapped_memberships)
+      Authorization.insert_all(mapped_memberships) if mapped_memberships.any?
     end
 
     def parent
