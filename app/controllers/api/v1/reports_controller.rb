@@ -7,10 +7,10 @@ module Api
 
       def index
         if params[:project_id]
-          json_response(Report.where(project_id: params[:project_id]).accessible_by(current_ability).all)
+          json_response(Report.where(project_id: params[:project_id]).includes(:project).accessible_by(current_ability).all)
           return
         end
-        json_response(Report.accessible_by(current_ability).all)
+        json_response(Report.includes(:project).accessible_by(current_ability).all)
       end
 
       def orphans
