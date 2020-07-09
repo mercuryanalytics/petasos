@@ -13,3 +13,20 @@ In order to add a new dynamic scope, you'll need to run the following rake task:
 `bundle exec rake scopes:create -- --action=do_something --scope=projects --description="small description of the scope" --name scope_name`
 
 Note that the `scope` argument should be a value from `clients`, `projects`, `reports`
+
+
+# Generate reports
+## Generate a report containing the users (contact name and email) which are researchers
+`bundle exec rake reports:researchers`
+
+## Generates a report containing the clients name and its respective users, with the following user attributes:
+` email company_name contact_name contact_title contact_phone contact_fax contact_email mailing_address_1 mailing_address_2 mailing_city mailing_state mailing_zip mailing_country`
+
+`bundle exec rake reports:client_accounts`
+
+## Generates a report containing the Partner Clients (client name, client contact name, client contact email)
+
+`bundle exec rake reports:partner_clients`
+
+Note: the reports are generated in the `public` folder, a message will appear after the generation is completed containing the file name.
+The script will output `Generated the file in public/report-partner-12-45-09-07.csv`
