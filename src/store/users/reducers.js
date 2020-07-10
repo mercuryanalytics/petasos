@@ -8,7 +8,7 @@ const initialState = {
   authorizedUsers: {},
 };
 
-const sortUsers = (stack) => orderStack(stack, {
+export const sortUsers = (stack) => orderStack(stack, {
   descending: false,
   valueProperty: ['contact_name', 'email'],
 });

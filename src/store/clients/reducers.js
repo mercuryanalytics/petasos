@@ -6,7 +6,7 @@ const initialState = {
   templates: {},
 };
 
-const sortClients = (stack) => orderStack(stack, {
+export const sortClients = (stack) => orderStack(stack, {
   descending: false,
   valueProperty: 'name',
 });

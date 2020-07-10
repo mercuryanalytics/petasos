@@ -171,7 +171,7 @@ const ReportManage = props => {
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
             )}
-            {!!data.url && (
+            {canEdit && !!data.url && (
               <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>
@@ -185,13 +185,15 @@ const ReportManage = props => {
               disabled={isBusy}
               label={`Report name ${canEdit ? '*' : ''}`}
             />
-            <Input
-              className={styles.formControl}
-              field={url}
-              preview={!canEdit}
-              disabled={isBusy}
-              label="URL"
-            />
+            {canEdit && (
+              <Input
+                className={styles.formControl}
+                field={url}
+                // preview={!canEdit}
+                disabled={isBusy}
+                label="URL"
+              />
+            )}
             <Textarea
               className={styles.formControl}
               field={description}

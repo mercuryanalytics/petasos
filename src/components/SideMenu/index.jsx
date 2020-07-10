@@ -4,8 +4,11 @@ import { useHistory } from 'react-router-dom';
 import styles from './index.module.css';
 import Routes from '../../utils/routes';
 import { getClients } from '../../store/clients/actions';
+import { sortClients } from '../../store/clients/reducers';
 import { getProject, getProjects, getOrphanProjects } from '../../store/projects/actions';
+import { sortProjects } from '../../store/projects/reducers';
 import { getReport, getReports, getOrphanReports, getClientReports } from '../../store/reports/actions';
+import { sortReports } from '../../store/reports/reducers';
 import Search from '../common/Search';
 import Loader from '../common/Loader';
 import Tooltip from '../common/Tooltip';
@@ -87,25 +90,29 @@ const SideMenu = props => {
       return;
     }
     setIsLoading(true);
-    let defaultRoute;
+    let defaultRoutes = {};
     Promise.all([
       dispatch(getClients()).then((action) => {
         if (action.payload.length) {
-          defaultRoute = Routes.ManageClient.replace(':id', action.payload[0].id);
+          const sortedClients = sortClients(action.payload);
+          defaultRoutes.client = Routes.ManageClient.replace(':id', sortedClients[0].id);
         }
       }, () => {}),
       dispatch(getOrphanProjects()).then((action) => {
         if (action.payload.length) {
-          defaultRoute = Routes.ManageProject.replace(':id', action.payload[0].id);
+          const sortedProjects = sortProjects(action.payload);
+          defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
         }
       }, () => {}),
       dispatch(getOrphanReports()).then((action) => {
         if (action.payload.length) {
-          defaultRoute = Routes.ManageReport.replace(':id', action.payload[0].id);
+          const sortedReports = sortReports(action.payload);
+          defaultRoutes.report = Routes.ManageReport.replace(':id', sortedReports[0].id);
         }
       }, () => {}),
     ]).then(() => {
       const noActiveRes = !activeClient && !activeProject && !activeReport;
+      const defaultRoute = defaultRoutes.client || defaultRoutes.project || defaultRoutes.report;
       if (props.autoselect && noActiveRes && !isActiveAddLink && defaultRoute) {
         setAwaitRoute(defaultRoute);
         history.push(defaultRoute);
@@ -443,6 +450,7 @@ const SideMenu = props => {
     if (isSearching) {
       decorateSearchResults();
     }
+  // eslint-disable-next-line
   }, [isSearching]);
 
   useEffect(() => {

@@ -6,7 +6,7 @@ const initialState = {
   clientReports: [],
 };
 
-const sortReports = (stack) => orderStack(stack, {
+export const sortReports = (stack) => orderStack(stack, {
   descending: true,
   valueProperty: 'updated_at',
   valueFormatter: value => value ? +(new Date(value)) : 0,

@@ -5,7 +5,7 @@ const initialState = {
   orphans: [],
 };
 
-const sortProjects = (stack) => orderStack(stack, {
+export const sortProjects = (stack) => orderStack(stack, {
   descending: true,
   valueProperty: 'updated_at',
   valueFormatter: value => value ? +(new Date(value)) : 0,

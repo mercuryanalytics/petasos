@@ -107,6 +107,12 @@ const UserActions = props => {
     await Promise.all(promises).then(() => {
       if (mode === UserActionsModes.Grant && clientId) {
         handleClientToggle(clientId, true);
+        setTimeout(() => {
+          let el = window.document.getElementById(`useractions-client-${clientId}`);
+          if (el) {
+            el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        }, 0);
       }
     });
   }, [mode, clientId, limitClientId, authorizedOptions, dispatch, handleClientToggle]);
@@ -413,7 +419,11 @@ const UserActions = props => {
             allowedClients.indexOf(client.id) > -1 &&
             blockedClients.indexOf(client.id) === -1
           ) && (
-            <div className={styles.group} key={`permissions-group-${client.id}`}>
+            <div
+              className={styles.group}
+              key={`permissions-group-${client.id}`}
+              id={`useractions-client-${client.id}`}
+            >
               <div
                 className={`${styles.groupTitle} ${visibleSettings === client.id ? styles.active : ''}`}
                 onClick={() => handleClientToggle(client.id)}
