@@ -28,7 +28,7 @@
     "eject": "react-scripts eject",
     "sync": "aws s3 sync build/ s3://$BUCKET_NAME",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
-    "s3deploy": "react-scripts build && npm run-script sync && npm run-script invalidate"
+    "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate"
   },
   "eslintConfig": {
     "extends": "react-app"
