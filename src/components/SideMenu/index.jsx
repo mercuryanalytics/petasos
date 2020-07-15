@@ -283,8 +283,33 @@ const SideMenu = props => {
     dispatch, handleClientOpen, handleProjectOpen, scrollToActive,
   ]);
 
+  const filterStack = useCallback((stack, filter, values, key) => {
+    filter = filter ? filter.toLowerCase() : null;
+    return stack.filter(item => (
+      (filter && item.name.toLowerCase().includes(filter)) ||
+      (filter && item.project_number && item.project_number.toLowerCase().includes(filter)) ||
+      (values || []).indexOf(item[key || 'id']) > -1
+    ));
+  }, []);
+
   const handleSearch = useCallback(async (value, targets) => {
     setIsSearching(!!value.length);
+    if (!value.length) {
+      if (statesBackup) {
+        setOpenClients(statesBackup.clients.open);
+        setLoadedClients(statesBackup.clients.loaded);
+        setOpenProjects(statesBackup.projects.open);
+        setLoadedProjects(statesBackup.projects.loaded);
+        setStatesBackup(null);
+      }
+      return;
+    }
+    if (!statesBackup) {
+      setStatesBackup({
+        clients: { open: { ...openClients }, loaded: { ...loadedClients } },
+        projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
+      });
+    }
     let promises = [];
     let hasClients = false, hasProjects = false, hasReports = false;
     let filters = { query: value };
@@ -314,16 +339,35 @@ const SideMenu = props => {
       }
       return res;
     });
-  }, [isLoadedSearchData, dispatch]);
+  }, [
+    isLoadedSearchData, dispatch, statesBackup,
+    openClients, loadedClients, openProjects, loadedProjects,
+  ]);
 
-  const filterStack = useCallback((stack, filter, values, key) => {
-    filter = filter ? filter.toLowerCase() : null;
-    return stack.filter(item => (
-      (filter && item.name.toLowerCase().includes(filter)) ||
-      (filter && item.project_number && item.project_number.toLowerCase().includes(filter)) ||
-      (values || []).indexOf(item[key || 'id']) > -1
-    ));
-  }, []);
+  const decorateSearchResults = useCallback((clients, projects, orphanProjects) => {
+    if (clients.length) {
+      let states = {}, state = !clientsSearch;
+      clients.forEach(c => {
+        states[c.id] = state || (c.id === activeClient);
+      });
+      setOpenClients(states);
+      if (state) {
+        setLoadedClients(states);
+      }
+    }
+    if (projects.length || orphanProjects.length) {
+      let states = {}, state = !clientsSearch && !projectsSearch;
+      const pushProject = p => {
+        states[p.id] = state || (p.id === activeProject);
+      };
+      projects.forEach(p => pushProject(p));
+      orphanProjects.forEach(p => pushProject(p));
+      setOpenProjects(states);
+      if (state) {
+        setLoadedProjects(states);
+      }
+    }
+  }, [clientsSearch, projectsSearch, activeClient, activeProject]);
 
   useEffect(() => {
     if (isSearching && isLoadedSearchData && searchFilters.query.length) {
@@ -404,6 +448,7 @@ const SideMenu = props => {
           });
         }
       }
+      decorateSearchResults(clientsResult, projectsResult, orphanProjectsResult);
       setFilteredClients(clientsResult);
       setFilteredProjects(projectsResult);
       setFilteredOrphanProjects(orphanProjectsResult);
@@ -416,59 +461,6 @@ const SideMenu = props => {
     isSearching, isLoadedSearchData, searchFilters,
     clients, projects, orphanProjects, reports, orphanReports, clientReports,
   ]);
-
-  const decorateSearchResults = useCallback(() => {
-    if (filteredClients.length) {
-      let states = {}, state = !clientsSearch;
-      filteredClients.forEach(c => {
-        states[c.id] = state || (c.id === activeClient);
-      });
-      setOpenClients(states);
-      if (state) {
-        setLoadedClients(states);
-      }
-    }
-    if (filteredProjects.length || filteredOrphanProjects.length) {
-      let states = {}, state = !clientsSearch && !projectsSearch;
-      const pushProject = p => {
-        states[p.id] = state || (p.id === activeProject);
-      };
-      filteredProjects.forEach(p => pushProject(p));
-      filteredOrphanProjects.forEach(p => pushProject(p));
-      setOpenProjects(states);
-      if (state) {
-        setLoadedProjects(states);
-      }
-    }
-  }, [
-    clientsSearch, projectsSearch, activeClient, activeProject,
-    filteredClients, filteredProjects, filteredOrphanProjects,
-  ]);
-
-  useEffect(() => {
-    if (isSearching) {
-      decorateSearchResults();
-    }
-  // eslint-disable-next-line
-  }, [isSearching]);
-
-  useEffect(() => {
-    if (isSearching) {
-      if (!statesBackup) {
-        setStatesBackup({
-          clients: { open: { ...openClients }, loaded: { ...loadedClients } },
-          projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
-        });
-      }
-    } else if (statesBackup) {
-      setOpenClients(statesBackup.clients.open);
-      setLoadedClients(statesBackup.clients.loaded);
-      setOpenProjects(statesBackup.projects.open);
-      setLoadedProjects(statesBackup.projects.loaded);
-      setStatesBackup(null);
-    }
-  // eslint-disable-next-line
-  }, [isSearching, isLoadedSearchData]);
 
   return (
     <div className={styles.container}>
