@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './Search.module.css';
 import { MdSearch, MdCheck } from 'react-icons/md';
 
+let timeout = {};
+
 const Search = props => {
-  const { targets, hasShadows } = props;
+  const { id, targets, hasShadows } = props;
   const [value, setValue] = useState('');
   const valueRef = useRef(null);
   const [searchTargets, setSearchTargets] = useState(null);
@@ -15,17 +17,28 @@ const Search = props => {
     setSearchTargets([ ...(targets || []) ]);
   }, [targets]);
 
+  const throttleChange = useCallback((value) => {
+    if (timeout[id]) {
+      clearTimeout(timeout[id]);
+    }
+    timeout[id] = setTimeout(() => {
+      setValue(value);
+      setIsTouched(true);
+      timeout[id] = null;
+    }, 700);
+  }, [id]);
+
+  const handleChange = useCallback((event) => {
+    throttleChange(event.target.value);
+    event.stopPropagation();
+  }, [throttleChange]);
+
   useEffect(() => {
     if (isTouched && props.onSearch) {
       props.onSearch(value, searchTargets);
     }
   // eslint-disable-next-line
   }, [isTouched, value, searchTargets]);
-
-  const handleChange = useCallback((event) => {
-    setValue(event.target.value);
-    setIsTouched(true);
-  }, []);
 
   const handleTargetChange = useCallback((targetKey, value) => {
     valueRef.current.focus();

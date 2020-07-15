@@ -423,7 +423,6 @@ const SideMenu = props => {
       filteredClients.forEach(c => {
         states[c.id] = state || (c.id === activeClient);
       });
-      console.log('decorate', states);
       setOpenClients(states);
       if (state) {
         setLoadedClients(states);
@@ -480,6 +479,7 @@ const SideMenu = props => {
       ) && (
         <div className={styles.search}>
           <Search
+            id="sidemenu-search"
             placeholder="Search"
             targets={searchComponentTargets}
             hasShadows={true}

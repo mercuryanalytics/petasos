@@ -291,6 +291,38 @@ export const getAuthorizedUsersFailure = (error) => ({
   payload: error,
 });
 
+export function getAllAuthorizedUsers(res) {
+  let resPath, resId;
+  if (hasValue(res.reportId)) {
+    resPath = 'reports';
+    resId = res.reportId;
+  } else if (hasValue(res.projectId)) {
+    resPath = 'projects';
+    resId = res.projectId;
+  } else if (hasValue(res.clientId)) {
+    resPath = 'clients';
+    resId = res.clientId;
+  }
+  return dispatch => (
+    apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized`)
+  ).then(
+    res => dispatch(getAllAuthorizedUsersSuccess(res, resPath, resId)),
+    err => handleActionFailure(err, dispatch(getAllAuthorizedUsersFailure(err))),
+  );
+}
+
+export const getAllAuthorizedUsersSuccess = (data, resPath, resId) => ({
+  type: 'GET_ALL_AUTHORIZED_USERS_SUCCESS',
+  payload: data,
+  resPath: resPath,
+  resId: resId,
+});
+
+export const getAllAuthorizedUsersFailure = (error) => ({
+  type: 'GET_ALL_AUTHORIZED_USERS_FAILURE',
+  payload: error,
+});
+
 export function authorizeUser(id, contextId, res, states) {
   const refresh = async (dispatch) => {
     apiCall.forget(`${Constants.API_URL}/users/${id}/authorized`);

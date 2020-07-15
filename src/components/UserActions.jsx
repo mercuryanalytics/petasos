@@ -6,6 +6,7 @@ import {
   getUsers,
   createUser,
   deleteUser,
+  getAllAuthorizedUsers,
   getAuthorizedUsers,
   authorizeUser,
   getUserAuthorizations,
@@ -52,6 +53,8 @@ const UserActions = props => {
   const clients = useSelector(state => state.clientsReducer.clients);
   const users = useSelector(state => state.usersReducer.users);
   const authorizedUsers = useSelector(state => state.usersReducer.authorizedUsers);
+  const [shouldLoadSearchData, setShouldLoadSearchData] = useState(true);
+  const [isLoadingSearchData, setIsLoadingSearchData] = useState(false);
   const [userNameFilter, setUserNameFilter] = useState(null);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [blockedClients, setBlockedClients] = useState([]);
@@ -70,7 +73,9 @@ const UserActions = props => {
   const handleClientToggle = useCallback(async (id, forced) => {
     const status = forced ? !forced : !!openClients[id];
     setOpenClients(prev => ({ ...prev, [id]: !status }));
-    if (!loadedClients[id]) {
+    if (isLoadingSearchData) {
+      // dispatch(getUsers(id)).then(() => {}, () => {});
+    } else if (!loadedClients[id]) {
       await Promise.all([
         dispatch(getUsers(id)).then(() => {}, () => {}),
         dispatch(getAuthorizedUsers(id, authorizedOptions)).then(() => {}, () => {}),
@@ -78,7 +83,7 @@ const UserActions = props => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
       });
     }
-  }, [openClients, loadedClients, authorizedOptions, dispatch]);
+  }, [openClients, loadedClients, isLoadingSearchData, authorizedOptions, dispatch]);
 
   useEffect(() => {
     if (clientId || projectId || reportId) {
@@ -291,6 +296,21 @@ const UserActions = props => {
       if (userNameFilter === null) {
         setOpenClientsBackup({ ...openClients });
       }
+      if (mode === UserActionsModes.Grant) {
+        if (shouldLoadSearchData && !isLoadingSearchData) {
+          setShouldLoadSearchData(false);
+          setIsLoadingSearchData(true);
+          dispatch(getAllAuthorizedUsers(authorizedOptions)).then(() => {
+            let newLoadedStates = {};
+            clients.forEach(c => newLoadedStates[c.id] = true);
+            setLoadedClients(newLoadedStates);
+            setIsLoadingSearchData(false);
+          }, (err) => {
+            setShouldLoadSearchData(true);
+            setIsLoadingSearchData(false);
+          });
+        }
+      }
       setUserNameFilter(value);
     } else {
       if (openClientsBackup) {
@@ -301,39 +321,46 @@ const UserActions = props => {
       }
       setUserNameFilter(null);
     }
-  }, [userNameFilter, openClients, openClientsBackup]);
+  }, [
+    userNameFilter, openClients, openClientsBackup, dispatch,
+    mode, authorizedOptions, shouldLoadSearchData, isLoadingSearchData, clients,
+  ]);
+
+  const applySearchFilters = useCallback((filter) => {
+    filter = filter.toLowerCase();
+    let mcids = {}, buids = {}, bcids = {}, cids = {};
+    clients.forEach(c => {
+      if (c.name.toLowerCase().includes(filter)) {
+        mcids[c.id] = true;
+      }
+    });
+    users.forEach(u => {
+      if (
+        (u.contact_name && u.contact_name.toLowerCase().includes(filter)) ||
+        (u.email && u.email.toLowerCase().includes(filter)) ||
+        u.client_ids.filter(id => !!mcids[id]).length > 0
+      ) {
+        u.client_ids.forEach(cid => cids[cid] = true);
+      } else {
+        buids[u.id] = true;
+      }
+    });
+    clients.forEach(c => !mcids[c.id] && !cids[c.id] && (bcids[c.id] = true));
+    setBlockedClients(Object.keys(bcids).map(id => +id));
+    setBlockedUsers(Object.keys(buids).map(id => +id));
+    if (mode === UserActionsModes.Grant) {
+      for (let i in cids) {
+        handleClientToggle(+i, true);
+      }
+    }
+  }, [mode, clients, users, handleClientToggle]);
 
   useEffect(() => {
     if (userNameFilter) {
-      let filter = userNameFilter.toLowerCase();
-      let mcids = {}, buids = {}, bcids = {}, cids = {};
-      clients.forEach(c => {
-        if (c.name.toLowerCase().includes(filter)) {
-          mcids[c.id] = true;
-        }
-      });
-      users.forEach(u => {
-        if (
-          (u.contact_name && u.contact_name.toLowerCase().includes(filter)) ||
-          (u.email && u.email.toLowerCase().includes(filter)) ||
-          u.client_ids.filter(id => !!mcids[id]).length > 0
-        ) {
-          u.client_ids.forEach(cid => cids[cid] = true);
-        } else {
-          buids[u.id] = true;
-        }
-      });
-      clients.forEach(c => !mcids[c.id] && !cids[c.id] && (bcids[c.id] = true));
-      setBlockedClients(Object.keys(bcids).map(id => +id));
-      setBlockedUsers(Object.keys(buids).map(id => +id));
-      if (mode === UserActionsModes.Grant) {
-        for (let i in cids) {
-          handleClientToggle(+i, true);
-        }
-      }
+      applySearchFilters(userNameFilter);
     }
   // eslint-disable-next-line
-  }, [userNameFilter, mode]);
+  }, [userNameFilter]);
 
   const handleAddUserClose = useCallback(() => {
     setIsAddUserOpen(false);
@@ -343,7 +370,7 @@ const UserActions = props => {
   return (
     <div className={`${styles.container} ${props.className || ''}`}>
       <div className={styles.search}>
-        <Search placeholder="Search user" onSearch={handleSearch} />
+        <Search id="useractions-search" placeholder="Search user" onSearch={handleSearch} />
       </div>
       {!!canCreate && (
         <div className={styles.adders}>

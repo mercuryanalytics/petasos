@@ -95,6 +95,28 @@ const usersReducer = (state = initialState, action) => {
         },
       };
     }
+    case 'GET_ALL_AUTHORIZED_USERS_SUCCESS': {
+      const { resPath, resId } = action;
+      const resType = resPath ? resPath.slice(0, -1) : '';
+      let payload = {};
+      (action.payload || []).forEach(user => {
+        (user.client_ids || []).forEach(contextId => {
+          const key = `${resType}-${resId}@${contextId}`;
+          if (!payload[key]) {
+            payload[key] = [];
+          }
+          payload[key].push(Object.assign(
+            user,
+            { client_ids: [contextId] },
+            { authorized: (user.authorized || []).indexOf(contextId) > -1 },
+          ));
+        });
+      });
+      return {
+        ...state,
+        authorizedUsers: payload,
+      };
+    }
     case 'AUTHORIZE_USER_SUCCESS': {
       let authorizedUsers = state.authorizedUsers;
       let authorizations = state.authorizations;
