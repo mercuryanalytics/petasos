@@ -85,10 +85,17 @@ module Api
           subject_class: 'Client', subject_id: params[:id]
         ).pluck(:membership_id)
 
-        users = User.includes(:memberships).for_client(params[:id]).find_each.collect do |user|
-          user.authorized = (user.membership_ids & membership_ids).any?
-          user
-        end
+        users = if params[:client_id]
+                  User.includes(:memberships).for_client(params[:client_id]).find_each.collect do |user|
+                    user.authorized = (user.membership_ids & membership_ids).any?
+                    user
+                  end
+                else
+                  User.includes(:memberships).find_each.collect do |user|
+                    user.authorized = (user.membership_ids & membership_ids)
+                    user
+                  end
+                end
 
         json_response(users)
       end
