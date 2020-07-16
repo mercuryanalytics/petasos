@@ -106,6 +106,7 @@ const usersReducer = (state = initialState, action) => {
             payload[key] = [];
           }
           payload[key].push(Object.assign(
+            {},
             user,
             { client_ids: [contextId] },
             { authorized: (user.authorized || []).indexOf(contextId) > -1 },
