@@ -18,6 +18,9 @@ const ChangePassword = () => {
     return dispatch(changePassword(token, password, password_confirmation)).then(() => {
       return Promise.resolve(true);
     }, (err) => {
+      if (err.xhrHttpCode === 422) {
+        err = { errors: 'Your token is expired, please generate another one and try again.' };
+      }
       return Promise.reject(translateError(err));
     });
   }, [dispatch]);

@@ -17,6 +17,7 @@ import Search from './common/Search';
 import { MdPlayArrow } from 'react-icons/md';
 import { Bin, Menu } from './Icons';
 import { confirm } from './common/Confirm';
+import Tooltip from './common/Tooltip';
 import Toggle from './common/Toggle';
 import Modal from './common/Modal';
 import Button from './common/Button';
@@ -367,6 +368,15 @@ const UserActions = props => {
     form.reset();
   }, [form]);
 
+  const renderUserName = useCallback((user) => (
+    <>
+      <Tooltip id={`useractions-user-${user.id}-tt`} location="top" zIndex={5}>
+        <span>{user.email}</span>
+      </Tooltip>
+      {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
+    </>
+  ), []);
+
   return (
     <div className={`${styles.container} ${props.className || ''}`}>
       <div className={styles.search}>
@@ -419,12 +429,9 @@ const UserActions = props => {
                       ${selectedItem === user.id ? styles.selectedItem : ''}
                     `}
                     htmlFor={`user-toggle-${user.id}`}
-                    title={user.contact_name || user.email}
                     onClick={() => handleItemSelect(user.id)}
                   >
-                    <span className={styles.itemName}>
-                      {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
-                    </span>
+                    <span className={styles.itemName}>{renderUserName(user)}</span>
                     {!!canDelete && (
                       !!isDeleteBusy[user.id] ? (
                         <Loader inline size={3} className={styles.busyLoader} />
@@ -493,12 +500,9 @@ const UserActions = props => {
                           ${selectedItem === user.id ? styles.selectedItem : ''}
                         `}
                         htmlFor={`user-toggle-${client.id}-${user.id}`}
-                        title={user.contact_name || user.email}
                         onClick={() => handleItemSelect(user.id)}
                       >
-                        <span className={styles.itemName}>
-                          {!!(user.contact_name && user.contact_name.length) ? user.contact_name : user.email}
-                        </span>
+                        <span className={styles.itemName}>{renderUserName(user)}</span>
                         <Toggle
                           id={`user-toggle-${client.id}-${user.id}`}
                           className={styles.itemToggle}
