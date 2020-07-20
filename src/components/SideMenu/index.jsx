@@ -31,10 +31,18 @@ const SearchTargets = {
   Reports: 'reports',
 };
 
+const SearchToggles = {
+  HideClients: 'hide-clients',
+};
+
 const searchComponentTargets = [
   { key: SearchTargets.Clients, label: 'Clients', value: true },
   { key: SearchTargets.Projects, label: 'Projects', value: true },
   { key: SearchTargets.Reports, label: 'Reports', value: true },
+];
+
+const searchComponentToggles = [
+  { key: SearchToggles.HideClients, text: 'Hide clients', value: false },
 ];
 
 const SideMenu = props => {
@@ -60,6 +68,9 @@ const SideMenu = props => {
   const [loadedProjects, setLoadedProjects] = useState({});
   const [canCreateProjects, setCanCreateProjects] = useState({});
   const [canCreateReports, setCanCreateReports] = useState({});
+  const [clientsVisibility, setClientsVisibility] = useState(true);
+  const [isLoadedProjectsData, setIsLoadedProjectsData] = useState(false);
+  const [isLoadingProjectsData, setIsLoadingProjectsData] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
     query: '',
@@ -418,6 +429,23 @@ const SideMenu = props => {
     openClients, loadedClients, openProjects, loadedProjects, dispatch,
   ]);
 
+  const handleSearchToggleChange = useCallback(async (key, status) => {
+    if (key === SearchToggles.HideClients) {
+      setClientsVisibility(!status);
+      if (status && !isLoadedProjectsData && !isLoadingProjectsData) {
+        setIsLoadingProjectsData(true);
+        await Promise.all([
+          dispatch(getProjects()).then(() => {}, () => {}),
+          dispatch(getOrphanProjects()).then(() => {}, () => {}),
+          dispatch(getOrphanReports()).then(() => {}, () => {}),
+        ]).then(() => {
+          setIsLoadingProjectsData(false);
+          setIsLoadedProjectsData(true);
+        });
+      }
+    }
+  }, [isLoadedProjectsData, isLoadingProjectsData, dispatch]);
+
   return (
     <div className={styles.container}>
       {!isLoading && (
@@ -430,17 +458,43 @@ const SideMenu = props => {
             id="sidemenu-search"
             placeholder="Search"
             targets={searchComponentTargets}
+            toggles={searchComponentToggles}
             hasShadows={true}
             onSearch={handleSearch}
+            onToggleChange={handleSearchToggleChange}
           />
         </div>
       )}
       <Scrollable className={styles.menu}>
-        {((!isLoading && (isSearching && !clientsSearch && !isLoadedSearchData)) && (
+        {((!isLoading && (
+          (isSearching && !clientsSearch && !isLoadedSearchData) ||
+          (!clientsVisibility && !isLoadedProjectsData)
+        )) && (
           <Loader inline className={styles.loader} />
         ))
         || (isSearching && !Object.keys(filteredClients).length && (
           <div className={styles.noResults}></div>
+        ))
+        || (!isLoading && !clientsVisibility && (
+          projects.map(project => (
+            <Project
+              key={`project-btn-${project.id}`}
+              data={project}
+              reports={reports.filter(r => r.project_id === project.id)}
+              open={!!openProjects[project.id]}
+              loaded={!!loadedProjects[project.id]}
+              active={activeProject === project.id}
+              orphan={true}
+              activeReport={activeReport}
+              isActiveAddLink={isActiveAddLink}
+              canCreateReports={canCreateReports}
+              isSearching={isSearching}
+              filteredProjects={filteredProjects}
+              filteredReports={filteredReports}
+              onOpen={handleProjectOpen}
+              onClose={handleProjectClose}
+            />
+          ))
         ))
         || (!isLoading && (<>
           {clients && !!clients.length && (
@@ -517,7 +571,7 @@ const SideMenu = props => {
             ))
           )}
         </>))}
-        {!isLoading && isSuperUser(userId) && (
+        {!isLoading && clientsVisibility && isSuperUser(userId) && (
           <div className={styles.add}>
             <ClientAdd />
           </div>

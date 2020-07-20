@@ -71,11 +71,17 @@ input.active, .input:not(.active):focus {
 
 .targets .title {
   display: block;
-  padding: 0 15px;
   margin: 5px 0 10px 0;
+  padding: 0 15px;
   font-size: .85rem;
   color: #555;
   font-weight: bold;
+}
+
+.targets .toggles {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #F0F0F0;
 }
 
 .targets label {
@@ -89,6 +95,11 @@ input.active, .input:not(.active):focus {
 .targets label span {
   color: #555;
   font-size: .8rem;
+}
+
+.targets .toggles label span {
+  font-size: .85rem;
+  font-weight: bold;
 }
 
 .targets label:hover {

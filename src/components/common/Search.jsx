@@ -5,17 +5,22 @@ import { MdSearch, MdCheck } from 'react-icons/md';
 let timeout = {};
 
 const Search = props => {
-  const { id, targets, hasShadows } = props;
+  const { id, targets, hasShadows, toggles } = props;
   const [value, setValue] = useState('');
   const valueRef = useRef(null);
   const [searchTargets, setSearchTargets] = useState(null);
   const [showTargets, setShowTargets] = useState(false);
   const [overTargets, setOverTargets] = useState(false);
+  const [customToggles, setCustomToggles] = useState(null);
   const [isTouched, setIsTouched] = useState(false);
 
   useEffect(() => {
     setSearchTargets([ ...(targets || []) ]);
   }, [targets]);
+
+  useEffect(() => {
+    setCustomToggles([ ...(toggles || []) ]);
+  }, [toggles]);
 
   const throttleChange = useCallback((value) => {
     if (timeout[id]) {
@@ -42,15 +47,30 @@ const Search = props => {
 
   const handleTargetChange = useCallback((targetKey, value) => {
     valueRef.current.focus();
-    let newTargets = [ ...targets ];
+    let newTargets = [ ...searchTargets ];
     for (let i = 0; i < targets.length; i++) {
       if (targets[i].key === targetKey) {
-        newTargets[i].value = !!value;
+        newTargets[i] = { ...newTargets[i], value: !!value };
         break;
       }
     }
     setSearchTargets(newTargets);
-  }, [valueRef, targets]);
+  }, [valueRef, targets, searchTargets]);
+
+  const handleToggleChange = useCallback((targetKey, value) => {
+    valueRef.current.focus();
+    let newToggles = [ ...customToggles ];
+    for (let i = 0; i < toggles.length; i++) {
+      if (toggles[i].key === targetKey) {
+        newToggles[i] = { ...newToggles[i], value: !!value };
+        break;
+      }
+    }
+    if (props.onToggleChange) {
+      props.onToggleChange(targetKey, value);
+    }
+    setCustomToggles(newToggles);
+  }, [valueRef, toggles, customToggles, props]);
 
   return (
     <div className={`${styles.container} ${hasShadows ? styles.shadows : ''}`}>
@@ -91,6 +111,30 @@ const Search = props => {
               </div>
             </label>
           ))}
+          {!!customToggles && !!customToggles.length && (
+            <div className={styles.toggles}>
+              {customToggles.map(toggle => (
+                <label
+                  key={`search-toggle-${toggle.key}`}
+                  htmlFor={`search-toggle-input-${toggle.key}`}
+                  className={!!toggle.value ? styles.checked : ''}
+                >
+                  <span>{toggle.text}</span>
+                  <input
+                    style={{ visibility: 'hidden' }}
+                    id={`search-toggle-input-${toggle.key}`}
+                    type="checkbox"
+                    value={toggle.text}
+                    checked={!!toggle.value}
+                    onChange={e => handleToggleChange(toggle.key, e.target.checked)}
+                  />
+                  <div className={styles.checkbox}>
+                    {!!toggle.value && <MdCheck />}
+                  </div>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
