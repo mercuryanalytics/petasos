@@ -10,7 +10,10 @@ import ProjectAdd from './ProjectAdd';
 import Report from './Report';
 
 const Client = props => {
-  const { data, projects, reports, clientReports, open, loaded, openProjects, loadedProjects } = props;
+  const {
+    data, projects, reports, clientReports, open, loaded, openProjects, loadedProjects,
+    isSearching, filteredClients, filteredProjects, filteredReports,
+  } = props;
   const [isTouched, setIsTouched] = useState(false);
   const [isOpen, setIsOpen] = useState(!!open);
 
@@ -61,6 +64,7 @@ const Client = props => {
 
   return (
     <div
+      style={isSearching && !filteredClients[data.id] ? { display: 'none' } : {}}
       className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}
       id={`sidemenu-client-${data.id}`}
     >
@@ -86,6 +90,9 @@ const Client = props => {
                 activeReport={props.activeReport}
                 isActiveAddLink={props.isActiveAddLink}
                 canCreateReports={props.canCreateReports}
+                isSearching={isSearching}
+                filteredProjects={filteredProjects}
+                filteredReports={filteredReports}
                 onOpen={onProjectOpen}
                 onClose={onProjectClose}
               />
@@ -96,6 +103,8 @@ const Client = props => {
                 data={clientReport}
                 active={props.activeReport === clientReport.id}
                 orphan={true}
+                isSearching={isSearching}
+                filteredReports={filteredReports}
               />
             ))}
           </> : (

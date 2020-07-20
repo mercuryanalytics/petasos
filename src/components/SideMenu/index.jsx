@@ -70,13 +70,11 @@ const SideMenu = props => {
   const [clientsSearch, setClientsSearch] = useState(false);
   const [projectsSearch, setProjectsSearch] = useState(false);
   const [isLoadedSearchData, setIsLoadedSearchData] = useState(false);
+  const [isLoadingSearchData, setIsLoadingSearchData] = useState(false);
   const [statesBackup, setStatesBackup] = useState(null);
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [filteredProjects, setFilteredProjects] = useState([]);
-  const [filteredOrphanProjects, setFilteredOrphanProjects] = useState([]);
-  const [filteredReports, setFilteredReports] = useState([]);
-  const [filteredOrphanReports, setFilteredOrphanReports] = useState([]);
-  const [filteredClientReports, setFilteredClientReports] = useState([]);
+  const [filteredClients, setFilteredClients] = useState({});
+  const [filteredProjects, setFilteredProjects] = useState({});
+  const [filteredReports, setFilteredReports] = useState({});
 
   const init = useCallback((status) => {
     const handleSuccess = (isEmptyState) => {
@@ -292,6 +290,80 @@ const SideMenu = props => {
     ));
   }, []);
 
+  const updateSearchResults = useCallback(() => {
+    const isReportsSearch = !!searchFilters[SearchTargets.Reports];
+    const isProjectsSearch = !!searchFilters[SearchTargets.Projects];
+    const isClientsSearch = !!searchFilters[SearchTargets.Clients];
+    const shouldOpenClients = !clientsSearch;
+    const shouldOpenProjects = !clientsSearch && !projectsSearch;
+    let cids = {}, pids = {}, rids = {};
+    let matchedClients = {}, matchedProjects = {};
+    let newClientStates = {}, newProjectStates = {};
+    if (isReportsSearch) {
+      filterStack(reports, searchFilters.query).forEach(r => {
+        rids[r.id] = true;
+        pids[r.project_id] = true;
+        cids[r.project.domain_id] = true;
+      });
+    }
+    if (isProjectsSearch) {
+      filterStack(projects, searchFilters.query).forEach(p => {
+        matchedProjects[p.id] = true;
+        pids[p.id] = true;
+        cids[p.domain_id] = true;
+      });
+    }
+    if (isClientsSearch) {
+      filterStack(clients, searchFilters.query).forEach(c => {
+        matchedClients[c.id] = true;
+        cids[c.id] = true;
+      });
+      if (Object.keys(matchedClients).length) {
+        projects.filter(p => !!matchedClients[p.domain_id]).forEach(p => {
+          matchedProjects[p.id] = true;
+          pids[p.id] = true;
+        });
+      }
+    }
+    if (Object.keys(matchedProjects).length) {
+      reports.filter(r => !!matchedProjects[r.project_id]).forEach(r => {
+        rids[r.id] = true;
+      });
+    }
+    Object.keys(cids).map(i => +i).forEach(id => {
+      newClientStates[id] = shouldOpenClients || (id === activeClient);
+      initProjectCreationRights(id, projects.filter(p => p.domain_id === id));
+    });
+    Object.keys(pids).map(i => +i).forEach(id => {
+      newProjectStates[id] = shouldOpenProjects || (id === activeProject);
+      initReportCreationRights(id);
+    });
+    if (shouldOpenClients) {
+      setLoadedClients(newClientStates);
+    }
+    if (shouldOpenProjects) {
+      setLoadedProjects(newProjectStates);
+    }
+    setFilteredClients(cids);
+    setFilteredProjects(pids);
+    setFilteredReports(rids);
+    setOpenClients(newClientStates);
+    setOpenProjects(newProjectStates);
+  }, [
+    searchFilters, filterStack, clients, projects, reports,
+    initProjectCreationRights, initReportCreationRights,
+    clientsSearch, projectsSearch, activeClient, activeProject,
+  ]);
+
+  useEffect(() => {
+    if (isSearching && isLoadedSearchData && !!searchFilters.query.length) {
+      updateSearchResults();
+    } else if (!isSearching) {
+      scrollToActive();
+    }
+  // eslint-disable-next-line
+  }, [isSearching, isLoadedSearchData, searchFilters]);
+
   const handleSearch = useCallback(async (value, targets) => {
     setIsSearching(!!value.length);
     if (!value.length) {
@@ -310,9 +382,8 @@ const SideMenu = props => {
         projects: { open: { ...openProjects }, loaded: { ...loadedProjects } },
       });
     }
-    let promises = [];
-    let hasClients = false, hasProjects = false, hasReports = false;
     let filters = { query: value };
+    let hasClients = false, hasProjects = false, hasReports = false;
     for (let i = 0; i < targets.length; i++) {
       const target = targets[i];
       filters[target.key] = target.value;
@@ -329,137 +400,22 @@ const SideMenu = props => {
     setSearchFilters(filters);
     setClientsSearch(!hasProjects && !hasReports);
     setProjectsSearch(hasProjects && !hasReports);
-    if (!isLoadedSearchData && (hasProjects || hasReports) && value.length) {
+    if (!isLoadedSearchData && !isLoadingSearchData && (hasProjects || hasReports)) {
+      setIsLoadingSearchData(true);
+      let promises = [];
       promises.push(dispatch(getProjects()).then(() => {}, () => {}));
       promises.push(dispatch(getReports()).then(() => {}, () => {}));
-    }
-    await Promise.all(promises).then((res) => {
-      if (hasClients || hasProjects || hasReports) {
-        setIsLoadedSearchData(true);
-      }
-      return res;
-    });
-  }, [
-    isLoadedSearchData, dispatch, statesBackup,
-    openClients, loadedClients, openProjects, loadedProjects,
-  ]);
-
-  const decorateSearchResults = useCallback((clients, projects, orphanProjects) => {
-    if (clients.length) {
-      let states = {}, state = !clientsSearch;
-      clients.forEach(c => {
-        states[c.id] = state || (c.id === activeClient);
+      await Promise.all(promises).then(() => {
+        updateSearchResults();
+        if (hasClients || hasProjects || hasReports) {
+          setIsLoadingSearchData(false);
+          setIsLoadedSearchData(true);
+        }
       });
-      setOpenClients(states);
-      if (state) {
-        setLoadedClients(states);
-      }
     }
-    if (projects.length || orphanProjects.length) {
-      let states = {}, state = !clientsSearch && !projectsSearch;
-      const pushProject = p => {
-        states[p.id] = state || (p.id === activeProject);
-      };
-      projects.forEach(p => pushProject(p));
-      orphanProjects.forEach(p => pushProject(p));
-      setOpenProjects(states);
-      if (state) {
-        setLoadedProjects(states);
-      }
-    }
-  }, [clientsSearch, projectsSearch, activeClient, activeProject]);
-
-  useEffect(() => {
-    if (isSearching && isLoadedSearchData && searchFilters.query.length) {
-      let clientsResult = [];
-      let projectsResult = [], orphanProjectsResult = [];
-      let reportsResult = [], orphanReportsResult = [], clientReportsResult = [];
-      let opIds = {}, orIds = {}, crIds = {};
-      let pendingClients = {}, pendingProjects = {};
-      let pushedReports = {}, pushedProjects = {};
-      orphanProjects.forEach(p => (opIds[p.id] = true));
-      orphanReports.forEach(r => (orIds[r.id] = true));
-      clientReports.forEach(r => (crIds[r.id] = true));
-      const pushReport = (r) => {
-        if (!pushedReports[r.id]) {
-          pushedReports[r.id] = true;
-          if (orIds.hasOwnProperty(r.id)) {
-            orphanReportsResult.push(r);
-          } else if (crIds.hasOwnProperty(r.id)) {
-            clientReportsResult.push(r);
-          } else {
-            reportsResult.push(r);
-          }
-        }
-      };
-      const pushProject = (p) => {
-        if (!pushedProjects[p.id]) {
-          pushedProjects[p.id] = true;
-          if (opIds.hasOwnProperty(p.id)) {
-            orphanProjectsResult.push(p);
-          } else {
-            projectsResult.push(p);
-          }
-          initReportCreationRights(p.id);
-        }
-      };
-      if (searchFilters[SearchTargets.Reports]) {
-        filterStack(reports, searchFilters.query).forEach(r => {
-          pendingProjects[r.project_id] = true;
-          pushReport(r);
-        });
-      }
-      if (searchFilters[SearchTargets.Projects] || Object.keys(pendingProjects).length) {
-        const fromFilter = searchFilters[SearchTargets.Projects];
-        const query = fromFilter ? searchFilters.query : null;
-        const pendingIds = Object.keys(pendingProjects).map(id => +id);
-        let ids = {};
-        filterStack(projects, query, pendingIds).forEach(p => {
-          ids[p.id] = true;
-          pendingClients[p.domain_id] = true;
-          pushProject(p);
-        });
-        if (fromFilter) {
-          ids = Object.keys(ids).map(id => +id);
-          filterStack(reports, null, ids, 'project_id').forEach(r => {
-            pushReport(r);
-          });
-        }
-      }
-      if (searchFilters[SearchTargets.Clients] || Object.keys(pendingClients).length) {
-        const fromFilter = searchFilters[SearchTargets.Clients];
-        const query = fromFilter ? searchFilters.query : null;
-        const pendingIds = Object.keys(pendingClients).map(id => +id);
-        let ids = {}, pids = {};
-        filterStack(clients, query, pendingIds).forEach(c => {
-          ids[c.id] = true;
-          clientsResult.push(c);
-          initProjectCreationRights(c.id, projects.filter(p => p.domain_id === c.id));
-        });
-        if (fromFilter) {
-          ids = Object.keys(ids).map(id => +id);
-          filterStack(projects, null, ids, 'domain_id').forEach(p => {
-            pids[p.id] = true;
-            pushProject(p);
-          });
-          pids = Object.keys(pids).map(id => +id);
-          filterStack(reports, null, pids, 'project_id').forEach(r => {
-            pushReport(r);
-          });
-        }
-      }
-      decorateSearchResults(clientsResult, projectsResult, orphanProjectsResult);
-      setFilteredClients(clientsResult);
-      setFilteredProjects(projectsResult);
-      setFilteredOrphanProjects(orphanProjectsResult);
-      setFilteredReports(reportsResult);
-      setFilteredOrphanReports(orphanReportsResult);
-      setFilteredClientReports(clientReportsResult);
-    }
-  // eslint-disable-next-line
   }, [
-    isSearching, isLoadedSearchData, searchFilters,
-    clients, projects, orphanProjects, reports, orphanReports, clientReports,
+    isLoadedSearchData, isLoadingSearchData, statesBackup, updateSearchResults,
+    openClients, loadedClients, openProjects, loadedProjects, dispatch,
   ]);
 
   return (
@@ -483,21 +439,20 @@ const SideMenu = props => {
         {((!isLoading && (isSearching && !clientsSearch && !isLoadedSearchData)) && (
           <Loader inline className={styles.loader} />
         ))
-        || (isSearching && !filteredClients.length && (
-          <div className={styles.noResults}>No results</div>
+        || (isSearching && !Object.keys(filteredClients).length && (
+          <div className={styles.noResults}></div>
         ))
         || (!isLoading && (<>
           {clients && !!clients.length && (
-            (isSearching ? filteredClients : clients).map(client => (
+            clients.map(client => (
               <Client
                 key={`client-btn-${client.id}`}
                 data={client}
-                projects={(isSearching ? filteredProjects : projects).filter(p => p.domain_id === client.id)}
+                projects={projects.filter(p => p.domain_id === client.id)}
                 openProjects={openProjects}
                 loadedProjects={loadedProjects}
-                reports={(isSearching ? filteredReports : reports)}
-                clientReports={(isSearching ? filteredClientReports : clientReports)
-                  .filter(cr => cr.project.domain_id === client.id)}
+                reports={reports}
+                clientReports={clientReports.filter(cr => cr.project.domain_id === client.id)}
                 open={!!openClients[client.id]}
                 loaded={!!loadedClients[client.id]}
                 active={activeClient === client.id}
@@ -506,6 +461,10 @@ const SideMenu = props => {
                 isActiveAddLink={isActiveAddLink}
                 canCreateProjects={canCreateProjects}
                 canCreateReports={canCreateReports}
+                isSearching={isSearching}
+                filteredClients={filteredClients}
+                filteredProjects={filteredProjects}
+                filteredReports={filteredReports}
                 onOpen={handleClientOpen}
                 onClose={handleClientClose}
                 onProjectOpen={handleProjectOpen}
@@ -525,7 +484,7 @@ const SideMenu = props => {
             </div>
           )}
           {orphanProjects && !!orphanProjects.length && (
-            (isSearching ? filteredOrphanProjects : orphanProjects).map(project => (
+            orphanProjects.map(project => (
               <Project
                 key={`project-btn-${project.id}`}
                 data={project}
@@ -537,18 +496,23 @@ const SideMenu = props => {
                 activeReport={activeReport}
                 isActiveAddLink={isActiveAddLink}
                 canCreateReports={canCreateReports}
+                isSearching={isSearching}
+                filteredProjects={filteredProjects}
+                filteredReports={filteredReports}
                 onOpen={handleProjectOpen}
                 onClose={handleProjectClose}
               />
             ))
           )}
           {orphanReports && !!orphanReports.length && (
-            (isSearching ? filteredOrphanReports : orphanReports).map(report => (
+            orphanReports.map(report => (
               <Report
                 key={`report-btn-${report.id}`}
                 data={report}
                 active={activeReport === report.id}
                 orphan={true}
+                isSearching={isSearching}
+                filteredReports={filteredReports}
               />
             ))
           )}

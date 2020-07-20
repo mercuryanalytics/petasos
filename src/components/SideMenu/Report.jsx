@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import { File } from '../Icons';
 
 const Report = props => {
-  const { data, active, orphan } = props;
+  const { data, active, orphan, isSearching, filteredReports } = props;
 
   return (
     <Link
+      style={isSearching && !filteredReports[data.id] ? { display: 'none' } : {}}
       className={`${styles.container} ${active ? styles.active : ''} ${orphan ? styles.orphan : ''}`}
       id={`sidemenu-report-${data.id}`}
       to={Routes.ManageReport.replace(':id', data.id)}
