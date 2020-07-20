@@ -237,20 +237,13 @@ namespace :import do
         client = get_client_row(old_client_id, clients_mapped)
 
         membership = if client
-                       memberships.select { |i| i.client_id == client[:new_id] && i.user_id == user[:new_id] }.first ||
-                         Membership.find_or_initialize_by(client_id: new_project_row[:new_domain_id], user_id: user[:new_id])
-                     else
-                       Membership.find_or_initialize_by(client_id: new_project_row[:new_domain_id], user_id: user[:new_id])
-                    end
+                       memberships.select { |i| i.client_id == client[:new_id] && i.user_id == user[:new_id] }.first
+                     end
 
-        if membership.new_record?
-          membership.save
-          memberships << membership
+        if membership
+          auth.membership_id = membership.id
+          auth.save
         end
-
-        auth.membership_id = membership.id
-
-        auth.save
       end
 
       {
@@ -291,21 +284,15 @@ namespace :import do
         client = get_client_row(new_report_row[:old_domain_id], clients_mapped)
 
         membership = if client
-                       memberships.select { |i| i.client_id == client[:new_id] && i.user_id == user[:new_id] }.first ||
-                         Membership.find_or_initialize_by(client_id: new_report_row[:new_domain_id], user_id: user[:new_id])
-                     else
-                       Membership.find_or_initialize_by(client_id: new_report_row[:new_domain_id], user_id: user[:new_id])
+                       memberships.select { |i| i.client_id == client[:new_id] && i.user_id == user[:new_id] }.first
                      end
 
-        if membership.new_record?
-          membership.save
-          memberships << membership
+        if membership
+          auth.membership_id = membership.id
+          auth.save
         end
-
-        auth.membership_id = membership.id
-
-        auth.save
       end
+
       {
         old_report_id: row['report_id'],
         authorization: authorization
