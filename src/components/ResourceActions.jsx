@@ -81,14 +81,16 @@ const ResourceActions = props => {
       }, () => {}),
       dispatch(getScopes()).then((action) => {
         const data = action.payload.dynamic;
-        let initialFilters = {};
-        for (let i = 0; i < data.length; i++) {
-          initialFilters[data[i].id] = true;
-          if (i === 2) {
-            break;
+        if (data) {
+          let initialFilters = {};
+          for (let i = 0; i < data.length; i++) {
+            initialFilters[data[i].id] = true;
+            if (i === 2) {
+              break;
+            }
           }
+          setFilters(initialFilters);
         }
-        setFilters(initialFilters);
       }, () => {}),
       dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
     ]).then(() => {
@@ -199,6 +201,14 @@ const ResourceActions = props => {
     }
     setActiveStates(prev => ({ ...prev, ...newStates }));
   }, [userId, getItemStatus, dispatch]);
+
+  const getAccessStatus = useCallback((type, id) => {
+    return false;
+  });
+
+  const setAccessStatus = useCallback((type, id, status) => {
+    return false;
+  });
 
   const setFiltersStatus = useCallback((status, id) => {
     let newState = {};
@@ -420,6 +430,12 @@ const ResourceActions = props => {
                 )}
                 <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
                 <span className={styles.name}>{client.name}</span>
+                {/* <Checkbox
+                  className={styles.accessCheckbox}
+                  label="Access"
+                  checked={getAccessStatus('client', client.id)}
+                  onChange={e => setAccessStatus('client', client.id, !!e.target.checked)}
+                /> */}
                 <Toggle
                   id={`client-toggle-${client.id}`}
                   className={styles.itemToggle}
@@ -444,6 +460,12 @@ const ResourceActions = props => {
                         <Folder className={styles.icon} />
                         <span className={styles.name}>{project.project_number ?
                           project.project_number + ': ' : ''}{project.name}</span>
+                        {/* <Checkbox
+                          className={styles.accessCheckbox}
+                          label="Access"
+                          checked={getAccessStatus('project', project.id)}
+                          onChange={e => setAccessStatus('project', project.id, !!e.target.checked)}
+                        /> */}
                         <Toggle
                           id={`project-toggle-${project.id}`}
                           className={styles.itemToggle}

@@ -207,6 +207,10 @@
   margin-bottom: 32px;
 }
 
+.modalInput.stacked {
+  margin-bottom: 8px;
+}
+
 .modalButtons {}
 
 .loader {

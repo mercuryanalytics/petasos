@@ -171,7 +171,7 @@ const ReportManage = props => {
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
             )}
-            {canEdit && !!data.url && (
+            {!!data.url && (
               <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>

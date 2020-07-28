@@ -414,6 +414,11 @@
   justify-content: center;
 }
 
+.accessCheckbox {
+  width: auto;
+  margin-right: 8px;
+}
+
 .loaderContainer {
   padding: 25px 2rem 2rem 2rem;
 }

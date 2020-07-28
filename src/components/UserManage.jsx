@@ -10,7 +10,7 @@ import { Validators, Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
 
 const UserManage = props => {
-  const { id, embeded, preview, clientId, canEdit } = props;
+  const { id, embeded, preview, clientId, canEdit, disableAccountChange } = props;
   const dispatch = useDispatch();
   const editMode = !!id;
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,7 @@ const UserManage = props => {
       contact_title: data.contact_title || '',
       contact_phone: data.contact_phone || '',
       contact_fax: data.contact_fax || '',
-      contact_email: data.contact_email || '',
+      // contact_email: data.contact_email || '',
       mailing_address_1: data.mailing_address_1 || '',
       mailing_city: data.mailing_city || '',
       mailing_state: data.mailing_state || '',
@@ -45,7 +45,7 @@ const UserManage = props => {
     validate: (values) => {
       let errors = {};
       let requiredFields = [
-        'email', 'contact_name', 'contact_phone', 'contact_email',
+        'email', 'contact_name', 'contact_phone', /* 'contact_email', */
         'mailing_address_1', 'mailing_city', 'mailing_state', 'mailing_zip',
       ];
       requiredFields.forEach(key => {
@@ -56,9 +56,9 @@ const UserManage = props => {
       if (!errors.email && !Validators.isEmail(values.email)) {
         errors.email = 'Field value must be a valid email format.';
       }
-      if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
-        errors.contact_email = 'Field value must be a valid email format.';
-      }
+      // if (!errors.contact_email && !Validators.isEmail(values.contact_email)) {
+      //   errors.contact_email = 'Field value must be a valid email format.';
+      // }
       return errors;
     },
     onSubmit: (values) => {
@@ -69,7 +69,7 @@ const UserManage = props => {
         contact_title: values.contact_title,
         contact_phone: values.contact_phone,
         contact_fax: values.contact_fax,
-        contact_email: values.contact_email,
+        // contact_email: values.contact_email,
         mailing_address_1: values.mailing_address_1,
         mailing_city: values.mailing_city,
         mailing_state: values.mailing_state,
@@ -104,7 +104,7 @@ const UserManage = props => {
   const contact_title = useField('contact_title', form);
   const contact_phone = useField('contact_phone', form);
   const contact_fax = useField('contact_fax', form);
-  const contact_email = useField('contact_email', form);
+  // const contact_email = useField('contact_email', form);
   const mailing_address_1 = useField('mailing_address_1', form);
   const mailing_city = useField('mailing_city', form);
   const mailing_state = useField('mailing_state', form);
@@ -136,6 +136,7 @@ const UserManage = props => {
             <Input
               className={styles.formControl}
               field={email}
+              disabled={!!disableAccountChange}
               preview={preview && !isEditClicked}
               label={renderRequiredFieldLabel('Account name')}
             />
@@ -172,12 +173,12 @@ const UserManage = props => {
                 label="Fax number"
               />
             </div>
-            <Input
+            {/* <Input
               className={styles.formControl}
               field={contact_email}
               preview={preview && !isEditClicked}
               label={renderRequiredFieldLabel('Email')}
-            />
+            /> */}
             <div className={styles.controlsGroup}>
               <Input
                 className={styles.formControl}

@@ -387,8 +387,11 @@ export const authorizeUserFailure = (error) => ({
 });
 
 export function refreshAuthorizations(type, id, userId, contextId) {
-  return dispatch => Promise.all([
-    dispatch(getAuthorizedUsers(contextId, { [`${type}Id`]: id })).then(() => {}, () => {}),
-    dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
-  ]);
+  return dispatch => {
+    apiCall.forget(/\/users\/[0-9]+\/authorized/);
+    return Promise.all([
+      dispatch(getAuthorizedUsers(contextId, { [`${type}Id`]: id })).then(() => {}, () => {}),
+      dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
+    ]);
+  }
 }

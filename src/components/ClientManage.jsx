@@ -851,6 +851,7 @@ const ClientManage = props => {
                       preview={true}
                       embeded={true}
                       canEdit={canEdit}
+                      disableAccountChange={true}
                     />
                   )
                 )) ||

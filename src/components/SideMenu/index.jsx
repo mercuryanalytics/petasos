@@ -101,14 +101,19 @@ const SideMenu = props => {
     setIsLoading(true);
     let defaultRoutes = {};
     Promise.all([
-      dispatch(getClients()).then((action) => {
+      dispatch(getClients()).then(async (action) => {
         if (action.payload.length) {
           const sortedClients = sortClients(action.payload);
-          defaultRoutes.client = Routes.ManageClient.replace(':id', sortedClients[0].id);
+          await dispatch(getProjects(sortedClients[0].id)).then((action) => {
+            if (action.payload.length) {
+              const sortedProjects = sortProjects(action.payload);
+              defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
+            }
+          }, () => {})
         }
       }, () => {}),
       dispatch(getOrphanProjects()).then((action) => {
-        if (action.payload.length) {
+        if (action.payload.length && !defaultRoutes.project) {
           const sortedProjects = sortProjects(action.payload);
           defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
         }

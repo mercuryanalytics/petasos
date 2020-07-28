@@ -229,13 +229,16 @@ const UserActions = props => {
 
   const { form, handleSubmit, submitting } = useForm({
     validate: (values) => {
-      let err;
-      if (!Validators.hasValue(values.add_user_email)) {
-        err = 'Field value is required.';
-      } else if (!Validators.isEmail(values.add_user_email)) {
-        err = 'Field value must be a valid email format.';
+      let errors = {};
+      if (!Validators.hasValue(values.add_user_name)) {
+        errors.add_user_name = 'Field value is required.';
       }
-      return err ? { add_user_email: err } : {};
+      if (!Validators.hasValue(values.add_user_email)) {
+        errors.add_user_email = 'Field value is required.';
+      } else if (!Validators.isEmail(values.add_user_email)) {
+        errors.add_user_email = 'Field value must be a valid email format.';
+      }
+      return errors;
     },
     onSubmit: (values) => {
       setIsBusy(true);
@@ -243,7 +246,7 @@ const UserActions = props => {
         email: values.add_user_email,
         client_id: clientId || limitClientId || null,
         company_name: null,
-        contact_name: null,
+        contact_name: values.add_user_name,
         contact_title: null,
         contact_phone: null,
         contact_fax: null,
@@ -290,7 +293,8 @@ const UserActions = props => {
     },
   });
 
-  const addUserField = useField('add_user_email', form);
+  const addUserEmailField = useField('add_user_email', form);
+  const addUserNameField = useField('add_user_name', form);
 
   const handleSearch = useCallback((value) => {
     if (!!value.length) {
@@ -398,8 +402,13 @@ const UserActions = props => {
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <Input
+            className={`${styles.modalInput} ${styles.stacked}`}
+            field={addUserNameField}
+            label="Name"
+          />
+          <Input
             className={styles.modalInput}
-            field={addUserField}
+            field={addUserEmailField}
             label="Email"
           />
           <div className={styles.modalButtons}>
