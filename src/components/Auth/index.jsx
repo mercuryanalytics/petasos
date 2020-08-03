@@ -244,7 +244,7 @@ const Auth = props => {
     let value = '';
     if (viewType === AuthViewTypes.Login) {
       value = loginViewType !== LoginViewTypes.Reset ?
-        'Auth0 Login' :
+        'Login' :
         'Reset your password';
     } else {
       value = 'Change your password';
