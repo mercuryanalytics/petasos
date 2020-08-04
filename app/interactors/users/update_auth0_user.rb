@@ -29,7 +29,7 @@ module Users
         connection: AUTH0_CONNECTION_TYPE
       }
       payload.merge!(password: params[:password]) if params[[:password]]
-      payload.merge!(email: params[:email]) if current_user.admin? && user.email_changed?
+      payload.merge!(email: params[:email]) if current_user&.admin? && user.email_changed?
 
       payload.delete_if { |_, v| v.blank? }
     end
