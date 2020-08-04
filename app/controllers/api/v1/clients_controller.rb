@@ -40,7 +40,7 @@ module Api
       end
 
       def orphans
-        result = Reports::OrphanPerClient.call(user: current_user)
+        result = Reports::OrphanPerClient.call(user: current_user, client_id: params[:id])
 
         if result.success?
           json_response(result.reports)

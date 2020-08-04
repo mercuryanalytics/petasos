@@ -130,7 +130,7 @@ module Api
       def current_ability
         @current_ability ||= ::ProjectAbility.new(
           current_user,
-          params[:client_id] || project_params[:domain_id] || @project&.domain_id
+          params[:client_id] || params[:project]&.fetch(:domain_id, nil) || @project&.domain_id
         )
       end
 

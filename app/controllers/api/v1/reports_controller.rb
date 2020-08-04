@@ -123,7 +123,10 @@ module Api
       end
 
       def current_ability
-        @current_ability ||= ::ReportAbility.new(current_user, params[:project_id] || @report&.project_id)
+        @current_ability ||= ::ReportAbility.new(
+          current_user,
+          params[:project_id] || params[:report].fetch(:project_id, nil) || @report&.project_id
+        )
       end
 
       def authorize_params
