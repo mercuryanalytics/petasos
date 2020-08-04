@@ -45,6 +45,7 @@ const ProjectManage = props => {
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
+  const previewMode = editMode && !canEdit;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -194,7 +195,7 @@ const ProjectManage = props => {
 
   if (isLoading || (editMode && !data)) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
         <div className={styles.loading}>
           <Loader inline className={styles.loader} />
         </div>
@@ -203,7 +204,7 @@ const ProjectManage = props => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <span>Project details</span>

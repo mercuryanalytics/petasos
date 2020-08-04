@@ -50,9 +50,9 @@ const Select = props => {
   };
 
   return (
-    <div className={classes}>
+    <div data-field data-field-preview={preview} className={classes}>
       {!!label && (
-        <label>{label}</label>
+        <label data-field-label>{label}</label>
       )}
       {!preview ? (
         <div className={styles.controlWrapper}>
@@ -90,7 +90,7 @@ const Select = props => {
           </div>
         </div>
       ) : (
-        <span className={styles.preview}>
+        <span data-field-value className={styles.preview}>
           {selectedOption ? selectedOption.text : 'N/A'}
         </span>
       )}

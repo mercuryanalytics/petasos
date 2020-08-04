@@ -26,6 +26,7 @@ const ReportManage = props => {
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
+  const previewMode = editMode && !canEdit;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -142,7 +143,7 @@ const ReportManage = props => {
 
   if (isLoading || (editMode && !data)) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
         <div className={styles.loading}>
           <Loader inline className={styles.loader} />
         </div>
@@ -151,7 +152,7 @@ const ReportManage = props => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
       <div className={`${styles.section} ${styles.left}`}>
         <div className={styles.title}>
           <span>Report details</span>
@@ -171,7 +172,7 @@ const ReportManage = props => {
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
             )}
-            {!!data.url && (
+            {!previewMode && !!data.url && (
               <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>
@@ -223,6 +224,16 @@ const ReportManage = props => {
                   {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
                 </Button>
               </div>
+            )}
+            {previewMode && !!data.url && (
+              <Button
+                className={styles.viewButton}
+                link={getAccessibleUrl(data.url, data.name)}
+                target="_blank"
+                action={true}
+              >
+                <span>View report</span>
+              </Button>
             )}
           </form>
         </Scrollable>

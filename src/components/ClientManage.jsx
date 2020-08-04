@@ -65,6 +65,7 @@ const ClientManage = props => {
   const [canEdit, setCanEdit] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const editMode = !!id;
+  const previewMode = editMode && !canEdit;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -423,8 +424,12 @@ const ClientManage = props => {
   );
 
   return (!editMode || data) ? (
-    <div className={`${styles.container} ${!editMode ? styles.noTabs : ''}`}>
-      {editMode && (
+    <div className={`
+      ${styles.container} 
+      ${(!editMode || !canEdit) ? styles.noTabs : ''} 
+      ${previewMode ? styles.preview : ''}
+    `}>
+      {editMode && canEdit && (
         <div className={styles.tabs}>
           <div
             className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
@@ -432,14 +437,12 @@ const ClientManage = props => {
           >
             <span>Client details</span>
           </div>
-          {canEdit && (
-            <div
-              className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
-              onClick={() => handleTabSelect(ContentTabs.Accounts)}
-            >
-              <span>Accounts</span>
-            </div>
-          )}
+          <div
+            className={`${styles.tab} ${tab === ContentTabs.Accounts ? styles.active : ''}`}
+            onClick={() => handleTabSelect(ContentTabs.Accounts)}
+          >
+            <span>Accounts</span>
+          </div>
         </div>
       )}
       {isLoading ? (

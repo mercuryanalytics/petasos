@@ -13,6 +13,7 @@ const UserManage = props => {
   const { id, embeded, preview, clientId, canEdit, disableAccountChange } = props;
   const dispatch = useDispatch();
   const editMode = !!id;
+  const previewMode = !embeded;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isEditClicked, setIsEditClicked] = useState(false);
@@ -116,7 +117,7 @@ const UserManage = props => {
   );
 
   return !isLoading ? (
-    <div className={`${styles.container} ${embeded ? styles.embed : ''}`}>
+    <div className={`${styles.container} ${embeded ? styles.embed : ''} ${previewMode ? styles.preview : ''}`}>
       {!embeded && (
         <div className={`${styles.title} ${styles.big}`}>
           <span>My account</span>

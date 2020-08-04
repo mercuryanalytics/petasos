@@ -19,9 +19,9 @@ const Textarea = props => {
   }, [props.value]);
 
   return (
-    <div className={classes}>
+    <div data-field data-field-preview={preview} className={classes}>
       {!!label && (
-        <label>{label}</label>
+        <label data-field-label>{label}</label>
       )}
       {!preview ? (
         <textarea
@@ -31,7 +31,7 @@ const Textarea = props => {
           placeholder={placeholder}
         />
       ) : (
-        <span className={styles.preview}>
+        <span data-field-value className={styles.preview}>
           {field.input.value !== '' ? field.input.value : 'N/A'}
         </span>
       )}

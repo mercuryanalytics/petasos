@@ -8,6 +8,11 @@
   background-color: #fff;
 }
 
+.container.preview {
+  width: 514px;
+  border-radius: 5px 5px 0 0;
+}
+
 .actions {
   position: absolute;
   z-index: 3;
@@ -76,6 +81,14 @@
 .section .form {
   width: 100%;
   max-width: 520px;
+}
+
+.section .form [data-field-preview="true"] [data-field-label] {
+  font-size: .8125rem !important;
+}
+
+.section .form [data-field-preview="true"] [data-field-value] {
+  font-size: .875rem !important;
 }
 
 .section .form .formControl {
