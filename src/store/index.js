@@ -202,6 +202,7 @@ export const queryState = async (callback) => {
 };
 
 export const isUserAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal, specific) => {
+  const canInheritAccess = !specific && !isGlobal && resType;
   for (let i in authorizations) {
     if (userId === +i) {
       const userAuthorizations = authorizations[userId];
@@ -224,8 +225,18 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
           if (a[0].subject_id !== resId) {
             continue;
           }
-          if (role && (Array.isArray(a[1]) ? a[1] : [a[1]]).indexOf(UserRolesWriteToRead[role]) > -1) {
-            return true;
+          if (role) {
+            const roles = Array.isArray(a[1]) ? a[1] : [a[1]];
+            if (roles.indexOf(UserRolesWriteToRead[role]) > -1) {
+              return true;
+            }
+            if (canInheritAccess && role !== UserRoles.ClientAccess && role !== UserRoles.ProjectAccess) {
+              const accessRole = resType === ResourceTypes.Client ?
+                UserRoles.ClientAccess : (resType === ResourceTypes.Project ? UserRoles.ProjectAccess : null);
+              if (roles.indexOf(UserRolesWriteToRead[accessRole]) > -1) {
+                return true;
+              }
+            }
           }
           if (scopeId) {
             const scopes = a[2];
@@ -242,7 +253,7 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
       }
     }
   }
-  if (!specific && !isGlobal && resType) {
+  if (canInheritAccess) {
     const state = store.getState();
     if (state) {
       if (resType === ResourceTypes.Report) {
