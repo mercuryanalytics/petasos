@@ -27,9 +27,15 @@ module Secured
   def current_user
     email, auth_id = auth_token.first['email'], auth_token.first['sub']
 
-    @current_user = User.find_or_initialize_by(email: email)
+    @current_user = User.find_by(auth_id: auth_id)
+    @current_user = User.find_by(email: email) unless @current_user
 
-    # TODO(@relu): move this piece in other part
+    unless @current_user
+      render json: { errors: ['Not Authenticated'], error_message: e.message }, status: :unauthorized
+
+      return
+    end
+
     if @current_user.new_record? || @current_user.auth_id.nil?
       @current_user.auth_id = auth_id
       email_domain = email.split('@').last

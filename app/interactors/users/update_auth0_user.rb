@@ -6,7 +6,7 @@ module Users
 
     AUTH0_CONNECTION_TYPE = 'Username-Password-Authentication'
 
-    delegate :user, :params, to: :context
+    delegate :user, :params, :current_user, to: :context
 
     def call
       if user.email_changed? || params.key?(:password)
@@ -25,11 +25,13 @@ module Users
     end
 
     def payload
-      {
-        email:          params[:email],
-        password:       params[:password],
-        connection:     AUTH0_CONNECTION_TYPE
-      }.delete_if { |_, v| v.blank? }
+      payload = {
+        connection: AUTH0_CONNECTION_TYPE
+      }
+      payload.merge!(password: params[:password]) if params[[:password]]
+      payload.merge!(email: params[:email]) if current_user.admin? && user.email_changed?
+
+      payload.delete_if { |_, v| v.blank? }
     end
 
     def authorization_header
