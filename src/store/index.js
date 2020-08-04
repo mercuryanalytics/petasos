@@ -31,6 +31,8 @@ export const UserRoles = {
   ReportManager: 'report_manager',
   ReportAdmin: 'report_admin',
   Viewer: 'viewer',
+  ClientAccess: 'client_access',
+  ProjectAccess: 'project_access'
 };
 
 export const UserRolesWriteToRead = {
@@ -41,6 +43,8 @@ export const UserRolesWriteToRead = {
   [UserRoles.ReportManager]: 'report_editor',
   [UserRoles.ReportAdmin]: 'report_admin',
   [UserRoles.Viewer]: 'viewer',
+  [UserRoles.ClientAccess]: 'client_access',
+  [UserRoles.ProjectAccess]: 'project_access'
 };
 
 export const clearCache = () => {
@@ -197,7 +201,7 @@ export const queryState = async (callback) => {
   });
 };
 
-export const isUserAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal) => {
+export const isUserAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal, specific) => {
   for (let i in authorizations) {
     if (userId === +i) {
       const userAuthorizations = authorizations[userId];
@@ -238,7 +242,34 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
       }
     }
   }
+  if (!specific && !isGlobal && resType) {
+    const state = store.getState();
+    if (state) {
+      if (resType === ResourceTypes.Report) {
+        const report = state.reportsReducer.reports.filter(r => r.id === resId)[0];
+        if (report) {
+          return (
+            isUserAuthorized(authorizations, userId, ResourceTypes.Project,
+              report.project_id, UserRoles.ProjectAccess, scopeId, isGlobal) ||
+            isUserAuthorized(authorizations, userId, ResourceTypes.Client,
+              report.project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal)
+          );
+        }
+      }
+      if (resType === ResourceTypes.Project) {
+        const project = state.projectsReducer.projects.filter(p => p.id === resId)[0];
+        if (project) {
+          return isUserAuthorized(authorizations, userId, ResourceTypes.Client,
+            project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal);
+        }
+      }
+    }
+  }
   return false;
+};
+
+export const isUserSpecificallyAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal) => {
+  return isUserAuthorized(authorizations, userId, resType, resId, role, scopeId, isGlobal, true);
 };
 
 const getAuthorizations = () => {

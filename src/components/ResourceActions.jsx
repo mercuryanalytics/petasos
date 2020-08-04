@@ -13,7 +13,7 @@ import { getClients, getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports, getClientReports } from '../store/reports/actions';
 import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/actions';
-import { UserRoles, isUserAuthorized } from '../store';
+import { UserRoles, isUserAuthorized, isUserSpecificallyAuthorized } from '../store';
 
 const ResourceActions = props => {
   const { clientId, userId } = props;
@@ -116,7 +116,7 @@ const ResourceActions = props => {
       return currentState;
     }
     return !scopeId ?
-      isUserAuthorized(authorizations, userId, type, id, role)
+      isUserSpecificallyAuthorized(authorizations, userId, type, id, role)
       : isUserAuthorized(authorizations, userId, type, id, null, scopeId, isGlobal);
   }, [userId, authorizations, activeStates]);
 
@@ -128,38 +128,24 @@ const ResourceActions = props => {
         scope_id: scopeId,
         scope_state: status ? 1 : 0,
       };
-      dispatch(authorizeUser(userId, parentId, options, states))
-        .then(() => {}, () => {});
+      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
+    } else if (role === UserRoles.ClientAccess ||  role === UserRoles.ProjectAccess) {
+      const options = { [`${type}Id`]: id };
+      let states = {
+        role: role,
+        role_state: status ? 1 : 0,
+      };
+      if (status) {
+        states.authorize = true;
+        newStates[`${userId}-${type}-${id}-viewer`] = true;
+      }
+      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
     } else {
       const rolePrefix = type[0].toUpperCase() + type.substr(1);
       const managerRole = UserRoles[`${rolePrefix}Manager`];
       const adminRole = UserRoles[`${rolePrefix}Admin`];
       const options = { [`${type}Id`]: id };
       let states = {};
-      let skipCollections = false;
-      const handleItem = async (_type, _id) => {
-        const _options = { [`${_type}Id`]: _id };
-        const _status = getItemStatus(_type, _id);
-        if (status && !_status) {
-          setActiveStates(prev => ({ ...prev, [`${userId}-${_type}-${_id}-viewer`]: true }));
-          dispatch(authorizeUser(userId, parentId, _options, { authorize: true }))
-            .then(() => {}, () => {});
-        }
-      };
-      const handleProjectReports = async (_id) => {
-        dispatch(getReports(_id)).then(action => action.payload.forEach((r) => {
-          handleItem('report', r.id);
-        }), () => {});
-      };
-      const handleClientContents = (_id) => {
-        dispatch(getProjects(_id)).then(action => action.payload.forEach((p) => {
-          handleItem('project', p.id);
-          handleProjectReports(p.id);
-        }), () => {});
-        dispatch(getClientReports(_id)).then(action => action.payload.forEach((r) => {
-          handleItem('report', r.id);
-        }), () => {});
-      };
       if (role) {
         states.role = role;
         states.role_state = status ? 1 : 0;
@@ -172,7 +158,6 @@ const ResourceActions = props => {
               .then(() => {}, () => {});
           }
         } else {
-          skipCollections = true;
           if (role === managerRole) {
             newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
             dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
@@ -182,33 +167,25 @@ const ResourceActions = props => {
       } else {
         states.authorize = status;
         if (!status) {
+          const grantableAccess = type === 'client' ?
+            UserRoles.ClientAccess : (type === 'project' ? UserRoles.ProjectAccess : null);
           newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
           newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
           dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }))
             .then(() => {}, () => {});
           dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
             .then(() => {}, () => {});
+          if (grantableAccess) {
+            newStates[`${userId}-${type}-${id}-${grantableAccess}`] = false;
+            dispatch(authorizeUser(userId, parentId, options, { role: grantableAccess, role_state: 0 }))
+              .then(() => {}, () => {});
+          }
         }
       }
       dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
-      if (!skipCollections) {
-        if (type === 'client') {
-          handleClientContents(id);
-        } else if (type === 'project') {
-          handleProjectReports(id);
-        }
-      }
     }
     setActiveStates(prev => ({ ...prev, ...newStates }));
-  }, [userId, getItemStatus, dispatch]);
-
-  const getAccessStatus = useCallback((type, id) => {
-    return false;
-  });
-
-  const setAccessStatus = useCallback((type, id, status) => {
-    return false;
-  });
+  }, [userId, dispatch]);
 
   const setFiltersStatus = useCallback((status, id) => {
     let newState = {};
@@ -430,12 +407,12 @@ const ResourceActions = props => {
                 )}
                 <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
                 <span className={styles.name}>{client.name}</span>
-                {/* <Checkbox
+                <Checkbox
                   className={styles.accessCheckbox}
                   label="Access"
-                  checked={getAccessStatus('client', client.id)}
-                  onChange={e => setAccessStatus('client', client.id, !!e.target.checked)}
-                /> */}
+                  checked={getItemStatus('client', client.id, UserRoles.ClientAccess)}
+                  onChange={e => setItemStatus('client', client.id, client.id, !!e.target.checked, UserRoles.ClientAccess)}
+                />
                 <Toggle
                   id={`client-toggle-${client.id}`}
                   className={styles.itemToggle}
@@ -460,12 +437,12 @@ const ResourceActions = props => {
                         <Folder className={styles.icon} />
                         <span className={styles.name}>{project.project_number ?
                           project.project_number + ': ' : ''}{project.name}</span>
-                        {/* <Checkbox
+                        <Checkbox
                           className={styles.accessCheckbox}
                           label="Access"
-                          checked={getAccessStatus('project', project.id)}
-                          onChange={e => setAccessStatus('project', project.id, !!e.target.checked)}
-                        /> */}
+                          checked={getItemStatus('project', project.id, UserRoles.ProjectAccess)}
+                          onChange={e => setItemStatus('project', project.id, client.id, !!e.target.checked, UserRoles.ProjectAccess)}
+                        />
                         <Toggle
                           id={`project-toggle-${project.id}`}
                           className={styles.itemToggle}
