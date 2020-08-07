@@ -6,9 +6,8 @@ const initialState = {
 };
 
 export const sortProjects = (stack) => orderStack(stack, {
-  descending: true,
-  valueProperty: 'updated_at',
-  valueFormatter: value => value ? +(new Date(value)) : 0,
+  descending: false,
+  valueProperty: 'name',
 });
 
 const projectsReducer = (state = initialState, action) => {

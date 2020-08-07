@@ -7,9 +7,8 @@ const initialState = {
 };
 
 export const sortReports = (stack) => orderStack(stack, {
-  descending: true,
-  valueProperty: 'updated_at',
-  valueFormatter: value => value ? +(new Date(value)) : 0,
+  descending: false,
+  valueProperty: 'name',
 });
 
 const reportsReducer = (state = initialState, action) => {
