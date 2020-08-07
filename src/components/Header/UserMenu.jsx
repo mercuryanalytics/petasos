@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from './UserMenu.module.css';
 import Routes from '../../utils/routes';
 import HeaderControl from './HeaderControl';
@@ -9,10 +9,21 @@ const UserMenu = props => {
   const { authUser, localUser } = props;
   const avatar = authUser.picture;
   const name = localUser.contact_name || authUser.nickname || authUser.name;
+  let acronym = null;
   const [isOpen, setIsOpen] = useState(false);
-  const toggleMenu = () => {
+
+  if (name) {
+    let names = name.split(' ');
+    if (names.length > 1) {
+      acronym = names[0][0].toUpperCase() + names[1][0].toUpperCase();
+    } else {
+      acronym = name[0].toUpperCase();
+    }
+  }
+
+  const toggleMenu = useCallback(() => {
     setIsOpen(!isOpen);
-  };
+  }, [isOpen]);
 
   return (
     <HeaderControl
@@ -20,7 +31,7 @@ const UserMenu = props => {
       onClick={toggleMenu}
       active={isOpen}
     >
-      <Avatar className={styles.avatar} avatar={avatar} alt={name[0].toUpperCase()} />
+      <Avatar className={styles.avatar} avatar={avatar} acronym={acronym} />
       <span className={styles.name}>{name}</span>
       {isOpen && (
         <div className={styles.menu}>
