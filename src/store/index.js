@@ -202,7 +202,7 @@ export const queryState = async (callback) => {
 };
 
 export const isUserAuthorized = (authorizations, userId, resType, resId, role, scopeId, isGlobal, specific) => {
-  const canInheritAccess = !specific && !isGlobal && resType;
+  const canInheritAccess = !specific && !isGlobal && resType && role === UserRoles.Viewer;
   for (let i in authorizations) {
     if (userId === +i) {
       const userAuthorizations = authorizations[userId];
@@ -230,10 +230,10 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
             if (roles.indexOf(UserRolesWriteToRead[role]) > -1) {
               return true;
             }
-            if (canInheritAccess && role !== UserRoles.ClientAccess && role !== UserRoles.ProjectAccess) {
+            if (canInheritAccess) {
               const accessRole = resType === ResourceTypes.Client ?
                 UserRoles.ClientAccess : (resType === ResourceTypes.Project ? UserRoles.ProjectAccess : null);
-              if (roles.indexOf(UserRolesWriteToRead[accessRole]) > -1) {
+              if (accessRole && roles.indexOf(UserRolesWriteToRead[accessRole]) > -1) {
                 return true;
               }
             }
