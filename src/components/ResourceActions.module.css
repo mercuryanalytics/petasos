@@ -179,13 +179,17 @@
   color: #333;
 }
 
-.client:not(.active) > .title:hover {
+.client.active > .title {
+  background-color: #ebf9eb;
+}
+
+.client > .title:hover {
   background-color: #F0F0F0;
   color: #000;
 }
 
-.client.active > .title {
-  background-color: #F0F0F0;
+.project {
+  margin-top: 5px;
 }
 
 .project.indented {
@@ -222,16 +226,17 @@
   color: #333;
 }
 
-.project:not(.active) > .title:hover {
+.project.active > .title {
+  background-color: #ebf9eb;
+}
+
+.project > .title:hover {
   background-color: #F0F0F0;
   color: #000;
 }
 
-.project.active > .title {
-  background-color: #F0F0F0;
-}
-
 .report {
+  margin-top: 5px;
   margin-left: 20px;
 }
 
@@ -268,13 +273,13 @@
   color: #333;
 }
 
-.report:not(.active) > .title:hover {
-  background-color: #F0F0F0;
-  color: #000;
+.report.active > .title {
+  background-color: #ebf9eb;
 }
 
-.report.active > .title {
+.report > .title:hover {
   background-color: #F0F0F0;
+  color: #000;
 }
 
 .globalCheckboxes {

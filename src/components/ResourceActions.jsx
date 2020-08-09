@@ -16,7 +16,7 @@ import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/
 import { UserRoles, isUserAuthorized, isUserSpecificallyAuthorized } from '../store';
 
 const ResourceActions = props => {
-  const { clientId, userId } = props;
+  const { templateMode, clientId, userId } = props;
   const dispatch = useDispatch();
   const scopes = useSelector(state => state.usersReducer.scopes);
   const authorizations = useSelector(state => state.usersReducer.authorizations);
@@ -213,6 +213,11 @@ const ResourceActions = props => {
     return null;
   }, [filters]);
 
+  const getRowActiveClass = useCallback((res) => {
+    // @TODO Replace 'has_permissions' with proper value if needed
+    return !templateMode && !!res.has_permissions ? styles.active : '';
+  }, [templateMode]);
+
   const renderCheckboxTitle = useCallback((label, tooltip) => {
     return (
       <div className={`${styles.checkboxTitle} ${!tooltip ? styles.noTooltip : ''}`}>
@@ -405,7 +410,7 @@ const ResourceActions = props => {
       <Scrollable className={styles.resourcesActions}>
         {!!clients.length ? (<>
           {clients.map(client => (
-            <div key={client.id} className={styles.client}>
+            <div key={client.id} className={`${styles.client} ${getRowActiveClass(client)}`}>
               <div
                 className={styles.title}
                 title={client.name}
@@ -435,7 +440,10 @@ const ResourceActions = props => {
                   (!!clientReports[client.id] && !!clientReports[client.id].length)
                 ) ? (<>
                   {projects[client.id].map(project => (
-                    <div key={project.id} className={`${styles.project} ${!clientId ? styles.indented : ''}`}>
+                    <div
+                      key={project.id}
+                      className={`${styles.project} ${!clientId ? styles.indented : ''} ${getRowActiveClass(project)}`}
+                    >
                       <div
                         className={styles.title}
                         title={project.name}
@@ -463,7 +471,7 @@ const ResourceActions = props => {
                           reports[project.id].map(report => (
                             <div
                               key={report.id}
-                              className={styles.report}
+                              className={`${styles.report} ${getRowActiveClass(report)}`}
                               title={report.name}
                             >
                               <div className={styles.title}>
@@ -493,7 +501,7 @@ const ResourceActions = props => {
                   {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
                     <div
                       key={clientReport.id}
-                      className={`${styles.report} ${styles.orphan}`}
+                      className={`${styles.report} ${styles.orphan} ${getRowActiveClass(clientReport)}`}
                       title={clientReport.name}
                     >
                       <div className={styles.title}>
