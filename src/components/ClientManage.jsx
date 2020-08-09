@@ -65,7 +65,7 @@ const ClientManage = props => {
   const [canEdit, setCanEdit] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const editMode = !!id;
-  const previewMode = editMode && !canEdit;
+  const previewMode = editMode && !canManage;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -122,9 +122,11 @@ const ClientManage = props => {
       ] : [];
       initSelection();
       Promise.all(promises).then(() => {
-        setCanEdit(hasRoleOnClient(user.id, id, UserRoles.ClientManager));
-        setCanManage(hasRoleOnClient(user.id, id, UserRoles.ClientAdmin));
-        setIsLoading(false);
+        if (client) {
+          setCanEdit(hasRoleOnClient(user.id, id, UserRoles.ClientManager));
+          setCanManage(hasRoleOnClient(user.id, id, UserRoles.ClientAdmin));
+          setIsLoading(false);
+        }
       });
     }
   }, [editMode, id, user, initSelection, data, dispatch]);
@@ -426,10 +428,10 @@ const ClientManage = props => {
   return (!editMode || data) ? (
     <div className={`
       ${styles.container} 
-      ${(!editMode || !canEdit) ? styles.noTabs : ''} 
+      ${(!editMode || !canManage) ? styles.noTabs : ''} 
       ${previewMode ? styles.preview : ''}
     `}>
-      {editMode && canEdit && (
+      {editMode && canManage && (
         <div className={styles.tabs}>
           <div
             className={`${styles.tab} ${tab === ContentTabs.Details ? styles.active : ''}`}
@@ -762,13 +764,13 @@ const ClientManage = props => {
                 mode={UserActionsModes.Grant}
                 context={UserActionsContexts.Client}
                 clientId={id}
-                canCreate={canEdit}
+                canCreate={canManage}
               />
             </div>
           )}
         </div>
       )) ||
-      (tab === ContentTabs.Accounts && (
+      (tab === ContentTabs.Accounts && canManage && (
         <div className={`${styles.section} ${styles.accounts}`}>
           <div className={styles.userList}>
             <div className={styles.accountsTabs}>
@@ -810,8 +812,8 @@ const ClientManage = props => {
                 showClients={false}
                 limitClientId={id}
                 selectedUserId={selectedUserId}
-                canCreate={canEdit}
-                canDelete={canEdit}
+                canCreate={canManage}
+                canDelete={canManage}
                 onUserSelect={handleUserSelect}
               />
             )) ||
@@ -819,8 +821,8 @@ const ClientManage = props => {
               <DomainActions
                 className={styles.domainsActions}
                 clientId={id}
-                canCreate={canEdit}
-                canDelete={canEdit}
+                canCreate={canManage}
+                canDelete={canManage}
               />
             ))}
           </div>
@@ -853,7 +855,7 @@ const ClientManage = props => {
                       clientId={editMode ? id : null}
                       preview={true}
                       embeded={true}
-                      canEdit={canEdit}
+                      canEdit={canManage}
                       disableAccountChange={true}
                     />
                   )

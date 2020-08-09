@@ -11,7 +11,7 @@ import ClientManage from '../components/ClientManage';
 import ProjectManage from '../components/ProjectManage';
 import ReportManage from '../components/ReportManage';
 import { getClient } from '../store/clients/actions';
-import { getProject, getProjects } from '../store/projects/actions';
+import { getProject } from '../store/projects/actions';
 import { getReport } from '../store/reports/actions';
 import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 
@@ -118,7 +118,7 @@ const Index = props => {
     return result ? result : null;
   }, [content, resId, params, clients, getCurrentReport, getCurrentProject]);
 
-  const checkAuthorizations = useCallback((user, clientProjects) => {
+  const checkAuthorizations = useCallback((user, data) => {
     // eslint-disable-next-line
     switch (content) {
       case ContentTypes.CreateClient:
@@ -128,22 +128,16 @@ const Index = props => {
         setIsAccessBlocked(!hasRoleOnClient(user.id, resId, UserRoles.Viewer));
         break;
       case ContentTypes.CreateProject:
-        let authorized = isSuperUser(user.id);
-        if (!authorized && clientProjects) {
-          for (let i = 0; i < clientProjects.length; i++) {
-            if (hasRoleOnProject(user.id, clientProjects[i].id, UserRoles.ProjectManager)) {
-              authorized = true;
-              break;
-            }
-          }
-        }
-        setIsAccessBlocked(!authorized);
+        setIsAccessBlocked(!hasRoleOnClient(user.id, +params.clientId, UserRoles.ClientAdmin));
         break;
       case ContentTypes.ManageProject:
         setIsAccessBlocked(!hasRoleOnProject(user.id, resId, UserRoles.Viewer));
         break;
       case ContentTypes.CreateReport:
-        setIsAccessBlocked(!hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectManager));
+        setIsAccessBlocked(
+          !hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectAdmin) &&
+          !hasRoleOnClient(user.id, data.client.id, UserRoles.ClientAdmin)
+        );
         break;
       case ContentTypes.ManageReport:
         setIsAccessBlocked(!hasRoleOnReport(user.id, resId, UserRoles.Viewer));
@@ -153,7 +147,6 @@ const Index = props => {
 
   const handleScreenLoad = useCallback((user) => {
     let client = getCurrentClient();
-    let clientProjects;
     let project = getCurrentProject();
     let report = getCurrentReport();
     let promises = [], bc = [], dataError;
@@ -172,10 +165,6 @@ const Index = props => {
         bc.push('Create project');
         !client && promises.push(dispatch(getClient(+params.clientId)).then(
           (action) => (client = action.payload),
-          (error) => (dataError = error),
-        ));
-        promises.push(dispatch(getProjects(+params.clientId)).then(
-          (action) => (clientProjects = action.payload),
           (error) => (dataError = error),
         ));
         break;
@@ -250,7 +239,7 @@ const Index = props => {
       }
       finalBc = finalBc.concat(bc);
       setBreadcrumbs(finalBc);
-      checkAuthorizations(user, clientProjects);
+      checkAuthorizations(user, { client });
       setIsLoading(false);
     });
   }, [

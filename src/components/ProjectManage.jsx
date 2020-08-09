@@ -12,7 +12,7 @@ import { confirm } from './common/Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
-import { getProject, createProject, updateProject, deleteProject, getProjects } from '../store/projects/actions';
+import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers, refreshAuthorizations } from '../store/users/actions';
 import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
@@ -45,7 +45,7 @@ const ProjectManage = props => {
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
-  const previewMode = editMode && !canEdit;
+  const previewMode = !editMode || !canManage;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -75,23 +75,17 @@ const ProjectManage = props => {
       ] : [];
       Promise.all(promises).then(() => {
         if (project) {
-          dispatch(getProjects(project.domain_id)).then((action) => {
-            let projects = action.payload, authorized = false;
-            for (let i = 0; i < projects.length; i++) {
-              if (hasRoleOnProject(user.id, projects[i].id, UserRoles.ProjectManager)) {
-                authorized = true;
-                break;
-              }
-            }
-            setCanDelete(authorized);
-            setCanEdit(
-              authorized ||
-              hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager)
-            );
-            setCanManage(hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin));
-            setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager));
-            setIsLoading(false);
-          }, () => {});
+          setCanEdit(
+            hasRoleOnProject(user.id, id, UserRoles.ProjectManager) ||
+            hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientManager)
+          );
+          setCanManage(
+            hasRoleOnProject(user.id, id, UserRoles.ProjectAdmin) ||
+            hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin)
+          );
+          setCanDelete(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
+          setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
+          setIsLoading(false);
         }
       });
     }

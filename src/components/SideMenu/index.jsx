@@ -17,7 +17,7 @@ import ClientAdd from './ClientAdd';
 import Project from './Project';
 import Report from './Report';
 import Scrollable from '../common/Scrollable';
-import { UserRoles, isSuperUser, hasRoleOnProject } from '../../store';
+import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject } from '../../store';
 
 const TaskTypes = {
   ShowReport: 'show-report',
@@ -146,23 +146,16 @@ const SideMenu = props => {
   // eslint-disable-next-line
   }, [awaitRoute, history.location.pathname]);
 
-  const initProjectCreationRights = useCallback((clientId, clientProjects) => {
-    let canCreate = false;
-    if (clientProjects.length) {
-      for (let i = 0; i < clientProjects.length; i++) {
-        if (hasRoleOnProject(userId, clientProjects[i].id, UserRoles.ProjectManager)) {
-          canCreate = true;
-          break;
-        }
-      }
-    } else {
-      canCreate = isSuperUser(userId);
-    }
+  const initProjectCreationRights = useCallback((clientId) => {
+    let canCreate = hasRoleOnClient(userId, clientId, UserRoles.ClientAdmin);
     setCanCreateProjects(prev => ({ ...prev, [clientId]: canCreate }));
   }, [userId]);
 
   const initReportCreationRights = useCallback((projectId) => {
-    let canCreate = hasRoleOnProject(userId, projectId, UserRoles.ProjectManager);
+    let canCreate = (
+      hasRoleOnProject(userId, projectId, UserRoles.ProjectAdmin) ||
+      hasRoleOnClient(userId, projectId, UserRoles.ClientAdmin)
+    );
     setCanCreateReports(prev => ({ ...prev, [projectId]: canCreate }));
   }, [userId]);
 
@@ -172,13 +165,11 @@ const SideMenu = props => {
       setOpenClients(prev => ({ ...prev, [client.id]: true }));
     }
     if (!loadedClients[client.id]) {
-      let clientProjects;
       await Promise.all([
         dispatch(getClientReports(client.id)).then(() => {}, () => {}),
-        dispatch(getProjects(client.id)).then((action) => (clientProjects = action.payload))
-          .then(() => {}, () => {}),
+        dispatch(getProjects(client.id)).then(() => {}, () => {}),
       ]).then(() => {
-        initProjectCreationRights(client.id, clientProjects);
+        initProjectCreationRights(client.id);
         setLoadedClients(prev => ({ ...prev, [client.id]: true }));
         onReady();
       });
@@ -348,7 +339,7 @@ const SideMenu = props => {
     }
     Object.keys(cids).map(i => +i).forEach(id => {
       newClientStates[id] = shouldOpenClients || (id === activeClient);
-      initProjectCreationRights(id, projects.filter(p => p.domain_id === id));
+      initProjectCreationRights(id);
     });
     Object.keys(pids).map(i => +i).forEach(id => {
       newProjectStates[id] = shouldOpenProjects || (id === activeProject);

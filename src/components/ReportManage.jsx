@@ -26,7 +26,7 @@ const ReportManage = props => {
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
-  const previewMode = editMode && !canEdit;
+  const previewMode = !editMode || !canManage;
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isDeleteBusy, setIsDeleteBusy] = useState(false);
@@ -46,15 +46,24 @@ const ReportManage = props => {
         dispatch(getReport(id)).then((action) => (report = action.payload), () => {}),
       ] : [];
       Promise.all(promises).then(() => {
-        setCanDelete(hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager));
-        setCanEdit(
-          hasRoleOnReport(user.id, id, UserRoles.ReportManager) ||
-          hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager) ||
-          hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
-        );
-        setCanManage(hasRoleOnReport(user.id, id, UserRoles.ReportAdmin));
-        setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager));
-        setIsLoading(false);
+        if (report) {
+          setCanEdit(
+            hasRoleOnReport(user.id, id, UserRoles.ReportManager) ||
+            hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager) ||
+            hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
+          );
+          setCanManage(
+            hasRoleOnReport(user.id, id, UserRoles.ReportAdmin) ||
+            hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectAdmin) ||
+            hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin)
+          );
+          setCanDelete(
+            hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectAdmin) ||
+            hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin)
+          );
+          setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager));
+          setIsLoading(false);
+        }
       });
     }
   }, [editMode, id, user, data, dispatch]);
@@ -172,7 +181,7 @@ const ReportManage = props => {
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
             )}
-            {!previewMode && !!data.url && (
+            {editMode && !previewMode && !!data.url && (
               <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>
@@ -225,7 +234,7 @@ const ReportManage = props => {
                 </Button>
               </div>
             )}
-            {previewMode && !!data.url && (
+            {editMode && previewMode && !!data.url && (
               <Button
                 className={styles.viewButton}
                 link={getAccessibleUrl(data.url, data.name)}
