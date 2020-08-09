@@ -234,36 +234,45 @@ const ResourceActions = props => {
   const renderColumnCheckboxesTitles = useCallback(() => {
     return (
       <div className={styles.checkboxesTitles}>
+        {renderCheckboxTitle('Access', (
+          <div className={styles.tooltip}>
+            <div className={styles.title}>Client level:</div>
+            <span className={styles.item}>View the Client's and all it's Projects' and Reports' Details;</span>
+            <div className={styles.title}>Project level:</div>
+            <span className={styles.item}>View the Project's and all it's Reports' Details;</span>
+          </div>
+        ))}
         {renderCheckboxTitle('View', (
           <div className={styles.tooltip}>
-            <span className={`${styles.item} ${styles.clean}`}>
-              Client/Project/Report visibility on/off
-            </span>
+            <div className={styles.title}>Client level:</div>
+            <span className={styles.item}>View the Client's Details;</span>
+            <div className={styles.title}>Project level:</div>
+            <span className={styles.item}>View the Project's Details;</span>
+            <div className={styles.title}>Report level:</div>
+            <span className={styles.item}>View the Report's Details;</span>
           </div>
         ))}
         {renderCheckboxTitle('Edit', (
           <div className={styles.tooltip}>
-            <div className={styles.title}>Client level Edit Permissions:</div>
-            <span className={styles.item}>Manage Users and Domains</span>
-            <span className={styles.item}>Edit Client/Project/Report details</span>
-            <div className={styles.title}>Project level Edit Permissions:</div>
-            <span className={styles.item}>Manage Projects & Reports</span>
-            <span className={styles.item}>Edit Project & Reports details</span>
-            <div className={styles.title}>Report level Edit Permissions:</div>
-            <span className={styles.item}>Edit Report details</span>
+            <div className={styles.title}>Client level:</div>
+            <span className={styles.item}>Edit the Client's and all it's Projects' and Reports' Details;</span>
+            <div className={styles.title}>Project level:</div>
+            <span className={styles.item}>Edit the Project's and all it's Reports' Details;</span>
+            <div className={styles.title}>Report level:</div>
+            <span className={styles.item}>Edit the Report's Details;</span>
           </div>
         ))}
         {renderCheckboxTitle('Admin', (
           <div className={`${styles.tooltip} ${styles.fixed}`}>
-            <div className={styles.title}>Client level Admin Permissions:</div>
-            <span className={styles.item}>Manage the Client's visibility</span>
-            <span className={styles.item}>
-              Manage the Client's User Template (the data new users are provisioned with)
-            </span>
-            <div className={styles.title}>Project level Admin Permissions:</div>
-            <span className={styles.item}>Manage the Project's visibility</span>
-            <div className={styles.title}>Report level Admin Permissions:</div>
-            <span className={styles.item}>Manage the Report's visibility</span>
+            <div className={styles.title}>Client level:</div>
+            <span className={styles.item}>Edit the Client's and all it's Projects' and Reports' Permissions;</span>
+            <span className={styles.item}>Manage Accounts (Users/Domains/UserTemplate);</span>
+            <span className={styles.item}>Ability to Create / Delete Projects and Reports within the Client;</span>
+            <div className={styles.title}>Project level:</div>
+            <span className={styles.item}>Edit the Project's and all it's Reports' Permissions;</span>
+            <span className={styles.item}>Ability to Create / Delete Reports within the Project;</span>
+            <div className={styles.title}>Report level:</div>
+            <span className={styles.item}>Edit the Report's Permissions;</span>
           </div>
         ))}
         {!clientId && !!scopes.dynamic && !!getActiveFiltersCount() && <>
@@ -408,8 +417,7 @@ const ResourceActions = props => {
                 <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
                 <span className={styles.name}>{client.name}</span>
                 <Checkbox
-                  className={styles.accessCheckbox}
-                  label="Access"
+                  className={styles.itemCheckbox}
                   checked={getItemStatus('client', client.id, UserRoles.ClientAccess)}
                   onChange={e => setItemStatus('client', client.id, client.id, !!e.target.checked, UserRoles.ClientAccess)}
                 />
@@ -438,8 +446,7 @@ const ResourceActions = props => {
                         <span className={styles.name}>{project.project_number ?
                           project.project_number + ': ' : ''}{project.name}</span>
                         <Checkbox
-                          className={styles.accessCheckbox}
-                          label="Access"
+                          className={styles.itemCheckbox}
                           checked={getItemStatus('project', project.id, UserRoles.ProjectAccess)}
                           onChange={e => setItemStatus('project', project.id, client.id, !!e.target.checked, UserRoles.ProjectAccess)}
                         />
