@@ -21,8 +21,10 @@ class Client < ApplicationRecord
 
   before_create :set_uuid
 
+  attr_accessor :children_access
+
   def as_json(options = {})
-    super.as_json.merge(logo_url: logo_url)
+    super.as_json.merge(logo_url: logo_url, children_access: children_access)
   end
 
   def partner?

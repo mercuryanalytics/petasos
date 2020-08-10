@@ -26,6 +26,12 @@ class Project < ApplicationRecord
 
   before_create :default_project_type, if: -> { project_type.nil? }
 
+  attr_accessor :children_access
+
+  def as_json(options = {})
+    super.merge(children_access: children_access)
+  end
+  
   private
 
   def default_project_type
