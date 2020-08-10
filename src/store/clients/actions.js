@@ -1,13 +1,16 @@
-import { queryState, handleActionFailure } from '../index';
+import { queryState, handleActionFailure, hasValue } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
-export function getClients() {
+export function getClients(userId) {
+  const queryString = hasValue(userId) ? `?user_id=${userId}` : '';
   return dispatch => (
     !apiCall.isCalled([
+      `${Constants.API_URL}/clients${queryString}`,
+    ].concat(!hasValue(userId) ? [
       `${Constants.API_URL}/clients`,
-    ])
-      ? apiCall('GET', `${Constants.API_URL}/clients`)
+    ] : []))
+      ? apiCall('GET', `${Constants.API_URL}/clients${queryString}`)
       : queryState(state => ({
         target: state.clientsReducer.clients,
       }))
@@ -27,13 +30,15 @@ export const getClientsFailure = (error) => ({
   payload: error,
 });
 
-export function getClient(id) {
+export function getClient(id, userId) {
+  const queryString = hasValue(userId) ? `?user_id=${userId}` : '';
   return dispatch => (
     !apiCall.isCalled([
+      `${Constants.API_URL}/clients/${id}${queryString}`,
+    ].concat(!hasValue(userId) ? [
       `${Constants.API_URL}/clients`,
-      `${Constants.API_URL}/clients/${id}`,
-    ])
-      ? apiCall('GET', `${Constants.API_URL}/clients/${id}`)
+    ] : []))
+      ? apiCall('GET', `${Constants.API_URL}/clients/${id}${queryString}`)
       : queryState(state => ({
         target: state.clientsReducer.clients,
         filters: [{ run: true, filter: item => item.id === id }],

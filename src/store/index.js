@@ -59,6 +59,13 @@ export const hasValue = (source) => {
   return typeof source !== 'undefined' && source !== null;
 };
 
+export const fixMultiQueryString = (qs) => {
+  if (qs && qs[0] === '&') {
+    return '?' + qs.substr(1);
+  }
+  return qs;
+};
+
 export const filterStack = (stack, filters) => {
   if (!Array.isArray(stack)) {
     return stack;

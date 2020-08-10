@@ -1,14 +1,18 @@
-import { hasValue, queryState, handleActionFailure } from '../index';
+import { hasValue, fixMultiQueryString, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
 
-export function getProjects(clientId) {
-  const queryString = hasValue(clientId) ? `?client_id=${clientId}` : '';
+export function getProjects(clientId, userId) {
+  const queryString = fixMultiQueryString(
+    (hasValue(clientId) ? `?client_id=${clientId}` : '') +
+    (hasValue(userId) ? `&user_id=${userId}` : '')
+  );
   return dispatch => (
     !apiCall.isCalled([
-      `${Constants.API_URL}/projects`,
       `${Constants.API_URL}/projects${queryString}`,
-    ])
+    ].concat(!hasValue(userId) ? [
+      `${Constants.API_URL}/projects`,
+    ] : []))
       ? apiCall('GET', `${Constants.API_URL}/projects${queryString}`)
       : queryState(state => ({
         target: state.projectsReducer.projects,

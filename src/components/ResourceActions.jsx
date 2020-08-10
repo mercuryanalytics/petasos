@@ -20,6 +20,7 @@ const ResourceActions = props => {
   const dispatch = useDispatch();
   const scopes = useSelector(state => state.usersReducer.scopes);
   const authorizations = useSelector(state => state.usersReducer.authorizations);
+  const contextUserId = !templateMode ? userId : null;
   const [isLoading, setIsLoading] = useState(true);
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState({});
@@ -50,7 +51,7 @@ const ResourceActions = props => {
     if (!loadedClients[id]) {
       let _projects;
       await Promise.all([
-        dispatch(getProjects(id)).then(async (action) => {
+        dispatch(getProjects(id, contextUserId)).then(async (action) => {
           _projects = action.payload;
           setProjects(prev => ({ ...prev, [id]: action.payload }));
         }, () => {}),
@@ -68,12 +69,13 @@ const ResourceActions = props => {
         handleProjectToggle(projects[id][0].id, true);
       } catch (e) {}
     }
-  }, [openClients, loadedClients, projects, dispatch, handleProjectToggle]);
+  }, [openClients, loadedClients, projects, contextUserId, dispatch, handleProjectToggle]);
 
   const init = useCallback(async () => {
+    const getClientAction = clientId ? getClient(clientId, contextUserId) : getClients(contextUserId);
     let clientToOpen;
     await Promise.all([
-      dispatch(clientId ? getClient(clientId) : getClients()).then(async (action) => {
+      dispatch(getClientAction).then(async (action) => {
         let data = action.payload;
         data = Array.isArray(data) ? data : [data];
         clientToOpen = clientId || (data.length ? data[0].id : null);
@@ -98,7 +100,7 @@ const ResourceActions = props => {
         handleClientToggle(clientToOpen, !!clientId, true);
       }
     });
-  }, [clientId, userId, dispatch, handleClientToggle]);
+  }, [clientId, userId, contextUserId, dispatch, handleClientToggle]);
 
   useEffect(() => {
     if (userId) {
@@ -213,10 +215,10 @@ const ResourceActions = props => {
     return null;
   }, [filters]);
 
-  const getRowActiveClass = useCallback((res) => {
-    // @TODO Replace 'has_permissions' with proper value if needed
-    return !templateMode && !!res.has_permissions ? styles.active : '';
-  }, [templateMode]);
+  const getRowActiveClass = useCallback((type, res) => {
+    return !templateMode &&
+      (!!res.children_access || getItemStatus(type, res.id)) ? styles.active : '';
+  }, [templateMode, getItemStatus]);
 
   const renderCheckboxTitle = useCallback((label, tooltip) => {
     return (
@@ -412,7 +414,7 @@ const ResourceActions = props => {
       <Scrollable className={styles.resourcesActions}>
         {!!clients.length ? (<>
           {clients.map(client => (
-            <div key={client.id} className={`${styles.client} ${getRowActiveClass(client)}`}>
+            <div key={client.id} className={`${styles.client} ${getRowActiveClass('client', client)}`}>
               <div
                 className={styles.title}
                 title={client.name}
@@ -444,7 +446,11 @@ const ResourceActions = props => {
                   {projects[client.id].map(project => (
                     <div
                       key={project.id}
-                      className={`${styles.project} ${!clientId ? styles.indented : ''} ${getRowActiveClass(project)}`}
+                      className={`
+                        ${styles.project}
+                        ${!clientId ? styles.indented : ''}
+                        ${getRowActiveClass('project', project)}
+                      `}
                     >
                       <div
                         className={styles.title}
@@ -473,7 +479,7 @@ const ResourceActions = props => {
                           reports[project.id].map(report => (
                             <div
                               key={report.id}
-                              className={`${styles.report} ${getRowActiveClass(report)}`}
+                              className={`${styles.report} ${getRowActiveClass('report', report)}`}
                               title={report.name}
                             >
                               <div className={styles.title}>
@@ -503,7 +509,7 @@ const ResourceActions = props => {
                   {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
                     <div
                       key={clientReport.id}
-                      className={`${styles.report} ${styles.orphan} ${getRowActiveClass(clientReport)}`}
+                      className={`${styles.report} ${styles.orphan} ${getRowActiveClass('report', clientReport)}`}
                       title={clientReport.name}
                     >
                       <div className={styles.title}>
