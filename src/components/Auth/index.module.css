@@ -63,7 +63,7 @@
 
 .errors span {
   color: #B60010;
-  font-size: .75rem;
+  font-size: .8rem;
 }
 
 .errors span:not(:first-child) {
@@ -85,7 +85,7 @@
 
 .success span {
   color: #333330;
-  font-size: .75rem;
+  font-size: .8rem;
 }
 
 .buttons {

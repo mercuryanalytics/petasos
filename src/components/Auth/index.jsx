@@ -13,6 +13,7 @@ export const AuthViewTypes = {
   ChangePassword: 'change-password',
 };
 
+export const auth0ErrorMessageKey = 'authErrorMessage';
 export const auth0StorageKey = 'authData';
 export const auth0PendingSocialLoginKey = 'pendingSocialLogin';
 export const auth0ReturnUrlKey = 'authReturnUrl';
@@ -180,6 +181,14 @@ const Auth = props => {
     initLogo(logoSrc);
   // eslint-disable-next-line
   }, [logoSrc]);
+
+  useEffect(() => {
+    const initialErrorMessage = localStorage.getItem(auth0ErrorMessageKey);
+    if (initialErrorMessage) {
+      localStorage.removeItem(auth0ErrorMessageKey);
+      setLoginError({ description: initialErrorMessage });
+    }
+  }, []);
 
   const handleLogin = useCallback((user, password) => {
     clearErrors();

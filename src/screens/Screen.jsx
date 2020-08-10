@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './Screen.module.css';
 import { useHistory } from 'react-router-dom';
 import Routes from '../utils/routes';
-import { isLoggedIn } from '../components/Auth';
+import { isLoggedIn, auth0StorageKey, auth0ErrorMessageKey } from '../components/Auth';
 import { setLocationData } from '../store/location/actions';
 import { setUser } from '../store/auth/actions';
 import { getUsers, getMyAuthorizations } from '../store/users/actions';
@@ -59,7 +59,7 @@ const Screen = props => {
         return;
       }
       if (authUser) {
-        dispatch(getUsers()).then(action => {
+        dispatch(getUsers()).then((action) => {
           const users = Array.isArray(action.payload) ? action.payload : [];
           const user = users.filter(u => u.email === authUser.email)[0];
           if (user) {
@@ -69,7 +69,11 @@ const Screen = props => {
               setIsLoading(false);
             }, () => {});
           }
-        }, () => {});
+        }, () => {
+          localStorage.removeItem(auth0StorageKey);
+          localStorage.setItem(auth0ErrorMessageKey, 'An error occured.');
+          setDoRedirect(true);
+        });
       }
     }
   // eslint-disable-next-line
