@@ -9,6 +9,18 @@ module Api
           return
         end
 
+        if user.auth_id.nil?
+          auth0_user_interactor = Users::GetAuth0User.call(email: create_params[:email])
+          auth_id = if auth0_user_interactor.success?
+                      auth0_user_interactor.auth_id
+                    else
+                      Users::CreateAuth0User.call(params: { email: user.email }).auth_id
+                    end
+
+          user.auth_id = auth_id
+          user.save
+        end
+
         user.password_reset_token      = SecureRandom.hex(16)
         user.password_reset_expires_at = 1.week.from_now
         user.password_reset_domain     = create_params.fetch(:subdomain, nil)

@@ -21,7 +21,12 @@ class ClientAbility
 
     scopes = current_authorization.client_scopes
 
-    scopes.each { |scope| can scope.action.to_sym, Client, id: client_ids }
+    scopes.each do |scope|
+      if scope.action == 'access'
+        can :manage, Client, id: client_ids
+      end
+      can scope.action.to_sym, Client, id: client_ids
+    end
   end
 
   def client_ids

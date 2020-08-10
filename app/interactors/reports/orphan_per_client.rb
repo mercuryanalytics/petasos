@@ -6,10 +6,10 @@ module Reports
   class OrphanPerClient
     include Interactor
 
-    delegate :user, to: :context
+    delegate :user, :client_id, to: :context
 
     def call
-      if user.admin?
+      if user.admin? || has_access_scopes?
         context.reports = []
         return
       end
@@ -25,6 +25,16 @@ module Reports
 
     def client_authorizations
       @client_authorizations ||= Client.authorized_for_user(user.membership_ids).pluck(:id)
+    end
+
+    def has_access_scopes?
+      has = false
+
+      Authorization.preload(:client_scopes).where(subject_id: client_id, subject_class: 'Client').find_each do |auth|
+        has = true if auth.client_scopes.any? { |scope| scope.action == 'access' }
+      end
+
+      has
     end
 
     def project_authorizations

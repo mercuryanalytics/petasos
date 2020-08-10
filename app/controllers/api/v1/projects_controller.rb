@@ -128,7 +128,10 @@ module Api
       end
 
       def current_ability
-        @current_ability ||= ::ProjectAbility.new(current_user, params[:client_id] || @project&.domain_id)
+        @current_ability ||= ::ProjectAbility.new(
+          current_user,
+          params[:client_id] || params[:project]&.fetch(:domain_id, nil) || @project&.domain_id
+        )
       end
 
       def authorize_params

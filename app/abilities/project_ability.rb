@@ -17,21 +17,20 @@ class ProjectAbility
 
     projects_authorizations.find_each do |project_authorization|
       project_authorization.project_scopes.each do |scope|
-        if scope.action == 'create' && scope.scope == 'project'
-          project = projects.select { |project| project.id == project_authorization.subject_id }.first
-          can :create, Project, domain_id: project.domain_id
-
-          next
+        if scope.action =='access'
+          can :manage, Project, id: project_authorization.subject_id
         end
+
         can scope.action.to_sym, Project, id: project_authorization.subject_id
       end
     end
 
     # Client manager role has the create / edit all projects scopes
     client_authorizations.find_each do |client_authorization|
-      can :view, Project, domain_id: client_authorization.subject_id
-      client_authorization.project_scopes.each do |scope|
-        can scope.action.to_sym, Project, domain_id: client_authorization.subject_id
+      access_scope = client_authorization.client_scopes.find { |scope| scope.action == 'access' }
+
+      if access_scope
+        can :manage, Project, domain_id: client_authorization.subject_id
       end
     end
   end
@@ -62,7 +61,7 @@ class ProjectAbility
   def client_authorizations
     @client_authorizations ||= Authorization
                                  .preload(:project_scopes)
-                                 .joins(:project_scopes)
+                                 .preload(:client_scopes)
                                  .joins(:membership)
                                  .where(memberships: { user_id: user.id })
                                  .for_clients

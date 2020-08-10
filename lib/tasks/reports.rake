@@ -7,11 +7,59 @@ namespace :reports do
 
     filename = "report-partner-#{Time.zone.now.strftime('%H-%M-%d-%m')}.csv"
     CSV.open("#{Rails.root}/public/#{filename}", "wb") do |csv|
-      csv << ['Client name', 'Contact name', 'Contact email']
+      csv << ['Client ID', 'Client name', 'Client subdomain']
 
       Client.where(contact_type: Client::PARTNER).find_each do |client|
-        csv << [client.name, client.contact_name, client.contact_email]
+        csv << [client.id, client.name, client.subdomain]
       end
+    end
+
+    puts "Generated the file in public/#{filename}"
+  end
+
+  task duplicate_accounts: :environment do
+    require 'optparse'
+    require 'csv'
+
+    filename = "report-client-accounts-on-petasos-#{Time.zone.now.strftime('%H-%M-%d-%m')}.csv"
+
+    options = {
+      database_name:     nil,
+      database_host:     nil,
+      database_user:     nil,
+      database_password: nil
+    }
+
+    o        = OptParse.new
+    o.banner = 'Usage: rake import OPTIONS'
+    o.on('--db-name', '--db-name=DATABASE_NAME') { |input| options[:database_name] = input }
+    o.on('--db-host', '--db-host=DATABASE_HOST') { |input| options[:database_host] = input }
+    o.on('--db-pass', '--db-pass=DATABASE_PASSWORD') { |input| options[:database_password] = input }
+    o.on('--db-user', '--db-user=DATABASE_USER') { |input| options[:database_user] = input }
+    o.parse!(o.order(ARGV) {})
+
+    db_client = Mysql2::Client.new(
+      host:     options[:database_host],
+      username: options[:database_user],
+      password: options[:database_password],
+      database: options[:database_name]
+    )
+
+    duplicate_users = db_client.query('select LOWER(contact_email) as email, count(*) from accounts group by LOWER(contact_email) having count(*) > 1')
+
+    users = duplicate_users.collect do |result|
+      user_result = db_client.query("SELECT * FROM accounts WHERE LOWER(contact_email) = LOWER('#{result['email']}')")
+
+      v = user_result.to_a.collect { |d| d.except('crypted_password', 'salt', 'persistence_token', 'remember_token', 'remember_token_expires_at', 'login_at') }
+      v.each do |user|
+        user['domain_id'] = db_client.query("SELECT name FROM domains WHERE id = #{user['domain_id']}").to_a.first['name']
+      end
+    end
+
+    CSV.open("#{Rails.root}/public/#{filename}", "wb") do |csv|
+      csv << users.flatten!.first.keys
+
+      users.each { |user| csv << user.values }
     end
 
     puts "Generated the file in public/#{filename}"

@@ -21,12 +21,20 @@ class ReportAbility
       end
     end
 
+    client_authorizations.find_each do |client_authorization|
+      access_scope = client_authorization.scopes.find { |scope| scope.action == 'access' }
+
+      can :manage, Report, project_id: client_project_ids(client_authorization.subject_id) if access_scope
+    end
+
     return unless project_id
 
     projects_authorizations.find_each do |authorization|
       authorization.scopes.each do |scope|
-        next unless scope.scope == 'report'
-        can scope.action.to_sym, Report, project_id: authorization.subject_id
+        if scope.action == 'access'
+          can :manage, Report, project_id: authorization.subject_id
+          next
+        end
       end
     end
   end
@@ -65,5 +73,18 @@ class ReportAbility
 
   def memberships
     @memberships ||= user.memberships
+  end
+
+  def client_authorizations
+    @client_authorizations ||= Authorization
+                                 .preload(:project_scopes)
+                                 .preload(:client_scopes)
+                                 .joins(:membership)
+                                 .where(memberships: { user_id: user.id })
+                                 .for_clients
+  end
+
+  def client_project_ids(client_id)
+    Project.where(domain_id: client_id).pluck(:id)
   end
 end

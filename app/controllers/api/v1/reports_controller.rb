@@ -28,7 +28,7 @@ module Api
       end
 
       def create
-        @authorized = Report.new(project_id: params[:project_id])
+        @authorized = Report.new(project_id: report_params[:project_id])
         authorize!(:create, @authorized)
 
         context = Reports::CreateReportOrganizer.call(params: report_params, user: current_user)
@@ -123,7 +123,10 @@ module Api
       end
 
       def current_ability
-        @current_ability ||= ::ReportAbility.new(current_user, params[:project_id] || @report&.project_id)
+        @current_ability ||= ::ReportAbility.new(
+          current_user,
+          params[:project_id] || params[:report].fetch(:project_id, nil) || @report&.project_id
+        )
       end
 
       def authorize_params

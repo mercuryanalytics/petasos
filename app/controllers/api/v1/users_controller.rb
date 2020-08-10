@@ -83,7 +83,7 @@ module Api
       end
 
       def update
-        result = Users::UpdateUserOrganizer.call(user: @user, params: user_params)
+        result = Users::UpdateUserOrganizer.call(user: @user, params: user_params, current_user: current_user)
 
         if result.success?
           json_response(result.user)
@@ -176,6 +176,7 @@ module Api
       def get_role_from_scopes(authorization, scopes)
         dimension = authorization.subject_class.downcase
         roles = []
+        roles << "#{dimension}_access" if scopes.map(&:action).include?('access')
         roles << "#{dimension}_admin" if scopes.map(&:action).include?('authorize')
         roles << "#{dimension}_editor" if scopes.map(&:action).include?('update')
         roles << 'viewer'

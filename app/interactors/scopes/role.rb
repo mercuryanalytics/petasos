@@ -15,6 +15,8 @@ module Scopes
     PROJECT_MANAGER_ROLE = 'project_manager'
     REPORT_ADMIN_ROLE    = 'report_admin'
     REPORT_MANAGER_ROLE  = 'report_manager'
+    CLIENT_ACCESS_ROLE   = 'client_access'
+    PROJECT_ACCESS_ROLE  = 'project_access'
 
     delegate :role, to: :context
 
@@ -22,6 +24,14 @@ module Scopes
       context.fail!(message: 'No role could be found') unless roles
 
       context.scopes = roles
+    end
+
+    def project_access_role
+      project_scopes.select { |project_scope| project_scope.action == 'access' }
+    end
+
+    def client_access_role
+      client_scopes.select { |client_scope| client_scope.action == 'access' }
     end
 
     def roles
@@ -38,6 +48,10 @@ module Scopes
                    report_admin_role
                  when REPORT_MANAGER_ROLE
                    report_manager_role
+                 when CLIENT_ACCESS_ROLE
+                   client_access_role
+                 when PROJECT_ACCESS_ROLE
+                   project_access_role
                  else
                    nil
                  end
