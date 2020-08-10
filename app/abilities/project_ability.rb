@@ -27,10 +27,19 @@ class ProjectAbility
 
     # Client manager role has the create / edit all projects scopes
     client_authorizations.find_each do |client_authorization|
-      access_scope = client_authorization.client_scopes.find { |scope| scope.action == 'access' }
+      client_authorization.scopes.each do |scope|
+        if scope.action == 'access'
+          can :view, Project, domain_id: client_authorization.subject_id
+        end
 
-      if access_scope
-        can :manage, Project, domain_id: client_authorization.subject_id
+        if scope.action == 'update'
+          can :create, Project, domain_id: client_authorization.subject_id
+          can :update, Project, domain_id: client_authorization.subject_id
+        end
+
+        if scope.action == 'authorize'
+          can :manage, Project, domain_id: client_authorization.subject_id
+        end
       end
     end
   end
