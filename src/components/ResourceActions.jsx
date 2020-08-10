@@ -229,7 +229,7 @@ const ResourceActions = props => {
                 {tooltip}
               </Tooltip>
               <InfoStroke />
-            </div>  
+            </div>
           )}
         </div>
       </div>
@@ -261,8 +261,10 @@ const ResourceActions = props => {
           <div className={styles.tooltip}>
             <div className={styles.title}>Client level:</div>
             <span className={styles.item}>Edit the Client's and all it's Projects' and Reports' Details;</span>
+            <span className={styles.item}>Ability to Create / Delete Reports within the Client's Projects;</span>
             <div className={styles.title}>Project level:</div>
             <span className={styles.item}>Edit the Project's and all it's Reports' Details;</span>
+            <span className={styles.item}>Ability to Create / Delete Reports within the Project;</span>
             <div className={styles.title}>Report level:</div>
             <span className={styles.item}>Edit the Report's Details;</span>
           </div>

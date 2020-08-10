@@ -135,8 +135,8 @@ const Index = props => {
         break;
       case ContentTypes.CreateReport:
         setIsAccessBlocked(
-          !hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectAdmin) &&
-          !hasRoleOnClient(user.id, data.client.id, UserRoles.ClientAdmin)
+          !hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectManager) &&
+          !hasRoleOnClient(user.id, data.client.id, UserRoles.ClientManager)
         );
         break;
       case ContentTypes.ManageReport:

@@ -58,10 +58,10 @@ const ReportManage = props => {
             hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin)
           );
           setCanDelete(
-            hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectAdmin) ||
-            hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin)
+            hasRoleOnProject(user.id, report.project_id, UserRoles.ProjectManager) ||
+            hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager)
           );
-          setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientManager));
+          setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin));
           setIsLoading(false);
         }
       });

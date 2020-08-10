@@ -153,8 +153,8 @@ const SideMenu = props => {
 
   const initReportCreationRights = useCallback((projectId) => {
     let canCreate = (
-      hasRoleOnProject(userId, projectId, UserRoles.ProjectAdmin) ||
-      hasRoleOnClient(userId, projectId, UserRoles.ClientAdmin)
+      hasRoleOnProject(userId, projectId, UserRoles.ProjectManager) ||
+      hasRoleOnClient(userId, projectId, UserRoles.ClientManager)
     );
     setCanCreateReports(prev => ({ ...prev, [projectId]: canCreate }));
   }, [userId]);
