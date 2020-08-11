@@ -26,7 +26,7 @@ module Api
       end
 
       def template_params
-        params.permit(:client_id, :resource_type, :resource_id, :state)
+        params.permit(:client_id, :resource_type, :resource_id, :state, :role, :role_state)
       end
 
       def current_ability

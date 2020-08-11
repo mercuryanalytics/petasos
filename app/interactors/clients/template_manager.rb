@@ -10,18 +10,18 @@ module Clients
       if state == 1
         add_authorization
         context.status = :ok
-
-        return
       end
 
       if state.zero?
         remove_authorization
         context.status = :removed
-
-        return
       end
 
-      context.fail!(message: 'Did nothing since the state param is not recognizable')
+      if params[:role]
+        interactor = Scopes::Role.call(role: params[:role])
+        authorization.scopes << interactor.scopes if params[:role_state] == 1
+        authorization.scopes = authorization.scopes - interactor.scopes if params[:role_state] == 0
+      end
     end
 
     def params_present?
