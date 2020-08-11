@@ -24,6 +24,15 @@ module Authorizations
       end
 
       Authorization.insert_all(membership_authorizations) if membership_authorizations.any?
+
+      client_authorizations.each do |client_authorization|
+        user_authorization = Authorization.find_by(
+          membership_id: membership_id,
+          subject_class: client_authorization.subject_class, subject_id: client_authorization.subject_id
+        )
+
+        user_authorization.scopes = client_authorization.scopes if user_authorization
+      end
     end
 
     private
