@@ -290,6 +290,38 @@ export const isUserSpecificallyAuthorized = (authorizations, userId, resType, re
   return isUserAuthorized(authorizations, userId, resType, resId, role, scopeId, isGlobal, true);
 };
 
+export const isUserTemplateAuthorized = (templates, clientId, resType, resId, role) => {
+  const hasRole = (roles, targetRole) => {
+    return roles.indexOf(UserRolesWriteToRead[targetRole]) > -1;
+  };
+  for (let i in templates) {
+    if (clientId === +i) {
+      const clientTemplate = templates[i];
+      if (resType === ResourceTypes.Client) {
+        return role ? hasRole(clientTemplate.roles, role) : clientTemplate.authorized;
+      }
+      const projects = clientTemplate.projects;
+      for (let i in projects) {
+        const project = projects[i];
+        if (resType === ResourceTypes.Project) {
+          if (resId === project.id) {
+            return role ? hasRole(project.roles, role) : project.authorized;
+          }
+        } else {
+          const reports = project.reports;
+          for (let j in reports) {
+            const report = reports[j];
+            if (resId === report.id) {
+              return role ? hasRole(report.roles, role) : report.authorized;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+};
+
 const getAuthorizations = () => {
   try {
     return store.getState().usersReducer.authorizations || {};

@@ -167,7 +167,7 @@ export const getTemplatesFailure = (error, clientId) => ({
   clientId: clientId,
 });
 
-export function updateTemplate(data, clientId) {
+export function updateTemplate(clientId, data) {
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/clients/${clientId}/templates`, { body: JSON.stringify(data) })
       .then(

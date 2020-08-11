@@ -8,7 +8,6 @@ import Button from './common/Button';
 import Loader from './common/Loader';
 import UserActions, { UserActionsModes, UserActionsContexts } from './UserActions';
 import UserManage from './UserManage';
-import TemplateActions from './TemplateActions';
 import ResourceActions from './ResourceActions';
 import DomainActions from './DomainActions';
 import Toggle from './common/Toggle';
@@ -909,7 +908,7 @@ const ClientManage = props => {
                   />
                 </div>
               </div>
-              <TemplateActions className={styles.templatesActions} clientId={id} />
+              <ResourceActions className={styles.templatesActions} clientId={id} templateMode={true} />
             </div>
           ))}
         </div>

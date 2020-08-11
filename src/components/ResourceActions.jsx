@@ -13,13 +13,15 @@ import { getClients, getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports, getClientReports } from '../store/reports/actions';
 import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/actions';
-import { UserRoles, isUserAuthorized, isUserSpecificallyAuthorized } from '../store';
+import { getTemplates, updateTemplate } from '../store/clients/actions';
+import { UserRoles, isUserAuthorized, isUserSpecificallyAuthorized, isUserTemplateAuthorized } from '../store';
 
 const ResourceActions = props => {
   const { templateMode, clientId, userId } = props;
   const dispatch = useDispatch();
   const scopes = useSelector(state => state.usersReducer.scopes);
   const authorizations = useSelector(state => state.usersReducer.authorizations);
+  const templates = useSelector(state => state.clientsReducer.templates);
   const contextUserId = !templateMode ? userId : null;
   const [isLoading, setIsLoading] = useState(true);
   const [clients, setClients] = useState([]);
@@ -74,66 +76,91 @@ const ResourceActions = props => {
   const init = useCallback(async () => {
     const getClientAction = clientId ? getClient(clientId, contextUserId) : getClients(contextUserId);
     let clientToOpen;
-    await Promise.all([
+    let promises = [
       dispatch(getClientAction).then(async (action) => {
         let data = action.payload;
         data = Array.isArray(data) ? data : [data];
         clientToOpen = clientId || (data.length ? data[0].id : null);
         setClients(data);
       }, () => {}),
-      dispatch(getScopes()).then((action) => {
-        const data = action.payload.dynamic;
-        if (data) {
-          let initialFilters = {};
-          for (let i = 0; i < data.length; i++) {
-            initialFilters[data[i].id] = true;
-            if (i === 2) {
-              break;
+    ];
+    if (!templateMode) {
+      promises.push(
+        dispatch(getScopes()).then((action) => {
+          const data = action.payload.dynamic;
+          if (data) {
+            let initialFilters = {};
+            for (let i = 0; i < data.length; i++) {
+              initialFilters[data[i].id] = true;
+              if (i === 2) {
+                break;
+              }
             }
+            setFilters(initialFilters);
           }
-          setFilters(initialFilters);
-        }
-      }, () => {}),
-      dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
-    ]).then(() => {
+        }, () => {}),
+        dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
+      );
+    } else {
+      promises.push(
+        dispatch(getTemplates(clientId)).then(() => {}, () => {}),
+      );
+    }
+    await Promise.all(promises).then(() => {
       if (clientToOpen) {
         handleClientToggle(clientToOpen, !!clientId, true);
       }
     });
-  }, [clientId, userId, contextUserId, dispatch, handleClientToggle]);
+  }, [clientId, userId, contextUserId, templateMode, dispatch, handleClientToggle]);
 
   useEffect(() => {
-    if (userId) {
+    if (userId || templateMode) {
       setIsLoading(true);
       setOpenClients({});
       setOpenProjects({});
       init().then(() => setIsLoading(false));
     }
   // eslint-disable-next-line
-  }, [clientId, userId]);
+  }, [clientId, userId, templateMode]);
 
   const getItemStatus = useCallback((type, id, role, scopeId, isGlobal) => {
     const currentState = activeStates[`${userId}-${type}-${id}-${role || scopeId || 'viewer'}`];
     if (currentState === true || currentState === false) {
       return currentState;
     }
-    return !scopeId ?
-      isUserSpecificallyAuthorized(authorizations, userId, type, id, role)
-      : isUserAuthorized(authorizations, userId, type, id, null, scopeId, isGlobal);
-  }, [userId, authorizations, activeStates]);
+    return !templateMode ? (
+      !scopeId ? isUserSpecificallyAuthorized(authorizations, userId, type, id, role)
+        : isUserAuthorized(authorizations, userId, type, id, null, scopeId, isGlobal)
+    ) : isUserTemplateAuthorized(templates, clientId, type, id, role);
+  }, [userId, clientId, authorizations, templateMode, templates, activeStates]);
 
   const setItemStatus = useCallback((type, id, parentId, status, role, scopeId, isGlobal) => {
     let newStates = { [[`${userId}-${type}-${id}-${role || scopeId || 'viewer'}`]]: status };
+    let options, states;
+    const getAuthorizeAction = (options, states) => {
+      if (!templateMode) {
+        return authorizeUser(userId, parentId, options, states);
+      }
+      const data = {
+        resource_type: type,
+        resource_id: id,
+        state: states.authorize ? 1 : 0,
+      };
+      if (states.role) {
+        data.role = states.role;
+        data.role_state = states.role_state;
+      }
+      return updateTemplate(clientId, data);
+    };
     if (scopeId) {
-      const options = { [`${type}Id`]: id, isGlobal: isGlobal };
-      let states = {
+      options = { [`${type}Id`]: id, isGlobal: isGlobal };
+      states = {
         scope_id: scopeId,
         scope_state: status ? 1 : 0,
       };
-      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
     } else if (role === UserRoles.ClientAccess ||  role === UserRoles.ProjectAccess) {
-      const options = { [`${type}Id`]: id };
-      let states = {
+      options = { [`${type}Id`]: id };
+      states = {
         role: role,
         role_state: status ? 1 : 0,
       };
@@ -141,13 +168,12 @@ const ResourceActions = props => {
         states.authorize = true;
         newStates[`${userId}-${type}-${id}-viewer`] = true;
       }
-      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
     } else {
       const rolePrefix = type[0].toUpperCase() + type.substr(1);
       const managerRole = UserRoles[`${rolePrefix}Manager`];
       const adminRole = UserRoles[`${rolePrefix}Admin`];
-      const options = { [`${type}Id`]: id };
-      let states = {};
+      options = { [`${type}Id`]: id };
+      states = {};
       if (role) {
         states.role = role;
         states.role_state = status ? 1 : 0;
@@ -156,13 +182,13 @@ const ResourceActions = props => {
           newStates[`${userId}-${type}-${id}-viewer`] = true;
           if (role === adminRole) {
             newStates[`${userId}-${type}-${id}-${managerRole}`] = true;
-            dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 1 }))
+            dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 1, authorize: true }))
               .then(() => {}, () => {});
           }
         } else {
           if (role === managerRole) {
             newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
-            dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
+            dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
               .then(() => {}, () => {});
           }
         }
@@ -173,21 +199,21 @@ const ResourceActions = props => {
             UserRoles.ClientAccess : (type === 'project' ? UserRoles.ProjectAccess : null);
           newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
           newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
-          dispatch(authorizeUser(userId, parentId, options, { role: managerRole, role_state: 0 }))
+          dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 0 }))
             .then(() => {}, () => {});
-          dispatch(authorizeUser(userId, parentId, options, { role: adminRole, role_state: 0 }))
+          dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
             .then(() => {}, () => {});
           if (grantableAccess) {
             newStates[`${userId}-${type}-${id}-${grantableAccess}`] = false;
-            dispatch(authorizeUser(userId, parentId, options, { role: grantableAccess, role_state: 0 }))
+            dispatch(getAuthorizeAction(options, { role: grantableAccess, role_state: 0 }))
               .then(() => {}, () => {});
           }
         }
       }
-      dispatch(authorizeUser(userId, parentId, options, states)).then(() => {}, () => {});
     }
+    dispatch(getAuthorizeAction(options, states)).then(() => {}, () => {});
     setActiveStates(prev => ({ ...prev, ...newStates }));
-  }, [userId, dispatch]);
+  }, [userId, clientId, templateMode, dispatch]);
 
   const setFiltersStatus = useCallback((status, id) => {
     let newState = {};
@@ -339,7 +365,7 @@ const ResourceActions = props => {
   };
 
   return !isLoading ? (
-    <div className={`${styles.container} ${!clientId ? styles.complete : ''}`}>
+    <div className={`${styles.container} ${!clientId ? styles.complete : ''} ${props.className || ''}`}>
       {!clientId && (<>
         <div className={styles.globals}>
           <div className={styles.bigTitle}>

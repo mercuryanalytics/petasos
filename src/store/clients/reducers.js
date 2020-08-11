@@ -1,4 +1,4 @@
-import { pushToStack, orderStack } from '../index';
+import { pushToStack, orderStack, UserRolesWriteToRead } from '../index';
 
 const initialState = {
   clients: [],
@@ -65,17 +65,33 @@ const clientsReducer = (state = initialState, action) => {
       const type = action.data.resource_type;
       const id = action.data.resource_id;
       const status = !!action.data.state;
+      const alignScopes = (scopes) => {
+        scopes = [ ...scopes ];
+        let scope = action.data.role;
+        if (scope) {
+          scope = UserRolesWriteToRead[scope];
+          const scopeIndex = scopes.indexOf(scope);
+          if (scopeIndex > -1) {
+            scopes.splice(scopeIndex, 1);
+          }
+          if (action.data.role_state) {
+            scopes.push(scope);
+          }
+        }
+        return scopes;
+      };
       let clientTemplates = state.templates[action.clientId];
       if (type === 'client') {
         clientTemplates = {
           ...clientTemplates,
           authorized: status,
+          roles: alignScopes(clientTemplates.roles),
         };
       } else if (type === 'project') {
         let projects = clientTemplates.projects;
         projects.forEach((project, i) => {
           if (project.id === id) {
-            projects[i] = { ...projects[i], authorized: status };
+            projects[i] = { ...project, authorized: status, roles: alignScopes(project.roles) };
           }
         });
         clientTemplates = {
@@ -87,9 +103,9 @@ const clientsReducer = (state = initialState, action) => {
         projects.forEach((project, i) => {
           project.reports.forEach((report, j) => {
             if (report.id === id) {
-              let reports = projects[i].reports;
-              reports[j] = { ...reports[j], authorized: status };
-              projects[i] = { ...projects[i], reports: [ ...reports ] };
+              let reports = project.reports;
+              reports[j] = { ...report, authorized: status, roles: alignScopes(report.roles) };
+              projects[i] = { ...project, reports: [ ...reports ] };
             }
           });
         });

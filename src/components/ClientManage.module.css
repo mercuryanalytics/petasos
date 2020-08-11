@@ -403,7 +403,7 @@
 }
 
 .section.accounts .anyActions .templatesActions {
-  height: calc(100% - 96px);
+  height: calc(100% - 62px);
   margin: 0 -10px;
 }
 
