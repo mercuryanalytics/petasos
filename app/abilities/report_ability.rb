@@ -30,7 +30,7 @@ class ReportAbility
         end
 
         if scope.action == 'update'
-          can :create, report, project_id: project_ids
+          can :create, Report, project_id: project_ids
           can :update, Report, project_id: project_ids
         end
 
