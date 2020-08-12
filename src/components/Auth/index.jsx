@@ -49,7 +49,7 @@ export const initFromStorage = (options) => {
     ) {
       logout({ config: options.config });
     } else if (options.onSuccess) {
-      options.onSuccess(data.key, data.user);
+      options.onSuccess(data.key, data.user, !!data.isSocialLogin);
     }
   }
 };
@@ -106,7 +106,7 @@ const Auth = props => {
     setPasswordChangeError(null);
   }, []);
 
-  const login = useCallback(async (res) => {
+  const login = useCallback(async (res, isSocialLogin) => {
     const webAuth = getWebAuth();
     const redirectTo = localStorage.getItem(auth0ReturnUrlKey);
     localStorage.removeItem(auth0ReturnUrlKey);
@@ -121,9 +121,10 @@ const Auth = props => {
         key: res.idToken,
         user: user,
         expiresAt: (res.expiresIn * 1000) + new Date().getTime(),
+        isSocialLogin,
       }));
       if (onSuccess) {
-        await onSuccess(res.idToken, user);
+        await onSuccess(res.idToken, user, isSocialLogin);
       }
       if (redirectTo) {
         if (redirectTo.indexOf('http') === 0) {
@@ -218,7 +219,7 @@ const Auth = props => {
         window.location.replace(config.loginUrl);
         return;
       }
-      login(res);
+      login(res, true);
     });
   }, [redirectTo, clearErrors, config, getWebAuth, login]);
 

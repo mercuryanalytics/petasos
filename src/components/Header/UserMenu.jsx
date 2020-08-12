@@ -6,9 +6,9 @@ import Avatar from '../common/Avatar';
 import { Link } from 'react-router-dom';
 
 const UserMenu = props => {
-  const { authUser, localUser } = props;
-  const avatar = authUser.picture;
+  const { authUser, localUser, isSocialLogin } = props;
   const name = localUser.contact_name || authUser.nickname || authUser.name;
+  const avatar = isSocialLogin ? authUser.picture : null;
   let acronym = null;
   const [isOpen, setIsOpen] = useState(false);
 

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Constants from '../utils/constants';
 import Routes from '../utils/routes';
 import authConfig from '../auth-config';
-import { setAuthKey, setAuthUser, resetPassword } from '../store/auth/actions';
+import { setAuthKey, setAuthUser, setIsSocialLogin, resetPassword } from '../store/auth/actions';
 import { getLogo } from '../App';
 import Auth, { AuthViewTypes, isLoggedIn } from '../components/Auth';
 import parse from 'url-parse';
@@ -46,9 +46,10 @@ const Login = () => {
   // eslint-disable-next-line
   }, []);
 
-  const handleLoginSuccess = useCallback(async (key, user) => {
+  const handleLoginSuccess = useCallback(async (key, user, isSocialLogin) => {
     await dispatch(setAuthKey(key));
     await dispatch(setAuthUser(user));
+    await dispatch(setIsSocialLogin(isSocialLogin));
   }, [dispatch]);
 
   const handlePasswordReset = useCallback(async (email) => {

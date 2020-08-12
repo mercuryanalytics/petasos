@@ -1,5 +1,6 @@
 const initialState = {
   user: null,
+  isSocialLogin: false,
   authKey: null,
   authUser: null,
   partner: null,
@@ -11,6 +12,12 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+      };
+    }
+    case 'SET_IS_SOCIAL_LOGIN': {
+      return {
+        ...state,
+        isSocialLogin: action.payload,
       };
     }
     case 'SET_AUTH_KEY': {

@@ -8,7 +8,7 @@ import { Route, Switch } from 'react-router-dom';
 import store from './store';
 import authConfig from './auth-config';
 import { initFromStorage } from './components/Auth';
-import { setAuthKey, setAuthUser, setPartner } from './store/auth/actions';
+import { setAuthKey, setAuthUser, setIsSocialLogin, setPartner } from './store/auth/actions';
 import Index, { ContentTypes } from './screens/Index';
 import Account from './screens/Account';
 import SuperUser from './screens/SuperUser';
@@ -49,9 +49,10 @@ const App = () => {
     if (!authUser) {
       initFromStorage({
         config: authConfig,
-        onSuccess: async (authKey, authUser) => {
+        onSuccess: async (authKey, authUser, isSocialLogin) => {
           await dispatch(setAuthKey(authKey));
           await dispatch(setAuthUser(authUser));
+          await dispatch(setIsSocialLogin(isSocialLogin));
         },
       });
     }

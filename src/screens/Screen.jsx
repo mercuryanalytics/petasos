@@ -21,6 +21,7 @@ const Screen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSideMenuLoading, setIsSideMenuLoading] = useState(true);
   const authUser = useSelector(state => state.authReducer.authUser);
+  const isSocialLogin = useSelector(state => state.authReducer.isSocialLogin);
   const partner = useSelector(state => state.authReducer.partner);
   const partnerClient = useSelector(state => !partner ? null :
     (state.clientsReducer.clients.filter(c => c.subdomain === partner)[0] || null));
@@ -109,6 +110,7 @@ const Screen = props => {
           <Header
             authUser={authUser}
             localUser={localUser}
+            isSocialLogin={isSocialLogin}
             logo={customLogo}
             slogan={customSlogan}
           />

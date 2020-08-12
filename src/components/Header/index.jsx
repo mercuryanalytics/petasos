@@ -7,7 +7,7 @@ import UserMenu from './UserMenu';
 import { isSuperUser } from '../../store';
 
 const Header = props => {
-  const { authUser, localUser, logo, slogan } = props;
+  const { authUser, localUser, isSocialLogin, logo, slogan } = props;
 
   return (
     <div className={styles.container}>
@@ -23,7 +23,7 @@ const Header = props => {
       </div>
       <div className={styles.controls}>
         {isSuperUser(localUser.id) && <SuperUserLink />}
-        <UserMenu authUser={authUser} localUser={localUser} />
+        <UserMenu authUser={authUser} localUser={localUser} isSocialLogin={isSocialLogin} />
       </div>
     </div>
   );

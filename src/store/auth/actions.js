@@ -7,6 +7,11 @@ export const setUser = (user) => ({
   payload: user,
 });
 
+export const setIsSocialLogin = (status) => ({
+  type: 'SET_IS_SOCIAL_LOGIN',
+  payload: status,
+});
+
 export const setAuthKey = (authKey) => ({
   type: 'SET_AUTH_KEY',
   payload: authKey,
