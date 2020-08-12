@@ -22,9 +22,22 @@ class ReportAbility
     end
 
     client_authorizations.find_each do |client_authorization|
-      access_scope = client_authorization.scopes.find { |scope| scope.action == 'access' }
+      project_ids = client_project_ids(client_authorization.subject_id)
 
-      can :manage, Report, project_id: client_project_ids(client_authorization.subject_id) if access_scope
+      client_authorization.scopes.each do |scope|
+        if scope.action == 'access'
+          can :view, Report, project_id: project_ids
+        end
+
+        if scope.action == 'update'
+          can :create, Report, project_id: project_ids
+          can :update, Report, project_id: project_ids
+        end
+
+        if scope.action == 'authorize'
+          can :manage, Report, project_id: project_ids
+        end
+      end
     end
 
     return unless project_id
@@ -32,8 +45,16 @@ class ReportAbility
     projects_authorizations.find_each do |authorization|
       authorization.scopes.each do |scope|
         if scope.action == 'access'
+          can :view, Report, project_id: authorization.subject_id
+        end
+
+        if scope.action == 'update'
+          can :create, Report, project_id: authorization.subject_id
+          can :update, Report, project_id: authorization.subject_id
+        end
+
+        if scope.action == 'authorize'
           can :manage, Report, project_id: authorization.subject_id
-          next
         end
       end
     end
@@ -76,12 +97,7 @@ class ReportAbility
   end
 
   def client_authorizations
-    @client_authorizations ||= Authorization
-                                 .preload(:project_scopes)
-                                 .preload(:client_scopes)
-                                 .joins(:membership)
-                                 .where(memberships: { user_id: user.id })
-                                 .for_clients
+    @client_authorizations ||= Authorization.preload(:scopes).joins(:membership).where(memberships: { user_id: user.id })
   end
 
   def client_project_ids(client_id)

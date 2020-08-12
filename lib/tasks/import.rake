@@ -2,6 +2,8 @@ require 'optparse'
 
 namespace :import do
   task database_data: :environment do
+    require 'open-uri'
+
     options = {
       database_name:     nil,
       database_host:     nil,
@@ -26,6 +28,8 @@ namespace :import do
 
     puts 'Migrating domains to companies'
     result = db_client.query('SELECT * FROM domains')
+
+    logo_host = 'http://researchresultswebsite.com/assets/'
 
     clients_mapped = result.collect do |row|
       client = Client.find_or_initialize_by(name: row['name']).tap do |c|
@@ -55,8 +59,18 @@ namespace :import do
         c.homepage          = row['homepage']
         c.subdomain         = get_subdomain(db_client, row['id'])
         c.created_at        = row['created_at']
-        c.updated_at        = row['updated_at']
+        c.updated_at        = row['updated_at'] || Time.zone.now
+
         c.save if c.new_record?
+
+        begin
+          unless c.logo.attached?
+            c.logo.attach(io: open("#{logo_host}#{row['id']}.png"), filename: "logo-old-client-id-#{row['id']}.png")
+            c.save
+          end
+        rescue OpenURI::HTTPError
+          puts "No logo for client #{row['company_name']}"
+        end
       end
 
       {

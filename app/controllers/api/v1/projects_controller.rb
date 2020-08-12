@@ -6,19 +6,15 @@ module Api
       load_and_authorize_resource except: %i(create)
 
       def index
-        if params[:client_id]
-          json_response(
-            Project
-              .accessible_by(current_ability)
-              .where(domain_id: params[:client_id])
-              .all
-          )
-          return
+        @projects = params[:client_id] ?
+                      Project.accessible_by(current_ability).where(domain_id: params[:client_id]).all :
+                      Project.accessible_by(current_ability).all
+
+        if params[:user_id]
+          Authorizations::ChildrenAccess.call(collection: @projects, type: Project, user_id: params[:user_id])
         end
 
-        json_response(
-          Project.accessible_by(current_ability).all
-        )
+        json_response(@projects)
       end
 
       def create
