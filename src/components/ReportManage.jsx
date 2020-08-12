@@ -223,9 +223,9 @@ const ReportManage = props => {
               className={styles.formControl}
               field={modified_on}
               preview={!canEdit}
-              disabled={isBusy}
+              disabled={true}
               maxToday={true}
-              label={`Last modified on ${canEdit ? '*' : ''}`}
+              label={`Last updated`}
             />
             {canEdit && (
               <div className={styles.formButtons}>
