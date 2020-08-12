@@ -270,15 +270,23 @@ export const isUserAuthorized = (authorizations, userId, resType, resId, role, s
             isUserAuthorized(authorizations, userId, ResourceTypes.Project,
               report.project_id, UserRoles.ProjectAccess, scopeId, isGlobal) ||
             isUserAuthorized(authorizations, userId, ResourceTypes.Client,
-              report.project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal)
+              report.project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal) ||
+            isUserAuthorized(authorizations, userId, ResourceTypes.Project,
+              report.project_id, UserRoles.ProjectManager, scopeId, isGlobal) ||
+            isUserAuthorized(authorizations, userId, ResourceTypes.Client,
+              report.project.domain_id, UserRoles.ClientManager, scopeId, isGlobal)
           );
         }
       }
       if (resType === ResourceTypes.Project) {
         const project = state.projectsReducer.projects.filter(p => p.id === resId)[0];
         if (project) {
-          return isUserAuthorized(authorizations, userId, ResourceTypes.Client,
-            project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal);
+          return (
+            isUserAuthorized(authorizations, userId, ResourceTypes.Client,
+              project.domain_id, UserRoles.ClientAccess, scopeId, isGlobal) ||
+            isUserAuthorized(authorizations, userId, ResourceTypes.Client,
+              project.domain_id, UserRoles.ClientManager, scopeId, isGlobal)
+          );
         }
       }
     }
