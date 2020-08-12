@@ -3,7 +3,8 @@
   <tr>
     <td class="pad-all-20">
       <!--CONTAINER-->
-      <table class="w100" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="width: 600px; min-width: 600px; margin: 0 auto;">
+      <table cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="width: 600px; min-width: 600px; margin: 0 auto;">
+        <!--[if !mso]><!-- -->
         <tbody>
         <tr>
           <td>&nbsp;</td>
@@ -224,6 +225,93 @@
           </td>
         </tr>
         </tbody>
+        <!--<![endif]-->
+        <!--[if mso]>
+        <tbody>
+        <tr>
+        <td style="padding: 50px 0;">
+          <table class="w100" align="center" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; text-align: center;">
+            <tbody>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td><img src="<%= @client.logo_url %>" style="width: 150px;"/></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>
+                <h1 style="margin-bottom: 0;">You've been invited to join</h1>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h1 style="margin-bottom: 0;"><%= @client.name %></h1>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>
+                <p><b><%= @inviter_user.contact_name || @inviter_user.email %></b> invited you to join his team on Mercury Analytics</p>
+                <p>Tap the button below to access your application.</p>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <% if @user.auth_id&.start_with?('auth0') %>
+            <tr>
+              <td>
+                <table class="w20" cellspacing="0" cellpadding="0" border="0" align="center" width="25%" bgcolor="#ffffff" style="width: 25%; background-color: #0d7997; margin: 0 auto; padding: 10px; text-align: center">
+                  <tbody>
+                  <tr>
+                    <td nowrap>
+                      <a class="mso-link" href="<%= @forgot_password_url %>" style="padding: 8px 12px !important;background: #0d7997 !important;font-size: 14px !important;">Set your password</a>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>or</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <% end %>
+            <tr>
+              <td>
+                <a class="mso-link-dark" href="<%= @link %>" style="font-size: 14px !important;">Login with domain</a>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td align="center" style="font-size: 12px;">
+                Responses to this email are not monitored. Please do not reply
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+        </tr>
+        </tbody>
+        <![endif]-->
       </table>
     </td>
   </tr>
