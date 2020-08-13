@@ -59,9 +59,9 @@ export const getOrphanProjectsFailure = (error) => ({
   payload: error,
 });
 
-export function getProject(id, clientId) {
+export function getProject(id, clientId, force) {
   return dispatch => (
-    !apiCall.isCalled([
+    force || !apiCall.isCalled([
       `${Constants.API_URL}/projects`,
       `${Constants.API_URL}/projects/${id}`,
     ].concat(hasValue(clientId) ? [

@@ -1,6 +1,7 @@
 import { hasValue, queryState, handleActionFailure } from '../index';
 import apiCall from '../../utils/api-call';
 import Constants from '../../utils/constants';
+import { getProject } from '../projects/actions';
 
 export function getReports(projectId, clientId) {
   const queryString = hasValue(projectId) ? `?project_id=${projectId}` :
@@ -121,13 +122,13 @@ export const getReportFailure = (error) => {
 
 export function createReport(data, projectId) {
   const body = JSON.stringify({ report: data });
-  if (projectId) {
-    apiCall.forget(`${Constants.API_URL}/projects/${projectId}`);
-  }
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/reports`, { body })
       .then(
-        res => dispatch(createReportSuccess(res)),
+        res => {
+          dispatch(getProject(projectId, null, true));
+          return dispatch(createReportSuccess(res));
+        },
         err => handleActionFailure(err, dispatch(createReportFailure(err))),
       );
   };
@@ -149,13 +150,13 @@ export const createReportFailure = (error) => {
 
 export function updateReport(id, data, projectId) {
   const body = JSON.stringify({ report: data });
-  if (projectId) {
-    apiCall.forget(`${Constants.API_URL}/projects/${projectId}`);
-  }
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body })
       .then(
-        res => dispatch(updateReportSuccess(res)),
+        res => {
+          dispatch(getProject(projectId, null, true));
+          return dispatch(updateReportSuccess(res));
+        },
         err => handleActionFailure(err, dispatch(updateReportFailure(err))),
       );
   };
