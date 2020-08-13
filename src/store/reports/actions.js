@@ -119,8 +119,11 @@ export const getReportFailure = (error) => {
   }
 };
 
-export function createReport(data) {
+export function createReport(data, projectId) {
   const body = JSON.stringify({ report: data });
+  if (projectId) {
+    apiCall.forget(`${Constants.API_URL}/projects/${projectId}`);
+  }
   return dispatch => {
     return apiCall('POST', `${Constants.API_URL}/reports`, { body })
       .then(
@@ -144,8 +147,11 @@ export const createReportFailure = (error) => {
   }
 };
 
-export function updateReport(id, data) {
+export function updateReport(id, data, projectId) {
   const body = JSON.stringify({ report: data });
+  if (projectId) {
+    apiCall.forget(`${Constants.API_URL}/projects/${projectId}`);
+  }
   return dispatch => {
     return apiCall('PATCH', `${Constants.API_URL}/reports/${id}`, { body })
       .then(

@@ -94,13 +94,13 @@ const ReportManage = props => {
       url: data.url || '',
       description: data.description || '',
       presented_on: data.presented_on || '',
-      modified_on: data.modified_on || '',
+      updated_at: data.updated_at || '',
     } : {
-      modified_on: format(new Date(), 'yyyy-MM-dd'),
+      updated_at: format(new Date(), 'yyyy-MM-dd'),
     },
     validate: (values) => {
       let errors = {};
-      ['name', 'modified_on'].forEach(key => {
+      ['name', 'updated_at'].forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
         }
@@ -116,20 +116,20 @@ const ReportManage = props => {
         presented_on: values.presented_on ?
           format(new Date(values.presented_on), 'yyyy-MM-dd')
           : '',
-        modified_on: values.modified_on ?
-          format(new Date(values.modified_on), 'yyyy-MM-dd')
+        updated_at: values.updated_at ?
+          format(new Date(values.updated_at), 'yyyy-MM-dd')
           : '',
         project_id: data ? data.project_id : projectId,
       };
       if (editMode) {
-        data && dispatch(updateReport(data.id, result)).then(() => {
+        data && dispatch(updateReport(data.id, result, result.project_id)).then(() => {
           form.reset();
           setIsBusy(false);
         }, () => {
           setIsBusy(false);
         });
       } else {
-        dispatch(createReport(result)).then(action => {
+        dispatch(createReport(result, result.project_id)).then(action => {
           const report = action.payload;
           const handleSuccess = () => {
             setIsBusy(false);
@@ -148,7 +148,7 @@ const ReportManage = props => {
   const url = useField('url', form);
   const description = useField('description', form);
   const presented_on = useField('presented_on', form);
-  const modified_on = useField('modified_on', form);
+  const updated_at = useField('updated_at', form);
 
   if (isLoading || (editMode && !data)) {
     return (
@@ -221,7 +221,7 @@ const ReportManage = props => {
             />
             <Datepicker
               className={styles.formControl}
-              field={modified_on}
+              field={updated_at}
               preview={!canEdit}
               disabled={true}
               maxToday={true}

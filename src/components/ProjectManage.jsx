@@ -120,14 +120,14 @@ const ProjectManage = props => {
       project_type: data.project_type || '',
       description: data.description || '',
       account_id: +data.account_id || '',
-      modified_on: data.modified_on || '',
+      updated_at: data.updated_at || '',
     } : {
       project_type: ProjectTypes.CommercialTest,
-      modified_on: format(new Date(), 'yyyy-MM-dd'),
+      updated_at: format(new Date(), 'yyyy-MM-dd'),
     },
     validate: (values) => {
       let errors = {};
-      ['name', 'modified_on'].forEach(key => {
+      ['name', 'updated_at'].forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
         }
@@ -145,8 +145,8 @@ const ProjectManage = props => {
         account_id: values.account_id,
         phone: contact ? contact.contact_phone : null,
         email: contact ? contact.email : null,
-        modified_on: values.modified_on ?
-          format(new Date(values.modified_on), 'yyyy-MM-dd')
+        updated_at: values.updated_at ?
+          format(new Date(values.updated_at), 'yyyy-MM-dd')
           : '',
       };
       if (editMode) {
@@ -177,7 +177,7 @@ const ProjectManage = props => {
   const project_type = useField('project_type', form);
   const description = useField('description', form);
   const account_id = useField('account_id', form);
-  const modified_on = useField('modified_on', form);
+  const updated_at = useField('updated_at', form);
 
   const contact_phone = useField('contact_phone', form);
   const contact_email = useField('contact_email', form);
@@ -279,7 +279,7 @@ const ProjectManage = props => {
             </>)}
             <Datepicker
               className={styles.formControl}
-              field={modified_on}
+              field={updated_at}
               preview={!canEdit}
               disabled={true}
               maxToday={true}
