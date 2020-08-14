@@ -6,8 +6,6 @@ module Reports
 
     def call
       context.fail!(message: client.errors) unless report.save
-
-      report.project.update_attribute(:modified_on, report.modified_on)
     end
   end
 end

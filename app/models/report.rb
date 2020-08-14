@@ -1,6 +1,6 @@
 class Report < ApplicationRecord
   include Authorized
-  belongs_to :project
+  belongs_to :project, touch: true
 
   validates :name, presence: true
 

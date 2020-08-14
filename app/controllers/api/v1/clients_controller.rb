@@ -15,6 +15,10 @@ module Api
       end
 
       def show
+        if params[:user_id]
+          Authorizations::ChildrenAccess.call(collection: [@client], type: Client, user_id: params[:user_id])
+        end
+
         json_response(@client)
       end
 
