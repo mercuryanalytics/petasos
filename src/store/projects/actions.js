@@ -148,7 +148,6 @@ export function deleteProject(id) {
     return apiCall('DELETE', `${Constants.API_URL}/projects/${id}`)
       .then(
         res => dispatch(deleteProjectSuccess(id)),
-        err => dispatch(deleteProjectFailure(err, id)),
         err => handleActionFailure(err, dispatch(deleteProjectFailure(err, id))),
       );
   };

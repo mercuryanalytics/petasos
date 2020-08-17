@@ -326,7 +326,7 @@ export const getAllAuthorizedUsersFailure = (error) => ({
 export function authorizeUser(id, contextId, res, states) {
   const refresh = async (dispatch) => {
     apiCall.forget(`${Constants.API_URL}/users/${id}/authorized`);
-    await dispatch(getUserAuthorizations(id));
+    await dispatch(getUserAuthorizations(id)).then(() => {}, () => {});
   };
   let resPath, resId;
   states = states || {};
@@ -393,5 +393,5 @@ export function refreshAuthorizations(type, id, userId, contextId) {
       dispatch(getAuthorizedUsers(contextId, { [`${type}Id`]: id })).then(() => {}, () => {}),
       dispatch(getUserAuthorizations(userId)).then(() => {}, () => {}),
     ]);
-  }
+  };
 }

@@ -11,10 +11,13 @@ import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow, MdFilterList } from 'react-icons/md';
 import { getClients, getClient } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
-import { getReports, getClientReports } from '../store/reports/actions';
+import { getReports } from '../store/reports/actions';
 import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/actions';
 import { getTemplates, updateTemplate } from '../store/clients/actions';
-import { UserRoles, isUserAuthorized, isUserSpecificallyAuthorized, isUserTemplateAuthorized } from '../store';
+import {
+  UserRoles, ResourceTypes,
+  isUserAuthorized, isUserSpecificallyAuthorized, isUserTemplateAuthorized,
+} from '../store';
 
 const ResourceActions = props => {
   const { templateMode, clientId, userId } = props;
@@ -27,12 +30,13 @@ const ResourceActions = props => {
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState({});
   const [reports, setReports] = useState({});
-  const [clientReports, setClientReports] = useState({});
+  const reportsSource = useSelector(state => state.reportsReducer.reports);
   const [openClients, setOpenClients] = useState({});
   const [loadedClients, setLoadedClients] = useState({});
   const [openProjects, setOpenProjects] = useState({});
   const [loadedProjects, setLoadedProjects] = useState({});
   const [activeStates, setActiveStates] = useState({});
+  const [rowActiveStates, setRowActiveStates] = useState({});
   const [filters, setFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
 
@@ -56,9 +60,6 @@ const ResourceActions = props => {
         dispatch(getProjects(id, contextUserId)).then(async (action) => {
           _projects = action.payload;
           setProjects(prev => ({ ...prev, [id]: action.payload }));
-        }, () => {}),
-        dispatch(getClientReports(id)).then(async (action) => {
-          setClientReports(prev => ({ ...prev, [id]: action.payload }));
         }, () => {}),
       ]).then(() => {
         setLoadedClients(prev => ({ ...prev, [id]: true }));
@@ -134,9 +135,50 @@ const ResourceActions = props => {
     ) : isUserTemplateAuthorized(templates, clientId, type, id, role);
   }, [userId, clientId, authorizations, templateMode, templates, activeStates]);
 
+  const refreshChildAccessStates = useCallback((type, id, status, clientId) => {
+    let newStates = {};
+    let projectStates = {}, clientState = false;
+    const checkAccess = (t, i) => {
+      return (t === type && i === id) ? status : getItemStatus(t, i);
+    };
+    reportsSource.forEach(report => {
+      if (report.project.domain_id === clientId && !projectStates[report.project_id]) {
+        if (checkAccess(ResourceTypes.Report, report.id)) {
+          projectStates[report.project_id] = true;
+        }
+      }
+    });
+    (projects[clientId] || []).forEach(project => {
+      const accessKey = `${ResourceTypes.Project}-${project.id}`;
+      const hasAccess = !!projectStates[project.id] || checkAccess(ResourceTypes.Project, project.id);
+      if (hasAccess) {
+        clientState = true;
+        if (!rowActiveStates[accessKey]) {
+          newStates[accessKey] = true;
+        }
+      } else if (rowActiveStates[accessKey]) {
+        newStates[accessKey] = false;
+      }
+    });
+    clients.forEach(client => {
+      if (client.id === clientId) {
+        const accessKey = `${ResourceTypes.Client}-${client.id}`;
+        const hasAccess = clientState || checkAccess(ResourceTypes.Client, client.id);
+        if (hasAccess) {
+          if (!rowActiveStates[accessKey]) {
+            newStates[accessKey] = true;
+          }
+        } else if (rowActiveStates[accessKey]) {
+          newStates[accessKey] = false;
+        }
+      }
+    });
+    setRowActiveStates(prev => ({ ...prev, ...newStates }));
+  }, [clients, projects, reportsSource, rowActiveStates, getItemStatus]);
+
   const setItemStatus = useCallback((type, id, parentId, status, role, scopeId, isGlobal) => {
     let newStates = { [[`${userId}-${type}-${id}-${role || scopeId || 'viewer'}`]]: status };
-    let options, states;
+    let options, states, promises = [];
     const getAuthorizeAction = (options, states) => {
       if (!templateMode) {
         return authorizeUser(userId, parentId, options, states);
@@ -182,14 +224,14 @@ const ResourceActions = props => {
           newStates[`${userId}-${type}-${id}-viewer`] = true;
           if (role === adminRole) {
             newStates[`${userId}-${type}-${id}-${managerRole}`] = true;
-            dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 1, authorize: true }))
-              .then(() => {}, () => {});
+            promises.push(dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 1, authorize: true }))
+              .then(() => {}, () => {}));
           }
         } else {
           if (role === managerRole) {
             newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
-            dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
-              .then(() => {}, () => {});
+            promises.push(dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
+              .then(() => {}, () => {}));
           }
         }
       } else {
@@ -199,21 +241,26 @@ const ResourceActions = props => {
             UserRoles.ClientAccess : (type === 'project' ? UserRoles.ProjectAccess : null);
           newStates[`${userId}-${type}-${id}-${managerRole}`] = false;
           newStates[`${userId}-${type}-${id}-${adminRole}`] = false;
-          dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 0 }))
-            .then(() => {}, () => {});
-          dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
-            .then(() => {}, () => {});
+          promises.push(dispatch(getAuthorizeAction(options, { role: managerRole, role_state: 0 }))
+            .then(() => {}, () => {}));
+          promises.push(dispatch(getAuthorizeAction(options, { role: adminRole, role_state: 0 }))
+            .then(() => {}, () => {}));
           if (grantableAccess) {
             newStates[`${userId}-${type}-${id}-${grantableAccess}`] = false;
-            dispatch(getAuthorizeAction(options, { role: grantableAccess, role_state: 0 }))
-              .then(() => {}, () => {});
+            promises.push(dispatch(getAuthorizeAction(options, { role: grantableAccess, role_state: 0 }))
+              .then(() => {}, () => {}));
           }
         }
       }
     }
-    dispatch(getAuthorizeAction(options, states)).then(() => {}, () => {});
+    const hasAnyPermission = !role || role === UserRoles.Viewer ?
+      status
+      : (status || getItemStatus(type, id));
+    refreshChildAccessStates(type, id, hasAnyPermission, parentId);
+    promises.push(dispatch(getAuthorizeAction(options, states)).then(() => {}, () => {}));
+    Promise.all(promises).then(() => {});
     setActiveStates(prev => ({ ...prev, ...newStates }));
-  }, [userId, clientId, templateMode, dispatch]);
+  }, [userId, clientId, templateMode, refreshChildAccessStates, getItemStatus, dispatch]);
 
   const setFiltersStatus = useCallback((status, id) => {
     let newState = {};
@@ -242,9 +289,16 @@ const ResourceActions = props => {
   }, [filters]);
 
   const getRowActiveClass = useCallback((type, res) => {
-    return !templateMode &&
-      (!!res.children_access || getItemStatus(type, res.id)) ? styles.active : '';
-  }, [templateMode, getItemStatus]);
+    let status;
+    if (!templateMode) {
+      const accessKey = `${type}-${res.id}`;
+      status = rowActiveStates[accessKey];
+      if (status !== true && status !== false) {
+        status = !!res.children_access || getItemStatus(type, res.id);
+      }
+    }
+    return status ? styles.active : '';
+  }, [templateMode, rowActiveStates, getItemStatus]);
 
   const renderCheckboxTitle = useCallback((label, tooltip) => {
     return (
@@ -465,10 +519,7 @@ const ResourceActions = props => {
                 {renderColumnCheckboxes('client', client.id, client.id)}
               </div>
               {!!openClients[client.id] && (!!loadedClients[client.id] ? (
-                (
-                  (!!projects[client.id] && !!projects[client.id].length) ||
-                  (!!clientReports[client.id] && !!clientReports[client.id].length)
-                ) ? (<>
+                (!!projects[client.id] && !!projects[client.id].length) ? (<>
                   {projects[client.id].map(project => (
                     <div
                       key={project.id}
@@ -530,26 +581,6 @@ const ResourceActions = props => {
                       ) : (
                         <Loader inline className={`${styles.loader} ${!clientId ? styles.left : ''}`} />
                       ))}
-                    </div>
-                  ))}
-                  {!!clientReports[client.id] && clientReports[client.id].map(clientReport => (
-                    <div
-                      key={clientReport.id}
-                      className={`${styles.report} ${styles.orphan} ${getRowActiveClass('report', clientReport)}`}
-                      title={clientReport.name}
-                    >
-                      <div className={styles.title}>
-                        <File className={styles.icon} />
-                        <span className={styles.name}>{clientReport.name}</span>
-                        <Toggle
-                          id={`client-report-toggle-${clientReport.id}`}
-                          className={styles.itemToggle}
-                          checked={getItemStatus('report', clientReport.id)}
-                          onChange={status =>
-                            setItemStatus('report', clientReport.id, clientReport.project.domain_id, status)}
-                        />
-                        {renderColumnCheckboxes('report', clientReport.id, clientReport.project.domain_id)}
-                      </div>
                     </div>
                   ))}
                 </>) : (
