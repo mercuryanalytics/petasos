@@ -13,7 +13,7 @@ module Authorizations
 
           if authorizations.any?
             client.children_access = true
-            break
+            next
           else
             report_ids = Report.where(project_id: project_ids).pluck(:id)
             authorizations = report_authorizations(report_ids)
