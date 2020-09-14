@@ -20,6 +20,17 @@ export function getClients(userId) {
   );
 }
 
+export function getClientsFromSA(userId) {
+  const queryString = hasValue(userId) ? `?user_id=${userId}` : '';
+
+  return dispatch => (
+      apiCall('GET', `${Constants.API_URL}/clients${queryString}`)
+  ).then(
+      res => dispatch(getClientsSuccess(res)),
+      err => handleActionFailure(err, dispatch(getClientsFailure(err))),
+  );
+}
+
 export const getClientsSuccess = (clients) => ({
   type: 'GET_CLIENTS_SUCCESS',
   payload: clients,

@@ -9,7 +9,7 @@ import Tooltip from './common/Tooltip';
 import { Checkbox } from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow, MdFilterList } from 'react-icons/md';
-import { getClients, getClient } from '../store/clients/actions';
+import { getClients, getClient, getClientsFromSA } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports } from '../store/reports/actions';
 import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/actions';
@@ -75,7 +75,7 @@ const ResourceActions = props => {
   }, [openClients, loadedClients, projects, contextUserId, dispatch, handleProjectToggle]);
 
   const init = useCallback(async () => {
-    const getClientAction = clientId ? getClient(clientId, contextUserId) : getClients(contextUserId);
+    const getClientAction = clientId ? getClient(clientId, contextUserId) : getClientsFromSA(contextUserId);
     let clientToOpen;
     let promises = [
       dispatch(getClientAction).then(async (action) => {
