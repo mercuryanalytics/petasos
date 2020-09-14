@@ -17,6 +17,7 @@ module Reports
       reports = Report.accessible_by(ReportAbility.new(user))
                   .joins(:project).where.not(project_id: project_authorizations)
                   .where(projects: { domain_id: client_authorizations })
+                  .order(updated_at: :desc)
 
       context.reports = reports
     end

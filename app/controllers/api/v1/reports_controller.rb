@@ -7,10 +7,10 @@ module Api
 
       def index
         if params[:project_id]
-          json_response(Report.where(project_id: params[:project_id]).includes(:project).accessible_by(current_ability).all)
+          json_response(Report.where(project_id: params[:project_id]).includes(:project).order(updated_at: :desc).accessible_by(current_ability).all)
           return
         end
-        json_response(Report.includes(:project).accessible_by(current_ability).all)
+        json_response(Report.includes(:project).accessible_by(current_ability).order(updated_at: :desc).all)
       end
 
       def orphans
@@ -23,6 +23,7 @@ module Api
                     .joins(:project)
                     .where.not(project_id: project_authorizations)
                     .where.not(projects: { domain_id: client_authorizations })
+                    .order(updated_at: :desc)
 
         json_response(reports)
       end

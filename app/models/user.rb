@@ -7,7 +7,7 @@ class User < ApplicationRecord
   attr_accessor :authorized
 
   scope :researchers, -> {
-    joins(:scopes).where(scopes: { action: 'research', scope: 'user' })
+    joins(:scopes).where(scopes: { action: 'research', scope: 'user' }).order(contact_name: :asc)
   }
 
   scope :for_client, -> (client_id) {

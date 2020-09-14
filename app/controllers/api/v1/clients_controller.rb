@@ -6,7 +6,7 @@ module Api
       load_and_authorize_resource
 
       def index
-        @clients = Client.accessible_by(current_ability).all
+        @clients = Client.accessible_by(current_ability).order(name: :asc).all
         if params[:user_id]
           Authorizations::ChildrenAccess.call(collection: @clients, type: Client, user_id: params[:user_id])
         end

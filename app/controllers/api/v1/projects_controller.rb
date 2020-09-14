@@ -7,8 +7,8 @@ module Api
 
       def index
         @projects = params[:client_id] ?
-                      Project.accessible_by(current_ability).where(domain_id: params[:client_id]).all :
-                      Project.accessible_by(current_ability).all
+                      Project.accessible_by(current_ability).where(domain_id: params[:client_id]).order(updated_at: :desc).all :
+                      Project.accessible_by(current_ability).order(updated_at: :desc).all
 
         if params[:user_id]
           Authorizations::ChildrenAccess.call(collection: @projects, type: Project, user_id: params[:user_id])
@@ -52,7 +52,7 @@ module Api
         return json_response([]) if current_user.admin?
 
         client_authorizations = Client.authorized_for_user(current_user.membership_ids).pluck(:id)
-        projects = Project.where.not(domain_id: client_authorizations).accessible_by(current_ability)
+        projects = Project.where.not(domain_id: client_authorizations).order(updated_at: :desc).accessible_by(current_ability)
 
         json_response(projects)
       end
