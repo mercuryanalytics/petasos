@@ -97,7 +97,7 @@ const ProjectManage = props => {
     if (contacts) {
       setContactsOptions(contacts.map(contact => ({
         value: contact.id,
-        text: contact.email,
+        text: `${contact.contact_name} (${contact.email})`,
       })));
     }
   }, [contacts]);
