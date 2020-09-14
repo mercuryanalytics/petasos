@@ -32,6 +32,7 @@ const SuperUser = () => {
   const handleUserSelect = useCallback((id) => {
     if (selectedUserId !== id) {
       setSelectedUserId(id);
+      setTab(Tabs.Info);
     }
   }, [selectedUserId]);
 
