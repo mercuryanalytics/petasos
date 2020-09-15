@@ -336,12 +336,13 @@ namespace :import do
         puts "skipping #{row} because the user does not exist"
         next
       end
-      memberships = memberships.select { |i| i.user_id == user[:new_id] }
+      memberships_d = memberships.select { |i| i.user_id == user[:new_id] }
 
       user[:instance].scopes << researcher_scope if permissions.include?('research_project')
 
       # Projects permissions
-      memberships.each do |membership|
+      puts ' Adding scopes - long running task, please wait'
+      memberships_d.each do |membership|
         if permissions.include?('view_domains')
           authorization = Authorization.find_or_initialize_by(
             subject_class: 'Client',
