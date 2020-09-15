@@ -239,7 +239,7 @@ namespace :import do
         missing_authorizations_project_ids << row['project_id']
         next
       end
-      authorization = Authorization.find_or_initialize_by(
+      authorization = Authorization.new(
         subject_class: 'Project',
         subject_id:    new_project_id
       ).tap do |auth|
@@ -259,6 +259,8 @@ namespace :import do
           auth.save
         end
       end
+
+      next if authorization.new_record?
 
       {
         old_user_id:    row['account_id'],
@@ -284,7 +286,7 @@ namespace :import do
         next
       end
 
-      authorization = Authorization.find_or_initialize_by(
+      authorization = Authorization.new(
         subject_class: 'Report',
         subject_id:    new_report_row[:new_id]
       ).tap do |auth|
@@ -307,6 +309,7 @@ namespace :import do
         end
       end
 
+      next if authorization.new_record?
       {
         old_report_id: row['report_id'],
         authorization: authorization
@@ -321,6 +324,8 @@ namespace :import do
     project_manager_role = Scopes::Role.call(role: Scopes::Role::PROJECT_MANAGER_ROLE).scopes
     report_admin_role    = Scopes::Role.call(role: Scopes::Role::REPORT_ADMIN_ROLE).scopes
     report_manager       = Scopes::Role.call(role: Scopes::Role::REPORT_MANAGER_ROLE).scopes
+    client_access        = Scopes::Role.call(role: Scopes::Role::CLIENT_ACCESS_ROLE).scopes
+    project_access       = Scopes::Role.call(role: Scopes::Role::PROJECT_ACCESS_ROLE).scopes
 
     researcher_scope = Scope.find_by(action: 'research', scope: 'user')
 
@@ -356,6 +361,20 @@ namespace :import do
         end
 
         if permissions.include?('view_projects')
+          authorization = Authorization.find_or_initialize_by(
+            subject_class: 'Client',
+            subject_id:    membership.client_id,
+            membership_id: membership.id
+          )
+          authorization.save if authorization.new_record?
+
+          authorization.client_scopes << client_access
+        end
+
+        if permissions.include?('create_project') ||
+          permissions.include?('edit_project') ||
+          permissions.include?('delete_project')
+
           Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
             authorization = Authorization.find_or_initialize_by(
               subject_class: 'Project',
@@ -365,22 +384,30 @@ namespace :import do
 
             authorization.save if authorization.new_record?
 
-            if permissions.include?('create_project') ||
-              permissions.include?('edit_project') ||
-              permissions.include?('delete_project')
-              authorization.project_scopes << project_manager_role
+            authorization.project_scopes << project_manager_role
 
-              if permissions.include?('edit_project_permissions')
-                authorization.project_scopes << project_admin
-              end
+            if permissions.include?('edit_project_permissions')
+              authorization.project_scopes << project_admin
             end
           end
         end
 
         if permissions.include?('view_reports')
-          Report.includes(:project)
-            .references(:project)
-            .where(project: { domain_id: membership.client_id })
+          Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
+            authorization = Authorization.find_or_initialize_by(
+              subject_class: 'Project',
+              subject_id:    project_id,
+              membership_id: membership.id
+            )
+
+            authorization.save if authorization.new_record?
+
+            authorization.project_scopes << project_access
+          end
+        end
+
+        if permissions.include?('edit_report')
+          Report.includes(:project).references(:project).where(projects: { domain_id: membership.client_id })
             .pluck(:id).each do |report_id|
             authorization = Authorization.find_or_initialize_by(
               subject_class: 'Report',
@@ -389,11 +416,9 @@ namespace :import do
             )
             authorization.save if authorization.new_record?
 
-            if permissions.include?('edit_report')
-              authorization.report_scopes << report_manager
+            authorization.report_scopes << report_manager
 
-              authorization.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
-            end
+            authorization.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
           end
         end
       end
