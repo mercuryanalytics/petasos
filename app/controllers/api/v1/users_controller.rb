@@ -146,7 +146,10 @@ module Api
       end
 
       def researchers
-        json_response(User.researchers)
+        mercury_client = Client.find_by(name: 'Mercury Analytics')&.id
+        current_client_ids = current_user.memberships.pluck(:client_id)
+
+        json_response(User.for_client([mercury_client, *current_client_ids]).researchers)
       end
 
       private
