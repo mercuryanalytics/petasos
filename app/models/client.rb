@@ -32,7 +32,7 @@ class Client < ApplicationRecord
   end
 
   def logo_url
-    return logo.blob.service_url(expires_in: 1.week) if partner? && logo.attached?
+    return logo.blob.service_url(expires_in: 1.week) if logo.attached?
 
     parsed_url = URI.parse(Rails.application.credentials[:app_host])
 
