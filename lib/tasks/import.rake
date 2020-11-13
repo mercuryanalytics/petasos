@@ -470,7 +470,10 @@ namespace :import do
   def get_user_id(id, users)
     return nil unless id
 
-    users.select { |i| i[:old_id] == id }.first[:new_id]
+    u = users.select { |i| i[:old_id] == id }.first
+    return u[:new_id] if u
+
+    nil
   end
 
   def get_user_row(id, users)
