@@ -93,4 +93,123 @@ namespace :users do
       next
     end
   end
+
+  desc 'Returns the user permission'
+  task :audit, [:email] => [:environment] do |_, args|
+
+    email = args[:email]
+
+    user = User.find_by(email: email)
+    unless user
+      puts "User #{email} could not be found"
+      exit
+    end
+
+    memberships_ids = user.memberships.pluck(:id)
+
+    auths = Authorization.preload(:scopes)
+                .preload(:dynamic_scopes)
+                .left_joins(:scopes)
+                .where(membership_id: memberships_ids)
+                .select(:id, :subject_class, :subject_id)
+                .distinct
+
+
+    authorizations = auths.map do |authorization|
+      [
+          authorization,
+          get_role_from_scopes(authorization, authorization.scopes),
+          authorization.dynamic_scopes
+      ]
+    end
+
+    authorizations = authorizations.group_by { |i| i.first.subject_class }.map do |k, v|
+      { k.downcase => v }
+    end
+
+    client_authorizations = authorizations.select { |i| i.keys.include?('client') }.first.values
+    project_authorizations = authorizations.select { |i| i.keys.include?('project') }.first.values
+    report_authorizations = authorizations.select { |i| i.keys.include?('report') }.first.values
+
+
+    puts "User #{user.email} has the following global permissions:"
+    puts "Global admin" if user.scopes.map(&:action).include?('admin')
+    puts "Researcher" if user.scopes.map(&:action).include?('research')
+
+    puts "Listing permissions"
+
+    clients_list = []
+    projects_list = []
+    reports_list = []
+
+    client_authorizations.first.each do |client_auth|
+      client_data = client_auth.first
+      c = Client.find(client_data[:subject_id])
+      clients_list << [c, client_auth.second]
+    end
+
+    project_authorizations.first.each do |proj_auth|
+      proj_data = proj_auth.first
+      p = Project.find(proj_data[:subject_id])
+      projects_list << [p, proj_auth.second]
+    end
+
+
+    report_authorizations.first.each do |rep_auth|
+      rep_data = rep_auth.first
+      r = Report.find(rep_data[:subject_id])
+      reports_list << [r, rep_auth.second]
+
+    end
+
+    clients_list.each do |(client, permissions)|
+      puts "Client #{client.name} - with the following permissions: #{permissions.join(', ')}"
+
+      p = projects_list.select { |(project, _)| project.domain_id == client.id }
+
+      projects_list = projects_list - p
+
+      p.each do |(project, perm)|
+        puts "\t Project #{project.project_number} #{project.name} - with the following permissions: #{perm.join(', ')}"
+        r = reports_list.select {|(report, _)| report.project_id == project.id }
+        reports_list = reports_list - r
+        r.each do |(report, r_perm)|
+          puts "\t\t Report #{report.name} - with the following permissions: #{r_perm.join(', ')}"
+        end
+      end
+    end
+
+    if projects_list.any?
+      puts 'Orphan projects'
+
+      projects_list.each do |(project, perm)|
+        puts "\t Project #{project.project_number} #{project.name} - client #{project.client.name} with the following permissions: #{perm.join(', ')}"
+        r = reports_list.select {|(report, _)| report.project_id == project.id }
+        reports_list = reports_list - r if r.any?
+        r.each do |(report, r_perm)|
+          puts "\t\t Report #{report.name} - with the following permissions: #{r_perm.join(', ')}"
+        end
+      end
+    end
+
+
+    if reports_list.any?
+      puts 'Orphan reports'
+      reports_list.each do |(report, r_perm)|
+        puts "\t\t Report #{report.name} - project #{report.project.name} client #{report.project.client.name} with the following permissions: #{r_perm.join(', ')}"
+      end
+    end
+
+
+  end
+
+  def get_role_from_scopes(authorization, scopes)
+    dimension = authorization.subject_class.downcase
+    roles = []
+    roles << "#{dimension}_access" if scopes.map(&:action).include?('access')
+    roles << "#{dimension}_admin" if scopes.map(&:action).include?('authorize')
+    roles << "#{dimension}_editor" if scopes.map(&:action).include?('update')
+    roles << 'viewer'
+    roles
+  end
 end
