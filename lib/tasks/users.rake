@@ -127,9 +127,9 @@ namespace :users do
       { k.downcase => v }
     end
 
-    client_authorizations = authorizations.select { |i| i.keys.include?('client') }.first.values
-    project_authorizations = authorizations.select { |i| i.keys.include?('project') }.first.values
-    report_authorizations = authorizations.select { |i| i.keys.include?('report') }.first.values
+    client_authorizations = authorizations.select { |i| i.keys.include?('client') }.first&.values
+    project_authorizations = authorizations.select { |i| i.keys.include?('project') }.first&.values
+    report_authorizations = authorizations.select { |i| i.keys.include?('report') }.first&.values
 
 
     puts "User #{user.email} has the following global permissions:"
@@ -142,20 +142,20 @@ namespace :users do
     projects_list = []
     reports_list = []
 
-    client_authorizations.first.each do |client_auth|
+    client_authorizations&.first&.each do |client_auth|
       client_data = client_auth.first
       c = Client.find(client_data[:subject_id])
       clients_list << [c, client_auth.second]
     end
 
-    project_authorizations.first.each do |proj_auth|
+    project_authorizations&.first&.each do |proj_auth|
       proj_data = proj_auth.first
       p = Project.find(proj_data[:subject_id])
       projects_list << [p, proj_auth.second]
     end
 
 
-    report_authorizations.first.each do |rep_auth|
+    report_authorizations&.first&.each do |rep_auth|
       rep_data = rep_auth.first
       r = Report.find(rep_data[:subject_id])
       reports_list << [r, rep_auth.second]
