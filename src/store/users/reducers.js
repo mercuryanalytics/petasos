@@ -73,6 +73,12 @@ const usersReducer = (state = initialState, action) => {
         },
       };
     }
+    case 'RESET_USER_AUTHORIZATIONS': {
+      return {
+        ...state,
+        authorizations: {}
+      }
+    }
     case 'GET_MY_AUTHORIZATIONS_SUCCESS': {
       return {
         ...state,

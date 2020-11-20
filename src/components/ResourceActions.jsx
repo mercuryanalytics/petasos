@@ -6,18 +6,27 @@ import Avatar from './common/Avatar';
 import Toggle from './common/Toggle';
 import Scrollable from './common/Scrollable';
 import Tooltip from './common/Tooltip';
-import { Checkbox } from './FormFields';
+import {Checkbox, Input, Validators} from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow, MdFilterList } from 'react-icons/md';
 import { getClients, getClient, getClientsFromSA } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports } from '../store/reports/actions';
-import { getScopes, getUserAuthorizations, authorizeUser } from '../store/users/actions';
+import {
+  getScopes,
+  getUserAuthorizations,
+  authorizeUser,
+  copyPermissions,
+  resetUserAuthorizations
+} from '../store/users/actions';
 import { getTemplates, updateTemplate } from '../store/clients/actions';
 import {
   UserRoles, ResourceTypes,
   isUserAuthorized, isUserSpecificallyAuthorized, isUserTemplateAuthorized,
 } from '../store';
+import Button from "./common/Button";
+import Modal from "./common/Modal";
+import {useField, useForm} from "react-final-form-hooks";
 
 const ResourceActions = props => {
   const { templateMode, clientId, userId } = props;
@@ -39,6 +48,11 @@ const ResourceActions = props => {
   const [rowActiveStates, setRowActiveStates] = useState({});
   const [filters, setFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
+  const [copyPermissionsModal, setCopyPermissionsModal] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
+  const [append, setAppend] = useState(false);
+  const [errors, setErrors] = useState(null);
+
 
   const handleProjectToggle = useCallback(async (id, forced) => {
     const status = forced ? !forced : !!openProjects[id];
@@ -418,12 +432,109 @@ const ResourceActions = props => {
     </>;
   };
 
+  const { form, handleSubmit, submitting } = useForm({
+    validate: (values) => {
+      let errors = {};
+      if (!Validators.hasValue(values.copy_from_email)) {
+        errors.copy_from_email = 'Field value is required.';
+      }
+      if (!Validators.isEmail(values.copy_from_email)) {
+        errors.copy_from_email = 'Field value must be a valid email format.';
+      }
+      return undefined;
+    },
+    onSubmit: (values) => {
+      setErrors(null);
+      setIsBusy(true);
+      const result = {
+        copy_from: values.copy_from_email,
+        append: append
+      };
+
+      dispatch(copyPermissions(userId, result)).then((action) => {
+        const handleSuccess = () => {
+          form.reset();
+          setIsBusy(false);
+          setCopyPermissionsModal(false);
+          setIsLoading(true);
+          setOpenClients({});
+          setOpenProjects({});
+          setRowActiveStates({});
+          setActiveStates({});
+          dispatch(resetUserAuthorizations(userId));
+          init().then(() => setIsLoading(false))
+        };
+        let promises = [];
+
+        Promise.all(promises).then(() => {
+          handleSuccess();
+        }, () => {
+          setIsBusy(false);
+        });
+      }, (response) => {
+
+          if (response.xhrHttpCode === 422) {
+            setErrors('Wrong email');
+          } else {
+            setErrors('Something went wrong');
+          }
+          setIsBusy(false);
+      });
+    },
+  });
+
+  const copyFromEmail = useField('copy_from_email', form);
+
+  const handleCopyPermissionClose = useCallback(() => {
+    setCopyPermissionsModal(false);
+    form.reset();
+  }, [form]);
+
+
   return !isLoading ? (
     <div className={`${styles.container} ${!clientId ? styles.complete : ''} ${props.className || ''}`}>
       {!clientId && (<>
         <div className={styles.globals}>
-          <div className={styles.bigTitle}>
+          <Modal
+              className={styles.modal}
+              title="Copy permissions from user"
+              open={copyPermissionsModal}
+              onClose={() => handleCopyPermissionClose()}
+          >
+            {errors && <div className={styles.modalTextError}>{errors}</div>}
+            <div className={styles.modalText}>
+              Enter the email address of user you wish to copy its permissions.
+            </div>
+
+            <form className={styles.form} onSubmit={handleSubmit}>
+              <Input
+                  className={`${styles.modalInput} ${styles.stacked}`}
+                  field={copyFromEmail}
+                  label="Email"
+              />
+              <label className={styles.labelModal}>
+                <span>Append permissions</span>
+                <Checkbox
+                    className={`${styles.itemCheckbox} ${styles.stacked}`}
+                    checked={append}
+                    onChange={e => setAppend(!append)}
+                />
+              </label>
+              <span className={styles.spanDescription}>By checking the above checkbox, the users old permission will be retained. If not, they will be overwritten!</span>
+
+              <div className={styles.modalButtons}>
+                <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
+                  {!isBusy ? 'Copy user permissions' : 'Copying user permissions...'}
+                </Button>
+                <Button transparent onClick={() => setCopyPermissionsModal(false)}>
+                  <span>Cancel</span>
+                </Button>
+              </div>
+            </form>
+          </Modal>
+          <div className={`${styles.bigTitle} ${styles.justifyBetween}`}>
             <span>Global</span>
+            <Button onClick={() => setCopyPermissionsModal(!copyPermissionsModal) }>Copy permissions from</Button>
           </div>
           <div className={styles.globalCheckboxes}>
             {!!scopes.global && scopes.global.map(s => (

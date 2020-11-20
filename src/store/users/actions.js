@@ -79,6 +79,33 @@ export function createUser(data, clientId, noAuth) {
   };
 }
 
+export function copyPermissions(id, data) {
+  const body = JSON.stringify(data);
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/users/${id}/copy`, { body })
+        .then(
+            res => {
+              return dispatch(copyPermissionsSuccess(res))
+            },
+            err => handleActionFailure(err, dispatch(createUserFailure(err)))
+        )
+  }
+}
+
+export const copyPermissionsSuccess = (res) => {
+  return {
+    type: 'COPY_PERMISSIONS_SUCCESS',
+    payload: res
+  }
+}
+
+export const copyPermissionsFailur = (error) => {
+  return {
+    type: 'COPY_PERMISSIONS_FAILURE',
+    payload: error
+  }
+}
+
 export const createUserSuccess = (user) => {
   return {
     type: 'CREATE_USER_SUCCESS',
@@ -196,14 +223,7 @@ export const getScopesFailure = (error) => ({
 
 export function getUserAuthorizations(id) {
   return dispatch => (
-    !apiCall.isCalled([
-      `${Constants.API_URL}/users/${id}/authorized`,
-    ])
-      ? apiCall('GET', `${Constants.API_URL}/users/${id}/authorized`)
-      : queryState(state => ({
-        target: state.usersReducer.authorizations,
-        key: id,
-      }))
+    apiCall('GET', `${Constants.API_URL}/users/${id}/authorized`)
   ).then(
     res => dispatch(getUserAuthorizationsSuccess(res, id)),
     err => handleActionFailure(err, dispatch(getUserAuthorizationsFailure(err, id))),
@@ -213,6 +233,12 @@ export function getUserAuthorizations(id) {
 export const getUserAuthorizationsSuccess = (authorizations, userId) => ({
   type: 'GET_USER_AUTHORIZATIONS_SUCCESS',
   payload: authorizations,
+  userId: userId,
+});
+
+export const resetUserAuthorizations = (userId) => ({
+  type: 'RESET_USER_AUTHORIZATIONS',
+  payload: {},
   userId: userId,
 });
 

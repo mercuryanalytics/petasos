@@ -27,6 +27,10 @@
   line-height: 1.25rem;
 }
 
+.justifyBetween {
+  justify-content: space-between;
+}
+
 .filter {
   position: absolute;
   z-index: 2;
@@ -456,4 +460,52 @@
 .noResults.left {
   margin-left: 23px;
   text-align: left;
+}
+
+.modal {
+  width: 320px;
+}
+
+.modalText {
+  margin-bottom: 25px;
+  font-size: .85rem;
+}
+
+.modalTextError {
+  margin-bottom: 25px;
+  font-size: .85rem;
+  color: red;
+}
+
+.modalInput {
+  margin-bottom: 32px;
+}
+
+.modalInput.stacked {
+  margin-bottom: 8px;
+}
+
+.modalButtons {
+  margin-top: 30px;
+}
+
+.loader {
+  display: flex !important;
+  justify-content: center;
+  width: 100% !important;
+}
+
+.spanDescription {
+  font-size: 11px;
+  color: grey;
+}
+
+.busyLoader {
+  height: 25px !important;
+  margin-left: 10px !important;
+}
+
+.labelModal {
+  display:flex;
+  margin-top: 15px;
 }
