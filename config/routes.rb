@@ -37,6 +37,7 @@ Rails.application.routes.draw do
         member do
           get :authorized
           post :scopes
+          post :copy
         end
       end
 

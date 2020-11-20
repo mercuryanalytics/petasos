@@ -111,6 +111,19 @@ module Api
         json_response(@user)
       end
 
+      def copy
+        email = params[:copy_from]
+        copy_to_user = User.find(params[:id])
+        copy_from_user = User.find_by(email: email)
+        append = params[:append]
+        return error_response('Wrong email') if copy_from_user.nil?
+        return error_response('The action is forbidden for your account') unless current_user.admin?
+
+        Users::CopyUserPermissions.call(copy_from: copy_from_user, copy_to: copy_to_user, append: append)
+
+        render json: { email: email }
+      end
+
       def authorized
         memberships_ids = if params[:client_id]
                             @user.memberships.select { |membership| membership.client_id == params[:client_id].to_i }.first
