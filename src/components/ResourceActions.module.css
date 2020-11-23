@@ -187,6 +187,14 @@
   background-color: #ebf9eb;
 }
 
+.buttonContainer {
+  display: inline-flex;
+}
+
+.buttonContainer > button:first-child {
+  margin-right: 10px;
+}
+
 .client > .title:hover {
   background-color: #F0F0F0;
   color: #000;

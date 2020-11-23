@@ -52,6 +52,7 @@ const ResourceActions = props => {
   const [isBusy, setIsBusy] = useState(false);
   const [append, setAppend] = useState(false);
   const [errors, setErrors] = useState(null);
+  const [showOnlyAccess, setShowOnlyAccess] = useState(false);
 
 
   const handleProjectToggle = useCallback(async (id, forced) => {
@@ -401,6 +402,16 @@ const ResourceActions = props => {
     );
   }, [clientId, filters, getActiveFiltersCount, getFirstActiveFilterId, renderCheckboxTitle, scopes]);
 
+  const hasFilteredProjects = (client) =>{
+    let p = projects[client.id].filter(project => getRowActiveClass('project', project) !== '' || project.children_access)
+    return !!p.length;
+  }
+
+  const hasFilteredReports = (project) =>{
+    let r = reports[project.id].filter(report => getRowActiveClass('report', report) !== '')
+    return !!r.length;
+  }
+
   const renderColumnCheckboxes = (resType, resId, parentId) => {
     const rolePrefix = resType[0].toUpperCase() + resType.substr(1);
     const managerRole = UserRoles[`${rolePrefix}Manager`];
@@ -534,7 +545,10 @@ const ResourceActions = props => {
           </Modal>
           <div className={`${styles.bigTitle} ${styles.justifyBetween}`}>
             <span>Global</span>
-            <Button onClick={() => setCopyPermissionsModal(!copyPermissionsModal) }>Copy permissions from</Button>
+            <div className={styles.buttonContainer}>
+              <Button onClick={() => setShowOnlyAccess(!showOnlyAccess) }>{showOnlyAccess ? 'Show all' : 'Show only active permissions'}</Button>
+              <Button onClick={() => setCopyPermissionsModal(!copyPermissionsModal) }>Copy permissions from</Button>
+            </div>
           </div>
           <div className={styles.globalCheckboxes}>
             {!!scopes.global && scopes.global.map(s => (
@@ -604,7 +618,11 @@ const ResourceActions = props => {
       {renderColumnCheckboxesTitles()}
       <Scrollable className={styles.resourcesActions}>
         {!!clients.length ? (<>
-          {clients.map(client => (
+          {(
+              showOnlyAccess ?
+                  clients.filter(client => getRowActiveClass('client', client) !== '' || client.children_access) :
+                  clients
+          ).map(client => (
             <div key={client.id} className={`${styles.client} ${getRowActiveClass('client', client)}`}>
               <div
                 className={styles.title}
@@ -630,8 +648,11 @@ const ResourceActions = props => {
                 {renderColumnCheckboxes('client', client.id, client.id)}
               </div>
               {!!openClients[client.id] && (!!loadedClients[client.id] ? (
-                (!!projects[client.id] && !!projects[client.id].length) ? (<>
-                  {projects[client.id].map(project => (
+                ((showOnlyAccess && hasFilteredProjects(client)) || (!showOnlyAccess && !!projects[client.id] && !!projects[client.id].length)) ? (<>
+                  {(showOnlyAccess ?
+                      projects[client.id].filter(project => getRowActiveClass('project', project) !== '' || project.children_access) :
+                      projects[client.id]
+                  ).map(project => (
                     <div
                       key={project.id}
                       className={`
@@ -663,8 +684,11 @@ const ResourceActions = props => {
                         {renderColumnCheckboxes('project', project.id, project.domain_id)}
                       </div>
                       {!!openProjects[project.id] && (!!loadedProjects[project.id] ? (
-                        (!!reports[project.id] && !!reports[project.id].length) ? (
-                          reports[project.id].map(report => (
+                        ((showOnlyAccess && hasFilteredReports(project)) || (!showOnlyAccess && !!reports[project.id] && !!reports[project.id].length)) ? (
+                              (showOnlyAccess ?
+                                  reports[project.id].filter(report => getRowActiveClass('report', report) !== '') :
+                                  reports[project.id]
+                              ).map(report => (
                             <div
                               key={report.id}
                               className={`${styles.report} ${getRowActiveClass('report', report)}`}
