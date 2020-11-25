@@ -26,9 +26,10 @@ end
 Defined methods:
 * `current_user` returns the current authenticated user as a `MercurySsoAuth0::User` instance
 * `MercurySsoAuth0::User#email` -  returns the email
-* `MercurySsoAuth0::User#scopes(session)`
-    * sends a GET request to RAM Api and saves the returned scopes in session
+* `MercurySsoAuth0::User#scopes(session || {})`
+    * sends a GET request to RAM Api and saves the returned scopes in session or a simple hash or a hash structure of your choice
     * you can use this in your cancancan ability files to assign permissions
+    * in order to not call the api again, you can save the scopes in session or a hash structure
 
 Sample of scopes you can get:
 ```

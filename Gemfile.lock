@@ -5,7 +5,7 @@ PATH
       omniauth
       omniauth-auth0 (~> 2.2)
       omniauth-rails_csrf_protection (~> 0.1)
-      railties (>= 4.1.0)
+      railties (>= 4.0.0)
       rest-client
 
 GEM
