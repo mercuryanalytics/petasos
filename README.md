@@ -11,7 +11,10 @@ MercurySsoAuth0.setup do |ma|
   ma.domain    = 'AUTH0_DOMAIN'
   ma.login_url = 'BASE_URL FOR FRONTEND RAM APP'
   ma.api_url   = 'API_BASE_URL'
-  ma.host      = 'HOSTNAME' # needed for building redirect_uri
+  # this will be app url which also needs to be in auth0 authorized callbacks
+  # in auth0 authorized callbacks, the URL must also contain `auth/auth0/callback` path
+  ma.host      = 'https://domain.tld' 
+                  
 end
 ```
 
