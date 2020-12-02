@@ -34,6 +34,10 @@ module MercurySsoAuth0
   mattr_accessor :host
   @@host = 'localhost'
 
+  # Optional callback path override
+  mattr_accessor :callback_path
+  @@callback_path = '/auth/auth0/callback'
+
   def self.setup
     yield self
   end

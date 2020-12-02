@@ -12,7 +12,7 @@ module MercurySsoAuth0
         MercurySsoAuth0.client,
         MercurySsoAuth0.secret,
         MercurySsoAuth0.domain,
-        callback_path: '/auth/auth0/callback',
+        callback_path: MercurySsoAuth0.callback_path,
         authorize_params: {
           scope: MercurySsoAuth0.scopes
         }
