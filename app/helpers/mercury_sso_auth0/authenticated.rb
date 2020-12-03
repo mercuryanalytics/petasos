@@ -15,6 +15,7 @@ module MercurySsoAuth0
     def authenticated?
       return true if session[:userinfo].present?
 
+      session[:authentication_intercept] = request.fullpath
       redirect_to sso_login.to_s
     end
 
