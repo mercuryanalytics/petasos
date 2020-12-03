@@ -3,7 +3,7 @@ module MercurySsoAuth0
     def callback
       session[:userinfo] = request.env['omniauth.auth']
 
-      redirect_to '/'
+      redirect_to_authentication_intercept
     end
 
     def failure
@@ -11,5 +11,12 @@ module MercurySsoAuth0
     end
 
     def login; end
+
+    private
+
+    def redirect_to_authentication_intercept
+      redirect_to session[:authentication_intercept] if session[:authentication_intercept]
+      session[:authentication_intercept] = nil
+    end
   end
 end
