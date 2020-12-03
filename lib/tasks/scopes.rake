@@ -11,13 +11,13 @@ namespace :scopes do
     o        = OptParse.new
     o.banner = 'Usage: rake scopes:create OPTIONS'
     o.on('--action', '--action ACTION_NAME') { |input| options[:action] = input }
-    o.on('--scope', '--scope report,project,client') { |input| options[:scope] = input }
+    o.on('--scope', '--scope reports,projects,clients') { |input| options[:scope] = input }
     o.on('--description', '--description DESCRIPTION') { |input| options[:description] = input }
     o.on('--name', '--name NAME') { |input| options[:name] = input }
     o.parse!(o.order(ARGV) {})
 
     unless %w[reports projects clients].include?(options[:scope])
-      puts "Please specify the correct resource scope (one of report, project, client); you specified #{options[:scope]}"
+      puts "Please specify the correct resource scope (one of reports, projects, clients); you specified #{options[:scope]}"
       exit(1)
     end
 

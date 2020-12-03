@@ -42,11 +42,11 @@ module Authorizations
     def authorization_instance
       @membership ||= Membership.find_by(user_id: params[:user_id], client_id: params[:client_id])
 
-      Authorization.find_by(
+      Authorization.find_or_create_by(
         membership_id: @membership.id,
         subject_class: subject_class,
         subject_id:    subject_id
-      )
+      ) if @membership
     end
 
     def subject_class
