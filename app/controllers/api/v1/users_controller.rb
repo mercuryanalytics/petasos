@@ -30,7 +30,7 @@ module Api
       end
 
       def me
-        memberships_ids = current_user.memberships.pluck(:id)
+        memberships_ids = current_user.memberships.pluck(:id).uniq
 
         json_response([]) && return unless memberships_ids
 
