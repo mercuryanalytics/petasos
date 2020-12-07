@@ -29,7 +29,7 @@ namespace :import do
     puts 'Migrating domains to companies'
     result = db_client.query('SELECT * FROM domains')
 
-    logo_host = 'http://researchresultswebsite.com/assets/'
+    logo_host = ENV["LOGO_HOST"] || 'http://researchresultswebsite.com/assets/'
 
     clients_mapped = result.collect do |row|
       client = Client.find_or_initialize_by(name: row['name']).tap do |c|
