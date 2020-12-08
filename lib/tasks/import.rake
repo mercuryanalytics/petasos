@@ -476,6 +476,8 @@ namespace :import do
       puts 'Client removed, recreating...'
     end
 
+    logo_host = ENV["LOGO_HOST"] || 'http://researchresultswebsite.com/assets/'
+
     clients_mapped = client_result.collect do |row|
       old_client_id = row['id']
 
