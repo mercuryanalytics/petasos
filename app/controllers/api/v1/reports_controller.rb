@@ -10,6 +10,17 @@ module Api
           json_response(Report.where(project_id: params[:project_id]).includes(:project).order(updated_at: :desc).accessible_by(current_ability).all)
           return
         end
+
+        if params[:client_id]
+          json_response(
+              Report
+                  .includes(:project)
+                  .where(projects: { domain_id: params[:client_id]} )
+                  .order(updated_at: :desc)
+                  .accessible_by(current_ability).all)
+          return
+        end
+
         json_response(Report.includes(:project).accessible_by(current_ability).order(updated_at: :desc).all)
       end
 

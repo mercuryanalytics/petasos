@@ -12,7 +12,15 @@ module Users
       return if user && user.persisted?
 
       RestClient.post(users_endpoint, create_params, authorization_header) do |response, _, _|
-        context.fail!(message: JSON.parse(response.body)['message']) if response.code != 201
+        if response.code != 201
+          user_interactor = Users::GetAuth0User.call(email: params[:email])
+          if user_interactor.success?
+            context.auth_id = user_interactor.auth_id
+            return
+          else
+            context.fail!(message: context.message)
+          end
+        end
 
         context.auth_id = JSON.parse(response.body)['user_id']
       end

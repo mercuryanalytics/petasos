@@ -67,6 +67,7 @@ module Api
 
         status = base_authorization.status == :ok ? :created : :no_content
         authorization = base_authorization.authorization
+        authorization.scopes << Scope.find_by(action: 'access', scope: 'project') if params[:access] && authorization
 
         return head status unless current_user.admin? && authorization
 
