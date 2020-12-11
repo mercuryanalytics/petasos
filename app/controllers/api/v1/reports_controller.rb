@@ -12,11 +12,14 @@ module Api
         end
 
         if params[:client_id] && !current_user.admin?
+          project_authorizations = Project.authorized_for_user(current_user.membership_ids).pluck(:id)
+
           json_response(
               Report
                   .includes(:project)
                   .where(projects: { domain_id: params[:client_id]} )
                   .order(updated_at: :desc)
+                  .where.not(projects: { id: project_authorizations })
                   .accessible_by(current_ability).all)
           return
         end
