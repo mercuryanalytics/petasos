@@ -76,9 +76,29 @@ export function getClientReports(clientId) {
   );
 }
 
+export function getClientSubReports(clientId) {
+    return dispatch => (
+        !apiCall.isCalled([
+            `${Constants.API_URL}/reports?client_id=${clientId}`,
+        ])
+            ? apiCall('GET', `${Constants.API_URL}/reports?client_id=${clientId}`)
+            : queryState(state => ({
+                target: state.reportsReducer.clientReports,
+                filters: [{ run: true, filter: item => item.project.domain_id === clientId }],
+            }))
+    ).then(
+        res => dispatch(getClientReportsSuccess(res)),
+        err => handleActionFailure(err, dispatch(getClientReportsFailure(err))),
+    );
+}
 export const getClientReportsSuccess = (reports) => ({
   type: 'GET_CLIENT_REPORTS_SUCCESS',
   payload: reports,
+});
+
+export const getClientSubReportsSuccess = (reports) => ({
+    type: 'GET_CLIENT_SUB_REPORTS_SUCCESS',
+    payload: reports,
 });
 
 export const getClientReportsFailure = (error) => ({

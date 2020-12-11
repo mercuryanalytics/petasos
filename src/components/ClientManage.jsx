@@ -756,7 +756,7 @@ const ClientManage = props => {
           {editMode && canManage && (
             <div className={styles.grant}>
               <div className={`${styles.title} ${styles.big}`}>
-                <span>Client access</span>
+                <span>Client name</span>
               </div>
               <UserActions
                 className={styles.grantActions}

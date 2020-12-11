@@ -7,7 +7,13 @@ import { getClients } from '../../store/clients/actions';
 import { sortClients } from '../../store/clients/reducers';
 import { getProject, getProjects, getOrphanProjects } from '../../store/projects/actions';
 import { sortProjects } from '../../store/projects/reducers';
-import { getReport, getReports, getOrphanReports, getClientReports } from '../../store/reports/actions';
+import {
+  getReport,
+  getReports,
+  getOrphanReports,
+  getClientReports,
+  getClientSubReports
+} from '../../store/reports/actions';
 import { sortReports } from '../../store/reports/reducers';
 import Search from '../common/Search';
 import Loader from '../common/Loader';
@@ -168,6 +174,7 @@ const SideMenu = props => {
       await Promise.all([
         dispatch(getClientReports(client.id)).then(() => {}, () => {}),
         dispatch(getProjects(client.id)).then(() => {}, () => {}),
+        dispatch(getClientSubReports(client.id)).then(() => {}, () => {}),
       ]).then(() => {
         initProjectCreationRights(client.id);
         setLoadedClients(prev => ({ ...prev, [client.id]: true }));
@@ -530,7 +537,6 @@ const SideMenu = props => {
               <Tooltip id="other-reports-tt" location="top" zIndex={5}>
                 <span>Reports for which the parent client is unknown.</span>
               </Tooltip>
-              <span>Other reports</span>
             </div>
           )}
           {orphanProjects && !!orphanProjects.length && (

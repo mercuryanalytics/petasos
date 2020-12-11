@@ -190,7 +190,7 @@ const UserActions = props => {
   }, [clientId, projectId, reportId, authorizedUsers, activeStates, context]);
 
   const setItemStatus = useCallback((parentId, itemId, status) => {
-    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }))
+    dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }, context))
       .then(() => {}, () => {});
     setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
   }, [authorizedOptions, dispatch]);

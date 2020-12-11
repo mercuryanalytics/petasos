@@ -290,14 +290,7 @@ export function getAuthorizedUsers(contextId, res) {
     resId = res.clientId;
   }
   return dispatch => (
-    !apiCall.isCalled([
-      `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`,
-    ])
-      ? apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
-      : queryState(state => ({
-        target: state.usersReducer.authorizedUsers,
-        key: `${resPath}-${resId}@${contextId}`,
-      }))
+    apiCall('GET', `${Constants.API_URL}/${resPath}/${resId}/authorized${queryString}`)
   ).then(
     res => dispatch(getAuthorizedUsersSuccess(res, contextId, resPath, resId)),
     err => handleActionFailure(err, dispatch(getAuthorizedUsersFailure(err))),
@@ -349,7 +342,7 @@ export const getAllAuthorizedUsersFailure = (error) => ({
   payload: error,
 });
 
-export function authorizeUser(id, contextId, res, states) {
+export function authorizeUser(id, contextId, res, states, context = null) {
   const refresh = async (dispatch) => {
     apiCall.forget(`${Constants.API_URL}/users/${id}/authorized`);
     await dispatch(getUserAuthorizations(id)).then(() => {}, () => {});
@@ -385,7 +378,10 @@ export function authorizeUser(id, contextId, res, states) {
     client_id: contextId,
   }, states);
   return dispatch => {
-    return apiCall('POST', `${Constants.API_URL}/${resPath}/${resId}/authorize`, { body: JSON.stringify(data) })
+    let url = context === 'project' ?
+        `${Constants.API_URL}/${resPath}/${resId}/authorize?access=1` :
+        `${Constants.API_URL}/${resPath}/${resId}/authorize`
+    return apiCall('POST', url, { body: JSON.stringify(data) })
       .then(
         async (res) => {
           await refresh(dispatch);
