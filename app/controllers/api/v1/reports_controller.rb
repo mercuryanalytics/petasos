@@ -11,7 +11,9 @@ module Api
           return
         end
 
-        if params[:client_id] && !current_user.admin?
+        if params[:client_id]
+          return json_response([]) if current_user.admin?
+
           project_authorizations = Project.authorized_for_user(current_user.membership_ids).pluck(:id)
 
           json_response(
