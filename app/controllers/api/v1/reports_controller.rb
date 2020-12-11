@@ -11,7 +11,7 @@ module Api
           return
         end
 
-        if params[:client_id]
+        if params[:client_id] && !current_user.admin?
           json_response(
               Report
                   .includes(:project)
