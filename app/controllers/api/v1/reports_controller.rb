@@ -76,15 +76,33 @@ module Api
       end
 
       def authorize
+        report = Report.find(params[:id])
+
         base_authorization = Authorizations::BaseAuthorization.call(
           params: authorize_params.to_h,
-          report: Report.find(params[:id])
+          report: report
         )
 
         render error_response(base_authorization.message) && return unless base_authorization.success?
 
         status = base_authorization.status == :ok ? :created : :no_content
         authorization = base_authorization.authorization
+
+        if params[:access] && authorization
+          project = report.project
+          Authorizations::AddAuthorization.call(
+              user_id: authorize_params[:user_id],
+              project: project,
+              client_id: authorize_params[:client_id]
+          )
+
+          client = project.client
+          Authorizations::AddAuthorization.call(
+              client: client,
+              user_id: authorize_params[:user_id],
+              client_id: authorize_params[:client_id]
+          )
+        end
 
         return head status unless current_user.admin? && authorization
 

@@ -26,6 +26,18 @@ namespace :import do
       database: options[:database_name]
     )
 
+
+    client_manager       = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
+    client_admin         = Scopes::Role.call(role: Scopes::Role::CLIENT_ADMIN_ROLE).scopes
+    project_admin        = Scopes::Role.call(role: Scopes::Role::PROJECT_ADMIN_ROLE).scopes
+    project_manager_role = Scopes::Role.call(role: Scopes::Role::PROJECT_MANAGER_ROLE).scopes
+    report_admin_role    = Scopes::Role.call(role: Scopes::Role::REPORT_ADMIN_ROLE).scopes
+    report_manager       = Scopes::Role.call(role: Scopes::Role::REPORT_MANAGER_ROLE).scopes
+    client_access        = Scopes::Role.call(role: Scopes::Role::CLIENT_ACCESS_ROLE).scopes
+    project_access_role  = Scopes::Role.call(role: Scopes::Role::PROJECT_ACCESS_ROLE).scopes
+
+    researcher_scope = Scope.find_by(action: 'research', scope: 'user')
+
     puts 'Migrating domains to companies'
     result = db_client.query('SELECT * FROM domains')
 
@@ -112,6 +124,31 @@ namespace :import do
         user_id:   user.id
       )
       membership.save if membership.new_record?
+
+      client_id = get_client(row['domain_id'], clients_mapped)
+      permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = #{row['id']} GROUP BY account_id;")
+
+      client_auth = Authorization.find_or_initialize_by(
+          membership_id: membership.id,
+          subject_class: 'Client',
+          subject_id: client_id
+      )
+
+      client_auth.save if client_auth.new_record?
+
+      permissions_results.each do |row|
+        permissions = row['scopes'].split(',')
+
+        if permissions.include?('create_accounts') ||
+            permissions.include?('edit_account') ||
+            permissions.include?('delete_account') ||
+            permissions.include?('create_partner_domain')
+
+          client_auth.client_scopes << client_manager
+          client_auth.client_scopes << client_admin
+        end
+      end
 
       memberships << membership
 
@@ -227,7 +264,8 @@ namespace :import do
 
     puts 'adding project authorizations'
 
-    project_authorizations_results     = db_client.query('SELECT * FROM project_accesses')
+    project_authorizations_results     = db_client.query('SELECT project_accesses.* FROM
+      project_accesses INNER JOIN projects ON projects.id = project_accesses.project_id')
     missing_authorizations_project_ids = []
 
     project_acceses = project_authorizations_results.collect do |row|
@@ -257,6 +295,32 @@ namespace :import do
         if membership
           auth.membership_id = membership.id
           auth.save
+
+          permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = #{row['account_id']} GROUP BY account_id;")
+
+          proj = Project.find(new_project_id)
+
+          client_authorization = Authorization.find_or_initialize_by(subject_id: proj.domain_id, subject_class: 'Client', membership_id: membership.id)
+          client_authorization.save if client_authorization.new_record?
+
+          permissions_results.each do |row|
+            permissions = row['scopes'].split(',')
+
+            if permissions.include?('create_project') ||
+                permissions.include?('edit_project') ||
+                permissions.include?('delete_project')
+              auth.project_scopes << project_manager_role
+
+              if permissions.include?('edit_project_permissions')
+                auth.project_scopes << project_admin
+              end
+            end
+
+            if permissions.include?('view_reports')
+              auth.project_scopes << project_access_role
+            end
+          end
         end
       end
 
@@ -272,7 +336,7 @@ namespace :import do
     end
     puts "counter for projects #{missing_authorizations_project_ids.size}"
 
-    report_authorizations_results = db_client.query('SELECT * FROM report_accesses')
+    report_authorizations_results = db_client.query('SELECT report_accesses.* FROM report_accesses INNER JOIN reports ON reports.id = report_accesses.report_id')
     missing_report_authorizations = []
 
     puts 'adding reports authorizations'
@@ -306,124 +370,45 @@ namespace :import do
         if membership
           auth.membership_id = membership.id
           auth.save
+
+          next unless new_report_row[:new_id]
+          report = Report.find(new_report_row[:new_id])
+
+          project_authorization = Authorization.find_or_initialize_by(
+              subject_class: 'Project',
+              subject_id: report.project_id,
+              membership_id: membership.id
+          )
+          project_authorization.save if project_authorization.new_record?
+
+          client_authorization = Authorization.find_or_initialize_by(
+              subject_class: 'Client',
+              subject_id: report.project.domain_id,
+              membership_id: membership.id
+          )
+
+          client_authorization.save if client_authorization.new_record?
+
+          permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = '#{row['account_id']}' GROUP BY account_id;")
+
+          permissions_results.each do |row|
+            permissions = row['scopes'].split(',')
+
+            if permissions.include?('edit_report')
+              auth.report_scopes << report_manager
+              auth.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
+            end
+          end
         end
       end
+
 
       next if authorization.new_record?
       {
         old_report_id: row['report_id'],
         authorization: authorization
       }
-    end
-
-    permissions_results = db_client.query('SELECT account_id, GROUP_CONCAT(code, \'\') as scopes FROM permissions GROUP BY account_id;')
-
-    client_manager       = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
-    client_admin         = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
-    project_admin        = Scopes::Role.call(role: Scopes::Role::PROJECT_ADMIN_ROLE).scopes
-    project_manager_role = Scopes::Role.call(role: Scopes::Role::PROJECT_MANAGER_ROLE).scopes
-    report_admin_role    = Scopes::Role.call(role: Scopes::Role::REPORT_ADMIN_ROLE).scopes
-    report_manager       = Scopes::Role.call(role: Scopes::Role::REPORT_MANAGER_ROLE).scopes
-    client_access        = Scopes::Role.call(role: Scopes::Role::CLIENT_ACCESS_ROLE).scopes
-    project_access       = Scopes::Role.call(role: Scopes::Role::PROJECT_ACCESS_ROLE).scopes
-
-    researcher_scope = Scope.find_by(action: 'research', scope: 'user')
-
-    puts ' Adding scopes - long running task, please wait'
-    permissions_results.each do |row|
-      permissions = row['scopes'].split(',')
-      user        = get_user_row(row['account_id'], mapped_users)
-      unless user
-        puts "skipping #{row} because the user does not exist"
-        next
-      end
-      memberships_d = memberships.select { |i| i.user_id == user[:new_id] }
-
-      user[:instance].scopes << researcher_scope if permissions.include?('research_project')
-
-      # Projects permissions
-      puts 'working'
-      memberships_d.each do |membership|
-        if permissions.include?('view_domains')
-          authorization = Authorization.find_or_initialize_by(
-            subject_class: 'Client',
-            subject_id:    membership.client_id,
-            membership_id: membership.id
-          )
-          authorization.save if authorization.new_record?
-
-          if permissions.include?('create_accounts') ||
-            permissions.include?('edit_account') ||
-            permissions.include?('delete_account') ||
-            permissions.include?('create_partner_domain')
-
-            authorization.client_scopes << client_manager
-            authorization.client_scopes << client_admin
-          end
-        end
-
-        if permissions.include?('view_projects')
-          authorization = Authorization.find_or_initialize_by(
-            subject_class: 'Client',
-            subject_id:    membership.client_id,
-            membership_id: membership.id
-          )
-          authorization.save if authorization.new_record?
-
-          authorization.client_scopes << client_access
-        end
-
-        if permissions.include?('create_project') ||
-          permissions.include?('edit_project') ||
-          permissions.include?('delete_project')
-
-          Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
-            authorization = Authorization.find_or_initialize_by(
-              subject_class: 'Project',
-              subject_id:    project_id,
-              membership_id: membership.id
-            )
-
-            authorization.save if authorization.new_record?
-
-            authorization.project_scopes << project_manager_role
-
-            if permissions.include?('edit_project_permissions')
-              authorization.project_scopes << project_admin
-            end
-          end
-        end
-
-        if permissions.include?('view_reports')
-          Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
-            authorization = Authorization.find_or_initialize_by(
-              subject_class: 'Project',
-              subject_id:    project_id,
-              membership_id: membership.id
-            )
-
-            authorization.save if authorization.new_record?
-
-            authorization.project_scopes << project_access
-          end
-        end
-
-        if permissions.include?('edit_report')
-          Report.includes(:project).references(:project).where(projects: { domain_id: membership.client_id })
-            .pluck(:id).each do |report_id|
-            authorization = Authorization.find_or_initialize_by(
-              subject_class: 'Report',
-              subject_id:    report_id,
-              membership_id: membership.id
-            )
-            authorization.save if authorization.new_record?
-
-            authorization.report_scopes << report_manager
-
-            authorization.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
-          end
-        end
-      end
     end
   end
 
@@ -457,6 +442,7 @@ namespace :import do
       exit
     end
 
+
     puts 'Checking if the client exists in old db'
     client_result = db_client.query("SELECT * FROM domains WHERE name = '#{options[:client_name]}'")
 
@@ -475,6 +461,18 @@ namespace :import do
       c.destroy
       puts 'Client removed, recreating...'
     end
+
+
+    client_manager       = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
+    client_admin         = Scopes::Role.call(role: Scopes::Role::CLIENT_ADMIN_ROLE).scopes
+    project_admin        = Scopes::Role.call(role: Scopes::Role::PROJECT_ADMIN_ROLE).scopes
+    project_manager_role = Scopes::Role.call(role: Scopes::Role::PROJECT_MANAGER_ROLE).scopes
+    report_admin_role    = Scopes::Role.call(role: Scopes::Role::REPORT_ADMIN_ROLE).scopes
+    report_manager       = Scopes::Role.call(role: Scopes::Role::REPORT_MANAGER_ROLE).scopes
+    client_access        = Scopes::Role.call(role: Scopes::Role::CLIENT_ACCESS_ROLE).scopes
+    project_access_role       = Scopes::Role.call(role: Scopes::Role::PROJECT_ACCESS_ROLE).scopes
+
+    researcher_scope = Scope.find_by(action: 'research', scope: 'user')
 
     logo_host = ENV["LOGO_HOST"] || 'http://researchresultswebsite.com/assets/'
 
@@ -565,6 +563,30 @@ namespace :import do
       )
       membership.save if membership.new_record?
 
+      client_id = get_client(row['domain_id'], clients_mapped)
+      permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = #{row['id']} GROUP BY account_id;")
+
+      client_auth = Authorization.find_or_initialize_by(
+          membership_id: membership.id,
+          subject_class: 'Client',
+          subject_id: client_id
+      )
+
+      client_auth.save if client_auth.new_record?
+
+      permissions_results.each do |row|
+        permissions = row['scopes'].split(',')
+
+        if permissions.include?('create_accounts') ||
+            permissions.include?('edit_account') ||
+            permissions.include?('delete_account') ||
+            permissions.include?('create_partner_domain')
+
+          client_auth.client_scopes << client_manager
+          client_auth.client_scopes << client_admin
+        end
+      end
       memberships << membership
 
       {
@@ -611,10 +633,14 @@ namespace :import do
 
     puts 'migration reports'
 
-    reports_results = db_client.query("SELECT * FROM reports INNER JOIN projects ON reports.project_id = projects.id WHERE projects.domain_id = #{old_client_id}")
+    reports_results = db_client.query(
+        "SELECT reports.* FROM reports
+         INNER JOIN projects ON reports.project_id = projects.id
+         WHERE projects.domain_id = #{old_client_id}"
+    )
 
     missing_reports_projects = []
-    mapped_reports = reports_results.collect do |row|
+    mapped_reports = reports_results.collect do  |row|
       project_row = get_project_row(row['project_id'], mapped_projects)
 
       begin
@@ -683,7 +709,8 @@ namespace :import do
     puts 'adding project authorizations'
 
     project_authorizations_results     = db_client.query(
-        "SELECT * FROM project_accesses INNER JOIN projects ON projects.id = project_accesses.project_id WHERE projects.domain_id = '#{old_client_id}'"
+        "SELECT project_accesses.* FROM project_accesses INNER JOIN projects ON projects.id = project_accesses.project_id
+        WHERE projects.domain_id = '#{old_client_id}'"
     )
     missing_authorizations_project_ids = []
 
@@ -714,9 +741,34 @@ namespace :import do
         if membership
           auth.membership_id = membership.id
           auth.save
+
+          permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = #{row['account_id']} GROUP BY account_id;")
+          proj = Project.find(new_project_id)
+
+          client_authorization = Authorization.find_or_initialize_by(subject_id: proj.domain_id, subject_class: 'Client', membership_id: membership.id)
+          client_authorization.save if client_authorization.new_record?
+
+          permissions_results.each do |row|
+            permissions = row['scopes'].split(',')
+
+            if permissions.include?('create_project') ||
+                permissions.include?('edit_project') ||
+                permissions.include?('delete_project')
+              auth.project_scopes << project_manager_role
+
+              if permissions.include?('edit_project_permissions')
+                auth.project_scopes << project_admin
+              end
+            end
+
+            if permissions.include?('view_reports')
+              auth.project_scopes << project_access_role
+            end
+          end
+
         end
       end
-
       next if authorization.new_record?
 
       {
@@ -729,7 +781,10 @@ namespace :import do
     end
     puts "counter for projects #{missing_authorizations_project_ids.size}"
 
-    report_authorizations_results = db_client.query("SELECT * FROM report_accesses WHERE report_id IN (#{mapped_reports.map { |r| r[:old_id] }.join(',')})")
+    report_authorizations_results = db_client.query(
+        "SELECT report_accesses.* FROM report_accesses
+         WHERE report_id IN (#{mapped_reports.map { |r| r[:old_id] }.join(',')})"
+    )
     missing_report_authorizations = []
 
     puts 'adding reports authorizations'
@@ -763,6 +818,36 @@ namespace :import do
         if membership
           auth.membership_id = membership.id
           auth.save
+
+          report = Report.find(new_report_row[:new_id])
+
+          project_authorization = Authorization.find_or_initialize_by(
+              subject_class: 'Project',
+              subject_id: report.project_id,
+              membership_id: membership.id
+          )
+          project_authorization.save if project_authorization.new_record?
+
+          client_authorization = Authorization.find_or_initialize_by(
+              subject_class: 'Client',
+              subject_id: report.project.domain_id,
+              membership_id: membership.id
+          )
+
+          client_authorization.save if client_authorization.new_record?
+
+          permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
+        WHERE account_id = '#{row['account_id']}' GROUP BY account_id;")
+
+          auth.save
+          permissions_results.each do |row|
+            permissions = row['scopes'].split(',')
+
+            if permissions.include?('edit_report')
+              auth.report_scopes << report_manager
+              auth.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
+            end
+          end
         end
       end
 
@@ -772,120 +857,6 @@ namespace :import do
           authorization: authorization
       }
     end
-
-
-    permissions_results = db_client.query("SELECT account_id, GROUP_CONCAT(code, '') as scopes FROM permissions
-        WHERE account_id IN(#{mapped_users.map{|i| i[:old_id]}.join(',')}) GROUP BY account_id;")
-
-    client_manager       = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
-    client_admin         = Scopes::Role.call(role: Scopes::Role::CLIENT_MANAGER_ROLE).scopes
-    project_admin        = Scopes::Role.call(role: Scopes::Role::PROJECT_ADMIN_ROLE).scopes
-    project_manager_role = Scopes::Role.call(role: Scopes::Role::PROJECT_MANAGER_ROLE).scopes
-    report_admin_role    = Scopes::Role.call(role: Scopes::Role::REPORT_ADMIN_ROLE).scopes
-    report_manager       = Scopes::Role.call(role: Scopes::Role::REPORT_MANAGER_ROLE).scopes
-    client_access        = Scopes::Role.call(role: Scopes::Role::CLIENT_ACCESS_ROLE).scopes
-    project_access       = Scopes::Role.call(role: Scopes::Role::PROJECT_ACCESS_ROLE).scopes
-
-    researcher_scope = Scope.find_by(action: 'research', scope: 'user')
-
-    puts ' Adding scopes - long running task, please wait'
-    permissions_results.each do |row|
-      permissions = row['scopes'].split(',')
-      user        = get_user_row(row['account_id'], mapped_users)
-      unless user
-        puts "skipping #{row} because the user does not exist"
-        next
-      end
-      memberships_d = memberships.select { |i| i.user_id == user[:new_id] }
-
-      user[:instance].scopes << researcher_scope if permissions.include?('research_project')
-
-      puts 'working'
-
-      # Projects permissions
-      memberships_d.each do |membership|
-        if permissions.include?('view_domains')
-          authorization = Authorization.find_or_initialize_by(
-              subject_class: 'Client',
-              subject_id:    membership.client_id,
-              membership_id: membership.id
-          )
-          authorization.save if authorization.new_record?
-
-          if permissions.include?('create_accounts') ||
-              permissions.include?('edit_account') ||
-              permissions.include?('delete_account') ||
-              permissions.include?('create_partner_domain')
-
-            authorization.client_scopes << client_manager
-            authorization.client_scopes << client_admin
-          end
-        end
-
-        if permissions.include?('view_projects')
-          authorization = Authorization.find_or_initialize_by(
-              subject_class: 'Client',
-              subject_id:    membership.client_id,
-              membership_id: membership.id
-          )
-          authorization.save if authorization.new_record?
-
-          authorization.client_scopes << client_access
-        end
-
-        if permissions.include?('create_project') ||
-            permissions.include?('edit_project') ||
-            permissions.include?('delete_project')
-
-          Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
-            authorization = Authorization.find_or_initialize_by(
-                subject_class: 'Project',
-                subject_id:    project_id,
-                membership_id: membership.id
-            )
-
-            authorization.save if authorization.new_record?
-
-            authorization.project_scopes << project_manager_role
-
-            if permissions.include?('edit_project_permissions')
-              authorization.project_scopes << project_admin
-            end
-          end
-        end
-
-        if permissions.include?('view_reports')
-          Project.where(domain_id: membership.client_id).pluck(:id).each do |project_id|
-            authorization = Authorization.find_or_initialize_by(
-                subject_class: 'Project',
-                subject_id:    project_id,
-                membership_id: membership.id
-            )
-
-            authorization.save if authorization.new_record?
-
-            authorization.project_scopes << project_access
-          end
-        end
-
-        if permissions.include?('edit_report')
-          Report.includes(:project).references(:project).where(projects: { domain_id: membership.client_id })
-              .pluck(:id).each do |report_id|
-            authorization = Authorization.find_or_initialize_by(
-                subject_class: 'Report',
-                subject_id:    report_id,
-                membership_id: membership.id
-            )
-            authorization.save if authorization.new_record?
-
-            authorization.report_scopes << report_manager
-
-            authorization.report_scopes << report_admin_role if permissions.include?('edit_report_permissions')
-          end
-        end
-      end
-    end
-
   end
 
   task synchronize_auth: :environment do
