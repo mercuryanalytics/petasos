@@ -114,6 +114,8 @@ const SideMenu = props => {
             if (action.payload.length) {
               const sortedProjects = sortProjects(action.payload);
               defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
+            } else {
+              defaultRoutes.client = Routes.ManageClient.replace(':id', sortedClients[0].id);
             }
           }, () => {})
         }

@@ -250,7 +250,7 @@ const ReportManage = props => {
       {editMode && canManage && (
         <div className={`${styles.section} ${styles.right}`}>
           <div className={styles.title}>
-            <span>Report view</span>
+            <span>Report (with Project & Client) View</span>
           </div>
           <UserActions
             className={styles.grantActions}

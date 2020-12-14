@@ -378,7 +378,7 @@ export function authorizeUser(id, contextId, res, states, context = null) {
     client_id: contextId,
   }, states);
   return dispatch => {
-    let url = context === 'project' ?
+    let url = context === 'project' || context === 'report' ?
         `${Constants.API_URL}/${resPath}/${resId}/authorize?access=1` :
         `${Constants.API_URL}/${resPath}/${resId}/authorize`
     return apiCall('POST', url, { body: JSON.stringify(data) })
