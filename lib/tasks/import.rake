@@ -920,7 +920,9 @@ namespace :import do
   def get_client(domain_id, clients)
     return nil unless domain_id
 
-    clients.select { |i| i[:old_id] == domain_id }.first[:new_id]
+    client = clients.select { |i| i[:old_id] == domain_id }.first
+    return client[:new_id] if client
+    nil
   end
 
   def get_subdomain(db_client, client_id)
