@@ -88,7 +88,7 @@ module Api
         status = base_authorization.status == :ok ? :created : :no_content
         authorization = base_authorization.authorization
 
-        if params[:access] && authorization
+        if params[:access] && authorization && params[:authorize]
           project = report.project
           Authorizations::AddAuthorization.call(
               user_id: authorize_params[:user_id],
@@ -102,6 +102,27 @@ module Api
               user_id: authorize_params[:user_id],
               client_id: authorize_params[:client_id]
           )
+        end
+
+        if params[:access] && !params[:authorize]
+          membership = Membership.find_by(
+              user_id: authorize_params[:user_id],
+              client_id: authorize_params[:client_id]
+          )
+
+          project = report.project
+          Authorization.find_by(
+              subject_class: 'Project',
+              subject_id: project.id,
+              membership_id: membership.id
+          )&.destroy if membership
+
+          client = project.client
+          Authorization.find_by(
+              subject_class: 'Client',
+              subject_id: client.id,
+              membership_id: membership.id
+          )&.destroy if membership
         end
 
         return head status unless current_user.admin? && authorization

@@ -58,16 +58,37 @@ module Api
       end
 
       def authorize
+        project = Project.find(params[:id])
         base_authorization = Authorizations::BaseAuthorization.call(
           params: authorize_params.to_h,
-          project: Project.find(params[:id])
+          project: project
         )
 
         render error_response(base_authorization.message) && return unless base_authorization.success?
 
         status = base_authorization.status == :ok ? :created : :no_content
         authorization = base_authorization.authorization
-        authorization.scopes << Scope.find_by(action: 'access', scope: 'project') if params[:access] && authorization
+        if params[:access] && authorization && params[:authorize]
+          authorization.scopes << Scope.find_by(action: 'access', scope: 'project')
+
+          client = project.client
+          Authorizations::AddAuthorization.call(
+              client: client,
+              user_id: authorize_params[:user_id],
+              client_id: authorize_params[:client_id]
+          )
+        end
+
+        if params[:access] && !params[:authorize]
+          client = project.client
+
+          membership = Membership.find_by(user_id: authorize_params[:user_id], client_id: authorize_params[:client_id])
+          Authorization.find_by(
+              subject_class: 'Client',
+              subject_id: client.id,
+              membership_id: membership.id
+          )&.destroy if membership
+        end
 
         return head status unless current_user.admin? && authorization
 
