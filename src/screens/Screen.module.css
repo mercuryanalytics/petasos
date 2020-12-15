@@ -14,9 +14,9 @@
 }
 
 .body .side {
-  width: 330px;
-  min-width: 330px;
-  max-width: 330px;
+  width: 500px;
+  min-width: 500px;
+  max-width: 500px;
   height: calc(100vh - 72px);
   padding: 0 28px 2rem 18px;
   box-sizing: border-box;

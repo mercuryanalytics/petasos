@@ -8,6 +8,7 @@ import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input } from './FormFields';
 import { getUser, createUser, updateUser } from '../store/users/actions';
+import { setUser } from "../store/auth/actions";
 
 const UserManage = props => {
   const { id, embeded, preview, clientId, canEdit, disableAccountChange } = props;
@@ -19,7 +20,7 @@ const UserManage = props => {
   const [isEditClicked, setIsEditClicked] = useState(false);
   const data = useSelector(state =>
     editMode ? state.usersReducer.users.filter(u => u.id === id)[0] : null);
-
+  const authUser = useSelector(state => state.authReducer.user)
   useEffect(() => {
     setIsEditClicked(false);
     if (!!id && (!data || data.id !== !!id)) {
@@ -84,9 +85,12 @@ const UserManage = props => {
         result.client_id = clientId;
       }
       if (editMode) {
-        data && dispatch(updateUser(data.id, result)).then(() => {
+        data && dispatch(updateUser(data.id, result)).then((response) => {
           form.reset();
           setIsBusy(false);
+          if (id === authUser.id) {
+            dispatch(setUser(response.payload))
+          }
         }, () => {
           setIsBusy(false);
         });

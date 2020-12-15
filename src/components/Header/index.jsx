@@ -5,9 +5,11 @@ import Routes from '../../utils/routes';
 import SuperUserLink from './SuperUserLink';
 import UserMenu from './UserMenu';
 import { isSuperUser } from '../../store';
+import { useSelector } from "react-redux";
 
 const Header = props => {
   const { authUser, localUser, isSocialLogin, logo, slogan } = props;
+  const userInStore = useSelector(state => state.authReducer.user)
 
   return (
     <div className={styles.container}>
@@ -23,7 +25,7 @@ const Header = props => {
       </div>
       <div className={styles.controls}>
         {isSuperUser(localUser.id) && <SuperUserLink />}
-        <UserMenu authUser={authUser} localUser={localUser} isSocialLogin={isSocialLogin} />
+        <UserMenu authUser={authUser} localUser={userInStore} isSocialLogin={isSocialLogin} />
       </div>
     </div>
   );
