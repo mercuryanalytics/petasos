@@ -82,7 +82,7 @@ Orphan reports
 
 # Add new dynamic scope
 In order to add a new dynamic scope, you'll need to run the following rake task:
-`bundle exec rake scopes:create -- --action=do_something --scope=projects --description="small description of the scope" --name scope_name`
+`bundle exec rake scopes:create:dynamic -- --action=do_something --scope=projects --description="small description of the scope" --name scope_name`
 
 Note that the `scope` argument should be a value from `clients`, `projects`, `reports`
 

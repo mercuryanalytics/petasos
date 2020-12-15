@@ -1,0 +1,48 @@
+inherit_from: ~/.rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.5
+  TargetRailsVersion: 6.0
+  Exclude:
+    - "bin/*"
+    - "db/schema.rb"
+    - "lib/tasks/cucumber.rake"
+    - "sandbox/**/*"
+    - "public/dispatch.rb"
+
+Rails:
+  Enabled: true
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/BlockComments:
+  Enabled: false
+  Exclude:
+    - "config/routes.rb"
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Style/RegexpLiteral:
+  EnforcedStyle: percent_r
+  AllowInnerSlashes: false
+  Exclude:
+    - "features/**/*"
+
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - "features/**/*"
+
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+
+Rails/SkipsModelValidations:
+  Exclude:
+    - "db/migrate/*"
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
