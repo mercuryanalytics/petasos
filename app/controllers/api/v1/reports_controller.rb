@@ -10,6 +10,22 @@ module Api
           json_response(Report.where(project_id: params[:project_id]).includes(:project).order(updated_at: :desc).accessible_by(current_ability).all)
           return
         end
+
+        if params[:client_id]
+          return json_response([]) if current_user.admin?
+
+          project_authorizations = Project.authorized_for_user(current_user.membership_ids).pluck(:id)
+
+          json_response(
+              Report
+                  .includes(:project)
+                  .where(projects: { domain_id: params[:client_id]} )
+                  .order(updated_at: :desc)
+                  .where.not(projects: { id: project_authorizations })
+                  .accessible_by(current_ability).all)
+          return
+        end
+
         json_response(Report.includes(:project).accessible_by(current_ability).order(updated_at: :desc).all)
       end
 
@@ -60,15 +76,33 @@ module Api
       end
 
       def authorize
+        report = Report.find(params[:id])
+
         base_authorization = Authorizations::BaseAuthorization.call(
           params: authorize_params.to_h,
-          report: Report.find(params[:id])
+          report: report
         )
 
         render error_response(base_authorization.message) && return unless base_authorization.success?
 
         status = base_authorization.status == :ok ? :created : :no_content
         authorization = base_authorization.authorization
+
+        if params[:access] && authorization
+          project = report.project
+          Authorizations::AddAuthorization.call(
+              user_id: authorize_params[:user_id],
+              project: project,
+              client_id: authorize_params[:client_id]
+          )
+
+          client = project.client
+          Authorizations::AddAuthorization.call(
+              client: client,
+              user_id: authorize_params[:user_id],
+              client_id: authorize_params[:client_id]
+          )
+        end
 
         return head status unless current_user.admin? && authorization
 
