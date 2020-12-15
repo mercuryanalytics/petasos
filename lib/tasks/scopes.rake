@@ -39,7 +39,7 @@ namespace :scopes do
       TALARIA_GLOBAL_SCOPES = [
         {
           scope: "workbench",
-          action: "admin",
+          action: "operator",
           name: "Workbench Admin",
           description: "For engineering team",
           global: true
@@ -71,28 +71,28 @@ namespace :scopes do
         {
           scope: "clients",
           action: "download_hart_data",
-          name: "Download Hart Research Data Format",
+          name: "Hart Research Data Format",
           description: "Can download Hart Research data format on Workbench",
           dynamic: true
         },
         {
           scope: "clients",
           action: "download_gba_data",
-          name: "Download GBA Strategies Data Format",
+          name: "GBA Strategies Data Format",
           description: "Can download GBA Strategies data format on Workbench",
           dynamic: true
         },
         {
           scope: "clients",
           action: "download_g2_data",
-          name: "Download G2analytics Data Format",
+          name: "G2analytics Data Format",
           description: "Can download G2analytics data format on Workbench",
           dynamic: true
         },
         {
           scope: "clients",
           action: "download_gpg_data",
-          name: "Download GPG Data Format",
+          name: "GPG Data Format",
           description: "Can download GPG data format on Workbench",
           dynamic: true
         }
