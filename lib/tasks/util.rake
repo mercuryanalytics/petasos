@@ -29,8 +29,8 @@ namespace :util do
       database: options[:database_name]
     )
 
-    domains = db_client.query("SELECT * FROM domains ORDER BY company_name").to_a.each.with_object({}) do |row, ds|
-      ds[row["id"]] = row["company_name"]
+    domains = db_client.query("SELECT * FROM domains ORDER BY name").to_a.each.with_object({}) do |row, ds|
+      ds[row["id"]] = row["name"]
     end
 
     CSV do |csv|
