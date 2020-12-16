@@ -92,6 +92,9 @@ const Auth = props => {
         redirectUri: callbackUrl,
       };
     }
+    if (config.audience) {
+      authConfig.audience = config.audience;
+    }
     return new auth0.WebAuth(
       Object.assign({
         domain: config.domain,
