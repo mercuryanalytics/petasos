@@ -8,7 +8,7 @@ const authConfig = {
   clientId: 'gGZDDRXWMgdEzA5RaWzT8yR0ysvOce0B',
   loginUrl: `${Constants.APP_URL}${Routes.Login}`,
   callbackUrl: `${Constants.APP_URL}${Routes.LoginCallback}`,
-  // audience: 'http://localhost:3000',
+  audience: 'https://researchresultswebsite.com/',
   socialConnectors: [
     {
       type: 'google-oauth2',
