@@ -15,12 +15,12 @@ module MercurySsoAuth0
     end
 
     DEFAULT_SCOPES = { data: { global: {}, client: {}, report: {}, project: {} } }.to_json
-    def scopes(session)
+    def scopes(_session)
       # return session['scopes'] if session.key?('scopes')
 
-      @response ||= ::RestClient.get(
+      @scopes ||= ::RestClient.get(
         MercurySsoAuth0.api_url + '/api/v1/users/me',
-        'Authorization': 'Bearer ' + attributes['credentials']['id_token']
+        Authorization: 'Bearer ' + attributes['credentials']['id_token']
       ) do |response|
         body = response.body
         body = DEFAULT_SCOPES if body.empty?
