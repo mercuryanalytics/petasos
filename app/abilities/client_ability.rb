@@ -16,8 +16,7 @@ class ClientAbility
     can :view, Client, id: client_ids
 
     return unless client_id
-    return unless current_membership
-    return unless current_authorization
+    return unless current_membership || current_authorization
 
     scopes = current_authorization.client_scopes
 
@@ -43,6 +42,8 @@ class ClientAbility
   end
 
   def current_authorization
-    current_membership.clients_authorizations.where(subject_id: client_id).first
+    return current_membership.clients_authorizations.where(subject_id: client_id).first if current_membership
+
+    user.authorizations.select { |auth| auth.subject_class == 'Client' && auth.subject_id == client_id.to_i }.first
   end
 end

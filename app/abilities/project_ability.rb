@@ -18,7 +18,7 @@ class ProjectAbility
     projects_authorizations.find_each do |project_authorization|
       project_authorization.project_scopes.each do |scope|
         if scope.action =='access'
-          can :manage, Project, id: project_authorization.subject_id
+          can :view, Project, id: project_authorization.subject_id
         end
 
         can scope.action.to_sym, Project, id: project_authorization.subject_id
