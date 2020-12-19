@@ -29,7 +29,7 @@ import Modal from "./common/Modal";
 import {useField, useForm} from "react-final-form-hooks";
 
 const ResourceActions = props => {
-  const { templateMode, clientId, userId } = props;
+  const { templateMode, clientId, userId, context } = props;
   const dispatch = useDispatch();
   const scopes = useSelector(state => state.usersReducer.scopes);
   const authorizations = useSelector(state => state.usersReducer.authorizations);
@@ -191,12 +191,12 @@ const ResourceActions = props => {
     setRowActiveStates(prev => ({ ...prev, ...newStates }));
   }, [clients, projects, reportsSource, rowActiveStates, getItemStatus]);
 
-  const setItemStatus = useCallback((type, id, parentId, status, role, scopeId, isGlobal) => {
+  const setItemStatus = useCallback((type, id, parentId, status, role, scopeId, isGlobal, context) => {
     let newStates = { [[`${userId}-${type}-${id}-${role || scopeId || 'viewer'}`]]: status };
     let options, states, promises = [];
     const getAuthorizeAction = (options, states) => {
       if (!templateMode) {
-        return authorizeUser(userId, parentId, options, states);
+        return authorizeUser(userId, parentId, options, states, context);
       }
       const data = {
         resource_type: type,
@@ -420,12 +420,12 @@ const ResourceActions = props => {
       <Checkbox
         className={styles.itemCheckbox}
         checked={getItemStatus(resType, resId, managerRole)}
-        onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, managerRole)}
+        onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, managerRole, null, null, context)}
       />
       <Checkbox
         className={styles.itemCheckbox}
         checked={getItemStatus(resType, resId, adminRole)}
-        onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, adminRole)}
+        onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, adminRole, null, null, context)}
       />
       {!clientId && !!scopes.dynamic && scopes.dynamic.map((s, i) => !!filters[s.id] && (
         <Checkbox
@@ -437,7 +437,7 @@ const ResourceActions = props => {
           `}
           disabled={s.scope !== `${resType}s`}
           checked={getItemStatus(resType, resId, null, s.id)}
-          onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, null, s.id)}
+          onChange={e => setItemStatus(resType, resId, parentId, !!e.target.checked, null, s.id, null, context)}
         />
       ))}
     </>;
@@ -579,7 +579,7 @@ const ResourceActions = props => {
                   ))
                 )}
                 checked={getItemStatus(null, null, null, s.id, true)}
-                onChange={e => setItemStatus(null, null, null, !!e.target.checked, null, s.id, true)}
+                onChange={e => setItemStatus(null, null, null, !!e.target.checked, null, s.id, true, context)}
               />
             ))}
           </div>
@@ -637,13 +637,13 @@ const ResourceActions = props => {
                 <Checkbox
                   className={styles.itemCheckbox}
                   checked={getItemStatus('client', client.id, UserRoles.ClientAccess)}
-                  onChange={e => setItemStatus('client', client.id, client.id, !!e.target.checked, UserRoles.ClientAccess)}
+                  onChange={e => setItemStatus('client', client.id, client.id, !!e.target.checked, UserRoles.ClientAccess, null, null, context)}
                 />
                 <Toggle
                   id={`client-toggle-${client.id}`}
                   className={styles.itemToggle}
                   checked={getItemStatus('client', client.id)}
-                  onChange={status => setItemStatus('client', client.id, client.id, status)}
+                  onChange={status => setItemStatus('client', client.id, client.id, status, null, null, null, context)}
                 />
                 {renderColumnCheckboxes('client', client.id, client.id)}
               </div>
@@ -673,13 +673,13 @@ const ResourceActions = props => {
                         <Checkbox
                           className={styles.itemCheckbox}
                           checked={getItemStatus('project', project.id, UserRoles.ProjectAccess)}
-                          onChange={e => setItemStatus('project', project.id, client.id, !!e.target.checked, UserRoles.ProjectAccess)}
+                          onChange={e => setItemStatus('project', project.id, client.id, !!e.target.checked, UserRoles.ProjectAccess, null, null, context)}
                         />
                         <Toggle
                           id={`project-toggle-${project.id}`}
                           className={styles.itemToggle}
                           checked={getItemStatus('project', project.id)}
-                          onChange={status => setItemStatus('project', project.id, project.domain_id, status)}
+                          onChange={status => setItemStatus('project', project.id, project.domain_id, status, null, null, null, context)}
                         />
                         {renderColumnCheckboxes('project', project.id, project.domain_id)}
                       </div>
@@ -702,7 +702,7 @@ const ResourceActions = props => {
                                   className={styles.itemToggle}
                                   checked={getItemStatus('report', report.id)}
                                   onChange={status =>
-                                    setItemStatus('report', report.id, report.project.domain_id, status)}
+                                    setItemStatus('report', report.id, report.project.domain_id, status, null, null, null, context)}
                                 />
                                 {renderColumnCheckboxes('report', report.id, report.project.domain_id)}
                               </div>

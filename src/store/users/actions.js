@@ -381,6 +381,10 @@ export function authorizeUser(id, contextId, res, states, context = null) {
     let url = context === 'project' || context === 'report' ?
         `${Constants.API_URL}/${resPath}/${resId}/authorize?access=1` :
         `${Constants.API_URL}/${resPath}/${resId}/authorize`
+    if (context === 'admin') {
+      url = `${Constants.API_URL}/${resPath}/${resId}/authorize?from_admin=1`;
+    }
+
     return apiCall('POST', url, { body: JSON.stringify(data) })
       .then(
         async (res) => {
