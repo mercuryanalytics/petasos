@@ -1,6 +1,5 @@
 module MercurySsoAuth0
   module Authenticated
-
     def self.included(base)
       base.class_eval do
         before_action :authenticated?
@@ -15,8 +14,9 @@ module MercurySsoAuth0
     def authenticated?
       return true if session[:userinfo].present?
 
-      session[:authentication_intercept] = request.fullpath
+      session[:authentication_intercept] ||= request.fullpath
       redirect_to sso_login.to_s
+      false
     end
 
     def sso_login
