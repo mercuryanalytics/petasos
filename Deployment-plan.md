@@ -1,5 +1,12 @@
 # Deployment Changes for RRW
 
+The following systems need to be updated:
+1. Front end
+1. Back end
+1. Auth0
+1. AWS CodePipeline
+1. AWS Chatbot
+
 ## Frontend Deployment Changes
 
 ### Reconfigure AWS CodePipeline
