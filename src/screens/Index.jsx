@@ -131,16 +131,17 @@ const Index = props => {
         setIsAccessBlocked(!hasRoleOnClient(user.id, +params.clientId, UserRoles.ClientAdmin));
         break;
       case ContentTypes.ManageProject:
-        setIsAccessBlocked(!hasRoleOnProject(user.id, resId, UserRoles.Viewer));
+        setIsAccessBlocked(!(hasRoleOnProject(user.id, resId, UserRoles.Viewer) ||
+            hasRoleOnClient(user.id, data.client?.id, UserRoles.ClientAdmin)));
         break;
       case ContentTypes.CreateReport:
         setIsAccessBlocked(
           !hasRoleOnProject(user.id, +params.projectId, UserRoles.ProjectManager) &&
-          !hasRoleOnClient(user.id, data.client.id, UserRoles.ClientManager)
+          !hasRoleOnClient(user.id, data.client?.id, UserRoles.ClientManager)
         );
         break;
       case ContentTypes.ManageReport:
-        setIsAccessBlocked(!hasRoleOnReport(user.id, resId, UserRoles.Viewer));
+        setIsAccessBlocked(!(hasRoleOnReport(user.id, resId, UserRoles.Viewer) || hasRoleOnClient(user.id, data.client.id, UserRoles.ClientManager)));
         break;
     }
   }, [content, resId, params]);

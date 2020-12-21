@@ -79,7 +79,7 @@ const SuperUser = () => {
             )) ||
             (tab === Tabs.Permissions && (
               selectedUserId !== null && (
-                <ResourceActions userId={selectedUserId} />
+                <ResourceActions userId={selectedUserId} context={'admin'} />
               )
             ))}
             {selectedUserId === null && (
