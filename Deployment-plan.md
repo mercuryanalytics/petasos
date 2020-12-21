@@ -1,7 +1,7 @@
 # Deployment Changes for RRW
 
 The following systems need to be updated:
-1. SSO Front end
+1. [SSO Front end|Front end deployment]
 2. SSO Back end
 3. Auth0
 4. AWS CodePipeline
