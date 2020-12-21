@@ -7,7 +7,11 @@
 * Click on Mercury-Analytics-Codepipeline-Demo>Edit>Edit build (Edit Stage) and select git repo (https://github.com/mercuryanalytics/mercury-analytics-frontend.git ) with master branch.
 * Choose the correct distribution ID (E9FR9DKG3N589) and Bucket name (www.researchresultswebsite.com) that points to researchresultswebsite.com. 
 * Go to AWS Chatbot select Mercury Analytics from left panel and select AWS-Codepipeline-Frontend-Notifications > Edit > Topic. Select Mercury-Analytics-Codepipeline-Demo
-
+* Modify `src/auth-config.js` to point to `auth.researchresultswebsite.com`
+```
+const authConfig = {
+  domain: 'auth.researchresultswebsite.com',
+```
 
 
 ## Backend Deployment Changes
