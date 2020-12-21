@@ -1,11 +1,42 @@
 # Deployment Changes for RRW
 
 The following systems need to be updated:
-1. Front end
-1. Back end
-1. Auth0
-1. AWS CodePipeline
-1. AWS Chatbot
+1. SSO Front end
+2. SSO Back end
+3. Auth0
+4. AWS CodePipeline
+5. AWS Chatbot
+6. Workbench
+7. NBCU Data Capture
+
+## Pre deployment
+1. Try to rename `api.ratethedebate.com` to `api.researchresultswebsite.com` and configure the front end to point there with no other changes.
+2. Set up new front-end buckets; `ratethedebate.com` should be the primary bucket, and `www.ratethedebate.com` is the alias (other aliases to be determined).
+3. Test run the database import tasks.
+  1. Drop current ratethedebate database
+  2. Recreate it from the migrations (`rake db:setup`)
+  3. Run the import script
+  4. Run the scope-creation script
+  5. Run the census export script
+  6. Run the census import script
+
+## Deployment steps
+1. Change AWS CodePipeline and Chatbot to deploy to `researchresultswebsite.com`.
+2. Change frontend auth-config to use `auth.researchresultswebsite.com`, and deploy.
+3. Declare maintenance phase.
+4. Reimport the petasos database.
+5. Stop the old SSO server.
+6. Run the scope-creation rake task.
+7. Run the census rake task and import it to workbench.
+8. Deploy SSO backend with modified config.
+9. Deploy workbench with modified config.
+10. Deploy nbcu-data-capture with modified config.
+11. Change auth0 custom domain name to `auth.researchresultswebsite.com` and get it verified.
+12. Change DNS entries to point to the new S3 buckets.
+13. Smoke test.
+14. Announce end of maintenance.
+
+---
 
 ## Frontend Deployment Changes
 
@@ -34,10 +65,8 @@ const authConfig = {
 
 ## Backend Deployment Changes
 
-* Go to root project
-* Run EDITOR=vim bundle exec rails credentials:edit
+Run `bundle exec rails credentials:edit` to make the following changes:
 
-Changes to be made in the file is as follows
 ```
 secret_key_base: 6ee7476c8e3ecdc24defe972151a802f33746cf4a83e97a3c2570cc0ab9937ff33accd63d724bbc431bf7fc44d4d62e9a2e0fc2c31773409ecb64f2b549f7b34
 app_host: https://www.researchresultswebsite.com/
@@ -58,4 +87,5 @@ aws:
   region: us-east-1
   bucket: www.researchresultswebsite.com
 ```
-* Switch over DNS entries
+
+Check in the modified `config/credentials.yml.enc` and deploy.
