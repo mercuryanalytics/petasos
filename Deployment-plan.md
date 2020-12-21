@@ -21,14 +21,14 @@ secret_key_base: 6ee7476c8e3ecdc24defe972151a802f33746cf4a83e97a3c2570cc0ab9937f
 app_host: https://www.researchresultswebsite.com/
 
 auth0:
-  iss: https://dev-oxtggqjp.auth0.com/
+  iss: https://auth.researchresultswebsite.com/
   audience: https://www.researchresultswebsite.com/
     
 management_api:
-  base_url: https://dev-oxtggqjp.auth0.com/
+  base_url: https://auth.researchresultswebsite.com/
   client_id: XfTCmnYbCiePNBBcYsWsT4yTdCcvj71Z
   client_secret: fgRDJDUAWObqUFKnAA_s1D1YvKKVq3pDq0BnLvkEmYP8Pdyjhste9boeS0pBKMR
-  audience: https://dev-oxtggqjp.auth0.com/api/v2/
+  audience: https://auth.researchresultswebsite.com/api/v2/
     
 aws:
   access_key_id: AKIA3VZQKJDI5NKH33K2
