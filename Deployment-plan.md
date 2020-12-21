@@ -2,17 +2,28 @@
 
 ## Frontend Deployment Changes
 
-* Login to your AWS account and go to Codepipeline
-* Choose the AWS Codepipeline (Mercury-Analytics-Codepipeline-Demo)
-* Click on Mercury-Analytics-Codepipeline-Demo>Edit>Edit build (Edit Stage) and select git repo (https://github.com/mercuryanalytics/mercury-analytics-frontend.git ) with master branch.
-* Choose the correct distribution ID (E9FR9DKG3N589) and Bucket name (www.researchresultswebsite.com) that points to researchresultswebsite.com. 
-* Go to AWS Chatbot select Mercury Analytics from left panel and select AWS-Codepipeline-Frontend-Notifications > Edit > Topic. Select Mercury-Analytics-Codepipeline-Demo
+### Reconfigure AWS CodePipeline
+
+* Edit `Mercury-Analytics-Codepipeline-Demo` (Edit > Edit build), selecting the `mercuryanalytics/mercury-analytics-frontend` repo's master branch.
+* Choose the correct distribution ID (`E9FR9DKG3N589`) and Bucket name (`www.researchresultswebsite.com`) that points to researchresultswebsite.com.
+
+### Reconfigure AWS Chatbot
+* Edit the `AWS-Codepipeline-Frontend-Notifications` topic. Select `Mercury-Analytics-Codepipeline-Demo`.
 * Modify `src/auth-config.js` to point to `auth.researchresultswebsite.com`
 ```
 const authConfig = {
   domain: 'auth.researchresultswebsite.com',
 ```
-* Switch over DNS entries
+
+### Configure Auth0
+* Change the custom domain to be `auth.researchresultswebsite.com`
+* Change the DNS entry for `auth.researchresultswebsite.com` to be the CNAME indicated.
+* Verify the domain.
+
+### Configure DNS
+* `researchresultswebiste.com` and subdomains other than `api` and `auth` should be pointing to the S3 bucket.
+* `api.researchresultswebsite.com` should be pointing to the backend server.
+* `auth.researchresultswebsite.com` should be a CNAME for the auth0 domain, as set in the Auth0 config.
 
 ## Backend Deployment Changes
 
