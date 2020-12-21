@@ -67,35 +67,36 @@ namespace :scopes do
         }
       ].freeze
 
+      # TODO: Reemplement these scopes once dynamic scopes are fixed
       TALARIA_DYNAMIC_SCOPES = [
-        {
-          scope: "clients",
-          action: "download_hart_data",
-          name: "Hart Research Data Format",
-          description: "Can download Hart Research data format on Workbench",
-          dynamic: true
-        },
-        {
-          scope: "clients",
-          action: "download_gba_data",
-          name: "GBA Strategies Data Format",
-          description: "Can download GBA Strategies data format on Workbench",
-          dynamic: true
-        },
-        {
-          scope: "clients",
-          action: "download_g2_data",
-          name: "G2analytics Data Format",
-          description: "Can download G2analytics data format on Workbench",
-          dynamic: true
-        },
-        {
-          scope: "clients",
-          action: "download_gpg_data",
-          name: "GPG Data Format",
-          description: "Can download GPG data format on Workbench",
-          dynamic: true
-        }
+        # {
+        #   scope: "clients",
+        #   action: "download_hart_data",
+        #   name: "Hart Research Data Format",
+        #   description: "Can download Hart Research data format on Workbench",
+        #   dynamic: true
+        # },
+        # {
+        #   scope: "clients",
+        #   action: "download_gba_data",
+        #   name: "GBA Strategies Data Format",
+        #   description: "Can download GBA Strategies data format on Workbench",
+        #   dynamic: true
+        # },
+        # {
+        #   scope: "clients",
+        #   action: "download_g2_data",
+        #   name: "G2analytics Data Format",
+        #   description: "Can download G2analytics data format on Workbench",
+        #   dynamic: true
+        # },
+        # {
+        #   scope: "clients",
+        #   action: "download_gpg_data",
+        #   name: "GPG Data Format",
+        #   description: "Can download GPG data format on Workbench",
+        #   dynamic: true
+        # }
       ].freeze
 
       NBCU_SCOPES = [
@@ -104,7 +105,7 @@ namespace :scopes do
           action: "access_biometrics",
           name: "Biometrics Access",
           description: "Can use the NBCU biometrics tool",
-          dynamic: true
+          global: true
         }
       ].freeze
 
@@ -114,8 +115,35 @@ namespace :scopes do
           p.description = scope[:description]
         end
         permission.save!
+        puts "Created/Updated talaria scope #{permission.action} with name #{permission.name}"
       end
-      puts "Created talaria scopes"
+
+      DEPRICATED_SCOPE_DESCRIPTIONS = [
+        {
+          scope: "projects",
+          action: "financial_access",
+          description: "Financial access scope",
+          global: false,
+          dynamic: true,
+          name: "Financial Manager"
+        },
+        {
+          scope: "reports",
+          action: "view_report",
+          description: "Report dynamic permission",
+          global: false,
+          dynamic: true,
+          name: "Report viewer"
+        }
+      ].freeze
+
+      DEPRICATED_SCOPE_DESCRIPTIONS.each do |desc|
+        s = Scope.find_by(desc)
+        if s.present?
+          s.destroy!
+          puts "Found depricated e-spres-oh scope #{s.action} with name #{s.name}. Destroying..."
+        end
+      end
     end
   end
 
