@@ -12,7 +12,7 @@
 const authConfig = {
   domain: 'auth.researchresultswebsite.com',
 ```
-
+* Switch over DNS entries
 
 ## Backend Deployment Changes
 
@@ -40,3 +40,4 @@ aws:
   region: us-east-1
   bucket: www.researchresultswebsite.com
 ```
+* Switch over DNS entries
