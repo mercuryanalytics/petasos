@@ -36,6 +36,7 @@ const ResourceActions = props => {
   const templates = useSelector(state => state.clientsReducer.templates);
   const contextUserId = !templateMode ? userId : null;
   const [isLoading, setIsLoading] = useState(true);
+  const [permissionUpdating, setPermissionUpdating] = useState(false);
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState({});
   const [reports, setReports] = useState({});
@@ -273,8 +274,11 @@ const ResourceActions = props => {
       : (status || getItemStatus(type, id));
     refreshChildAccessStates(type, id, hasAnyPermission, parentId);
     promises.push(dispatch(getAuthorizeAction(options, states)).then(() => {}, () => {}));
-    Promise.all(promises).then(() => {});
-    setActiveStates(prev => ({ ...prev, ...newStates }));
+    setPermissionUpdating(true);
+    Promise.all(promises).then(() => {
+      setPermissionUpdating(false);
+      });
+    setActiveStates(prev => ({ ...prev, ...newStates }))
   }, [userId, clientId, templateMode, refreshChildAccessStates, getItemStatus, dispatch]);
 
   const setFiltersStatus = useCallback((status, id) => {
@@ -504,6 +508,7 @@ const ResourceActions = props => {
 
   return !isLoading ? (
     <div className={`${styles.container} ${!clientId ? styles.complete : ''} ${props.className || ''}`}>
+      {permissionUpdating && (<div className={`${styles.nonClickable}`}><p>Permission updating, please wait.</p></div>)}
       {!clientId && (<>
         <div className={styles.globals}>
           <Modal
