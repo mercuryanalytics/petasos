@@ -2,12 +2,12 @@
 
 The following systems need to be updated:
 1. [[SSO Front end|Front end deployment]]
-2. SSO Back end
-3. Auth0
-4. AWS CodePipeline
-5. AWS Chatbot
-6. Workbench
-7. NBCU Data Capture
+2. [[SSO Back end|Back end deployment]]
+3. [[Auth0|Auth0 deployment]]
+4. [[AWS CodePipeline|CodePipeline deployment]]
+5. [[AWS Chatbot|CodePipeline deployment]]
+6. [[Workbench|Workbench deployment]]
+7. [[NBCU Data Capture|NBCU deployment]]
 
 ## Pre deployment
 1. Try to rename `api.ratethedebate.com` to `api.researchresultswebsite.com` and configure the front end to point there with no other changes.
