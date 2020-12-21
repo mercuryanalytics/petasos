@@ -39,6 +39,8 @@ class DomainAbility
   end
 
   def current_authorization
-    @current_authorization ||= current_membership.clients_authorizations.where(subject_id: client_id).first
+    @current_authorization ||= user.authorizations
+                                   .select { |i| i.subject_class == 'Client' && i.subject_id == client_id.to_i }
+                                   .first
   end
 end

@@ -15,6 +15,9 @@ module Api
           return json_response([]) if current_user.admin?
 
           project_authorizations = Project.authorized_for_user(current_user.membership_ids).pluck(:id)
+          client_authorizations = Client.authorized_for_user(current_user.membership_ids).pluck(:id)
+
+          return json_response([]) if client_authorizations.include?(params[:client_id].to_i)
 
           json_response(
               Report
@@ -22,6 +25,7 @@ module Api
                   .where(projects: { domain_id: params[:client_id]} )
                   .order(updated_at: :desc)
                   .where.not(projects: { id: project_authorizations })
+                  .where.not(projects: { domain_id: client_authorizations })
                   .accessible_by(current_ability).all)
           return
         end
@@ -186,7 +190,7 @@ module Api
       end
 
       def authorize_params
-        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state)
+        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
       end
     end
   end

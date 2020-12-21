@@ -17,7 +17,7 @@ class UserAbility
     if memberships.any?
       cl_ids = memberships.pluck(:client_id)
       client_authorizations(cl_ids).find_each do |client_authorization|
-        access_scope = client_authorization.scopes.select { |scope| scope.action == 'access'}
+        access_scope = client_authorization.scopes.select { |scope| %w[authorize access].include?(scope.action) }
         can :manage, User, memberships: { client_id: client_authorization.subject_id } if access_scope.any?
       end
     end
@@ -63,5 +63,11 @@ class UserAbility
                                  .preload(:client_scopes)
                                  .for_clients
                                  .where(subject_id: cl_ids)
+                                   .or(
+                                       Authorization
+                                           .preload(:client_scopes)
+                                           .for_clients
+                                           .where(membership_id: memberships.pluck(:id))
+                                   )
   end
 end

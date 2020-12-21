@@ -2,13 +2,18 @@ module Authorizations
   class BaseAuthorization
     include Interactor
 
-    delegate :params, :client, :project, :report, to: :context
+    delegate :params, :client, :project, :report, :from_admin, to: :context
 
     def call
+      if params[:from_admin]
+        user = User.find(params[:user_id])
+        @client_id = user.memberships.first&.client_id
+      end
+
       if params[:authorize]
         interactor = AddAuthorization.call(
           user_id:   params[:user_id],
-          client_id: params[:client_id],
+          client_id: @client_id || params[:client_id],
           **instance
         )
 
@@ -20,7 +25,7 @@ module Authorizations
       if params.key?(:authorize) && !params[:authorize]
         interactor = RemoveAuthorization.call(
           user_id:   params[:user_id],
-          client_id: params[:client_id],
+          client_id: @client_id || params[:client_id],
           **instance
         )
 
@@ -40,7 +45,7 @@ module Authorizations
     end
 
     def authorization_instance
-      @membership ||= Membership.find_by(user_id: params[:user_id], client_id: params[:client_id])
+      @membership ||= Membership.find_by(user_id: params[:user_id], client_id: @client_id || params[:client_id])
 
       Authorization.find_or_create_by(
         membership_id: @membership.id,
