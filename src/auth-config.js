@@ -4,7 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaWindows } from 'react-icons/fa';
 
 const authConfig = {
-  domain: 'auth.mercuryanalytics.com',
+  domain: 'auth.ratethedebate.com',
   clientId: 'gGZDDRXWMgdEzA5RaWzT8yR0ysvOce0B',
   loginUrl: `${Constants.APP_URL}${Routes.Login}`,
   callbackUrl: `${Constants.APP_URL}${Routes.LoginCallback}`,
