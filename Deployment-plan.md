@@ -11,7 +11,7 @@ The following systems need to be updated:
 
 ## Pre deployment
 1. Try to rename `api.ratethedebate.com` to `api.researchresultswebsite.com` and configure the front end to point there with no other changes.
-2. Set up new front-end buckets; `ratethedebate.com` should be the primary bucket, and `www.ratethedebate.com` is the alias (other aliases to be determined).
+2. Set up new front-end buckets; `researchresultsweb.com` should be the primary bucket, and `www.researchresultsweb.com` is the alias (other aliases to be determined).
 3. Test run the database import tasks.
   1. Drop current ratethedebate database
   2. Recreate it from the migrations (`rake db:setup`)
