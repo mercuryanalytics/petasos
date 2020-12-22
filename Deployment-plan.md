@@ -16,11 +16,11 @@ The following systems need to be updated:
     1. Drop current ratethedebate database
     2. Recreate it with `rake db:create` then `rake db:seed`
     3. Run the import script
-    4. Run auth0 sync `rake import:synchronize_auth 
+    4. Run auth0 sync `rake import:synchronize_auth`
     4. Run the scope-creation script `rake scopes:create:talaria`
     5. Run the census export script `rake util:census` with same params as the import
-    6. Run the census unmap script 
-    7. Run the census import script
+    6. Run the census unmap script `bin/rake sso_import:unmap_owners` on aws0
+    7. Run the census import script `bin/rake sso_import:map_owners[$HOME/account-map.csv]` on aws0
 
 ## Deployment steps
 1. Change AWS CodePipeline and Chatbot to deploy to `researchresultswebsite.com`.
