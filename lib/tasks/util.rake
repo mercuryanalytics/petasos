@@ -36,11 +36,7 @@ namespace :util do
 
     CSV do |csv|
       db_client.query("SELECT * FROM accounts ORDER BY domain_id, contact_email").each do |row|
-        csv << [
-          "#{domains[row['domain_id']]}/#{row['name']}",
-          row["contact_email"].downcase,
-          row["contact_name"]
-        ]
+        csv << ["#{domains[row['domain_id']]}/#{row['name']}", row["contact_email"].downcase]
       end
     end
   end
