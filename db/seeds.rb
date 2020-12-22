@@ -6,4 +6,5 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Scope.create(scope: "admin", action: "admin", description: "Global admin", global: true, dynamic: false, name: "Mercury Analytics Admin")
+Scope.where(action: "admin")
+  .first_or_create!(scope: "admin", description: "Global admin", global: true, dynamic: false, name: "Mercury Analytics Admin")
