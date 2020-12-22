@@ -3,8 +3,8 @@ import Env, { EnvTypes } from './env';
 const EnvTypeToUrlsMap = {
   [EnvTypes.PRODUCTION]: {
          APP_URL: Env.publicUrl,
-         API_HOST: 'https://api.ratethedebate.com',
-         API_URL: 'https://api.ratethedebate.com/api/v1',
+         API_HOST: 'https://api.researchresultswebsite.com',
+         API_URL: 'https://api.researchresultswebsite.com/api/v1',
        },
   [EnvTypes.DEVELOPMENT]: {
     APP_URL: Env.publicUrl,
