@@ -11,19 +11,18 @@ The following systems need to be updated:
 
 ## Pre deployment
 1. Try to rename `api.ratethedebate.com` to `api.researchresultswebsite.com` and configure the front end to point there with no other changes.
-2. Set up new front-end buckets; `researchresultsweb.com` should be the primary bucket, and `www.researchresultsweb.com` is the alias (other aliases to be determined).
+2. Set up new front-end buckets; `researchresultsweb.com` should be the primary bucket, with no alias buckets needed.
 3. Test run the database import tasks.
-    1. Drop current ratethedebate database
-    2. Recreate it with `rake db:create` then `rake db:seed`
-    3. Run the import script
-    4. Run auth0 sync `rake import:synchronize_auth` (SKIP until verified as being necessary)
-    4. Run the scope-creation script `rake scopes:create:talaria`
-    5. Run the census export script `rake util:census` with same params as the import
+  1. Drop current ratethedebate database
+  2. Recreate it with `rake db:create` then `rake db:seed`
+  3. Run the import script
+  4. Run the scope-creation script `rake scopes:create:talaria`
+  5. Run the census export script `rake util:census` with same params as the import
     
-    STOP HERE UNTIL GO LIVE TIME
+  STOP HERE UNTIL GO LIVE TIME
     
-    6. Run the census unmap script `bin/rake sso_import:unmap_owners` on aws0
-    7. Run the census import script `bin/rake sso_import:map_owners[$HOME/account-map.csv]` on aws0
+  6. Run the census unmap script `bin/rake sso_import:unmap_owners` on aws0
+  7. Run the census import script `bin/rake sso_import:map_owners[$HOME/account-map.csv]` on aws0
 
 ## Deployment steps
 1. Change AWS CodePipeline and Chatbot to deploy to `researchresultswebsite.com`.
@@ -40,3 +39,7 @@ The following systems need to be updated:
 12. Change DNS entries to point to the new S3 buckets.
 13. Smoke test.
 14. Announce end of maintenance.
+
+Deferred steps:
+
+* Run auth0 sync `rake import:synchronize_auth`
