@@ -14,7 +14,7 @@ The following systems need to be updated:
 2. Set up new front-end buckets; `researchresultsweb.com` should be the primary bucket, and `www.researchresultsweb.com` is the alias (other aliases to be determined).
 3. Test run the database import tasks.
     1. Drop current ratethedebate database
-    2. Recreate it from the migrations (`rake db:setup`)
+    2. Recreate it with `rake db:create` then `rake db:seed`
     3. Run the import script
     4. Run the scope-creation script
     5. Run the census export script
