@@ -18,7 +18,8 @@ The following systems need to be updated:
   3. Run the import script
   4. Run the scope-creation script
   5. Run the census export script
-  6. Run the census import script
+  6. Run the census unmap script
+  7. Run the census import script
 
 ## Deployment steps
 1. Change AWS CodePipeline and Chatbot to deploy to `researchresultswebsite.com`.
