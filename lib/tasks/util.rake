@@ -3,6 +3,7 @@
 require 'optparse'
 
 namespace :util do
+  desc "Export sso census"
   task census: :environment do
     require 'open-uri'
     require 'csv'
@@ -16,10 +17,10 @@ namespace :util do
 
     o        = OptParse.new
     o.banner = 'Usage: rake import OPTIONS'
-    o.on('--db-name', '--db-name=DATABASE_NAME') { |input| options[:database_name] = input }
-    o.on('--db-host', '--db-host=DATABASE_HOST') { |input| options[:database_host] = input }
-    o.on('--db-pass', '--db-pass=DATABASE_PASSWORD') { |input| options[:database_password] = input }
-    o.on('--db-user', '--db-user=DATABASE_USER') { |input| options[:database_user] = input }
+    o.on('--db-name', '--db-name=DATABASE_NAME') {|input| options[:database_name] = input }
+    o.on('--db-host', '--db-host=DATABASE_HOST') {|input| options[:database_host] = input }
+    o.on('--db-pass', '--db-pass=DATABASE_PASSWORD') {|input| options[:database_password] = input }
+    o.on('--db-user', '--db-user=DATABASE_USER') {|input| options[:database_user] = input }
     o.parse!(o.order(ARGV) {})
 
     db_client = Mysql2::Client.new(
