@@ -40,4 +40,28 @@ namespace :util do
       end
     end
   end
+
+  desc "Export all users that have auth_ids to a csv file"
+  task export_auth_ids: :environment do
+    require 'csv'
+
+    CSV do |csv|
+      User.where.not(auth_id: nil).each do |user|
+        csv << [user.email, user.auth_id]
+      end
+    end
+  end
+
+  desc "Import auth_ids from a csv file"
+  task :import_auth_ids, %i[file] => :environment do |_, params|
+    require "csv"
+
+    ActiveRecord::Base.transaction do
+      CSV.foreach(params[:file]) do |email, auth_id|
+        User.find_by!(email: email).update(auth_id: auth_id)
+      rescue ActiveRecord::RecordNotFound
+        puts "could not find user with email #{email.inspect}"
+      end
+    end
+  end
 end
