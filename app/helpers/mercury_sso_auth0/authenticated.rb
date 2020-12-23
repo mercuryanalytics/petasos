@@ -21,9 +21,9 @@ module MercurySsoAuth0
 
     def sso_login
       uri = if Rails.env.production?
-              URI::HTTP.build(host: MercurySsoAuth0.login_url, path: '/login')
+              URI::HTTPS.build(host: MercurySsoAuth0.login_url, path: '/login')
             else
-              URI::HTTP.build(
+              URI::HTTPS.build(
                 host: MercurySsoAuth0.login_url,
                 path: '/login',
                 port: MercurySsoAuth0.login_port
