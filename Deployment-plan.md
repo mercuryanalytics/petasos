@@ -14,7 +14,7 @@ The following systems need to be updated:
 2. Set up new front-end buckets; `researchresultsweb.com` should be the primary bucket, with no alias buckets needed.
 3. Test run the database import tasks.
    1. Drop current ratethedebate database
-   2. Recreate it with `rake db:create` then `rake db:seed`
+   2. Recreate it with `rake db:setup` then `rake db:seed`
    3. Run the import script
    4. Run the scope-creation script `rake scopes:create:talaria`
    5. Run the census export script `rake util:census` with same params as the import
