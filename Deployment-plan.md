@@ -27,18 +27,20 @@ The following systems need to be updated:
 ## Deployment steps
 1. Change AWS CodePipeline and Chatbot to deploy to `researchresultswebsite.com`.
 2. Change frontend auth-config to use `auth.researchresultswebsite.com`, and deploy.
-3. Declare maintenance phase.
-4. Reimport the petasos database.
-5. Stop the old SSO server.
-6. Run the scope-creation rake task.
-7. Run the census rake task and import it to workbench.
-8. Deploy SSO backend with modified config.
-9. Deploy workbench with modified config.
-10. Deploy nbcu-data-capture with modified config.
-11. Change auth0 custom domain name to `auth.researchresultswebsite.com` and get it verified.
-12. Change DNS entries to point to the new S3 buckets.
-13. Smoke test.
-14. Announce end of maintenance.
+3. Run the auth_id export task `RAILS_ENV=production bundle exec rake util:export_auth_ids > auth_ids.csv`.
+4. Declare maintenance phase.
+5. Reimport the petasos database.
+6. Stop the old SSO server.
+7. Run the auth_id import task `RAILS_ENV=production bundle exec rake util:import_auth_ids[auth_ids.csv]`.
+8. Run the scope-creation rake task `RAILS_ENV=production bundle exec rake scopes:create:talaria`.
+9. Run the census rake task and import it to workbench `RAILS_ENV=production bundle exec rake util:census > census.csv` and `RAILS_ENV=staging NEWRELIC_ENABLE=false rbenv exec bundle exec rake sso_import:unmap owners sso_import:map_owners[$HOME/census.csv]`.
+10. Deploy SSO backend with modified config.
+11. Deploy workbench with modified config.
+12. Deploy nbcu-data-capture with modified config.
+13. Change auth0 custom domain name to `auth.researchresultswebsite.com` and get it verified.
+14. Change DNS entries to point to the new S3 buckets.
+15. Smoke test.
+16. Announce end of maintenance.
 
 Deferred steps:
 
