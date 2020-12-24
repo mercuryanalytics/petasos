@@ -14,6 +14,10 @@ module MercurySsoAuth0
       email
     end
 
+    def to_s
+      email
+    end
+
     DEFAULT_SCOPES = { data: { global: {}, client: {}, report: {}, project: {} } }.to_json
     def scopes(_session)
       # return session['scopes'] if session.key?('scopes')
