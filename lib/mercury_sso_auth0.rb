@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require "mercury_sso_auth0/engine"
 
 module MercurySsoAuth0
-
   # Auth0 Client ID
   mattr_accessor :client
   @@client = nil
@@ -22,17 +23,13 @@ module MercurySsoAuth0
   mattr_accessor :login_url
   @@login_url = nil
 
-  # RAM login host port
-  mattr_accessor :login_port
-  @@login_port = 3004
-
   # Ram api url
   mattr_accessor :api_url
   @@api_url = 'http://localhost:3002'
 
   # Host setup
-  mattr_accessor :host
-  @@host = 'localhost'
+  mattr_accessor :application_origin
+  @@application_origin = 'http://localhost'
 
   # Optional callback path override
   mattr_accessor :callback_path

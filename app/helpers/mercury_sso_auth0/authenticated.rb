@@ -34,21 +34,13 @@ module MercurySsoAuth0
     end
 
     def sso_login
-      uri = if MercurySsoAuth0.login_port.nil?
-              URI::HTTPS.build(host: MercurySsoAuth0.login_url, path: '/login')
-            else
-              URI::HTTPS.build(
-                host: MercurySsoAuth0.login_url,
-                path: '/login',
-                port: MercurySsoAuth0.login_port
-              )
-            end
-
+      return_uri = URI(MercurySsoAuth0.application_origin) + MercurySsoAuth0::Engine.routes.url_helpers.auth_auth0_callback_path
       options = {
-        return_url: MercurySsoAuth0::Engine.routes.url_helpers.auth_auth0_callback_url(host: MercurySsoAuth0.host),
+        return_url: return_uri.to_s,
         state: state
       }
 
+      uri = URI(MercurySsoAuth0.login_url) + "/login"
       uri.query = URI.encode_www_form(options)
 
       uri
