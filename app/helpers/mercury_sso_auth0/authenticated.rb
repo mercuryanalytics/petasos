@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MercurySsoAuth0
   module Authenticated
     def self.included(base)
@@ -8,11 +10,23 @@ module MercurySsoAuth0
     end
 
     def current_user
-      @current_user ||= MercurySsoAuth0::User.new(session[:userinfo])
+      @current_user ||= begin
+                          userinfo = session[:userinfo]
+                          userinfo = nil unless session_valid?
+                          MercurySsoAuth0::User.new(userinfo)
+                        end
+    end
+
+    def session_valid?
+      userinfo = session[:userinfo]
+      return false unless userinfo.present?
+
+      creds = userinfo[:credentials]
+      !creds[:expires] || Time.now < Time.at(creds[:expires_at])
     end
 
     def authenticated?
-      return true if session[:userinfo].present?
+      return true if session_valid?
 
       session[:authentication_intercept] ||= request.fullpath
       redirect_to sso_login.to_s
@@ -20,7 +34,7 @@ module MercurySsoAuth0
     end
 
     def sso_login
-      uri = if Rails.env.production?
+      uri = if MercurySsoAuth0.login_port.nil?
               URI::HTTPS.build(host: MercurySsoAuth0.login_url, path: '/login')
             else
               URI::HTTPS.build(
