@@ -7,7 +7,7 @@ module MercurySsoAuth0
     end
 
     def failure
-      @error_msg = request.params['message']
+      @error_msg = request.params['message'] # TODO: The error case should do something actually useful
     end
 
     def login; end
