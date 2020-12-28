@@ -21,8 +21,8 @@ module MercurySsoAuth0
       userinfo = session[:userinfo]
       return false unless userinfo.present?
 
-      creds = userinfo[:credentials]
-      !creds[:expires] || Time.now < Time.at(creds[:expires_at])
+      creds = userinfo["credentials"]
+      !creds["expires"] || Time.now < Time.at(creds["expires_at"])
     end
 
     def authenticated?
