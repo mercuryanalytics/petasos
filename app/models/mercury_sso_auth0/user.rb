@@ -18,16 +18,18 @@ module MercurySsoAuth0
       email
     end
 
-    DEFAULT_SCOPES = { data: { global: {}, client: {}, report: {}, project: {} } }.to_json
+    DEFAULT_SCOPES = { data: { global: {}, client: {}, report: {}, project: {} } }.with_indifferent_access.freeze
     def scopes(_session)
       # return session['scopes'] if session.key?('scopes')
+
+      return DEFAULT_SCOPES unless attributes.present?
 
       @scopes ||= ::RestClient.get(
         MercurySsoAuth0.api_url + '/api/v1/users/me',
         Authorization: 'Bearer ' + attributes['credentials']['id_token']
       ) do |response|
         body = response.body
-        body = DEFAULT_SCOPES if body.empty?
+        body = DEFAULT_SCOPES.to_json if body.empty?
         JSON.parse(body)
       end
 
