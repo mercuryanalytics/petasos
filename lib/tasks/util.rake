@@ -64,4 +64,17 @@ namespace :util do
       end
     end
   end
+
+  desc "Removing permissions from users"
+  task :remove_user_permissions, %i[file] => :environment do |_, params|
+    require "csv"
+
+    ActiveRecord::Base.transaction do
+      CSV.foreach(params[:file]) do |email|
+        User.find_by!(email: email).scopes.delete_all
+      rescue ActiveRecord::RecordNotFound
+        puts "could not find user with email #{email.inspect}"
+      end
+    end
+  end
 end
