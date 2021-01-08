@@ -70,8 +70,10 @@ namespace :util do
     require "csv"
 
     ActiveRecord::Base.transaction do
-      CSV.foreach(params[:file]) do |email|
-        User.find_by!(email: email).scopes.delete_all
+      CSV.foreach(params[:file]) do |email, _|
+        user = User.find_by!(email: email)
+        user.scopes.destroy_all
+        user.authorizations.each(&:destroy)
       rescue ActiveRecord::RecordNotFound
         puts "could not find user with email #{email.inspect}"
       end
