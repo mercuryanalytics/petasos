@@ -25,11 +25,16 @@ module MercurySsoAuth0
       !creds["expires"] || Time.now < Time.at(creds["expires_at"])
     end
 
-    def authenticated?
+    def authenticated?(opt = {})
       return true if session_valid?
 
-      session[:authentication_intercept] ||= request.fullpath
-      redirect_to sso_login.to_s
+      if opt.fetch(:prompt, true)
+        session[:authentication_intercept] ||= request.fullpath
+        redirect_to sso_login.to_s
+      else
+        head :unauthorized
+      end
+
       false
     end
 
