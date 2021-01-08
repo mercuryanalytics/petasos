@@ -79,4 +79,21 @@ namespace :util do
       end
     end
   end
+
+  desc "Geenerate a reset password url for a user"
+  task :generate_reset_password_url, %i[email] => :environment do |_, params|
+    ActiveRecord::Base.transaction do
+      email = params[:email]
+      user = User.find_by!(email: email)
+      parsed_url = URI.parse(Rails.application.credentials[:app_host])
+      link      = if user.password_reset_domain.present?
+                    "#{parsed_url.scheme}://#{user.password_reset_domain}.#{parsed_url.hostname.delete_prefix('www.')}/password-reset?token=#{user.password_reset_token}"
+                  else
+                    "#{parsed_url.scheme}://#{parsed_url.hostname}/password-reset?token=#{user.password_reset_token}"
+                  end
+      puts link
+    rescue ActiveRecord::RecordNotFound
+      puts "could not find user with email #{email.inspect}"
+    end
+  end
 end
