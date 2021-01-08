@@ -28,10 +28,13 @@ module MercurySsoAuth0
     def authenticated?(opt = {})
       return true if session_valid?
 
-      unless opt[:silent]
+      if opt.fetch(:prompt, true)
         session[:authentication_intercept] ||= request.fullpath
         redirect_to sso_login.to_s
+      else
+        head :unauthorized
       end
+
       false
     end
 
