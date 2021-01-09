@@ -20,13 +20,13 @@ class UserMailer < ApplicationMailer
     @inviter_user = inviter
 
     parsed_url = URI.parse(Rails.application.credentials[:app_host])
-    @forgot_password_url = if @client.partner? && @client.subdomain
+    @forgot_password_url = if @client.partner? && @client.subdomain.present?
                              "#{parsed_url.scheme}://#{@client.subdomain}.#{parsed_url.hostname.delete_prefix('www.')}/password-reset?token=#{@user.password_reset_token}"
                            else
                              "#{parsed_url.scheme}://#{parsed_url.hostname}/password-reset?token=#{@user.password_reset_token}"
                            end
 
-    @link = if @client.partner? && @client.subdomain
+    @link = if @client.partner? && @client.subdomain.present?
               "#{parsed_url.scheme}://#{@client.subdomain}.#{parsed_url.hostname.delete_prefix('www.')}"
             else
               "#{parsed_url.scheme}://#{parsed_url.hostname}"
