@@ -78,6 +78,9 @@ const Client = props => {
       </Link>
       {isOpen && (
         <div className={styles.content}>
+          {!!props.canCreateProjects[data.id] && (
+              <ProjectAdd clientId={data.id} active={isAdding} />
+          )}
           {projects && clientReports && !!(projects.length || clientReports.length) ? <>
             {projects.map(project => (
               <Project
@@ -113,9 +116,6 @@ const Client = props => {
             ) : (
               <div className={styles.noResults}>No results</div>
             )
-          )}
-          {!!props.canCreateProjects[data.id] && (
-            <ProjectAdd clientId={data.id} active={isAdding} />
           )}
         </div>
       )}

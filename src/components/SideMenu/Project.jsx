@@ -62,6 +62,9 @@ const Project = props => {
       </Link>
       {isOpen && (
         <div className={styles.content}>
+          {!!props.canCreateReports[data.id] && (
+              <ReportAdd projectId={data.id} active={isAdding} />
+          )}
           {!!reports && !!reports.length ? (
             reports.map(report => (
               <Report
@@ -78,9 +81,6 @@ const Project = props => {
             ) : (
               <div className={styles.noResults}>No results</div>
             )
-          )}
-          {!!props.canCreateReports[data.id] && (
-            <ReportAdd projectId={data.id} active={isAdding} />
           )}
         </div>
       )}
