@@ -2,7 +2,6 @@ module Reports
   class CreateReportOrganizer
     include Interactor::Organizer
 
-    organize ValidateReport, CreateReport, Authorizations::AddAuthorization,
-             Authorizations::AddAuthorizationFromParent
+    organize ValidateReport, CreateReport, Authorizations::AddAuthorization
   end
 end
