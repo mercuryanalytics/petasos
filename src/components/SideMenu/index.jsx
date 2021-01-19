@@ -106,18 +106,23 @@ const SideMenu = props => {
     }
     setIsLoading(true);
     let defaultRoutes = {};
+    let multiple = false;
     Promise.all([
       dispatch(getClients()).then(async (action) => {
         if (action.payload.length) {
           const sortedClients = sortClients(action.payload);
-          await dispatch(getProjects(sortedClients[0].id)).then((action) => {
-            if (action.payload.length) {
-              const sortedProjects = sortProjects(action.payload);
-              defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
-            } else {
-              defaultRoutes.client = Routes.ManageClient.replace(':id', sortedClients[0].id);
-            }
-          }, () => {})
+          if (sortedClients.length < 2) {
+            await dispatch(getProjects(sortedClients[0].id)).then((action) => {
+              if (action.payload.length) {
+                const sortedProjects = sortProjects(action.payload);
+                defaultRoutes.project = Routes.ManageProject.replace(':id', sortedProjects[0].id);
+              } else {
+                defaultRoutes.client = Routes.ManageClient.replace(':id', sortedClients[0].id);
+              }
+            }, () => {})
+          }
+        } else {
+          multiple = true;
         }
       }, () => {}),
       dispatch(getOrphanProjects()).then((action) => {
@@ -139,7 +144,7 @@ const SideMenu = props => {
         setAwaitRoute(defaultRoute);
         history.push(defaultRoute);
       } else {
-        handleSuccess(!defaultRoute);
+        handleSuccess(!defaultRoute && multiple);
       }
     });
   }, [props, activeClient, activeProject, activeReport, isActiveAddLink, dispatch, history]);
