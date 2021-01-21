@@ -21,6 +21,7 @@ const UserManage = props => {
   const data = useSelector(state =>
     editMode ? state.usersReducer.users.filter(u => u.id === id)[0] : null);
   const authUser = useSelector(state => state.authReducer.user)
+  const [errors, setErrors] = useState(null);
   useEffect(() => {
     setIsEditClicked(false);
     if (!!id && (!data || data.id !== !!id)) {
@@ -91,7 +92,10 @@ const UserManage = props => {
           if (id === authUser.id) {
             dispatch(setUser(response.payload))
           }
-        }, () => {
+          setIsEditClicked(false);
+          setErrors(null);
+        }, (errors) => {
+          setErrors(errors.body);
           setIsBusy(false);
         });
       } else {
@@ -115,6 +119,7 @@ const UserManage = props => {
   const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_country = useField('mailing_country', form);
+  const password = useField('new_password', form);
 
   const renderRequiredFieldLabel = (label) => (
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>
@@ -133,6 +138,7 @@ const UserManage = props => {
         </Button>
       )}
       <Scrollable className={styles.section}>
+        {errors && <div className={styles.textError}>{errors}</div>}
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formSection}>
             <div className={styles.title}>
@@ -145,6 +151,14 @@ const UserManage = props => {
               preview={preview && !isEditClicked}
               label={renderRequiredFieldLabel('Account name')}
             />
+
+            {isEditClicked && authUser?.auth_id?.startsWith('auth0') && <Input
+                className={styles.formControl}
+                field={password}
+                preview={false}
+                label={'New password'}
+            />
+            }
           </div>
           <div className={styles.formSection}>
             <div className={styles.title}>
