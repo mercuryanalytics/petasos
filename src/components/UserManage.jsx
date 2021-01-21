@@ -156,6 +156,7 @@ const UserManage = props => {
                 className={styles.formControl}
                 field={password}
                 preview={false}
+                type={'password'}
                 label={'New password'}
             />
             }
