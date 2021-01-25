@@ -46,6 +46,7 @@ const SuperUser = () => {
           <UserActions
             className={styles.usersActions}
             mode={UserActionsModes.Manage}
+            superAdminMode={true}
             showClients={false}
             selectedUserId={selectedUserId}
             onUserSelect={handleUserSelect}
