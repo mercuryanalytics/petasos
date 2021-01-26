@@ -7,7 +7,7 @@ import UserActions, { UserActionsModes, UserActionsContexts } from './UserAction
 import Button from './common/Button';
 import Loader from './common/Loader';
 import Scrollable from './common/Scrollable';
-import { Bin } from './Icons';
+import { Bin, Pen } from './Icons';
 import { confirm } from './common/Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
@@ -42,6 +42,7 @@ const ProjectManage = props => {
   const user = useSelector(state => state.authReducer.user);
   const [canDelete, setCanDelete] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
+  const [isEditClicked, setIsEditClicked] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
@@ -66,6 +67,7 @@ const ProjectManage = props => {
     if (!editMode) {
       setCanEdit(true);
       setIsLoading(false);
+      setIsEditClicked(true);
       return;
     }
     if (id) {
@@ -86,10 +88,11 @@ const ProjectManage = props => {
           setCanDelete(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
           setCanCreateUser(hasRoleOnClient(user.id, project.domain_id, UserRoles.ClientAdmin));
           setIsLoading(false);
+          setIsEditClicked(false);
         }
       });
     }
-  }, [editMode, id, user, data, dispatch]);
+  }, [editMode, id, user, data, dispatch, isEditClicked]);
 
   useEffect(init, [id]);
 
@@ -203,7 +206,7 @@ const ProjectManage = props => {
         <div className={styles.title}>
           <span>Project details</span>
         </div>
-        {editMode && (
+        {editMode && !isEditClicked && (
           <div className={styles.actions}>
             {canDelete && (
               <Button
@@ -218,6 +221,11 @@ const ProjectManage = props => {
                 <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
               </Button>
             )}
+            {!!canEdit && (
+                <Button transparent onClick={() => setIsEditClicked(true)}>
+                  <Pen className={styles.deleteIcon} /> Edit
+                </Button>
+            )}
           </div>
         )}
         <Scrollable className={styles.scrollableForm}>
@@ -225,21 +233,21 @@ const ProjectManage = props => {
             <Input
               className={styles.formControl}
               field={name}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               label={`Project name ${canEdit ? '*' : ''}`}
             />
             <Input
               className={styles.formControl}
               field={project_number}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               label="Project #"
             />
             <Select
               className={styles.formControl}
               field={project_type}
-              preview={!canEdit}
+              preview={!isEditClicked}
               options={projectTypesOptions}
               disabled={isBusy}
               placeholder={editMode ? 'UNASSIGNED' : 'Select a project type...'}
@@ -248,14 +256,14 @@ const ProjectManage = props => {
             <Textarea
               className={styles.formControl}
               field={description}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               label="Description"
             />
             <Select
               className={styles.formControl}
               field={account_id}
-              preview={!canEdit}
+              preview={!isEditClicked}
               options={contactsOptions}
               disabled={isBusy}
               placeholder={editMode ? 'UNASSIGNED' : 'Select a research contact...'}
@@ -280,16 +288,22 @@ const ProjectManage = props => {
             <Datepicker
               className={styles.formControl}
               field={updated_at}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={true}
               maxToday={true}
               label={`Last updated`}
             />
-            {canEdit && (
+            {canEdit && isEditClicked && (
               <div className={styles.formButtons}>
                 <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
                   {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
                 </Button>
+                {editMode && (
+                <Button transparent onClick={() => { form.reset(); setIsEditClicked(false) }}>
+                  Cancel
+                </Button>
+                )}
+
               </div>
             )}
           </form>

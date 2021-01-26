@@ -8,7 +8,7 @@ import UserActions, { UserActionsModes, UserActionsContexts } from './UserAction
 import Button from './common/Button';
 import Loader from './common/Loader';
 import Scrollable from './common/Scrollable';
-import { Bin } from './Icons';
+import { Bin, Pen } from './Icons';
 import { confirm } from './common/Confirm';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input, Textarea, Datepicker } from './FormFields';
@@ -23,6 +23,7 @@ const ReportManage = props => {
   const user = useSelector(state => state.authReducer.user);
   const [canDelete, setCanDelete] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
+  const [isEditClicked, setIsEditClicked] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const [canCreateUser, setCanCreateUser] = useState(false);
   const editMode = !!id;
@@ -37,6 +38,7 @@ const ReportManage = props => {
     setIsLoading(true);
     if (!editMode) {
       setCanEdit(true);
+      setIsEditClicked(true);
       setIsLoading(false);
       return;
     }
@@ -63,10 +65,11 @@ const ReportManage = props => {
           );
           setCanCreateUser(hasRoleOnClient(user.id, report.project.domain_id, UserRoles.ClientAdmin));
           setIsLoading(false);
+          setIsEditClicked(false);
         }
       });
     }
-  }, [editMode, id, user, data, dispatch]);
+  }, [editMode, id, user, data, dispatch, isEditClicked]);
 
   useEffect(() => {
     init();
@@ -125,6 +128,7 @@ const ReportManage = props => {
         data && dispatch(updateReport(data.id, result, result.project_id)).then(() => {
           form.reset();
           setIsBusy(false);
+          setIsEditClicked(false);
         }, () => {
           setIsBusy(false);
         });
@@ -181,7 +185,12 @@ const ReportManage = props => {
                 <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
               </Button>
             )}
-            {editMode && !previewMode && !!data.url && (
+            {!!canEdit && !isEditClicked && (
+                <Button transparent onClick={() => setIsEditClicked(true)}>
+                  <Pen className={styles.deleteIcon} /> Edit
+                </Button>
+            )}
+            {editMode && !previewMode && !!data.url && !isEditClicked && (
               <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
             )}
           </div>
@@ -191,15 +200,15 @@ const ReportManage = props => {
             <Input
               className={styles.formControl}
               field={name}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               label={`Report name ${canEdit ? '*' : ''}`}
             />
-            {canEdit && (
+            {canEdit && isEditClicked && (
               <Input
                 className={styles.formControl}
                 field={url}
-                // preview={!canEdit}
+                preview={!canEdit}
                 disabled={isBusy}
                 label="URL"
               />
@@ -207,14 +216,14 @@ const ReportManage = props => {
             <Textarea
               className={styles.formControl}
               field={description}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               label="Description"
             />
             <Datepicker
               className={styles.formControl}
               field={presented_on}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={isBusy}
               maxToday={true}
               label="Last presented on"
@@ -222,16 +231,21 @@ const ReportManage = props => {
             <Datepicker
               className={styles.formControl}
               field={updated_at}
-              preview={!canEdit}
+              preview={!isEditClicked}
               disabled={true}
               maxToday={true}
               label={`Last updated`}
             />
-            {canEdit && (
+            {canEdit && isEditClicked && (
               <div className={styles.formButtons}>
                 <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
                   {editMode ? (!isBusy ? 'Update' : 'Updating') : (!isBusy ? 'Create' : 'Creating')}
                 </Button>
+                {editMode && (
+                  <Button transparent onClick={() => { form.reset(); setIsEditClicked(false) }}>
+                    Cancel
+                  </Button>
+                )}
               </div>
             )}
             {editMode && previewMode && !!data.url && (
