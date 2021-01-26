@@ -224,11 +224,13 @@ const ClientManage = props => {
       contact_fax: data.contact_fax || '',
       contact_email: data.contact_email || '',
       mailing_address_1: data.mailing_address_1 || '',
+      mailing_address_2: data.mailing_address_2 || '',
       mailing_city: data.mailing_city || '',
       mailing_zip: data.mailing_zip || '',
       mailing_state: data.mailing_state || '',
       mailing_country: data.mailing_country || '',
       billing_address_1: data.billing_address_1 || '',
+      billing_address_2: data.billing_address_2 || '',
       billing_city: data.billing_city || '',
       billing_zip: data.billing_zip || '',
       billing_state: data.billing_state || '',
@@ -239,8 +241,8 @@ const ClientManage = props => {
       [
         'name', 'company_name', 'contact_type',
         'contact_name', 'contact_phone', 'contact_email',
-        'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
-        'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
+        'mailing_address_1', 'mailing_address_2', 'mailing_city', 'mailing_zip', 'mailing_state',
+        'billing_address_1', 'billing_address_2', 'billing_city', 'billing_zip', 'billing_state',
       ].forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
@@ -265,11 +267,13 @@ const ClientManage = props => {
         contact_fax: values.contact_fax,
         contact_email: values.contact_email,
         mailing_address_1: values.mailing_address_1,
+        mailing_address_2: values.mailing_address_2,
         mailing_city: values.mailing_city,
         mailing_zip: values.mailing_zip,
         mailing_state: values.mailing_state,
         mailing_country: values.mailing_country,
         billing_address_1: values.billing_address_1,
+        billing_address_2: values.billing_address_2,
         billing_city: values.billing_city,
         billing_zip: values.billing_zip,
         billing_state: values.billing_state,
@@ -317,6 +321,7 @@ const ClientManage = props => {
   const contact_email = useField('contact_email', form);
 
   const mailing_address_1 = useField('mailing_address_1', form);
+  const mailing_address_2 = useField('mailing_address_2', form);
   const mailing_city = useField('mailing_city', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_state = useField('mailing_state', form);
@@ -324,6 +329,7 @@ const ClientManage = props => {
 
   const billing_as_mailing = useField('billing_as_mailing', form);
   const billing_address_1 = useField('billing_address_1', form);
+  const billing_address_2 = useField('billing_address_2', form);
   const billing_city = useField('billing_city', form);
   const billing_zip = useField('billing_zip', form);
   const billing_state = useField('billing_state', form);
@@ -335,6 +341,7 @@ const ClientManage = props => {
   useEffect(() => {
     setBillingDefaults(data ? {
       billing_address_1: data.billing_address_1 || '',
+      billing_address_2: data.billing_address_2 || '',
       billing_city: data.billing_city || '',
       billing_zip: data.billing_zip || '',
       billing_state: data.billing_state || '',
@@ -347,6 +354,7 @@ const ClientManage = props => {
     if (status) {
       setBillingDefaults({
         billing_address_1: billing_address_1.input.value,
+        billing_address_2: billing_address_2.input.value,
         billing_city: billing_city.input.value,
         billing_zip: billing_zip.input.value,
         billing_state: billing_state.input.value,
@@ -375,8 +383,8 @@ const ClientManage = props => {
       [FieldsTabs.Details]: ['name', 'company_name', 'contact_type',],
       [FieldsTabs.Contact]: ['contact_name', 'contact_phone', 'contact_email'],
       [FieldsTabs.Addresses]: [
-        'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
-        'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
+        'mailing_address_1', 'mailing_address_2', 'mailing_city', 'mailing_zip', 'mailing_state',
+        'billing_address_1', 'billing_address_2', 'billing_city', 'billing_zip', 'billing_state',
       ],
     })[tab-1] || [];
     for (let i = 0; i < fields.length; i++) {
@@ -646,7 +654,15 @@ const ClientManage = props => {
                           preview={!canEdit}
                           disabled={isBusy}
                           persistErrors={persistFieldsErrors}
-                          label={`Address ${canEdit ? '*' : ''}`}
+                          label={`Address Line 1 ${canEdit ? '*' : ''}`}
+                        />
+                        <Input
+                            className={styles.formControl}
+                            field={mailing_address_2}
+                            preview={!canEdit}
+                            disabled={isBusy}
+                            persistErrors={persistFieldsErrors}
+                            label={`Address Line 2 ${canEdit ? '*' : ''}`}
                         />
                         <Input
                           className={styles.formControl}
@@ -700,7 +716,16 @@ const ClientManage = props => {
                           disabled={isBusy || billingAsMailing}
                           value={billingAsMailing ? mailing_address_1.input.value : (billingDefaults.billing_address_1 || undefined)}
                           persistErrors={persistFieldsErrors}
-                          label={`Address ${canEdit ? '*' : ''}`}
+                          label={`Address Line 1 ${canEdit ? '*' : ''}`}
+                        />
+                        <Input
+                            className={styles.formControl}
+                            field={billing_address_2}
+                            preview={!canEdit}
+                            disabled={isBusy || billingAsMailing}
+                            value={billingAsMailing ? mailing_address_2.input.value : (billingDefaults.billing_address_2 || undefined)}
+                            persistErrors={persistFieldsErrors}
+                            label={`Address Line 2 ${canEdit ? '*' : ''}`}
                         />
                         <Input
                           className={styles.formControl}
