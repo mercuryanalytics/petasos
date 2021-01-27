@@ -97,7 +97,7 @@ const ResourceActions = props => {
       dispatch(getClientAction).then(async (action) => {
         let data = action.payload;
         data = Array.isArray(data) ? data : [data];
-        clientToOpen = clientId || (data.length ? data[0].id : null);
+        clientToOpen = clientId || null;
         setClients(data);
       }, () => {}),
     ];
