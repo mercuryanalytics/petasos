@@ -148,3 +148,9 @@
   justify-content: center;
   width: 100% !important;
 }
+
+.textError {
+  margin-bottom: 25px;
+  font-size: .85rem;
+  color: red;
+}

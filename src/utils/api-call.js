@@ -35,7 +35,7 @@ function apiCall (method, url, options) {
 
   let handler = fetch(url, fetchOptions)
     .then(
-      (response) => {
+      async (response) => {
         if (method.toUpperCase() === 'GET') {
           delete ongoing[url];
           if (response.ok) {
@@ -43,12 +43,14 @@ function apiCall (method, url, options) {
           }
         }
         if (!response.ok) {
-          return Promise.reject({
-            xhrHttpCode: response.status,
-            message: `Request error: ${response.status} ${response.statusText}`,
-          });
+          let parsedResponse = await response.json().then(data => data.errors);
+          return Promise.all([response]).then(() => Promise.reject({
+              xhrHttpCode: response.status,
+              message: `Request error: ${response.status} ${response.statusText}`,
+              body: parsedResponse
+            }))
         }
-        return response.text();
+        return await response.text();
       },
       (reason) => {
         return Promise.reject(reason);
