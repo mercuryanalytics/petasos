@@ -80,14 +80,22 @@ module Api
         end
 
         if params[:access] && !params[:authorize]
-          client = project.client
-
+          client_id = project.domain_id
           membership = Membership.find_by(user_id: authorize_params[:user_id], client_id: authorize_params[:client_id])
+
+          project_ids = Project.where(domain_id: client_id).pluck(:id)
+
+          other_authorizations = Authorization.where(
+              subject_class: 'Project',
+              subject_id: project_ids,
+              membership_id: membership.id
+          ).count
+
           Authorization.find_by(
               subject_class: 'Client',
-              subject_id: client.id,
+              subject_id: client_id,
               membership_id: membership.id
-          )&.destroy if membership
+          )&.destroy if membership && other_authorizations.zero?
         end
 
         return head status unless current_user.admin? && authorization

@@ -115,18 +115,33 @@ module Api
           )
 
           project = report.project
+          other_report_ids = Report.where(project_id: report.project_id).pluck(:id)
+          other_report_authorizations = Authorization.where(
+              subject_class: 'Report',
+              subject_id: other_report_ids,
+              membership: membership.id
+          ).count
+
           Authorization.find_by(
               subject_class: 'Project',
               subject_id: project.id,
               membership_id: membership.id
-          )&.destroy if membership
+          )&.destroy if membership && other_report_authorizations.zero?
 
-          client = project.client
+          client_id = project.domain_id
+
+          project_ids = Project.where(domain_id: client_id).pluck(:id)
+          other_authorizations = Authorization.where(
+              subject_class: 'Project',
+              subject_id: project_ids,
+              membership_id: membership.id
+          ).count
+
           Authorization.find_by(
               subject_class: 'Client',
-              subject_id: client.id,
+              subject_id: client_id,
               membership_id: membership.id
-          )&.destroy if membership
+          )&.destroy if membership && other_authorizations.zero?
         end
 
         return head status unless current_user.admin? && authorization
