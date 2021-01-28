@@ -28,7 +28,10 @@ module Authorizations
     end
 
     def membership
-      @membership ||= Membership.find_or_create_by(user_id: user&.id || user_id, client_id: client_id)
+      @membership ||= Membership.find_by(user_id: user&.id || user_id, client_id: client_id) ||
+          user&.memberships&.first ||
+          User.find(user_id).memberships&.first ||
+          Membership.create(user_id: user&.id || user_id, client_id: client_id)
     end
 
     def client_id
