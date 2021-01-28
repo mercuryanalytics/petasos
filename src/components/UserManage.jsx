@@ -40,6 +40,7 @@ const UserManage = props => {
       contact_fax: data.contact_fax || '',
       // contact_email: data.contact_email || '',
       mailing_address_1: data.mailing_address_1 || '',
+      mailing_address_2: data.mailing_address_2 || '',
       mailing_city: data.mailing_city || '',
       mailing_state: data.mailing_state || '',
       mailing_zip: data.mailing_zip || '',
@@ -74,6 +75,7 @@ const UserManage = props => {
         contact_fax: values.contact_fax,
         // contact_email: values.contact_email,
         mailing_address_1: values.mailing_address_1,
+        mailing_address_2: values.mailing_address_2,
         mailing_city: values.mailing_city,
         mailing_state: values.mailing_state,
         mailing_zip: values.mailing_zip,
@@ -115,6 +117,7 @@ const UserManage = props => {
   const contact_fax = useField('contact_fax', form);
   // const contact_email = useField('contact_email', form);
   const mailing_address_1 = useField('mailing_address_1', form);
+  const mailing_address_2 = useField('mailing_address_2', form);
   const mailing_city = useField('mailing_city', form);
   const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
@@ -204,30 +207,37 @@ const UserManage = props => {
                 className={styles.formControl}
                 field={mailing_address_1}
                 preview={preview && !isEditClicked}
-                label={renderRequiredFieldLabel('Address')}
+                label={renderRequiredFieldLabel('Address Line 1')}
               />
               <Input
                 className={styles.formControl}
-                field={mailing_city}
+                field={mailing_address_2}
                 preview={preview && !isEditClicked}
-                label={renderRequiredFieldLabel('City')}
+                label={renderRequiredFieldLabel('Address Line 2')}
               />
             </div>
             <div className={styles.controlsGroup}>
+              <Input
+                  className={styles.formControl}
+                  field={mailing_city}
+                  preview={preview && !isEditClicked}
+                  label={renderRequiredFieldLabel('City')}
+              />
               <Input
                 className={styles.formControl}
                 field={mailing_state}
                 preview={preview && !isEditClicked}
                 label={renderRequiredFieldLabel('State')}
               />
-              <Input
-                className={styles.formControl}
-                field={mailing_zip}
-                preview={preview && !isEditClicked}
-                label={renderRequiredFieldLabel('Zip code')}
-              />
+
             </div>
             <div className={styles.controlsGroup}>
+              <Input
+                  className={styles.formControl}
+                  field={mailing_zip}
+                  preview={preview && !isEditClicked}
+                  label={renderRequiredFieldLabel('Zip code')}
+              />
               <Input
                 className={styles.formControl}
                 field={mailing_country}
