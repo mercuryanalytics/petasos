@@ -22,7 +22,7 @@ import Toggle from './common/Toggle';
 import Modal from './common/Modal';
 import Button from './common/Button';
 import Scrollable from './common/Scrollable';
-import {Validators, Input, Select} from './FormFields';
+import { Validators, Input } from './FormFields';
 
 export const UserActionsContexts = {
   Client: 'client',
@@ -62,7 +62,6 @@ const UserActions = props => {
   const [blockedClients, setBlockedClients] = useState([]);
   const [openClientsBackup, setOpenClientsBackup] = useState(null);
   const [visibleSettings, setVisibleSettings] = useState(null);
-  const [clientIdOptions, setClientIdOptions] = useState([]);
 
   const handleItemSelect = useCallback((id) => {
     if (mode === UserActionsModes.Manage) {
@@ -125,14 +124,6 @@ const UserActions = props => {
     });
   }, [mode, clientId, limitClientId, authorizedOptions, dispatch, handleClientToggle]);
 
-  useEffect(() => {
-    if (clients) {
-      setClientIdOptions(clients.map(client => ({
-        value: client.id,
-        text: client.name,
-      })));
-    }
-  }, [clients]);
   useEffect(() => {
     setIsLoading(true);
     setOpenClients({});
@@ -248,10 +239,6 @@ const UserActions = props => {
       } else if (!Validators.isEmail(values.add_user_email)) {
         errors.add_user_email = 'Field value must be a valid email format.';
       }
-
-      if (superAdminMode && !Validators.hasValue(values.client_id)) {
-        errors.client_id = 'You must select a client!';
-      }
       return errors;
     },
     onSubmit: (values) => {
@@ -276,7 +263,7 @@ const UserActions = props => {
       } else if (reportId) {
         result.report_id = reportId;
       }
-      const contextId = clientId ? clientId : (limitClientId ? limitClientId : result.client_id);
+      const contextId = clientId ? clientId : (limitClientId ? limitClientId : null);
       dispatch(createUser(result, contextId, mode === UserActionsModes.Manage)).then((action) => {
         const user = action.payload;
         const handleSuccess = () => {
@@ -309,7 +296,6 @@ const UserActions = props => {
 
   const addUserEmailField = useField('add_user_email', form);
   const addUserNameField = useField('add_user_name', form);
-  const addClientSelect = useField('client_id', form);
 
   const handleSearch = useCallback((value) => {
     if (!!value.length) {
@@ -401,7 +387,7 @@ const UserActions = props => {
       <div className={styles.search}>
         <Search id="useractions-search" placeholder="Search user" onSearch={handleSearch} />
       </div>
-      {!!canCreate && (
+      {!!canCreate && !superAdminMode && (
         <div className={styles.adders}>
           <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
         </div>
@@ -422,20 +408,10 @@ const UserActions = props => {
             label="Name"
           />
           <Input
-            className={`${styles.modalInput} ${styles.stacked}`}
+            className={styles.modalInput}
             field={addUserEmailField}
             label="Email"
           />
-          { superAdminMode &&
-          <Select
-              className={styles.modalInput}
-              field={addClientSelect}
-              options={clientIdOptions}
-              disabled={isBusy}
-              placeholder={'Select client'}
-              label={'Client'}
-          />
-          }
           <div className={styles.modalButtons}>
             <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
               {!isBusy ? 'Invite new user' : 'Inviting new user'}
