@@ -34,7 +34,6 @@ export const logout = (options) => {
       options.onSuccess();
     }
   }
-  window.location.replace(options.redirectTo || options.config.loginUrl);
 };
 
 export const initFromStorage = (options) => {
