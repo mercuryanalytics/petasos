@@ -165,6 +165,12 @@ module Api
         json_response(User.for_client([mercury_client, *current_client_ids]).researchers)
       end
 
+      def reset_password
+        Users::TriggerResetPassword.call(user: current_user)
+
+        json_response({}, 203)
+      end
+
       private
 
       def user_params

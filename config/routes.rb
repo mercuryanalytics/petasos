@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         collection do
           get :researchers
           get :me
+          post :reset_password
         end
         member do
           get :authorized
