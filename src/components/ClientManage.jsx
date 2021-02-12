@@ -206,7 +206,6 @@ const ClientManage = props => {
   }, [clients, data, history, dispatch]);
 
   const handleAvatarChange = useCallback((images) => {
-    console.log(images);
     if (images && images.length) {
       if (images[0].file.size > 1000000) {
         setAvatarErrors('The image exceeds the 1mb limit');
