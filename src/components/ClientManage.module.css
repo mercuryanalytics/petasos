@@ -535,3 +535,9 @@
   font-size: .875rem;
   color: #A9A9A9;
 }
+
+.avatarError {
+  margin-top: .3rem;
+  color: #B60010;
+  font-size: .75rem
+}

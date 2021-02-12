@@ -82,6 +82,7 @@ const ClientManage = props => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [templateActiveState, setTemplateActiveState] = useState(null);
   const [persistFieldsErrors, setPersistFieldsErrors] = useState(false);
+  const [avatarErrors, setAvatarErrors] = useState(null);
 
   const initSelection = useCallback(() => {
     const pathname = history.location.pathname;
@@ -105,6 +106,7 @@ const ClientManage = props => {
   const init = useCallback(() => {
     setIsLoading(true);
     setAvatar(null);
+    setAvatarErrors(null);
     setAccountsTab(AccountsTabs.Users);
     setUsersTab(UsersTabs.Info);
     setTemplateActiveState(null);
@@ -204,10 +206,18 @@ const ClientManage = props => {
   }, [clients, data, history, dispatch]);
 
   const handleAvatarChange = useCallback((images) => {
+    console.log(images);
     if (images && images.length) {
-      setAvatar(images[0]);
+      if (images[0].file.size > 1000000) {
+        setAvatarErrors('The image exceeds the 1mb limit');
+        setAvatar(null);
+      } else {
+        setAvatarErrors(null);
+        setAvatar(images[0]);
+      }
     } else {
       setAvatar(null);
+      setAvatarErrors(null);
     }
   }, []);
 
@@ -286,6 +296,7 @@ const ClientManage = props => {
         data && dispatch(updateClient(data.id, result)).then(() => {
           form.reset();
           setIsBusy(false);
+          setAvatarErrors(null);
         }, () => {
           setIsBusy(false);
         });
@@ -398,7 +409,7 @@ const ClientManage = props => {
   }, [errors]);
 
   const renderAvatarUploader = (centered, preview) => {
-    const avatarUrl = !!avatar ? avatar.dataURL : (
+    const avatarUrl = !!avatar && !avatarErrors ? avatar.dataURL : (
       data && data.logo_url !== Constants.DEFAULT_CLIENT_LOGO_URL ? data.logo_url : null);
     return (
       <ImageUploading acceptType={['jpg','gif','png','gif']} onChange={handleAvatarChange}>
@@ -409,12 +420,13 @@ const ClientManage = props => {
               className={`${styles.avatarUpload} ${!!avatarUrl ? styles.hasAvatar : ''}`}
               {...(!preview ? { onClick: onImageUpload } : {})}
             >
-              {!!avatarUrl && <img src={avatarUrl} alt="" />}
+              {!!avatarUrl && !avatarErrors && <img src={avatarUrl} alt="" />}
               {!preview && (<>
                 <div className={styles.uploadOverlay}></div>
                 <div className={styles.uploadTrigger}><Upload /></div>
               </>)}
             </div>
+            {avatarErrors && <p class={styles.avatarError}>{avatarErrors}</p>}
           </div>
         )}
       </ImageUploading>
