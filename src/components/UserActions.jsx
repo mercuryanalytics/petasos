@@ -39,6 +39,7 @@ const UserActions = props => {
   const {
     mode, context, clientId, projectId, reportId,
     selectedUserId, limitClientId, canCreate, canDelete,
+    superAdminMode
   } = props;
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -386,7 +387,7 @@ const UserActions = props => {
       <div className={styles.search}>
         <Search id="useractions-search" placeholder="Search user" onSearch={handleSearch} />
       </div>
-      {!!canCreate && (
+      {!!canCreate && !superAdminMode && (
         <div className={styles.adders}>
           <button onClick={() => setIsAddUserOpen(true)}>+ Add user</button>
         </div>
