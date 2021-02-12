@@ -131,6 +131,29 @@ export function updateUser(id, data) {
   };
 }
 
+export function userPasswordReset() {
+  return dispatch => {
+    return apiCall('post', `${Constants.API_URL}/users/reset_password`).then(
+        res => dispatch(triggerResetPassword(res)),
+        err => handleActionFailure(err, dispatch(triggerResetPasswordFailed(err))),
+    )
+  }
+}
+
+export const triggerResetPassword = (user) => {
+  return {
+    type: 'TRIGGER_RESET_PASSWORD',
+    payload: user,
+  }
+};
+
+export const triggerResetPasswordFailed = (error) => {
+  return {
+    type: 'TRIGGER_RESET_PASSWORD_ERROR',
+    payload: error,
+  }
+};
+
 export const updateUserSuccess = (user) => {
   return {
     type: 'UPDATE_USER_SUCCESS',

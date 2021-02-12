@@ -7,7 +7,7 @@ import Scrollable from './common/Scrollable';
 import { Pen } from './Icons';
 import { useForm, useField } from 'react-final-form-hooks';
 import { Validators, Input } from './FormFields';
-import { getUser, createUser, updateUser } from '../store/users/actions';
+import {getUser, createUser, updateUser, userPasswordReset} from '../store/users/actions';
 import { setUser } from "../store/auth/actions";
 
 const UserManage = props => {
@@ -22,6 +22,7 @@ const UserManage = props => {
     editMode ? state.usersReducer.users.filter(u => u.id === id)[0] : null);
   const authUser = useSelector(state => state.authReducer.user)
   const [errors, setErrors] = useState(null);
+  const [passwordResetTrigger, setPasswordResetTrigger] = useState(false);
   useEffect(() => {
     setIsEditClicked(false);
     if (!!id && (!data || data.id !== !!id)) {
@@ -30,6 +31,11 @@ const UserManage = props => {
     }
   // eslint-disable-next-line
   }, [id]);
+
+  function passwordReset() {
+    setPasswordResetTrigger(true);
+    dispatch(userPasswordReset());
+  }
 
   const { form, handleSubmit, submitting } = useForm({
     initialValues: data ? {
@@ -122,7 +128,6 @@ const UserManage = props => {
   const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_country = useField('mailing_country', form);
-  const password = useField('new_password', form);
 
   const renderRequiredFieldLabel = (label) => (
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>
@@ -154,15 +159,6 @@ const UserManage = props => {
               preview={preview && !isEditClicked}
               label={renderRequiredFieldLabel('Account name')}
             />
-
-            {isEditClicked && authUser?.auth_id?.startsWith('auth0') && <Input
-                className={styles.formControl}
-                field={password}
-                preview={false}
-                type={'password'}
-                label={'New password'}
-            />
-            }
           </div>
           <div className={styles.formSection}>
             <div className={styles.title}>
@@ -264,6 +260,11 @@ const UserManage = props => {
             </div>
           )}
         </form>
+        {preview && authUser?.auth_id?.startsWith('auth0') && authUser.id === id && !isEditClicked && (
+            <Button onClick={passwordReset} disabled={passwordResetTrigger}>
+          { passwordResetTrigger ? 'You will receive a password reset email' : 'Send password reset email'}
+        </Button>
+        )}
       </Scrollable>
     </div>
   ) : (
