@@ -9,7 +9,7 @@ const Logout = () => {
     onSuccess: clearCache,
     redirectTo: Constants.APP_URL,
   });
-  return '';
+  window.location.replace(Constants.APP_URL);
 };
 
 export default Logout;
