@@ -42,3 +42,9 @@
 .controls > :not(:last-child) {
   margin-right: 10px;
 }
+
+.hambugerIcon {
+  margin-left: -40px;
+  border-radius: 0 50px 50px 0px;
+  fill: #fff;
+}

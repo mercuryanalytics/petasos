@@ -24,6 +24,26 @@
   overflow-y: auto;
 }
 
+.hidden {
+  display: none;
+}
+
+.nonHidden {
+  display: block;
+}
+
+.absolutePosition {
+  position: absolute;
+  z-index: 99;
+  background: #EFF0F4;
+}
+
+.styledSideMenu {
+  position: absolute;
+  z-index: 999;
+  background-color: #EFF0F4;
+}
+
 .body .content {
   flex-grow: 1;
   height: calc(100vh - 72px);

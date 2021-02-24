@@ -14,6 +14,7 @@ import { getClient } from '../store/clients/actions';
 import { getProject } from '../store/projects/actions';
 import { getReport } from '../store/reports/actions';
 import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
+import { useMediaQuery } from "react-responsive/src";
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -37,6 +38,7 @@ const Index = props => {
   const clients = useSelector(state => state.clientsReducer.clients);
   const projects = useSelector(state => state.projectsReducer.projects);
   const reports = useSelector(state => state.reportsReducer.reports);
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -247,6 +249,14 @@ const Index = props => {
     content, resId, params, checkAuthorizations, dispatch,
     getCurrentClient, getCurrentProject, getCurrentReport,
   ]);
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', 'alignItems': 'center', 'margin': '50px', 'justifyContent': 'center' }}>
+        <h2>Our Workbench, Research Results Website and other Tools are optimized for access on Desktop, Laptop and Tablet.</h2>
+      </div>
+    );
+  }
 
   return (!isAccessBlocked && !isDataMissing) ? (
     <Screen
