@@ -59,62 +59,18 @@ module Api
 
       def authorize
         project = Project.find(params[:id])
-        base_authorization = Authorizations::BaseAuthorization.call(
-          params: authorize_params.to_h,
-          project: project
-        )
 
-        render error_response(base_authorization.message) && return unless base_authorization.success?
+        options = {
+            params: authorize_params.to_h,
+            project: project
+        }
+
+        options[:params].merge!({ access: params[:access] }) if params.key?(:access)
+
+        base_authorization = Authorizations::BaseAuthorization.call(**options)
 
         status = base_authorization.status == :ok ? :created : :no_content
-        authorization = base_authorization.authorization
-        if params[:access] && authorization && params[:authorize]
-          authorization.scopes << Scope.find_by(action: 'access', scope: 'project')
-
-          client = project.client
-          Authorizations::AddAuthorization.call(
-              client: client,
-              user_id: authorize_params[:user_id],
-              client_id: authorize_params[:client_id]
-          )
-        end
-
-        if params[:access] && !params[:authorize]
-          client_id = project.domain_id
-          membership = Membership.find_by(user_id: authorize_params[:user_id], client_id: authorize_params[:client_id])
-
-          project_ids = Project.where(domain_id: client_id).pluck(:id)
-
-          other_authorizations = Authorization.where(
-              subject_class: 'Project',
-              subject_id: project_ids,
-              membership_id: membership.id
-          ).count
-
-          Authorization.find_by(
-              subject_class: 'Client',
-              subject_id: client_id,
-              membership_id: membership.id
-          )&.destroy if membership && other_authorizations.zero?
-        end
-
-        return head status unless current_user.admin? && authorization
-
-        role_interactor = Authorizations::RoleSetter.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(role_interactor.message) && return unless role_interactor.success?
-
-        dynamic_scopes_interactor = Authorizations::DynamicScope.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(dynamic_scopes_interactor.message) && return unless dynamic_scopes_interactor.success?
-
-        head :ok
+        head status
       end
 
       def authorized

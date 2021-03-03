@@ -2,7 +2,7 @@ module Authorizations
   class AddAuthorization
     include Interactor
 
-    delegate :client, :project, :report, :user, :user_id, :params, :no_auth, to: :context
+    delegate :client, :project, :report, :user, :user_id, :membership_id, :params, :no_auth, to: :context
 
     attr_reader :instance
 
@@ -16,7 +16,7 @@ module Authorizations
       auth = Authorization.find_or_initialize_by(
         subject_class: instance.class.to_s,
         subject_id:    instance.id,
-        membership_id: membership.id
+        membership_id: membership_id || membership.id
       )
 
       context.client_id = client_id

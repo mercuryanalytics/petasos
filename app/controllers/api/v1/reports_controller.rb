@@ -82,85 +82,15 @@ module Api
       def authorize
         report = Report.find(params[:id])
 
-        base_authorization = Authorizations::BaseAuthorization.call(
-          params: authorize_params.to_h,
-          report: report
-        )
+        options = {
+            params: authorize_params.to_h,
+            report: report
+        }
 
-        render error_response(base_authorization.message) && return unless base_authorization.success?
-
+        options[:params].merge!({ access: params[:access] }) if params.key?(:access)
         status = base_authorization.status == :ok ? :created : :no_content
-        authorization = base_authorization.authorization
 
-        if params[:access] && authorization && params[:authorize]
-          project = report.project
-          Authorizations::AddAuthorization.call(
-              user_id: authorize_params[:user_id],
-              project: project,
-              client_id: authorize_params[:client_id]
-          )
-
-          client = project.client
-          Authorizations::AddAuthorization.call(
-              client: client,
-              user_id: authorize_params[:user_id],
-              client_id: authorize_params[:client_id]
-          )
-        end
-
-        if params[:access] && !params[:authorize]
-          membership = Membership.find_by(
-              user_id: authorize_params[:user_id],
-              client_id: authorize_params[:client_id]
-          )
-
-          project = report.project
-          other_report_ids = Report.where(project_id: report.project_id).pluck(:id)
-          other_report_authorizations = Authorization.where(
-              subject_class: 'Report',
-              subject_id: other_report_ids,
-              membership: membership.id
-          ).count
-
-          Authorization.find_by(
-              subject_class: 'Project',
-              subject_id: project.id,
-              membership_id: membership.id
-          )&.destroy if membership && other_report_authorizations.zero?
-
-          client_id = project.domain_id
-
-          project_ids = Project.where(domain_id: client_id).pluck(:id)
-          other_authorizations = Authorization.where(
-              subject_class: 'Project',
-              subject_id: project_ids,
-              membership_id: membership.id
-          ).count
-
-          Authorization.find_by(
-              subject_class: 'Client',
-              subject_id: client_id,
-              membership_id: membership.id
-          )&.destroy if membership && other_authorizations.zero?
-        end
-
-        return head status unless current_user.admin? && authorization
-
-        role_interactor = Authorizations::RoleSetter.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(role_interactor.message) && return unless role_interactor.success?
-
-        dynamic_scopes_interactor = Authorizations::DynamicScope.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(dynamic_scopes_interactor.message) && return unless dynamic_scopes_interactor.success?
-
-        head :ok
+        head status
       end
 
       def authorized

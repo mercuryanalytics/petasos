@@ -2,13 +2,12 @@ module Authorizations
   class RemoveAuthorization
     include Interactor
 
-    delegate :client, :project, :report, :user, :user_id, :client_id, to: :context
+    delegate :client, :project, :report, :user, :user_id, :membership_id, :client_id, :from_admin, to: :context
 
-    # TODO: check authorizations
     def call
       instance = client || project || report
 
-      # return unless membership_id
+      return unless membership_id
 
       # context.fail!(message: 'no authorization found') unless membership_id
 
@@ -19,10 +18,6 @@ module Authorizations
       }.reject { |_, value| value.blank? }
 
       Authorization.where(query).destroy_all
-    end
-
-    def membership_id
-      @membership_id ||= Membership.where(client_id: client_id, user_id: user_id).pluck(:id).first
     end
   end
 end

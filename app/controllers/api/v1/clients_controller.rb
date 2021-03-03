@@ -58,33 +58,21 @@ module Api
       end
 
       def authorize
-        base_authorization = Authorizations::BaseAuthorization.call(
-          params: authorize_params.to_h,
-          client: Client.find(params[:id])
-        )
+        client = Client.find(params[:id])
+
+        options = {
+            params: authorize_params.to_h,
+            client: client
+        }
+
+        options[:params].merge!({ access: params[:access] }) if params.key?(:access)
+
+        base_authorization = Authorizations::BaseAuthorization.call(**options)
 
         render error_response(base_authorization.message) && return unless base_authorization.success?
-
         status = base_authorization.status == :ok ? :created : :no_content
-        authorization = base_authorization.authorization
 
-        return head status unless current_user.admin? && authorization
-
-        role_interactor = Authorizations::RoleSetter.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(role_interactor.message) && return unless role_interactor.success?
-
-        dynamic_scopes_interactor = Authorizations::DynamicScope.call(
-          params: authorize_params.to_h,
-          authorization: authorization
-        )
-
-        render error_response(dynamic_scopes_interactor.message) && return unless dynamic_scopes_interactor.success?
-
-        head :ok
+        head status
       end
 
       def authorized
