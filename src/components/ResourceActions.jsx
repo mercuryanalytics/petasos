@@ -634,11 +634,13 @@ const ResourceActions = props => {
                 title={client.name}
                 onClick={() => !clientId && handleClientToggle(client.id)}
               >
+                <div className={styles.info + ' first-child'}>
                 {!clientId && (
                   <MdPlayArrow className={`${styles.arrow} ${!!openClients[client.id] ? styles.open : ''}`} />
                 )}
                 <Avatar className={styles.logo} avatar={client.logo_url} alt={client.name[0].toUpperCase()} />
                 <span className={styles.name}>{client.name}</span>
+              </div>
                 <Checkbox
                   className={styles.itemCheckbox}
                   checked={getItemStatus('client', client.id, UserRoles.ClientAccess)}
@@ -671,10 +673,12 @@ const ResourceActions = props => {
                         title={project.name}
                         onClick={() => handleProjectToggle(project.id)}
                       >
+                        <div className={styles.info + ' first-child'}>
                         <MdPlayArrow className={`${styles.arrow} ${!!openProjects[project.id] ? styles.open : ''}`} />
                         <Folder className={styles.icon} />
                         <span className={styles.name}>{project.project_number ?
                           project.project_number + ': ' : ''}{project.name}</span>
+                        </div>
                         <Checkbox
                           className={styles.itemCheckbox}
                           checked={getItemStatus('project', project.id, UserRoles.ProjectAccess)}
@@ -700,8 +704,10 @@ const ResourceActions = props => {
                               title={report.name}
                             >
                               <div className={styles.title}>
+                                <div className={styles.info + ' first-child'}>
                                 <File className={styles.icon} />
                                 <span className={styles.name}>{report.name}</span>
+                                </div>
                                 <Toggle
                                   id={`report-toggle-${report.id}`}
                                   className={styles.itemToggle}
@@ -714,7 +720,7 @@ const ResourceActions = props => {
                             </div>
                           ))
                         ) : (
-                          <div className={`${styles.noResults} ${!clientId ? styles.left : ''}`}>
+                          <div className={`${styles.noResults} ${!clientId ? styles.left : ''} first-child`}>
                             No results
                           </div>
                         )
@@ -724,7 +730,7 @@ const ResourceActions = props => {
                     </div>
                   ))}
                 </>) : (
-                  <div className={`${styles.noResults} ${!clientId ? styles.left : ''}`}>
+                  <div className={`${styles.noResults} ${!clientId ? styles.left : ''} first-child`}>
                     No results
                   </div>
                 )
@@ -734,7 +740,7 @@ const ResourceActions = props => {
             </div>
           ))}
         </>) : (
-          <div className={styles.noResults}>No results</div>
+          <div className={styles.noResults + ' first-child'}>No results</div>
         )}
       </Scrollable>
       </div>

@@ -20,6 +20,8 @@ import { Validators, Input, Select, Checkbox } from './FormFields';
 import { getClient, createClient, updateClient, deleteClient } from '../store/clients/actions';
 import { refreshAuthorizations, getUsers } from '../store/users/actions';
 import { UserRoles, hasRoleOnClient, isSuperUser } from '../store';
+import {useMediaQuery} from "react-responsive/src";
+import Close from "./Icons/Close";
 
 const ClientTypes = {
   Client: 'Client',
@@ -83,6 +85,8 @@ const ClientManage = props => {
   const [templateActiveState, setTemplateActiveState] = useState(null);
   const [persistFieldsErrors, setPersistFieldsErrors] = useState(false);
   const [avatarErrors, setAvatarErrors] = useState(null);
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1337 });
+  const [showUserActions, setShowUserActions] = useState(true);
 
   const initSelection = useCallback(() => {
     const pathname = history.location.pathname;
@@ -406,6 +410,17 @@ const ClientManage = props => {
     setPersistFieldsErrors(false);
     setFieldsTab(tab);
   }, [errors]);
+  const setCurrentTab = useCallback((tab) => {
+    setUsersTab(tab);
+    if (isTablet) {
+      if (tab === UsersTabs.Info) {
+        setShowUserActions(true);
+      } else {
+        setShowUserActions(false);
+      }
+
+    }
+  }, [usersTab]);
 
   const renderAvatarUploader = (centered, preview) => {
     const avatarUrl = !!avatar && !avatarErrors ? avatar.dataURL : (
@@ -443,6 +458,34 @@ const ClientManage = props => {
     </Button>
   );
 
+  function renderTemplateSection() {
+    return (
+        <div className={styles.anyActions}>
+          <div className={`${styles.title} ${styles.big}`}>
+            <span>Template</span>
+            {isTablet && (
+              <Button transparent onClick={() => { setShowTemplate(false); handleUserSelect(); }}>
+                <Close className={`${styles.deleteIcon} ${styles.right}`} />Close
+              </Button>
+            )}
+          </div>
+          <div className={`${styles.textBlock} ${styles.split}`}>
+            <div className={styles.left}>
+              {'By activating the user template you will be able to '}
+              {'set a default access for your new users.'}
+            </div>
+            <div className={styles.right}>
+              <Toggle
+                  id={`templates-toggle-${id}`}
+                  checked={getTemplateStatus()}
+                  onChange={status => setTemplateStatus(status)}
+              />
+            </div>
+          </div>
+          <ResourceActions className={styles.templatesActions} clientId={id} templateMode={true}/>
+        </div>
+    );
+  }
   return (!editMode || data) ? (
     <div className={`
       ${styles.container} 
@@ -807,73 +850,80 @@ const ClientManage = props => {
       )) ||
       (tab === ContentTabs.Accounts && canManage && (
         <div className={`${styles.section} ${styles.accounts}`}>
-          <div className={styles.userList}>
-            <div className={styles.accountsTabs}>
-              <div className={`${styles.innerTabs} ${styles.stretch}`}>
-                <div
-                  className={`
+          {showTemplate && isTablet && (
+              <div class={styles.container_over}>
+                {renderTemplateSection()}
+              </div>
+          )}
+          {showUserActions && (
+              <div className={styles.userList}>
+                <div className={styles.accountsTabs}>
+                  <div className={`${styles.innerTabs} ${styles.stretch}`}>
+                    <div
+                        className={`
                     ${styles.innerTab}
                     ${accountsTab === AccountsTabs.Users ? styles.active : ''}
                   `}
-                  onClick={() => {
-                    setAccountsTab(AccountsTabs.Users);
-                    setShowTemplate(false);
-                    setSelectedUserId(null);
-                  }}
-                >
-                  <span>Users</span>
+                        onClick={() => {
+                          setAccountsTab(AccountsTabs.Users);
+                          setShowTemplate(false);
+                          setSelectedUserId(null);
+                        }}
+                    >
+                      <span>Users</span>
+                    </div>
+                    <div
+                        className={`${styles.innerTab} ${accountsTab === AccountsTabs.Domains ? styles.active : ''}`}
+                        onClick={() => {
+                          setAccountsTab(AccountsTabs.Domains);
+                          setSelectedUserId(null);
+                          history.push(`${Routes.ManageClient.replace(':id', id)}`);
+                        }}
+                    >
+                      <span>Domains</span>
+                    </div>
+                  </div>
+                  {canManage && accountsTab !== AccountsTabs.Domains && (
+                      <div className={`${styles.template} ${showTemplate ? styles.active : ''}`}>
+                        <span onClick={handleTemplateClick}>User Template</span>
+                      </div>
+                  )}
                 </div>
-                <div
-                  className={`${styles.innerTab} ${accountsTab === AccountsTabs.Domains ? styles.active : ''}`}
-                  onClick={() => {
-                    setAccountsTab(AccountsTabs.Domains);
-                    setSelectedUserId(null);
-                    history.push(`${Routes.ManageClient.replace(':id', id)}`);
-                  }}
-                >
-                  <span>Domains</span>
-                </div>
+                {(accountsTab === AccountsTabs.Users && (
+                    <UserActions
+                        className={`${styles.usersActions} ${!canManage ? styles.tall : ''}`}
+                        mode={UserActionsModes.Manage}
+                        showClients={false}
+                        limitClientId={id}
+                        selectedUserId={selectedUserId}
+                        canCreate={canManage}
+                        canDelete={canManage}
+                        onUserSelect={handleUserSelect}
+                    />
+                )) ||
+                (accountsTab === AccountsTabs.Domains && (
+                    <DomainActions
+                        className={styles.domainsActions}
+                        clientId={id}
+                        canCreate={canManage}
+                        canDelete={canManage}
+                    />
+                ))}
               </div>
-              {canManage && accountsTab !== AccountsTabs.Domains && (
-                <div className={`${styles.template} ${showTemplate ? styles.active : ''}`}>
-                  <span onClick={handleTemplateClick}>User Template</span>
-                </div>
-              )}
-            </div>
-            {(accountsTab === AccountsTabs.Users && (
-              <UserActions
-                className={`${styles.usersActions} ${!canManage ? styles.tall : ''}`}
-                mode={UserActionsModes.Manage}
-                showClients={false}
-                limitClientId={id}
-                selectedUserId={selectedUserId}
-                canCreate={canManage}
-                canDelete={canManage}
-                onUserSelect={handleUserSelect}
-              />
-            )) ||
-            (accountsTab === AccountsTabs.Domains && (
-              <DomainActions
-                className={styles.domainsActions}
-                clientId={id}
-                canCreate={canManage}
-                canDelete={canManage}
-              />
-            ))}
-          </div>
+          )}
           {(accountsTab === AccountsTabs.Users && !showTemplate && (
             <div className={styles.userActions}>
               <div className={styles.innerTabs}>
                 <div
                   className={`${styles.innerTab} ${usersTab === UsersTabs.Info ? styles.active : ''}`}
-                  onClick={() => setUsersTab(UsersTabs.Info)}
+                  onClick={() => setCurrentTab(UsersTabs.Info)}
                 >
                   <span>User info</span>
                 </div>
                 {canManage && (
                   <div
                     className={`${styles.innerTab} ${usersTab === UsersTabs.Permissions ? styles.active : ''}`}
-                    onClick={() => setUsersTab(UsersTabs.Permissions)}
+                    onClick={() => setCurrentTab(UsersTabs.Permissions)}
                   >
                     <span>Access and Permissions</span>
                   </div>
@@ -926,27 +976,7 @@ const ClientManage = props => {
               </Scrollable>
             </div>
           )) ||
-          (showTemplate && (
-            <div className={styles.anyActions}>
-              <div className={`${styles.title} ${styles.big}`}>
-                <span>Template</span>
-              </div>
-              <div className={`${styles.textBlock} ${styles.split}`}>
-                <div className={styles.left}>
-                  {'By activating the user template you will be able to '}
-                  {'set a default access for your new users.'}
-                </div>
-                <div className={styles.right}>
-                  <Toggle
-                    id={`templates-toggle-${id}`}
-                    checked={getTemplateStatus()}
-                    onChange={status => setTemplateStatus(status)}
-                  />
-                </div>
-              </div>
-              <ResourceActions className={styles.templatesActions} clientId={id} templateMode={true} />
-            </div>
-          ))}
+          (showTemplate && !isTablet && renderTemplateSection())}
         </div>
       ))}
       </>)}

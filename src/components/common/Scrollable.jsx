@@ -12,8 +12,16 @@ const Scrollable = props => {
       if (contentNode && !contentNode.getAttribute('data-scrollable-content')) {
         contentNode.setAttribute('data-scrollable-content', 'true');
       }
+      document.addEventListener('scroll', function(event) {
+        containerRef.current.recalculate();
+        let xPosition = window.scrollX;
+        Array.from(document.getElementsByClassName('first-child')).forEach(element => {
+          element.style.transform = `translateX(${xPosition}px)`;
+        });
+      });
+
     }
-  }, [containerRef]);
+  }, [containerRef, document]);
 
   return (
     <SimpleBarReact ref={containerRef} data-scrollable className={`${props.className || ''}`}>

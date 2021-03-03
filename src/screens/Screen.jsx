@@ -14,6 +14,7 @@ import SideMenu from '../components/SideMenu';
 import Loader from '../components/common/Loader';
 import { EmptyState } from '../components/Icons';
 import { isSuperUser } from '../store';
+import { useMediaQuery } from "react-responsive/src";
 
 const Screen = props => {
   const dispatch = useDispatch();
@@ -31,6 +32,8 @@ const Screen = props => {
   const [doRedirect, setDoRedirect] = useState(false);
   const [realEmptyState, setRealEmptyState] = useState(false);
   const [emptyState, setEmptyState] = useState(false);
+  const [showSideMenu, setShowSideMenu] = useState(true);
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1337 })
 
   useEffect(() => {
     if (partner && authUser) {
@@ -86,6 +89,10 @@ const Screen = props => {
     }
   }, [localUser, authUser, props]);
 
+  const onSideMenuShow = useCallback( () => {
+    setShowSideMenu(!showSideMenu)
+  }, [showSideMenu]);
+
   const handleSideMenuLoad = useCallback((emptyState) => {
     setRealEmptyState(emptyState);
     setEmptyState(emptyState && props.useEmptyState === true);
@@ -113,11 +120,13 @@ const Screen = props => {
             isSocialLogin={isSocialLogin}
             logo={customLogo}
             slogan={customSlogan}
+            onSidemenuTrigger={onSideMenuShow}
+            showSidebar={props.showSideBar}
           />
         </div>
         <div className={styles.body}>
           {props.showSideBar !== false && (!realEmptyState || isSuperUser(localUser.id)) && (
-            <div className={styles.side}>
+            <div className={`${styles.side} ${showSideMenu ? styles.nonHidden : styles.hidden} ${isTablet ? styles.absolutePosition: ''}`}>
               <SideMenu
                 userId={localUser.id}
                 autoselect={!props.independent}

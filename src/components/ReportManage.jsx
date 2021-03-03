@@ -167,34 +167,36 @@ const ReportManage = props => {
   return (
     <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
       <div className={`${styles.section} ${styles.left}`}>
-        <div className={styles.title}>
-          <span>Report details</span>
-        </div>
-        {editMode && (
-          <div className={styles.actions}>
-            {canDelete && (
-              <Button
-                transparent
-                loading={isDeleteBusy}
-                onClick={() => confirm({
-                  text: 'Are you sure you want to delete this report ?',
-                  onConfirm: handleDelete,
-                })}
-              >
-                <Bin className={styles.deleteIcon} />
-                <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
-              </Button>
-            )}
-            {!!canEdit && !isEditClicked && (
-                <Button transparent onClick={() => setIsEditClicked(true)}>
-                  <Pen className={styles.deleteIcon} /> Edit
-                </Button>
-            )}
-            {editMode && !previewMode && !!data.url && !isEditClicked && (
-              <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
-            )}
+        <div class={styles.report_header}>
+          <div className={styles.title}>
+            <span>Report details</span>
           </div>
-        )}
+          {editMode && (
+            <div className={styles.actions}>
+              {canDelete && (
+                <Button
+                  transparent
+                  loading={isDeleteBusy}
+                  onClick={() => confirm({
+                    text: 'Are you sure you want to delete this report ?',
+                    onConfirm: handleDelete,
+                  })}
+                >
+                  <Bin className={styles.deleteIcon} />
+                  <span>{!isDeleteBusy ? 'Delete report' : 'Deleting report'}</span>
+                </Button>
+              )}
+              {!!canEdit && !isEditClicked && (
+                  <Button transparent onClick={() => setIsEditClicked(true)}>
+                    <Pen className={styles.deleteIcon} /> Edit
+                  </Button>
+              )}
+              {editMode && !previewMode && !!data.url && !isEditClicked && (
+                <Button link={getAccessibleUrl(data.url, data.name)} target="_blank" action={true}>View report</Button>
+              )}
+            </div>
+          )}
+        </div>
         <Scrollable className={styles.scrollableForm}>
           <form className={styles.form} onSubmit={handleSubmit}>
             <Input

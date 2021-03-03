@@ -8,6 +8,7 @@ import UserActions, { UserActionsModes } from '../components/UserActions';
 import UserManage from '../components/UserManage';
 import ResourceActions from '../components/ResourceActions';
 import { isSuperUser } from '../store';
+import { useMediaQuery } from "react-responsive/src";
 
 const Tabs = {
   Info: 1,
@@ -19,6 +20,15 @@ const SuperUser = () => {
   const [tab, setTab] = useState(Tabs.Info);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isAccessBlocked, setIsAccessBlocked] = useState(false);
+  const [showUserActions, setShowUserActions] = useState(true);
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1337 })
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const setCurrentTab = useCallback((tab) => {
+    setTab(tab);
+    if (isTablet) {
+      setShowUserActions(!showUserActions);
+    }
+  }, [tab]);
 
   useEffect(() => {
     dispatch(setLocationData({ superUser: true }));
@@ -36,35 +46,45 @@ const SuperUser = () => {
     }
   }, [selectedUserId]);
 
+  if (isMobile) {
+    return (
+        <div style={{ display: 'flex', 'alignItems': 'center', 'margin': '50px', 'justifyContent': 'center' }}>
+          <h2>Our Workbench, Research Results Website and other Tools are optimized for access on Desktop, Laptop and Tablet.</h2>
+        </div>
+    );
+  }
+
   return !isAccessBlocked ? (
     <Screen className={styles.container} private showSideBar={false} onLoad={handleScreenLoad}>
       <div className={styles.content}>
-        <div className={styles.left}>
-          <div className={styles.title}>
-            <span>Users</span>
+        {showUserActions && (
+          <div className={styles.left}>
+            <div className={styles.title}>
+              <span>Users</span>
+            </div>
+            <UserActions
+                className={styles.usersActions}
+                mode={UserActionsModes.Manage}
+                showClients={false}
+                superAdminMode={true}
+                selectedUserId={selectedUserId}
+                onUserSelect={handleUserSelect}
+                canCreate={true}
+                canDelete={true}
+            />
           </div>
-          <UserActions
-            className={styles.usersActions}
-            mode={UserActionsModes.Manage}
-            superAdminMode={true}
-            showClients={false}
-            selectedUserId={selectedUserId}
-            onUserSelect={handleUserSelect}
-            canCreate={true}
-            canDelete={true}
-          />
-        </div>
+        )}
         <div className={styles.right}>
           <div className={styles.tabs}>
             <div
               className={`${styles.tab} ${tab === Tabs.Info ? styles.active : ''}`}
-              onClick={() => setTab(Tabs.Info)}
+              onClick={() => setCurrentTab(Tabs.Info)}
             >
               <span>User info</span>
             </div>
             <div
               className={`${styles.tab} ${tab === Tabs.Permissions ? styles.active : ''}`}
-              onClick={() => setTab(Tabs.Permissions)}
+              onClick={() => setCurrentTab(Tabs.Permissions)}
             >
               <span>Access and Permissions</span>
             </div>

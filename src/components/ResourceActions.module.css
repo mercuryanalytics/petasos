@@ -166,6 +166,12 @@
   cursor: pointer;
 }
 
+.info {
+  display: flex;
+  flex-direction: row;
+  flex-basis: 100%;
+}
+
 .client > .title .logo {
   width: 1.75rem;
   height: 1.75rem;
@@ -315,6 +321,7 @@
   padding: 0 10px;
   margin-bottom: 24px;
   user-select: none;
+  margin-left: 300px;
 }
 
 .checkboxesTitles .checkboxTitle.separator, .itemCheckbox.separator {

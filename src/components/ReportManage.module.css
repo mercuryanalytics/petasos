@@ -14,12 +14,7 @@
 }
 
 .actions {
-  position: absolute;
   z-index: 3;
-  right: 2rem;
-  top: 22px;
-  display: flex;
-  align-items: center;
   background-color: #fff;
 }
 
@@ -121,4 +116,10 @@
   display: flex !important;
   justify-content: center;
   width: 100% !important;
+}
+
+.report_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }

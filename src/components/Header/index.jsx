@@ -6,14 +6,19 @@ import SuperUserLink from './SuperUserLink';
 import UserMenu from './UserMenu';
 import { isSuperUser } from '../../store';
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "react-responsive/src";
+import Button from "../common/Button";
+import HamburgerIcon from "../Icons/HamburgerIcon";
 
 const Header = props => {
-  const { authUser, localUser, isSocialLogin, logo, slogan } = props;
-  const userInStore = useSelector(state => state.authReducer.user)
+  const { authUser, localUser, isSocialLogin, logo, slogan, onSidemenuTrigger, showSidebar } = props;
+  const userInStore = useSelector(state => state.authReducer.user);
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1337 })
 
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
+          {isTablet && showSidebar !== false && <Button className={styles.hambugerIcon} onClick={onSidemenuTrigger}><HamburgerIcon /></Button>}
         <a
           className={styles.link}
           href={Routes.Home}
