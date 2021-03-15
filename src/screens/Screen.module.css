@@ -14,9 +14,6 @@
 }
 
 .body .side {
-  width: 500px;
-  min-width: 500px;
-  max-width: 500px;
   height: calc(100vh - 72px);
   padding: 0 28px 2rem 18px;
   box-sizing: border-box;
@@ -25,17 +22,48 @@
 }
 
 .hidden {
-  display: none;
+  padding: 0 !important;
+  animation: hideNav 500ms linear;
+  min-width: 0;
+  width: 0;
+
+}
+
+@keyframes showNav {
+  from { min-width: 0; width: 0; }
+  to { min-width: 500px;  width: 500px; }
+}
+
+@keyframes hideNav {
+  from { min-width: 500px; width: 500px; }
+  to { min-width: 0;  width: 0; }
+}
+
+@-webkit-keyframes showNav {
+  from { min-width: 0; width: 0; }
+  to { min-width: 500px;  width: 500px; }
+}
+
+@-webkit-keyframes hideNav {
+  from { min-width: 500px; width: 500px; }
+  to { min-width: 0;  width: 0; }
+}
+
+@-moz-keyframes showNav {
+  from { min-width: 0; width: 0; }
+  to { min-width: 500px;  width: 500px; }
+}
+
+@-moz-keyframes hideNav {
+  from { min-width: 500px; width: 500px; }
+  to { min-width: 0;  width: 0; }
 }
 
 .nonHidden {
+  animation: showNav 500ms linear;
   display: block;
-}
-
-.absolutePosition {
-  position: absolute;
-  z-index: 99;
-  background: #EFF0F4;
+  width: 500px;
+  min-width: 500px;
 }
 
 .styledSideMenu {

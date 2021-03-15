@@ -18,3 +18,5 @@ export { default as NoGlobe } from './NoGlobe';
 export { default as Pen } from './Pen';
 export { default as SuperUser } from './SuperUser';
 export { default as Upload } from './Upload';
+export { default as OpenMenu } from './OpenMenu';
+export { default as CloseMenu } from './CloseMenu';

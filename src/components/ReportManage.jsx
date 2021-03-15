@@ -167,7 +167,7 @@ const ReportManage = props => {
   return (
     <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
       <div className={`${styles.section} ${styles.left}`}>
-        <div class={styles.report_header}>
+        <div className={styles.report_header}>
           <div className={styles.title}>
             <span>Report details</span>
           </div>

@@ -15,6 +15,7 @@ import { getProject } from '../store/projects/actions';
 import { getReport } from '../store/reports/actions';
 import { UserRoles, isSuperUser, hasRoleOnClient, hasRoleOnProject, hasRoleOnReport } from '../store';
 import { useMediaQuery } from "react-responsive/src";
+import { MobileView } from "../components/MobileView";
 
 export const ContentTypes = {
   CreateClient: 'create-client',
@@ -39,6 +40,7 @@ const Index = props => {
   const projects = useSelector(state => state.projectsReducer.projects);
   const reports = useSelector(state => state.reportsReducer.reports);
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isMobileLandscape = useMediaQuery({ orientation: 'landscape', maxHeight: 500 });
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -250,12 +252,8 @@ const Index = props => {
     getCurrentClient, getCurrentProject, getCurrentReport,
   ]);
 
-  if (isMobile) {
-    return (
-      <div style={{ display: 'flex', 'alignItems': 'center', 'margin': '50px', 'justifyContent': 'center' }}>
-        <h2>Our Workbench, Research Results Website and other Tools are optimized for access on Desktop, Laptop and Tablet.</h2>
-      </div>
-    );
+  if (isMobile || isMobileLandscape) {
+    return <MobileView />;
   }
 
   return (!isAccessBlocked && !isDataMissing) ? (

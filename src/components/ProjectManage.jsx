@@ -203,31 +203,33 @@ const ProjectManage = props => {
   return (
     <div className={`${styles.container} ${previewMode ? styles.preview : ''}`}>
       <div className={`${styles.section} ${styles.left}`}>
-        <div className={styles.title}>
-          <span>Project details</span>
-        </div>
-        {editMode && !isEditClicked && (
-          <div className={styles.actions}>
-            {canDelete && (
-              <Button
-                transparent
-                loading={isDeleteBusy}
-                onClick={() => confirm({
-                  text: 'Are you sure you want to delete this project ?',
-                  onConfirm: handleDelete,
-                })}
-              >
-                <Bin className={styles.deleteIcon} />
-                <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
-              </Button>
-            )}
-            {!!canEdit && (
-                <Button transparent onClick={() => setIsEditClicked(true)}>
-                  <Pen className={styles.deleteIcon} /> Edit
-                </Button>
-            )}
+        <div className={styles.project_header}>
+          <div className={styles.title}>
+            <span>Project details</span>
           </div>
-        )}
+          {editMode && !isEditClicked && (
+              <div className={styles.actions}>
+                {canDelete && (
+                    <Button
+                        transparent
+                        loading={isDeleteBusy}
+                        onClick={() => confirm({
+                          text: 'Are you sure you want to delete this project ?',
+                          onConfirm: handleDelete,
+                        })}
+                    >
+                      <Bin className={styles.deleteIcon}/>
+                      <span>{!isDeleteBusy ? 'Delete project' : 'Deleting project'}</span>
+                    </Button>
+                )}
+                {!!canEdit && (
+                    <Button transparent onClick={() => setIsEditClicked(true)}>
+                      <Pen className={styles.deleteIcon}/> Edit
+                    </Button>
+                )}
+              </div>
+          )}
+        </div>
         <Scrollable className={styles.scrollableForm}>
           <form className={styles.form} onSubmit={handleSubmit}>
             <Input
