@@ -45,7 +45,7 @@ module MercurySsoAuth0
         state: state
       }
 
-      uri = URI(MercurySsoAuth0.login_url) + "/login"
+      uri = URI(MercurySsoAuth0.login_url) + "/login#"
       uri.query = URI.encode_www_form(options)
 
       uri

@@ -25,7 +25,7 @@ module MercurySsoAuth0
       return DEFAULT_SCOPES unless attributes.present?
 
       @scopes ||= ::RestClient.get(
-        MercurySsoAuth0.api_url + '/api/v1/users/me',
+        (URI(MercurySsoAuth0.api_url) + '/api/v1/users/me').to_s,
         Authorization: 'Bearer ' + attributes['credentials']['id_token']
       ) do |response|
         body = response.body
