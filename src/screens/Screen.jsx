@@ -90,7 +90,9 @@ const Screen = props => {
   }, [localUser, authUser, props]);
 
   const onSideMenuShow = useCallback( () => {
-    setShowSideMenu(!showSideMenu)
+    if (history.location.pathname !== '/') {
+      setShowSideMenu(!showSideMenu)
+    }
   }, [showSideMenu]);
 
   const handleSideMenuLoad = useCallback((emptyState) => {
@@ -102,6 +104,10 @@ const Screen = props => {
   useEffect(() => {
     if (!isLoading) {
       handleOnLoad();
+    }
+
+    if (isTablet && window.location.pathname !== '/') {
+      setShowSideMenu(false);
     }
   // eslint-disable-next-line
   }, [isLoading, history.location.pathname]);
@@ -122,11 +128,12 @@ const Screen = props => {
             slogan={customSlogan}
             onSidemenuTrigger={onSideMenuShow}
             showSidebar={props.showSideBar}
+            showTabletSidebar={showSideMenu}
           />
         </div>
         <div className={styles.body}>
           {props.showSideBar !== false && (!realEmptyState || isSuperUser(localUser.id)) && (
-            <div className={`${styles.side} ${showSideMenu ? styles.nonHidden : styles.hidden} ${isTablet ? styles.absolutePosition: ''}`}>
+            <div className={`${styles.side} ${showSideMenu ? styles.nonHidden : styles.hidden}`}>
               <SideMenu
                 userId={localUser.id}
                 autoselect={!props.independent}

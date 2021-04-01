@@ -9,6 +9,7 @@ import UserManage from '../components/UserManage';
 import ResourceActions from '../components/ResourceActions';
 import { isSuperUser } from '../store';
 import { useMediaQuery } from "react-responsive/src";
+import { MobileView } from "../components/MobileView";
 
 const Tabs = {
   Info: 1,
@@ -23,6 +24,7 @@ const SuperUser = () => {
   const [showUserActions, setShowUserActions] = useState(true);
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1337 })
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isMobileLandscape = useMediaQuery({ orientation: 'landscape', maxHeight: 500 });
   const setCurrentTab = useCallback((tab) => {
     setTab(tab);
     if (isTablet) {
@@ -46,11 +48,9 @@ const SuperUser = () => {
     }
   }, [selectedUserId]);
 
-  if (isMobile) {
+  if (isMobile || isMobileLandscape) {
     return (
-        <div style={{ display: 'flex', 'alignItems': 'center', 'margin': '50px', 'justifyContent': 'center' }}>
-          <h2>Our Workbench, Research Results Website and other Tools are optimized for access on Desktop, Laptop and Tablet.</h2>
-        </div>
+        <MobileView />
     );
   }
 

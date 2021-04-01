@@ -16,6 +16,8 @@
 .actions {
   z-index: 3;
   background-color: #fff;
+  display: flex;
+  align-items: center;
 }
 
 .actions > :not(:first-child) {
