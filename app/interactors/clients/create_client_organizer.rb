@@ -2,6 +2,6 @@ module Clients
   class CreateClientOrganizer
     include Interactor::Organizer
 
-    organize ValidateClient, CreateClient, CreateClientMembership, Authorizations::AddAuthorization
+    organize ValidateClient, CreateClient, Authorizations::AddAuthorization
   end
 end
