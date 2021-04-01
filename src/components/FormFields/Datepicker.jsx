@@ -69,8 +69,11 @@ const Datepicker = props => {
           <Calendar className={styles.controlIcon} onClick={togglePicker} />
         </div>
       ) : (
-        <span data-field-value className={styles.preview}>
-          {field.input.value !== '' ? field.input.value : 'N/A'}
+        <span className={styles.preview}>
+          {field.input.value !== '' ? new Date(field.input.value).toLocaleDateString(
+            undefined,
+            { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+            ) : 'N/A'}
         </span>
       )}
       {!!field && !preview && (
