@@ -88,6 +88,9 @@ module Api
         }
 
         options[:params].merge!({ access: params[:access] }) if params.key?(:access)
+
+        base_authorization = Authorizations::BaseAuthorization.call(**options)
+
         status = base_authorization.status == :ok ? :created : :no_content
 
         head status
