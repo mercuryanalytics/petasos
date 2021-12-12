@@ -8,6 +8,7 @@ import { setAuthKey, setAuthUser, setIsSocialLogin, resetPassword } from '../sto
 import { getLogo } from '../App';
 import Auth, { AuthViewTypes, isLoggedIn } from '../components/Auth';
 import parse from 'url-parse';
+import {updateUserLastLogin} from "../store/users/actions";
 
 const translateError = (err) => {
   return { description: err.errors || 'An error occured.' };
@@ -50,6 +51,7 @@ const Login = () => {
     await dispatch(setAuthKey(key));
     await dispatch(setAuthUser(user));
     await dispatch(setIsSocialLogin(isSocialLogin));
+    await dispatch(updateUserLastLogin());
   }, [dispatch]);
 
   const handlePasswordReset = useCallback(async (email) => {

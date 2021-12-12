@@ -23,6 +23,7 @@ const UserManage = props => {
   const authUser = useSelector(state => state.authReducer.user)
   const [errors, setErrors] = useState(null);
   const [passwordResetTrigger, setPasswordResetTrigger] = useState(false);
+
   useEffect(() => {
     setIsEditClicked(false);
     if (!!id && (!data || data.id !== !!id)) {
@@ -51,6 +52,7 @@ const UserManage = props => {
       mailing_state: data.mailing_state || '',
       mailing_zip: data.mailing_zip || '',
       mailing_country: data.mailing_country || '',
+      last_login: data.last_login && new Date(data.last_login).toLocaleString() || '-',
     } : {},
     validate: (values) => {
       let errors = {};
@@ -128,6 +130,7 @@ const UserManage = props => {
   const mailing_state = useField('mailing_state', form);
   const mailing_zip = useField('mailing_zip', form);
   const mailing_country = useField('mailing_country', form);
+  const last_login = useField('last_login', form);
 
   const renderRequiredFieldLabel = (label) => (
     <>{label}{!preview || isEditClicked ? ' *' : ''}</>
@@ -158,6 +161,13 @@ const UserManage = props => {
               disabled={!!disableAccountChange}
               preview={preview && !isEditClicked}
               label={renderRequiredFieldLabel('Account name')}
+            />
+            <Input
+                className={styles.formControl}
+                field={last_login}
+                disabled={true}
+                preview={true}
+                label={renderRequiredFieldLabel('Last login')}
             />
           </div>
           <div className={styles.formSection}>
