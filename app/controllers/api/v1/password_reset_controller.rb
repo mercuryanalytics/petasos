@@ -92,6 +92,52 @@ module Api
         }, status: :unprocessable_entity
       end
 
+      def verify
+        sleep(1.seconds) # to be removed
+
+        user = User.find_by(password_reset_token: verify_params[:token])
+
+        unless user
+          render json: {
+            data: {
+              message: 'Invalid token'
+            }
+          }, status: :not_found
+
+          return
+        end
+
+        if Time.zone.now > user.password_reset_expires_at
+          render json: {
+            data: {
+              message: 'Token expired'
+            }
+          }, status: :expectation_failed
+
+          return
+        end
+      end
+
+      def resend
+        user = User.find_by(password_reset_token: resend_params[:token]) if resend_params[:token]
+        user = User.find_by(email: resend_params[:email]) if !user && resend_params[:email]
+
+        unless user
+          render json: { data: { message: 'Invalid request' } }, status: :not_found
+          return
+        end
+
+        user.password_reset_token      = SecureRandom.hex(16)
+        user.password_reset_expires_at = 1.week.from_now
+        user.save
+
+        client = Client.find_by(subdomain: user.password_reset_domain)
+
+        UserMailer.forgot_password_email(user, client).deliver_now
+
+        render json: { data: { message: 'done' } }, status: :created
+      end
+
       private
 
       def create_params
@@ -100,6 +146,14 @@ module Api
 
       def update_params
         params.permit(:token, :password, :password_confirmation)
+      end
+
+      def verify_params
+        params.permit(:token)
+      end
+
+      def resend_params
+        params.permit(:token, :email)
       end
     end
   end

@@ -42,6 +42,8 @@ Rails.application.routes.draw do
         end
       end
 
+      post 'verify-password-token', action: :verify, controller: 'password_reset'
+      post 'resend-password-token', action: :resend, controller: 'password_reset'
       post 'reset-password', action: :create, controller: 'password_reset'
       post 'change-password', action: :update, controller: 'password_reset'
 
