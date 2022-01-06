@@ -103,3 +103,8 @@
 .buttons > *:not(:first-child) {
   margin-top: 16px;
 }
+
+.loadingContainer {
+  position: relative;
+  height: 50px;
+}
