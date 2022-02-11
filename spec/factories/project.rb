@@ -3,7 +3,7 @@ FactoryBot.define do
     name { Faker::Name.name }
     description { Faker::Lorem.paragraph(sentence_count: 10) }
     project_number { Faker::Alphanumeric.alphanumeric(number: 10) }
-    project_type { Project::PROJECT_TYPES.sample }
+    project_type { "Media/Message Test" }
     association :client
   end
 end

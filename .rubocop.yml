@@ -1,5 +1,9 @@
 inherit_from: ~/.rubocop.yml
 
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.5
   TargetRailsVersion: 6.0
@@ -44,5 +48,5 @@ Rails/SkipsModelValidations:
   Exclude:
     - "db/migrate/*"
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
