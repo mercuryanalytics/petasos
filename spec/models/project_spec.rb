@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Project, type: :model do
-  it { should have_many(:project_accesses) }
-  it { should validate_presence_of :name }
-  it { should validate_uniqueness_of :name }
-  it { should have_many :reports }
-  it { should belong_to :client }
+  it { is_expected.to have_many(:project_accesses) }
+  it { is_expected.to validate_presence_of :name }
+  # it { is_expected.to validate_uniqueness_of :name }
+  it { is_expected.to have_many :reports }
+  it { is_expected.to belong_to :client }
 end

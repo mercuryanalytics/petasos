@@ -4,6 +4,9 @@ class ClientAbility
   attr_reader :user, :client_id
 
   def initialize(user, client_id = nil)
+    Rails.logger.tagged("ClientAbility") do
+      Rails.logger.debug { "init user: #{user.inspect}, client_id: #{client_id.inspect}" }
+    end
     @user      = user
     @client_id = client_id
 

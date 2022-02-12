@@ -371,7 +371,7 @@ DEPENDENCIES
   railroady
   rails (~> 6.0.2, >= 6.0.2.1)
   rest-client (~> 2.1)
-  rspec-rails (~> 3.9)
+  rspec-rails
   rswag-api
   rswag-specs
   rswag-ui

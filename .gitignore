@@ -26,3 +26,4 @@ vendor/
 sandbox/
 /Notes
 .envrc
+/spec/examples.txt

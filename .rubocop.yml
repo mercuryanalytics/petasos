@@ -17,6 +17,10 @@ AllCops:
 Rails:
   Enabled: true
 
+# TODO: remove this
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: false
 
@@ -50,3 +54,23 @@ Rails/SkipsModelValidations:
 
 Naming/MethodParameterName:
   Enabled: false
+
+# TODO: review these
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/ScatteredLet:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Exclude:
+    - "spec/**/*"

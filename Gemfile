@@ -50,7 +50,7 @@ group :development, :test do
   gem "pry-rails"
   gem "pry-byebug"
 
-  gem 'rspec-rails', '~> 3.9'
+  gem 'rspec-rails'
   gem 'rswag-specs'
 end
 

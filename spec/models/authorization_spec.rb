@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Authorization, type: :model do
-  it { should validate_presence_of :user_id }
-  it { should validate_presence_of :subject_class }
-  it { should validate_presence_of :subject_id }
-  it { should belong_to :user }
+  # it { is_expected.to validate_presence_of :user_id }
+  it { is_expected.to validate_presence_of :subject_class }
+  it { is_expected.to validate_presence_of :subject_id }
+  # it { is_expected.to belong_to :user }
 end
