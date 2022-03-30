@@ -24,3 +24,7 @@
 .idea/
 vendor/
 sandbox/
+
+.envrc
+Notes
+spec/examples.txt
