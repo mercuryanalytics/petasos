@@ -43,5 +43,9 @@ FactoryBot.define do
     trait :authorized do
       action { 'authorized' }
     end
+
+    trait :admin do
+      action { 'admin' }
+    end
   end
 end

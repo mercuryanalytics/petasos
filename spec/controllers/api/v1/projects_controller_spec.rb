@@ -23,6 +23,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
   end
   let!(:user) { create(:user, clients: [client]) }
   let!(:user_scopes) { user.scopes << scopes }
+  let!(:membership) { create(:membership, user: user, client: client) }
 
   before do
     allow(JsonWebToken).to receive(:verify) { [user_attrs] }
@@ -32,7 +33,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     let!(:scopes) { create(:scope, :project, :read) }
     let!(:project) { create(:project) }
     let!(:project_2) { create(:project) }
-    let!(:project_access) { create(:project_auth, subject_id: project.id, user_id: user.id) }
+    let!(:project_access) { create(:project_auth, subject_id: project.id, membership_id: membership.id, user_id: user.id) }
 
     before { get :index }
 
@@ -46,7 +47,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
   end
 
   describe '#create' do
-    let!(:scopes) { create(:scope, :project, :create) }
+    let!(:scopes) { create(:scope, :project, :admin) }
 
     let(:params) do
       {
@@ -88,7 +89,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
   describe '#update' do
     let!(:scopes) { create(:scope, :project, :update) }
     let!(:project) { create(:project) }
-    let!(:project_access) { create(:project_auth, subject_id: project.id, user_id: user.id) }
+    let!(:project_access) { create(:project_auth, subject_id: project.id, membership_id: membership.id, user_id: user.id, scopes: [scopes]) }
     let(:project_params) do
       {
         project: {
@@ -135,8 +136,9 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     let!(:scopes) { create(:scope, :project, :destroy) }
     let!(:user_2) { create(:user) }
     let!(:project) { create(:project) }
-    let!(:project_access) { create(:project_auth, subject_id: project.id, user_id: user.id) }
-    let!(:project_access_2) { create(:project_auth, subject_id: project.id, user_id: user_2.id) }
+    let!(:project_access) { create(:project_auth, subject_id: project.id, user_id: user.id, membership_id: membership.id, scopes: [scopes]) }
+    let!(:membership_2) { create(:membership, user: user_2, client: client) }
+    let!(:project_access_2) { create(:project_auth, subject_id: project.id, user_id: user_2.id, membership_id: membership_2.id, scopes: [scopes]) }
 
     it 'deletes the record' do
       expect { delete :destroy, params: { id: project.id } }.to change { Project.count }.from(1).to(0)
@@ -147,7 +149,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
       expect { delete :destroy, params: { id: project.id } }.to change { Authorization.count }.from(2).to(0)
     end
 
-    xcontext 'unauthorized' do
+    context 'unauthorized' do
       context 'when the scope is missing' do
         before { scopes.destroy }
 

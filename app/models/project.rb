@@ -22,7 +22,7 @@ class Project < ApplicationRecord
     VIDEO_TEST, WEBSITE_EVALUATION_TEST, CUSTOM_TEST
   ]
 
-  validates :name, presence: true#, uniqueness: { case_sensitive: true }
+  validates :name, presence: true, uniqueness: { case_sensitive: true }
 
   before_create :default_project_type, if: -> { project_type.nil? }
 

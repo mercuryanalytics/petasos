@@ -21,8 +21,8 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
   end
   let(:client) { create(:client) }
   let!(:user) { create(:user, clients: [client]) }
-  let!(:project) { create(:project) }
-  let!(:project_2) { create(:project) }
+  let!(:project) { create(:project, client: client) }
+  let!(:project_2) { create(:project, client: client) }
   let!(:user_scopes) { user.scopes << scopes }
 
   before do
@@ -33,12 +33,12 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
     let!(:report) { create(:report, project_id: project.id) }
     let!(:report_2) { create(:report, project_id: project.id) }
     let!(:report_3) { create(:report, project_id: project_2.id) }
-    let!(:report_access) { create(:report_auth, subject_id: report.id, user_id: user.id) }
+    let!(:report_access) { create(:report_auth, subject_id: report.id, membership_id: user.membership_ids.first, user_id: user.id) }
     let!(:scopes) { create(:scope, :report, :read) }
     let!(:report_4) { create(:report, project: create(:project, client: create(:client))) }
-    let!(:report_access_2) { create(:report_auth, subject_id: report_4.id, user_id: user.id) }
+    let!(:report_access_2) { create(:report_auth, subject_id: report_4.id, membership_id: user.membership_ids.first, user_id: user.id) }
 
-    it 'returns only the accessible projects' do
+    it 'returns only the accessible reports' do
       get :index, params: { project_id: project.id }
 
       expect(response.body).to include report.name
@@ -46,13 +46,16 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
       # expect(response.body).to_not include report_3.name
     end
 
-    it 'retuns the project for other client, when authorized' do
+    it 'returns the report for other client, when authorized' do
       get :index, params: { project_id: report_4.project_id }
       expect(response.body).to include report_4.name
     end
   end
 
   describe '#create' do
+    let!(:scopes) { create(:scope, :client, :authorize) }
+    let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: user.membership_ids.first, user_id: user.id, scopes: [scopes]) }
+
     let(:params) do
       {
         report: {
@@ -62,9 +65,8 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
         }
       }
     end
-    let!(:scopes) { create(:scope, :report, :create) }
 
-    it 'creates the new project' do
+    it 'creates the new report' do
       expect { post :create, params: { project_id: project.id, **params } }.to change { Report.count }.by(1)
     end
 
@@ -90,7 +92,7 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
   describe '#update' do
     let!(:scopes) { create(:scope, :report, :update) }
     let!(:report) { create(:report, project_id: project.id) }
-    let!(:report_access) { create(:report_auth, subject_id: report.id, user_id: user.id) }
+    let!(:report_access) { create(:report_auth, subject_id: report.id, membership_id: user.membership_ids.first, user_id: user.id, scopes: [scopes]) }
     let(:params) do
       {
         report: {
@@ -105,9 +107,9 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
         .to change { report.reload.name }.to('Report 2')
     end
 
-    it 'updates the modified_on for project' do
+    it 'updates the modified_on for report' do
       expect { patch :update, params: { project_id: project.id, id: report.id, **params } }
-        .to change { report.reload.project.modified_on.to_s }.to('2012-12-12')
+        .to change { report.reload.modified_on.to_s }.to('2012-12-12')
     end
 
     xdescribe 'unauthorized' do
@@ -136,7 +138,7 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
   describe '#delete' do
     let!(:scopes) { create(:scope, :report, :destroy) }
     let!(:report) { create(:report, project_id: project.id) }
-    let!(:report_access) { create(:report_auth, subject_id: report.id, user_id: user.id) }
+    let!(:report_access) { create(:report_auth, subject_id: report.id, user_id: user.id, membership_id: user.membership_ids.first, scopes: [scopes]) }
 
     it 'deletes the record' do
       expect { delete :destroy, params: { project_id: project.id, id: report.id } }.to change { Report.count }.from(1).to(0)
