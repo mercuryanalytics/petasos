@@ -22,8 +22,8 @@
 /config/master.key
 
 .idea/
-vendor/
-sandbox/
-/Notes
-.envrc
+/vendor/
+/sandbox/
 /spec/examples.txt
+/.envrc
+/Notes

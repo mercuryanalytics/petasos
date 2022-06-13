@@ -67,11 +67,10 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-rails-collection'
   gem "solargraph"
-  gem "rubocop"
-  gem "rubocop-rails"
-  gem "rubocop-rspec"
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-rspec", require: false
 end
-
 
 group :test do
   gem 'factory_bot', '~> 5.1', '>= 5.1.1'
@@ -82,4 +81,4 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]

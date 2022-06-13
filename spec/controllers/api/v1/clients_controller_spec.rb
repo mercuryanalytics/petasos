@@ -22,7 +22,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
   end
   let!(:user) { create(:user) }
   let!(:membership) { create(:membership, user: user, client: client) }
-  let!(:client_access) { create(:client_auth, subject_id: client.id, membership_id: membership.id) }
+  let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: membership.id) }
 
   before do
     allow(JsonWebToken).to receive(:verify) { [user_attrs] }
@@ -117,7 +117,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
   describe 'POST #create' do
     context 'with valid params' do
       let(:scopes) { %w[create:clients] }
-      let(:client) { create(:client) }
+      let!(:user_scopes) { user.scopes << create(:scope, :client, :admin) }
+      let!(:client) { create(:client) }
 
       subject { post :create, params: { client: valid_attributes } }
 
@@ -170,6 +171,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
       { name: 'Test name' }
     end
     let!(:client) { create(:client) }
+    let!(:client_scopes) { create(:scope, :client, :update) }
+    let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: membership.id, scopes: [client_scopes]) }
 
     context "with valid params" do
       let(:scopes) { %w[update:clients] }
@@ -230,6 +233,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
   describe 'DELETE #destroy' do
     let!(:client) { create(:client) }
     let(:scopes) { %w[destroy:clients] }
+    let!(:client_scopes) { create(:scope, :client, :destroy) }
+    let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: membership.id, scopes: [client_scopes]) }
 
     subject { delete :destroy, params: { id: client.id } }
 

@@ -37,7 +37,11 @@ module Api
       end
 
       def destroy
-        context = Projects::RemoveProjectOrganizer.call(project: @project)
+        membership_ids = Authorization.where(
+          subject_class: 'Project', subject_id: params[:id]
+        ).pluck(:membership_id)
+
+        context = Projects::RemoveProjectOrganizer.call(project: @project, membership_id: membership_ids)
 
         return render head: :ok if context.success?
 
