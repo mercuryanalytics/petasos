@@ -68,7 +68,11 @@ module Api
       end
 
       def destroy
-        context = Reports::RemoveReportOrganizer.call(report: @report)
+        membership_ids = Authorization.where(
+          subject_class: 'Report', subject_id: params[:id]
+        ).pluck(:membership_id)
+
+        context = Reports::RemoveReportOrganizer.call(report: @report, membership_id: membership_ids)
 
         return render head: :ok if context.success?
 
