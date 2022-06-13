@@ -36,21 +36,6 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
     { something: 'test' }
   end
 
-  # begin
-  describe 'POST #create hack' do
-    context 'with valid params' do
-      let(:scopes) { %w[create:clients] }
-      let(:client) { create(:client) }
-
-      subject { post :create, params: { client: valid_attributes } }
-
-      it 'creates a new Client' do
-        expect { subject }.to change(Client, :count).by(1)
-      end
-    end
-  end
-  # end
-
   describe 'GET #index' do
     let!(:client) { create(:client) }
     let!(:client2) { create(:client) }
