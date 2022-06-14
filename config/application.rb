@@ -34,9 +34,6 @@ module MercuryAnalyticsApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    # TODO: set this as env
-    config.hosts << 'dc73ef2d.ngrok.io'
-
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
