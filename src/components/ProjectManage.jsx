@@ -18,16 +18,14 @@ import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
 
 const ProjectTypes = {
-  CommercialTest: 'Commercial Test',
-  ConsumerTest: 'Consumer Test',
-  CoverTest: 'Cover Test',
-  MessagingTest: 'Messaging Test',
-  PoliticalAdTest: 'Political Ad Test',
-  PrintAdTest: 'Print Ad Test',
-  TrailerTest: 'Trailer Test',
-  VideoTest: 'Video Test',
-  WebsiteEvaluationTest: 'Website Evaluation Test',
-  CustomTest: 'Custom Test',
+  MediaTest: "Media/Message Test",
+  BrandLiftResearch: "Brand Lift Research",
+  LiveLabs: "Live Labs",
+  CustomResearch: "Custom Research",
+  ConceptTest: "Concept Test",
+  PitchPoll: "Pitch Poll",
+  ThoughtLeadership: "Thought Leadership",
+  PoliticalResearch: "Political Research",
 };
 
 const projectTypesOptions = Object.keys(ProjectTypes).map(key => ({
