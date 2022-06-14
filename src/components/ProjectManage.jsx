@@ -123,7 +123,7 @@ const ProjectManage = props => {
       account_id: +data.account_id || '',
       updated_at: data.updated_at || '',
     } : {
-      project_type: ProjectTypes.CommercialTest,
+      project_type: ProjectTypes.CustomResearch,
       updated_at: format(new Date(), 'yyyy-MM-dd'),
     },
     validate: (values) => {
