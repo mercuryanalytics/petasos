@@ -47,8 +47,10 @@ end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem "pry-rails"
+  gem "pry-byebug"
 
-  gem 'rspec-rails', '~> 3.9'
+  gem 'rspec-rails'
   gem 'rswag-specs'
 end
 
@@ -63,8 +65,10 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-passenger'
   gem 'capistrano-rails-collection'
+  gem "solargraph"
   gem "rubocop", require: false
   gem "rubocop-rails", require: false
+  gem "rubocop-rspec", require: false
 end
 
 group :test do
