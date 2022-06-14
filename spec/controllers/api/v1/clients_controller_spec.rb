@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ClientsController, type: :controller do
-  let(:scopes) { %w[create:clients delete:clients read:clients] }
+  let(:scopes) { %w(create:clients delete:clients read:clients) }
   let(:user_attrs) do
     {
       "http://localhost:3001user_authorization": {
@@ -16,8 +16,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
       "iss": "https://iss/",
       "sub": "auth0|5e43e382c452940d9fce740f",
       "aud": "ze875woECaoiRt7Vp2561p4uf57zp9e1",
-      "iat": 1_582_705_389,
-      "exp": 1_582_741_389
+      "iat": 1582705389,
+      "exp": 1582741389
     }.with_indifferent_access
   end
   let!(:user) { create(:user) }
@@ -38,22 +38,26 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
   describe 'GET #index' do
     let!(:client) { create(:client) }
-    let!(:client2) { create(:client) }
+    let!(:client_2) { create(:client) }
 
     before { get :index }
 
     subject { response.body }
+
+    it 'returns the client on which access is given' do
+      expect(subject).to include(client.name)
+    end
 
     it 'returns the user assigned client' do
       expect(subject).to include(client.name)
     end
 
     xit 'does not show a client on which authorization is not set' do
-      expect(subject).not_to include(client2.name)
+      expect(subject).to_not include(client_2.name)
     end
 
     xcontext 'when scope is not set' do
-      let(:scopes) { %w[create:clients] }
+      let(:scopes) { %w(create:clients) }
 
       it 'returns unauthorized' do
         get :index
@@ -64,8 +68,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
   describe 'GET #show' do
     let!(:client) { create(:client) }
-    let!(:client2) { create(:client) }
-    let(:scopes) { %w[read:clients] }
+    let!(:client_2) { create(:client) }
+    let(:scopes) { %w(read:clients) }
 
     before { get :show, params: { id: client.id } }
 
@@ -81,7 +85,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
     xcontext 'permissions' do
       context 'when the scope is not present' do
-        let(:scopes) { %w[something:clients] }
+        let(:scopes) { %w(something:clients) }
 
         it 'returns unauthorized' do
           expect(response.status).to eq 401
@@ -89,10 +93,10 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
       end
 
       context 'when the user does not have permission' do
-        let(:scopes) { %w[something:clients] }
+        let(:scopes) { %w(something:clients) }
 
         it 'returns unauthorized' do
-          get :show, params: { id: client2.id }
+          get :show, params: { id: client_2.id }
           expect(response.status).to eq 401
         end
       end
@@ -101,12 +105,11 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
   describe 'POST #create' do
     context 'with valid params' do
-      let(:scopes) { %w[create:clients] }
+      let(:scopes) { %w(create:clients) }
       let!(:user_scopes) { user.scopes << create(:scope, :client, :admin) }
       let!(:client) { create(:client) }
 
       subject { post :create, params: { client: valid_attributes } }
-
       it 'creates a new Client' do
         expect { subject }.to change(Client, :count).by(1)
       end
@@ -123,7 +126,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
     end
 
     xcontext 'with invalid params' do
-      let(:scopes) { %w[create:clients] }
+      let(:scopes) { %w(create:clients) }
 
       subject { post :create, params: { client: invalid_attributes } }
 
@@ -141,7 +144,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
     xcontext 'permissions' do
       context 'when scope is missing' do
-        let(:scopes) { %w[read:clients] }
+        let(:scopes) { %w(read:clients) }
 
         it 'returns unauthorized' do
           post :create, params: { client: valid_attributes }
@@ -160,8 +163,6 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
     let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: membership.id, scopes: [client_scopes]) }
 
     context "with valid params" do
-      let(:scopes) { %w[update:clients] }
-
       subject { put :update, params: { id: client.id, client: new_attributes } }
 
       it 'updates the requested client' do
@@ -179,7 +180,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
       let(:new_attributes) { { client: { name: '' } } }
 
       it 'renders a JSON response with errors for the client' do
-        expect { subject }.not_to(change { client.reload.name })
+        expect { subject }.to_not change { client.reload.name }
       end
 
       it 'returns correct status code' do
@@ -190,8 +191,8 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
     end
 
     xcontext 'permissions' do
-      context 'when missing scope' do
-        let(:scopes) { %w[create:clients] }
+      context 'missing scope' do
+        let(:scopes) { %w(create:clients) }
         let(:new_attributes) do
           { name: 'Test name' }
         end
@@ -205,7 +206,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
         end
       end
 
-      context 'when missing permission' do
+      context 'missing permission' do
         it 'returns unauthorized' do
           put :update, params: { id: client.id, client: new_attributes }
 
@@ -217,7 +218,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
 
   describe 'DELETE #destroy' do
     let!(:client) { create(:client) }
-    let(:scopes) { %w[destroy:clients] }
+    let(:scopes) { %w(destroy:clients) }
     let!(:client_scopes) { create(:scope, :client, :destroy) }
     let!(:client_access) { create(:client_auth, subject_id: client.id, client_id: client.id, membership_id: membership.id, scopes: [client_scopes]) }
 
@@ -240,7 +241,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
         let(:scopes) { [] }
 
         it 'does not delete the client' do
-          expect { subject }.not_to change(Client, :count)
+          expect { subject }.to_not change(Client, :count)
         end
 
         it 'returns unauthorized' do
@@ -254,7 +255,7 @@ RSpec.describe Api::V1::ClientsController, type: :controller do
         before { client_access.destroy }
 
         it 'does not delete the client' do
-          expect { subject }.not_to change(Client, :count)
+          expect { subject }.to_not change(Client, :count)
         end
 
         it 'returns unauthorized' do

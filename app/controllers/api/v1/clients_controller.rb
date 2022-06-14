@@ -1,19 +1,23 @@
 module Api
   module V1
     class ClientsController < BaseController
-      before_action :set_client, only: %i[show update destroy]
+      before_action :set_client, only: [:show, :update, :destroy]
 
       load_and_authorize_resource
 
       def index
         @clients = Client.accessible_by(current_ability).order(name: :asc).all
-        Authorizations::ChildrenAccess.call(collection: @clients, type: Client, user_id: params[:user_id]) if params[:user_id]
+        if params[:user_id]
+          Authorizations::ChildrenAccess.call(collection: @clients, type: Client, user_id: params[:user_id])
+        end
 
         json_response(@clients)
       end
 
       def show
-        Authorizations::ChildrenAccess.call(collection: [@client], type: Client, user_id: params[:user_id]) if params[:user_id]
+        if params[:user_id]
+          Authorizations::ChildrenAccess.call(collection: [@client], type: Client, user_id: params[:user_id])
+        end
 
         json_response(@client)
       end
