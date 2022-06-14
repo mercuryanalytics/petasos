@@ -55,7 +55,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
           name: 'Project',
           description: 'Project Description',
           project_number: 'Project no1',
-          project_type: Project::PROJECT_TYPES.sample,
+          project_type: "Custom Research",
           account_id: 'test id',
           domain_id: client.id
         }
