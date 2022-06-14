@@ -2,24 +2,14 @@ import Env, { EnvTypes } from './env';
 
 const EnvTypeToUrlsMap = {
   [EnvTypes.PRODUCTION]: {
-         APP_URL: Env.publicUrl,
-         API_HOST: 'https://api.researchresultswebsite.com',
-         API_URL: 'https://api.researchresultswebsite.com/api/v1',
-       },
+    APP_URL: Env.publicUrl,
+    API_HOST: 'https://api.researchresultswebsite.com',
+    API_URL: 'https://api.researchresultswebsite.com/api/v1',
+  },
   [EnvTypes.DEVELOPMENT]: {
     APP_URL: Env.publicUrl,
-    API_HOST: 'https://mercury-analytics-api.herokuapp.com',
-    API_URL: 'https://mercury-analytics-api.herokuapp.com/api/v1',
-  },
-  [EnvTypes.STAGING_HEROKU]: {
-    APP_URL: Env.publicUrl,
-    API_HOST: 'https://mercury-analytics-api.herokuapp.com',
-    API_URL: 'https://mercury-analytics-api.herokuapp.com/api/v1',
-  },
-  [EnvTypes.STAGING_AWS]: {
-    APP_URL: Env.publicUrl,
-    API_HOST: 'https://api.aurelianb.com',
-    API_URL: 'https://api.aurelianb.com/api/v1',
+    API_HOST: 'https://petasos-api.test',
+    API_URL: 'https://petasos-api.test/api/v1',
   },
 };
 
