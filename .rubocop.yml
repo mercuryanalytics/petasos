@@ -15,6 +15,19 @@ AllCops:
 Rails:
   Enabled: true
 
+Rails/SkipsModelValidations:
+  Exclude:
+    - "db/migrate/*"
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: false
 
@@ -23,28 +36,24 @@ Style/BlockComments:
   Exclude:
     - "config/routes.rb"
 
-Bundler/OrderedGems:
-  Enabled: false
-
 Style/RegexpLiteral:
   EnforcedStyle: percent_r
   AllowInnerSlashes: false
   Exclude:
     - "features/**/*"
 
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+
 Lint/AmbiguousRegexpLiteral:
   Exclude:
     - "features/**/*"
 
-Style/BarePercentLiterals:
-  EnforcedStyle: percent_q
-
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 
-Rails/SkipsModelValidations:
-  Exclude:
-    - "db/migrate/*"
+Layout/LineLength:
+  Enabled: false
 
 Naming/MethodParameterName:
   Enabled: false
