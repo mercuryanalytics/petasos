@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(version: 2022_02_11_201054) do
     t.string "password_reset_token"
     t.datetime "password_reset_expires_at"
     t.string "password_reset_domain"
+    t.datetime "last_login"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

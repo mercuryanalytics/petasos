@@ -3,7 +3,7 @@ module Api
     class UsersController < BaseController
       before_action :set_user, only: [:show, :update, :destroy, :authorized]
 
-      load_and_authorize_resource except: [:create, :destroy, :researchers, :me]
+      load_and_authorize_resource except: [:create, :destroy, :researchers, :me, :update_last_login]
 
       def index
         users = (client_id = params[:client_id]) ?
@@ -169,6 +169,14 @@ module Api
         Users::TriggerResetPassword.call(user: current_user)
 
         json_response({}, 203)
+      end
+
+      def update_last_login
+        context = Users::UpdateLastLogin.call(user: current_user)
+
+        return json_response(context.last_login) if context.success?
+
+        error_response(context.message)
       end
 
       private

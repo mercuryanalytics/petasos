@@ -34,6 +34,7 @@ Rails.application.routes.draw do
           get :researchers
           get :me
           post :reset_password
+          post :update_last_login
         end
         member do
           get :authorized
