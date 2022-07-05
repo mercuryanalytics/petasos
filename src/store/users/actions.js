@@ -63,6 +63,29 @@ export const getUserFailure = (error) => {
   }
 };
 
+export function updateUserLastLogin() {
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/users/update_last_login`).then(
+        res => dispatch(updateUserLastLoginSuccess(res)),
+        err => handleActionFailure(err, dispatch(updateUserLastLoginFailure(err))),
+    );
+  }
+}
+
+export const updateUserLastLoginSuccess = (lastLogin) => {
+  return {
+    type: 'UPDATE_USER_LAST_LOGIN_SUCCESS',
+    payload: lastLogin,
+  }
+};
+
+export const updateUserLastLoginFailure = (error) => {
+  return {
+    type: 'UPDATE_USER_LAST_LOGIN_FAILURE',
+    payload: error,
+  }
+};
+
 export function createUser(data, clientId, noAuth) {
   const queryString = noAuth ? `?no_auth=1` : '';
   const params = hasValue(clientId) ? { client_id: clientId } : {};
