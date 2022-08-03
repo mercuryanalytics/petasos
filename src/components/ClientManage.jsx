@@ -254,8 +254,8 @@ const ClientManage = props => {
       [
         'name', 'company_name', 'contact_type',
         'contact_name', 'contact_phone', 'contact_email',
-        'mailing_address_1', 'mailing_address_2', 'mailing_city', 'mailing_zip', 'mailing_state',
-        'billing_address_1', 'billing_address_2', 'billing_city', 'billing_zip', 'billing_state',
+        'mailing_address_1', 'mailing_city', 'mailing_zip', 'mailing_state',
+        'billing_address_1', 'billing_city', 'billing_zip', 'billing_state',
       ].forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
