@@ -219,7 +219,7 @@ const UserManage = props => {
                 className={styles.formControl}
                 field={mailing_address_2}
                 preview={preview && !isEditClicked}
-                label={renderRequiredFieldLabel('Address Line 2')}
+                label="Address Line 2"
               />
             </div>
             <div className={styles.controlsGroup}>
