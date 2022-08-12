@@ -716,7 +716,7 @@ const ClientManage = props => {
                             preview={!canEdit}
                             disabled={isBusy}
                             persistErrors={persistFieldsErrors}
-                            label={`Address Line 2 ${canEdit ? '*' : ''}`}
+                            label="Address Line 2"
                         />
                         <Input
                           className={styles.formControl}
