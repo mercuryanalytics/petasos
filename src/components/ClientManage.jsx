@@ -779,7 +779,7 @@ const ClientManage = props => {
                             disabled={isBusy || billingAsMailing}
                             value={billingAsMailing ? mailing_address_2.input.value : (billingDefaults.billing_address_2 || undefined)}
                             persistErrors={persistFieldsErrors}
-                            label={`Address Line 2 ${canEdit ? '*' : ''}`}
+                            label="Address Line 2"
                         />
                         <Input
                           className={styles.formControl}
