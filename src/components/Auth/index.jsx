@@ -290,9 +290,7 @@ const Auth = props => {
     }
   }, [passwordChangeHandler, clearErrors]);
 
-  const handleTokenVerification = useCallback(async () => {
-    const token = parse(window.location.href, true).query.token;
-
+  const handleTokenVerification = useCallback(async (token) => {
     setVerifyingToken(true);
     setTokenExpired(false);
 
@@ -307,9 +305,11 @@ const Auth = props => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!tokenVerificationSuccess || !tokenVerificationError) {
-      handleTokenVerification();
-    }
+    const token = parse(window.location.href, true).query.token;
+    if (!token) return;
+    if (tokenVerificationSuccess || tokenVerificationError) return;
+
+    handleTokenVerification(token);
   }, []);
 
   const handleViewChange = useCallback((type) => {
