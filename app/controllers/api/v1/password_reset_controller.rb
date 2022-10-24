@@ -131,7 +131,7 @@ module Api
         user.password_reset_expires_at = 1.week.from_now
         user.save
 
-        client = Client.find_by(subdomain: user.password_reset_domain)
+        client = Client.find_or_initialize_by(subdomain: user.password_reset_domain)
 
         UserMailer.forgot_password_email(user, client).deliver_now
 
