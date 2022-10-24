@@ -93,8 +93,6 @@ module Api
       end
 
       def verify
-        sleep(1.seconds) # to be removed
-
         user = User.find_by(password_reset_token: verify_params[:token])
 
         unless user
