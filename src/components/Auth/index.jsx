@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from "react-redux";
 import styles from './index.module.css';
 import auth0 from 'auth0-js';
 import Loader from '../common/Loader';
@@ -7,6 +8,12 @@ import Button from '../common/Button';
 import { MdDone } from 'react-icons/md';
 import Login, { LoginViewTypes } from './Login';
 import ChangePassword from './ChangePassword';
+import ResetPasswordByEmail from './ResetPasswordByEmail';
+import ResetPasswordByToken from './ResetPasswordByToken';
+import parse from "url-parse";
+import { verifyPasswordToken, resendPasswordToken } from '../../store/auth/actions';
+
+
 
 export const AuthViewTypes = {
   Login: 'login',
@@ -54,6 +61,7 @@ export const initFromStorage = (options) => {
 };
 
 const Auth = props => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const {
     config, viewType, redirectTo, logoSrc,
@@ -62,11 +70,15 @@ const Auth = props => {
   const callbackUrl = config ? config.callbackUrl : null;
   const [logo, setLogo] = useState(null);
   const [loginViewType, setLoginViewType] = useState(LoginViewTypes.Login);
+  const [loginError, setLoginError] = useState(null);
   const [passwordResetSuccessMessage, setPasswordResetSuccessMessage] = useState(null);
   const [passwordChangeSuccessMessage, setPasswordChangeSuccessMessage] = useState(null);
-  const [loginError, setLoginError] = useState(null);
   const [passwordResetError, setPasswordResetError] = useState(null);
   const [passwordChangeError, setPasswordChangeError] = useState(null);
+  const [tokenVerificationSuccess, setTokenVerificationSuccess] = useState(false);
+  const [tokenVerificationError, setTokenVerificationError] = useState(null);
+  const [verifyingToken, setVerifyingToken] = useState(false);
+  const [tokenExpired, setTokenExpired] = useState(false);
   const hasSuccess = passwordResetSuccessMessage || passwordChangeSuccessMessage;
   const hasError = loginError || passwordResetError || passwordChangeError;
   const isConnected = isLoggedIn();
@@ -236,6 +248,37 @@ const Auth = props => {
     }
   }, [passwordResetHandler, clearErrors]);
 
+  const handlePasswordResetByToken = useCallback(async (token) => {
+    clearErrors();
+    dispatch(resendPasswordToken(token, null)).then(() => {
+      setPasswordResetSuccessMessage('An email will be sent to you containing the reset instructions.');
+    }, (err) => {
+      console.error('Error occurred while sending the email!', err);
+
+      let description = 'An error occurred while sending the email!';
+      if (err.xhrHttpCode === 404) {
+        description = 'Invalid token.'
+      }
+      setPasswordResetError({ description: description});
+    });
+  }, [dispatch, clearErrors]);
+
+  const handlePasswordResetByEmail = useCallback(async (email) => {
+    clearErrors();
+
+    dispatch(resendPasswordToken(null, email)).then(() => {
+      setPasswordResetSuccessMessage('An email will be sent to you containing the reset instructions.');
+    }, (err) => {
+      console.error('Error occurred while sending the email!', err);
+
+      let description = 'An error occurred while sending the email!';
+      if (err.xhrHttpCode === 404) {
+        description = 'The given email address is not recognized.'
+      }
+      setPasswordResetError({ description: description});
+    });
+  }, [dispatch, clearErrors]);
+
   const handlePasswordChange = useCallback(async (password, password_confirmation) => {
     clearErrors();
     if (passwordChangeHandler) {
@@ -247,6 +290,28 @@ const Auth = props => {
     }
   }, [passwordChangeHandler, clearErrors]);
 
+  const handleTokenVerification = useCallback(async (token) => {
+    setVerifyingToken(true);
+    setTokenExpired(false);
+
+    dispatch(verifyPasswordToken(token)).then((res) => {
+      setVerifyingToken(false);
+      setTokenVerificationSuccess(res);
+    }, (err) => {
+      setVerifyingToken(false);
+      setTokenVerificationError(err);
+      setTokenExpired(err.xhrHttpCode === 417);
+    })
+  }, [dispatch]);
+
+  useEffect(() => {
+    const token = parse(window.location.href, true).query.token;
+    if (!token) return;
+    if (tokenVerificationSuccess || tokenVerificationError) return;
+
+    handleTokenVerification(token);
+  }, []);
+
   const handleViewChange = useCallback((type) => {
     clearErrors();
     setLoginViewType(type);
@@ -255,16 +320,18 @@ const Auth = props => {
   const renderTitle = useCallback(() => {
     let value = '';
     if (viewType === AuthViewTypes.Login) {
-      value = loginViewType !== LoginViewTypes.Reset ?
-        'Login' :
-        'Reset your password';
-    } else {
-      value = 'Change your password';
+      value = loginViewType !== LoginViewTypes.Reset ? 'Login' : 'Reset your password';
+    } else if (viewType === AuthViewTypes.ChangePassword) {
+      if (verifyingToken) {
+        value = 'Verifying token';
+      } else if (tokenVerificationSuccess) {
+        value = 'Set your password'
+      }
     }
     return (
       <span>{value}</span>
     );
-  }, [viewType, loginViewType]);
+  }, [viewType, loginViewType, verifyingToken, tokenVerificationSuccess]);
 
   return (
     !isCallback &&
@@ -301,26 +368,43 @@ const Auth = props => {
               <Button link={config.loginUrl}>Back to Login</Button>
             </div>
           </>))}
-          {!hasSuccess && (
-            (viewType === AuthViewTypes.Login && (
-              <Login
-                socialConnectors={config.socialConnectors}
-                loginError={loginError}
-                passwordResetError={passwordResetError}
-                successMessage={passwordResetSuccessMessage}
-                onViewChange={handleViewChange}
-                onLogin={handleLogin}
-                onSocialLogin={handleSocialLogin}
-                onPasswordReset={handlePasswordReset}
-              />
-            )) ||
-            (viewType === AuthViewTypes.ChangePassword && (
-              <ChangePassword
+          {!hasSuccess && viewType === AuthViewTypes.Login && (
+            <Login
+              socialConnectors={config.socialConnectors}
+              loginError={loginError}
+              passwordResetError={passwordResetError}
+              successMessage={passwordResetSuccessMessage}
+              onViewChange={handleViewChange}
+              onLogin={handleLogin}
+              onSocialLogin={handleSocialLogin}
+              onPasswordReset={handlePasswordReset}
+            />
+          )}
+          {!hasSuccess && viewType === AuthViewTypes.ChangePassword && tokenVerificationSuccess && (
+            <ChangePassword
                 error={passwordChangeError}
                 successMessage={passwordChangeSuccessMessage}
                 onPasswordChange={handlePasswordChange}
+            />
+          )}
+          {!hasSuccess && viewType === AuthViewTypes.ChangePassword && verifyingToken && (
+              <div className={styles.loadingContainer}>
+                <Loader size={5}/>
+              </div>
+          )}
+          {!hasSuccess && viewType === AuthViewTypes.ChangePassword && tokenExpired && (
+            <ResetPasswordByToken
+              error={passwordResetError}
+              successMessage={passwordResetSuccessMessage}
+              onPasswordReset={handlePasswordResetByToken}
+            />
+          )}
+          {!hasSuccess && viewType === AuthViewTypes.ChangePassword && tokenVerificationError && !tokenExpired && (
+              <ResetPasswordByEmail
+                  error={passwordResetError}
+                  successMessage={passwordResetSuccessMessage}
+                  onPasswordReset={handlePasswordResetByEmail}
               />
-            ))
           )}
         </div>
       </div>

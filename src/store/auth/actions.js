@@ -56,6 +56,61 @@ export const resetPasswordFailure = (error) => {
   }
 };
 
+export function verifyPasswordToken(token) {
+  const body = JSON.stringify({
+    token: token
+  });
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/verify-password-token`, { body, noAuth: true })
+        .then(
+            res => dispatch(verifyPasswordTokenSuccess(res)),
+            err => handleActionFailure(err, dispatch(verifyPasswordTokenFailure(err))),
+        );
+  };
+}
+
+export const verifyPasswordTokenSuccess = (data) => {
+  return {
+    type: 'VERIFY_PASSWORD_TOKEN_SUCCESS',
+    payload: data,
+  };
+};
+
+export const verifyPasswordTokenFailure = (error) => {
+  return {
+    type: 'VERIFY_PASSWORD_TOKEN_FAILURE',
+    payload: error,
+  };
+};
+
+export function resendPasswordToken(token, email) {
+  const body = JSON.stringify({
+    token: token,
+    email: email
+  });
+  return dispatch => {
+    return apiCall('POST', `${Constants.API_URL}/resend-password-token`, { body, noAuth: true })
+        .then(
+            res => dispatch(resendPasswordTokenSuccess(res)),
+            err => handleActionFailure(err, dispatch(resendPasswordTokenFailure(err))),
+        );
+  };
+}
+
+export const resendPasswordTokenSuccess = (data) => {
+  return {
+    type: 'RESEND_PASSWORD_TOKEN_SUCCESS',
+    payload: data,
+  };
+};
+
+export const resendPasswordTokenFailure = (error) => {
+  return {
+    type: 'RESEND_PASSWORD_TOKEN_FAILURE',
+    payload: error,
+  };
+};
+
 export function changePassword(token, password, password_confirmation) {
   const body = JSON.stringify({
     token: token,

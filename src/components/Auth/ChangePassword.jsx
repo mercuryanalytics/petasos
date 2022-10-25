@@ -67,7 +67,7 @@ const ChangePassword = props => {
         loading={isBusy || submitting}
         disabled={isBusy || submitting}
       >
-        <span>{!isBusy ? 'Change Password' : 'Changing password'}</span>
+        <span>{!isBusy ? 'Set Password' : 'Setting password'}</span>
       </Button>
     </form>
   );
