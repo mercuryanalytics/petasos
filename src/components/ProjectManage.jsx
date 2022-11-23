@@ -14,7 +14,6 @@ import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers, refreshAuthorizations } from '../store/users/actions';
-import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
 
 const ProjectTypes = {
@@ -124,11 +123,12 @@ const ProjectManage = props => {
       updated_at: data.updated_at || '',
     } : {
       project_type: ProjectTypes.CustomResearch,
-      updated_at: format(new Date(), 'yyyy-MM-dd'),
+      updated_at: "",
     },
+    // TODO: Now that this array has only one field, should we simplify?
     validate: (values) => {
       let errors = {};
-      ['name', 'updated_at'].forEach(key => {
+      ['name'].forEach(key => {
         if (!Validators.hasValue(values[key])) {
           errors[key] = 'Field value is required.';
         }
@@ -146,9 +146,6 @@ const ProjectManage = props => {
         account_id: values.account_id,
         phone: contact ? contact.contact_phone : null,
         email: contact ? contact.email : null,
-        updated_at: values.updated_at ?
-          format(new Date(values.updated_at), 'yyyy-MM-dd')
-          : '',
       };
       if (editMode) {
         data && dispatch(updateProject(data.id, result)).then(() => {
