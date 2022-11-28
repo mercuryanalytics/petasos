@@ -282,7 +282,7 @@ const ProjectManage = props => {
                 label="Email"
               />
             </>)}
-            <Datepicker
+            {canEdit && editMode && <Datepicker
               className={styles.formControl}
               field={updated_at}
               preview={!isEditClicked}
@@ -290,6 +290,7 @@ const ProjectManage = props => {
               maxToday={true}
               label={`Last updated`}
             />
+            }
             {canEdit && isEditClicked && (
               <div className={styles.formButtons}>
                 <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
