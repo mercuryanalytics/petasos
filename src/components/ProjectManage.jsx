@@ -150,7 +150,7 @@ const ProjectManage = props => {
           const message = Object.entries(r.body).reduce((a, c) => {
             return a += `${c[0]} ${c[1]}\n`
           }, "")
-          window.confirm(message)
+          window.alert(message)
           setIsBusy(false);
       }
       if (editMode) {
