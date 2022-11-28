@@ -125,7 +125,6 @@ const ProjectManage = props => {
       project_type: ProjectTypes.CustomResearch,
       updated_at: "",
     },
-    // TODO: Now that this array has only one field, should we simplify?
     validate: (values) => {
       let errors = {};
       ['name'].forEach(key => {
@@ -147,25 +146,31 @@ const ProjectManage = props => {
         phone: contact ? contact.contact_phone : null,
         email: contact ? contact.email : null,
       };
+      const handleApiErrors = (r) => {
+          const message = Object.entries(r.body).reduce((a, c) => {
+            return a += `${c[0]} ${c[1]}\n`
+          }, "")
+          window.confirm(message)
+          setIsBusy(false);
+      }
       if (editMode) {
-        data && dispatch(updateProject(data.id, result)).then(() => {
-          form.reset();
-          setIsBusy(false);
-        }, () => {
-          setIsBusy(false);
-        });
-      } else {
-        dispatch(createProject(result)).then(action => {
-          const project = action.payload;
-          const handleSuccess = () => {
+        data && dispatch(updateProject(data.id, result))
+          .then(() => {
+            form.reset();
             setIsBusy(false);
-            history.push(Routes.ManageProject.replace(':id', project.id));
-          };
-          dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id))
-            .then(handleSuccess, handleSuccess);
-        }, () => {
-          setIsBusy(false);
-        });
+          }).catch((r) => handleApiErrors(r));
+      } else {
+        dispatch(createProject(result))
+          .then(action => {
+            const project = action.payload;
+            const handleSuccess = () => {
+              setIsBusy(false);
+              history.push(Routes.ManageProject.replace(':id', project.id));
+            };
+            dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id))
+              .then(handleSuccess, handleSuccess);
+          })
+          .catch((r) => handleApiErrors(r));
       }
     },
   });
