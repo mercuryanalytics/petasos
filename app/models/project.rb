@@ -6,7 +6,7 @@ class Project < ApplicationRecord
   has_many :authorizations
   belongs_to :client, foreign_key: 'domain_id'
 
-  validates :name, presence: true, uniqueness: { case_sensitive: true }
+  validates :name, presence: true, uniqueness: { scope: :client, case_sensitive: true }
 
   before_create :default_project_type, if: -> { project_type.nil? }
 
@@ -15,7 +15,7 @@ class Project < ApplicationRecord
   def as_json(options = {})
     super.merge(children_access: children_access)
   end
-  
+
   private
 
   def default_project_type
