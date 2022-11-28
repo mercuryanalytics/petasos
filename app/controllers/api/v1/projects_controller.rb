@@ -110,7 +110,7 @@ module Api
       def project_params
         params
           .require(:project)
-          .permit(:name, :description, :project_number, :project_type, :account_id, :domain_id, :modified_on)
+          .permit(:name, :description, :project_number, :project_type, :account_id, :domain_id)
       end
 
       def current_ability

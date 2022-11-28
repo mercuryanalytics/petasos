@@ -25,7 +25,7 @@ RSpec.describe Projects::CreateProjectOrganizer, type: :interactor do
     ActionController::Parameters
       .new(params)
       .require(:project)
-      .permit(:name, :description, :project_number, :project_type, :account_id, :domain_id, :modified_on)
+      .permit(:name, :description, :project_number, :project_type, :account_id, :domain_id)
   end
 
   it "exposes data errors to the UI" do
