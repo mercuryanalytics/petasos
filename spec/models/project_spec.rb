@@ -5,5 +5,5 @@ RSpec.describe Project, type: :model do
   it { should validate_presence_of :name }
   it { should have_many :reports }
   it { should belong_to :client }
-  xit { should validate_uniqueness_of(:name).scoped_to(:client) }
+  it { should validate_uniqueness_of(:name).scoped_to(:domain_id) }
 end
