@@ -126,13 +126,9 @@ const ProjectManage = props => {
       updated_at: "",
     },
     validate: (values) => {
-      let errors = {};
-      ['name'].forEach(key => {
-        if (!Validators.hasValue(values[key])) {
-          errors[key] = 'Field value is required.';
-        }
-      });
-      return errors;
+      if (!Validators.hasValue(values["name"])) {
+        return { "name": "Field value is required." }
+      }
     },
     onSubmit: (values) => {
       setIsBusy(true);
