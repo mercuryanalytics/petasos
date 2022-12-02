@@ -99,16 +99,12 @@ const ReportManage = props => {
       presented_on: data.presented_on || '',
       updated_at: data.updated_at || '',
     } : {
-      updated_at: format(new Date(), 'yyyy-MM-dd'),
+      updated_at: "",
     },
     validate: (values) => {
-      let errors = {};
-      ['name', 'updated_at'].forEach(key => {
-        if (!Validators.hasValue(values[key])) {
-          errors[key] = 'Field value is required.';
-        }
-      });
-      return errors;
+      if (!Validators.hasValue(values["name"])) {
+        return { "name": "Field value is required." }
+      }
     },
     onSubmit: (values) => {
       setIsBusy(true);
@@ -118,9 +114,6 @@ const ReportManage = props => {
         description: values.description,
         presented_on: values.presented_on ?
           format(new Date(values.presented_on), 'yyyy-MM-dd')
-          : '',
-        updated_at: values.updated_at ?
-          format(new Date(values.updated_at), 'yyyy-MM-dd')
           : '',
         project_id: data ? data.project_id : projectId,
       };
@@ -230,7 +223,7 @@ const ReportManage = props => {
               maxToday={true}
               label="Last presented on"
             />
-            <Datepicker
+            {canEdit && editMode && <Datepicker
               className={styles.formControl}
               field={updated_at}
               preview={!isEditClicked}
@@ -238,6 +231,7 @@ const ReportManage = props => {
               maxToday={true}
               label={`Last updated`}
             />
+            }
             {canEdit && isEditClicked && (
               <div className={styles.formButtons}>
                 <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>

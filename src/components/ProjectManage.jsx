@@ -14,7 +14,6 @@ import { Validators, Input, Textarea, Datepicker, Select } from './FormFields';
 import { getClients } from '../store/clients/actions';
 import { getProject, createProject, updateProject, deleteProject } from '../store/projects/actions';
 import { getResearchers, refreshAuthorizations } from '../store/users/actions';
-import { format } from 'date-fns';
 import { UserRoles, hasRoleOnClient, hasRoleOnProject } from '../store';
 
 const ProjectTypes = {
@@ -124,16 +123,12 @@ const ProjectManage = props => {
       updated_at: data.updated_at || '',
     } : {
       project_type: ProjectTypes.CustomResearch,
-      updated_at: format(new Date(), 'yyyy-MM-dd'),
+      updated_at: "",
     },
     validate: (values) => {
-      let errors = {};
-      ['name', 'updated_at'].forEach(key => {
-        if (!Validators.hasValue(values[key])) {
-          errors[key] = 'Field value is required.';
-        }
-      });
-      return errors;
+      if (!Validators.hasValue(values["name"])) {
+        return { "name": "Field value is required." }
+      }
     },
     onSubmit: (values) => {
       setIsBusy(true);
@@ -146,29 +141,32 @@ const ProjectManage = props => {
         account_id: values.account_id,
         phone: contact ? contact.contact_phone : null,
         email: contact ? contact.email : null,
-        updated_at: values.updated_at ?
-          format(new Date(values.updated_at), 'yyyy-MM-dd')
-          : '',
       };
+      const handleApiErrors = (r) => {
+          const message = Object.entries(r.body).reduce((a, c) => {
+            return a += `${c[0]} ${c[1]}\n`
+          }, "")
+          window.alert(message)
+          setIsBusy(false);
+      }
       if (editMode) {
-        data && dispatch(updateProject(data.id, result)).then(() => {
-          form.reset();
-          setIsBusy(false);
-        }, () => {
-          setIsBusy(false);
-        });
-      } else {
-        dispatch(createProject(result)).then(action => {
-          const project = action.payload;
-          const handleSuccess = () => {
+        data && dispatch(updateProject(data.id, result))
+          .then(() => {
+            form.reset();
             setIsBusy(false);
-            history.push(Routes.ManageProject.replace(':id', project.id));
-          };
-          dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id))
-            .then(handleSuccess, handleSuccess);
-        }, () => {
-          setIsBusy(false);
-        });
+          }).catch((r) => handleApiErrors(r));
+      } else {
+        dispatch(createProject(result))
+          .then(action => {
+            const project = action.payload;
+            const handleSuccess = () => {
+              setIsBusy(false);
+              history.push(Routes.ManageProject.replace(':id', project.id));
+            };
+            dispatch(refreshAuthorizations('project', project.id, user.id, project.domain_id))
+              .then(handleSuccess, handleSuccess);
+          })
+          .catch((r) => handleApiErrors(r));
       }
     },
   });
@@ -285,7 +283,7 @@ const ProjectManage = props => {
                 label="Email"
               />
             </>)}
-            <Datepicker
+            {canEdit && editMode && <Datepicker
               className={styles.formControl}
               field={updated_at}
               preview={!isEditClicked}
@@ -293,6 +291,7 @@ const ProjectManage = props => {
               maxToday={true}
               label={`Last updated`}
             />
+            }
             {canEdit && isEditClicked && (
               <div className={styles.formButtons}>
                 <Button type="submit" disabled={submitting || isBusy} loading={isBusy}>
