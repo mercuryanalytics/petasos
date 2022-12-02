@@ -96,8 +96,7 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
     let(:params) do
       {
         report: {
-          name: 'Report 2',
-          modified_on: '2012-12-12'
+          name: 'Report 2'
         }
       }
     end
@@ -105,11 +104,6 @@ RSpec.describe Api::V1::ReportsController, type: :controller do
     it 'updates the report' do
       expect { patch :update, params: { project_id: project.id, id: report.id, **params } }
         .to change { report.reload.name }.to('Report 2')
-    end
-
-    it 'updates the modified_on for report' do
-      expect { patch :update, params: { project_id: project.id, id: report.id, **params } }
-        .to change { report.reload.modified_on.to_s }.to('2012-12-12')
     end
 
     xdescribe 'unauthorized' do

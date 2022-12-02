@@ -131,7 +131,7 @@ module Api
       def report_params
         params
           .require(:report)
-          .permit(:name, :url, :project_id, :description, :presented_on, :modified_on, :project_id)
+          .permit(:name, :url, :project_id, :description, :presented_on, :project_id)
       end
 
       def current_ability
