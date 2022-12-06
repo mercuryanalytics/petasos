@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      * {
+        -webkit-text-size-adjust: none;
+      }
+
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: #f1f2f5 !important;
+        font-family: Helvetica, Arial, sans-serif;
+      }
+
+      body,
+      table,
+      td,
+      p,
+      a {
+        -ms-text-size-adjust: 100% !important;
+        -webkit-text-size-adjust: 100% !important;
+      }
+
+      table,
+      tr,
+      td {
+        border-spacing: 0 !important;
+        mso-table-lspace: 0px !important;
+        mso-table-rspace: 0pt !important;
+        border-collapse: collapse !important;
+        mso-line-height-rule: exactly !important;
+      }
+
+      .ExternalClass * {
+        line-height: 100%
+      }
+
+      .mobile-link a,
+      .mobile-link span {
+        text-decoration: none !important;
+        color: inherit !important;
+        border: none !important;
+      }
+
+      .w100 {
+        width: 100%;
+      }
+
+      .w20 {
+        width: 25%;
+      }
+
+      .pad-all-20 {
+        padding: 20px !important;
+      }
+
+      .mso-link {
+        display: block !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .mso-link-dark {
+        display: block !important;
+        color: #0d7997 !important;
+        text-decoration: none !important;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+basePath: http://localhost/api/v1
+paths:
+  "/api/v1/clients":
+    get:
+      summary: Returns the clients
+      tags:
+      - Clients
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Clients list
+        '401':
+          description: Unauthorized

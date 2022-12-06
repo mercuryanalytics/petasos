@@ -1,0 +1,59 @@
+require:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 2.5
+  TargetRailsVersion: 6.0
+  NewCops: enable
+  Exclude:
+    - "bin/*"
+    - "db/schema.rb"
+    - "lib/tasks/cucumber.rake"
+    - "sandbox/**/*"
+    - "public/dispatch.rb"
+
+Rails:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Exclude:
+    - "db/migrate/*"
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/BlockComments:
+  Enabled: false
+  Exclude:
+    - "config/routes.rb"
+
+Style/RegexpLiteral:
+  EnforcedStyle: percent_r
+  AllowInnerSlashes: false
+  Exclude:
+    - "features/**/*"
+
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - "features/**/*"
+
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+
+Layout/LineLength:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
