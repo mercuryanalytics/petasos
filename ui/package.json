@@ -29,7 +29,7 @@
     "eject": "react-scripts eject",
     "sync": "aws s3 sync build/ s3://$BUCKET_NAME",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
-    "s3deploy": "npm --prefix $CODEBUILD_SRC_DIR/ui/src run-script build && npm --prefix $CODEBUILD_SRC_DIR/ui/src run-script sync && npm --prefix $CODEBUILD_SRC_DIR/ui/src run-script invalidate"
+    "s3deploy": "npm --prefix $CODEBUILD_SRC_DIR/ui/ run-script build && npm --prefix $CODEBUILD_SRC_DIR/ui/ run-script sync && npm --prefix $CODEBUILD_SRC_DIR/ui/ run-script invalidate"
   },
   "eslintConfig": {
     "extends": "react-app"
