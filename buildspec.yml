@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 
 phases:
   install:
@@ -19,4 +19,5 @@ phases:
       - echo Building.........
       - echo Bucket name---------
       - echo $BUCKET_NAME
+      - cd ui
       - npm run deploy
