@@ -19,4 +19,4 @@ phases:
       - echo Building.........
       - echo Bucket name---------
       - echo $BUCKET_NAME
-      - npm run-script s3deploy
+      - npm run-script deploy
