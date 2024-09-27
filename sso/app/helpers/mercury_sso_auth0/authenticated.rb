@@ -30,7 +30,7 @@ module MercurySsoAuth0
 
       if opt.fetch(:prompt, true)
         session[:authentication_intercept] ||= request.fullpath
-        redirect_to sso_login.to_s
+        redirect_to sso_login.to_s, allow_other_host: true
       else
         head :unauthorized
       end
