@@ -1,36 +1,49 @@
-import React, { useState } from "react"
-import { Button } from "react-aria-components"
+import React, { useState } from "react";
+import {
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+  Button,
+} from "react-aria-components";
 
-import "./index.scss"
-import Back from "../icons/Back"
+import Back from "../icons/Back";
+
+import "./index.scss";
+import "./react_menu_stylesheet.scss";
+import Forward from "../icons/Forward";
 
 const Navbar: React.FC = () => {
-  const [showDropdown, setShowDropDown] = useState(false)
-
-  const handleClick = () => {
-    setShowDropDown(!showDropdown)
-  }
+  // TODO: Check which is the best way to toggle between icons in react-aria
+  const [showMenu, setShowMenu] = useState(true);
 
   return (
     <div className="navbar">
-      <Button>
-        <Back />
+      <Button onPress={() => setShowMenu((prev) => !prev)}>
+        {showMenu ? <Back /> : <Forward />}
       </Button>
       <img src="../../public/images/mercury_logo.png" />
       <div>
-        <span>User Name</span>
-        <button onClick={handleClick}>
-          <span>^</span>
-        </button>
         <div>
-          <ul style={showDropdown ? { display: "block" } : { display: "none" }}>
-            <li>My account</li>
-            <li>Log Out</li>
-          </ul>
+          <div>
+            <span>UL</span>
+          </div>
+          <span>User Name</span>
+        </div>
+        <div>
+          <MenuTrigger>
+            <Button aria-label="Menu">=</Button>
+            <Popover>
+              <Menu>
+                <MenuItem>My account</MenuItem>
+                <MenuItem>Log Out</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
