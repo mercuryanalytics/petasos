@@ -8,21 +8,21 @@ import {
 } from "react-aria-components";
 
 import Back from "../icons/Back";
+import Forward from "../icons/Forward";
 
 import "./index.scss";
 import "./react_menu_stylesheet.scss";
-import Forward from "../icons/Forward";
 
 const Navbar: React.FC = () => {
   // TODO: Check which is the best way to toggle between icons in react-aria
   const [showMenu, setShowMenu] = useState(true);
 
   return (
-    <div className="navbar">
+    <div className="Navbar">
       <Button onPress={() => setShowMenu((prev) => !prev)}>
         {showMenu ? <Back /> : <Forward />}
       </Button>
-      <img src="../../public/images/mercury_logo.png" />
+      <img src="/images/mercury_logo.png" />
       <div>
         <div>
           <div>
