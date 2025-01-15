@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { Input, Label, SearchField } from "react-aria-components";
 
-import CustomCheckbox from "../icons/custom_checkbox";
+import { CustomCheckbox } from "../../icons";
 
-import "./react_search_stylesheet.scss";
+import "./index.scss";
 
 const Search: React.FC = () => {
   const [showSearch, setShowSearch] = useState(false);
   // TODO: Change this eventListener
-  window.addEventListener("click", () => setShowSearch(false));
+  // window.addEventListener("click", () => setShowSearch(false));
   return (
-    <>
+    <div>
       <SearchField>
         <Label />
         <Input placeholder="Search" onInput={() => setShowSearch(true)} />
       </SearchField>
       {showSearch && (
-        <div>
+        <div className="Search-Dropdown">
           <label>
             <strong>Search For</strong>
           </label>
@@ -38,7 +38,7 @@ const Search: React.FC = () => {
           </label>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

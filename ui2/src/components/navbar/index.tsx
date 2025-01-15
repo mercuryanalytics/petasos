@@ -7,13 +7,14 @@ import {
   Button,
 } from "react-aria-components";
 
-import Back from "../icons/Back";
-import Forward from "../icons/Forward";
+import * as Icons from "../icons";
 
 import "./index.scss";
 import "./react_menu_stylesheet.scss";
 
 const Navbar: React.FC = () => {
+  const { Back, Forward } = Icons;
+
   // TODO: Check which is the best way to toggle between icons in react-aria
   const [showMenu, setShowMenu] = useState(true);
 
