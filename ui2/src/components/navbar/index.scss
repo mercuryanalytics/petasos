@@ -1,9 +1,8 @@
-.navbar {
+.Navbar {
   display: grid;
   grid-template-columns: 0fr 1fr 200px;
   align-items: center;
   height: 72px;
-  font-family: Arial, Helvetica, sans-serif;
 
   & > button:nth-child(1) {
     width: 120px;
