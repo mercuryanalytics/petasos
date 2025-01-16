@@ -3,8 +3,7 @@
   padding: 0 28px 2rem 18px;
   width: 500px;
   box-sizing: border-box;
-  overflow-x: visible;
-  overflow-y: auto;
+  overflow: hidden;
 
   & > div:nth-child(1) {
     position: relative;
