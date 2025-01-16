@@ -12,7 +12,7 @@ import * as Icons from "../icons";
 import "./index.scss";
 import "./react_menu_stylesheet.scss";
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const { Back, Forward } = Icons;
 
   // TODO: Check which is the best way to toggle between icons in react-aria
@@ -20,7 +20,12 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="Navbar">
-      <Button onPress={() => setShowMenu((prev) => !prev)}>
+      <Button
+        onPress={() => {
+          setShowMenu((prev) => !prev);
+          onClick();
+        }}
+      >
         {showMenu ? <Back /> : <Forward />}
       </Button>
       <img src="/images/mercury_logo.png" />
