@@ -1,9 +1,12 @@
 .Side_Menu {
+  position: relative;
   height: 100vh;
-  padding: 0 28px 2rem 18px;
   width: 500px;
+  left: 0;
+  padding: 0 28px 2rem 18px;
   box-sizing: border-box;
   overflow: hidden;
+  transition: 1s;
 
   & > div:nth-child(1) {
     position: relative;
@@ -14,4 +17,9 @@
     position: relative;
     height: 100%;
   }
+}
+
+.Side_Menu.slide {
+  width: 0;
+  left: -50px;
 }
