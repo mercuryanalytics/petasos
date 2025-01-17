@@ -1,4 +1,5 @@
-export { default as ArrowRight } from "./ArrowRight";
-export { default as Back } from "./Back";
-export { default as CustomCheckbox } from "./custom_checkbox";
-export { default as Forward } from "./Forward";
+export { default as ArrowRight } from "./ArrowRight"
+export { default as Back } from "./Back"
+export { default as CustomCheckbox } from "./custom_checkbox"
+export { default as Forward } from "./Forward"
+export { default as Folder } from "./Folder"
