@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import "./App.scss"
 import Navbar from "./components/navbar"
-import SideMenu from "./components/side_menu"
+import NavigationMenu from "./components/navigation_menu"
 
 const App: React.FC = () => {
   const [showSideMenu, setSideShowMenu] = useState(true)
@@ -9,7 +9,7 @@ const App: React.FC = () => {
   return (
     <>
       <Navbar onClick={() => setSideShowMenu(prev => !prev)} />
-      <SideMenu showSideMenu={showSideMenu} />
+      <NavigationMenu showSideMenu={showSideMenu} />
     </>
   )
 }

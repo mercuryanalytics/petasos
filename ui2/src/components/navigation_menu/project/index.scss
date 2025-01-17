@@ -1,0 +1,26 @@
+.Project {
+  position: relative;
+  margin-left: 20px;
+
+  & > li:first-child > a {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0c7997;
+  }
+
+  & > li:not(li:first-child) {
+    a {
+      display: grid;
+      grid-template-columns: 0fr 0fr 10fr;
+      column-gap: 10px;
+
+      & > div:first-child {
+        display: grid;
+      }
+    }
+  }
+
+  a {
+    padding: 0 20px;
+  }
+}
