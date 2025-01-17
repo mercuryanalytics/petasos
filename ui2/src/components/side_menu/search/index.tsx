@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Input, Label, SearchField } from "react-aria-components";
+import React, { useState } from "react"
+import { Input, Label, SearchField } from "react-aria-components"
 
-import { CustomCheckbox } from "../../icons";
+import { CustomCheckbox } from "../../icons"
 
-import "./index.scss";
+import "./index.scss"
 
 const Search: React.FC = () => {
-  const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false)
   // TODO: Change this eventListener
   // window.addEventListener("click", () => setShowSearch(false));
   return (
@@ -39,7 +39,7 @@ const Search: React.FC = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Search;
+export default Search

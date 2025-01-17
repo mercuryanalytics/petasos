@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 const ArrowRight: React.FC<{ rotate?: number }> = ({ rotate = 0 }) => (
   <svg
@@ -12,6 +12,6 @@ const ArrowRight: React.FC<{ rotate?: number }> = ({ rotate = 0 }) => (
   >
     <path d="M8 5v14l11-7z"></path>
   </svg>
-);
+)
 
-export default ArrowRight;
+export default ArrowRight

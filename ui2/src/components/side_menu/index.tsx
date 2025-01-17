@@ -1,7 +1,7 @@
-import React from "react";
-import Search from "./search";
-import "./index.scss";
-import ProjectMenu from "./project_menu";
+import React from "react"
+import Search from "./search"
+import "./index.scss"
+import ProjectMenu from "./project_menu"
 
 const SideMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) => {
   return (
@@ -9,7 +9,7 @@ const SideMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) => {
       <Search />
       <ProjectMenu />
     </div>
-  );
-};
+  )
+}
 
-export default SideMenu;
+export default SideMenu
