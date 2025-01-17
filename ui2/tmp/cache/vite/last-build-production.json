@@ -1,7 +1,0 @@
-{
-  "success": false,
-  "errors": "npm WARN exec The following package was not found and will be installed: vite@6.0.7\nfailed to load config from /Users/amitp/Documents/GitHub/ResearchResultsDemo/vite.config.ts\nerror during build:\nError [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /Users/amitp/Documents/GitHub/ResearchResultsDemo/vite.config.ts.timestamp-1736147505335-dddec7518fd1d.mjs\n    at new NodeError (node:internal/errors:399:5)\n    at packageResolve (node:internal/modules/esm/resolve:889:9)\n    at moduleResolve (node:internal/modules/esm/resolve:938:20)\n    at defaultResolve (node:internal/modules/esm/resolve:1153:11)\n    at nextResolve (node:internal/modules/esm/loader:163:28)\n    at ESMLoader.resolve (node:internal/modules/esm/loader:838:30)\n    at ESMLoader.getModuleJob (node:internal/modules/esm/loader:424:18)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:77:40)\n    at link (node:internal/modules/esm/module_job:76:36)\n",
-  "timestamp": "2025-01-06 12:41:45",
-  "vite_ruby": "3.9.1",
-  "digest": "430e66fc179aad635efb82cc2fbf4a8427c6cd2c"
-}
