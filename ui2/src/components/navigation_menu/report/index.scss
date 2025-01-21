@@ -1,0 +1,25 @@
+.Report {
+  position: relative;
+  margin-left: 20px;
+
+  & > li:first-child > a {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0c7997;
+  }
+
+  & > li:not(li:first-child) > a {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    column-gap: 10px;
+    font-size: 0.875em;
+
+    & > svg:nth-child(1) {
+      font-size: 1.2rem;
+    }
+  }
+
+  a {
+    padding: 0 20px;
+  }
+}
