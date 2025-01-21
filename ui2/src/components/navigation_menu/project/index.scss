@@ -8,15 +8,25 @@
     color: #0c7997;
   }
 
-  & > li:not(li:first-child) {
-    a {
-      display: grid;
-      grid-template-columns: 0fr 0fr 10fr;
-      column-gap: 10px;
+  & > li:not(li:first-child) > a {
+    display: grid;
+    grid-template-columns: 0fr 0fr 1fr;
+    column-gap: 10px;
 
-      & > div:first-child {
-        display: grid;
-      }
+    div:first-child > svg {
+      font-size: 1.2rem;
+    }
+
+    svg:nth-child(2) {
+      font-size: 1.6rem;
+    }
+
+    span {
+      font-size: 0.875em;
+    }
+
+    & > div:first-child {
+      display: grid;
     }
   }
 

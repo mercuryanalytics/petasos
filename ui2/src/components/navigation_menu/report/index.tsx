@@ -1,9 +1,11 @@
 import React from "react"
-import { ArrowRight, File } from "../../icons"
+import { File } from "../../icons"
+
+import "./index.scss"
 
 const Report: React.FC = () => {
   return (
-    <ul>
+    <ul className="Report">
       <li>
         <a href="#">
           <div>
@@ -13,11 +15,8 @@ const Report: React.FC = () => {
       </li>
       <li>
         <a href="#">
-          <div>
-            <ArrowRight />
-          </div>
           <File />
-          <span>Project Name</span>
+          <span>Report Name</span>
         </a>
       </li>
     </ul>
