@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { PrimitiveAtom, useAtom } from "jotai"
 
 // TODO: Modify this method later when using several list items
-const useDropdown = () => {
-  const [rotate, setRotate] = useState(0)
-  const [showMenu, setShowMenu] = useState(false)
+
+const useDropdown = (rotateAtom: PrimitiveAtom<number>, showMenuAtom: PrimitiveAtom<boolean>) => {
+  const [rotate, setRotate] = useAtom(rotateAtom)
+  const [showMenu, setShowMenu] = useAtom(showMenuAtom)
 
   return {
     rotate,

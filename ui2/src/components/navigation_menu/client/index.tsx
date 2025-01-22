@@ -1,6 +1,8 @@
 import React from "react"
 import { Button } from "react-aria-components"
 
+import { atom } from "jotai"
+
 import useDropdown from "../../../hooks/useDropdown"
 import { ArrowRight } from "../../icons"
 
@@ -8,8 +10,11 @@ import Project from "../project"
 
 import "./index.scss"
 
+const rotateAtom = atom(0)
+const showMenuAtom = atom(false)
+
 const Client: React.FC = () => {
-  const { rotate, showMenu: showProject, setShowDropdown } = useDropdown()
+  const { rotate, showMenu: showProject, setShowDropdown } = useDropdown(rotateAtom, showMenuAtom)
 
   return (
     <div className="Client">

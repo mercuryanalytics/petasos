@@ -1,4 +1,6 @@
 import React from "react"
+import { atom } from "jotai"
+
 import useDropdown from "../../../hooks/useDropdown"
 
 import { ArrowRight, Folder } from "../../icons"
@@ -7,8 +9,11 @@ import Report from "../report"
 
 import "./index.scss"
 
+const rotateAtom = atom(0)
+const showMenuAtom = atom(false)
+
 const Project: React.FC = () => {
-  const { rotate, showMenu: showReport, setShowDropdown } = useDropdown()
+  const { rotate, showMenu: showReport, setShowDropdown } = useDropdown(rotateAtom, showMenuAtom)
 
   return (
     <ul className="Project">
