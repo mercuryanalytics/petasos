@@ -35,7 +35,7 @@ const MenuStructure: React.FC = () => {
       <Tree aria-label="Files" selectionMode="multiple" items={items}>
         {function renderItem(item) {
           return (
-            <TreeItem textValue={item.title}>
+            <TreeItem textValue={item.title} className={"react-aria-TreeItem" + " " + item.title}>
               <TreeItemContent>
                 <a href="#">
                   {item.children.length ? (
@@ -59,10 +59,12 @@ const MenuStructure: React.FC = () => {
                 return (
                   <React.Fragment key={`${item.title}_${i}_child`}>
                     {(item.title === "Project" || item.title === "Report") && i === 0 && (
-                      <TreeItem textValue={item.title}>
+                      <TreeItem textValue={item.title} className={"react-aria-TreeItem" + " " + "New-" + item.title}>
                         <TreeItemContent>
                           <a href="#">
-                            <span>{`+ Add new ${item.title.toLowerCase()}`}</span>
+                            <span>
+                              <strong>{`+ Add new ${item.title.toLowerCase()}`}</strong>
+                            </span>
                           </a>
                         </TreeItemContent>
                       </TreeItem>

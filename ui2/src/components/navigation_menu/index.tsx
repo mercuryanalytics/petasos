@@ -8,7 +8,6 @@ const NavigationMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) =
   return (
     <div className={`Navigation-Menu${showSideMenu ? "" : " slide"}`}>
       <Search />
-      {/* <Client /> */}
       <MenuStructure />
     </div>
   )
