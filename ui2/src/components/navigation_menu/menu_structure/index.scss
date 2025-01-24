@@ -4,45 +4,26 @@
     gap: 2px;
     overflow: auto;
 
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-      background: #0c7997;
-    }
-
     .react-aria-TreeItem {
       align-items: center;
       margin-bottom: 5px;
-      margin-left: calc((var(--tree-item-level) - 1) * 20px + 0.571rem);
-      border-radius: 6px;
-      outline: none;
+      margin-left: calc((var(--tree-item-level) - 1) * 20px);
       cursor: pointer;
       font-size: 1.072rem;
       position: relative;
       transform: translateZ(0);
       border-radius: 18px;
 
-      &[data-has-child-rows] {
-        --padding: 0px;
-      }
-
       & > div {
         display: grid;
         row-gap: 5px;
+        font-size: 1.2rem;
 
         & > a {
-          display: grid;
           grid-template-columns: 0fr 0fr 1fr;
-          column-gap: 10px;
-          color: #333;
-          text-decoration: none;
-          cursor: pointer;
-          border-radius: 18px;
-          align-items: center;
         }
 
         & > a:has(span:first-child) {
-          display: grid;
           grid-template-columns: 1fr;
         }
       }
@@ -52,20 +33,31 @@
         display: grid;
         align-items: center;
         justify-content: center;
-        width: 1.143rem;
-        height: 1.143rem;
 
         svg {
           rotate: 0deg;
           transition: rotate 200ms;
-          width: 12px;
-          height: 12px;
-          stroke-width: 3px;
+          font-size: 1.2rem;
         }
       }
 
       &[data-expanded] .react-aria-Button[slot="chevron"] svg {
         rotate: 90deg;
+      }
+    }
+
+    & > .Report span,
+    & > .Project span {
+      font-size: 0.875rem;
+    }
+
+    & > .New-Report,
+    & > .New-Project {
+      margin-left: calc((var(--tree-item-level) - 1) * 20px);
+
+      span {
+        color: #0c7997;
+        font-size: 0.9375rem;
       }
     }
 
@@ -88,7 +80,6 @@
     .logo {
       width: 1.75rem;
       height: 1.75rem;
-      margin-right: 0.5rem;
       border-radius: 50%;
       background-color: #fff;
       overflow: hidden;
@@ -102,6 +93,7 @@
 
     a {
       display: grid;
+      column-gap: 8px;
       color: #333;
       text-decoration: none;
       cursor: pointer;
