@@ -46,18 +46,10 @@
       }
     }
 
-    & > .Report span,
-    & > .Project span {
-      font-size: 0.875rem;
-    }
-
-    & > .New-Report,
-    & > .New-Project {
-      margin-left: calc((var(--tree-item-level) - 1) * 20px);
-
-      span {
-        color: #0c7997;
-        font-size: 0.9375rem;
+    & > .react-aria-TreeItem:not(:first-child) a {
+      & > span:nth-child(2),
+      & > span:nth-child(3) {
+        font-size: 0.875rem;
       }
     }
 
@@ -104,13 +96,17 @@
     }
   }
 
-  .New-Client {
+  & > .react-aria-Button {
     border: 1px solid #ff6d35;
     border-color: #ff6d35;
     border-radius: 4px;
     box-sizing: border-box;
     padding: 0 20px;
     font-size: 0.875rem;
+
+    &:focus-visible {
+      outline: none;
+    }
 
     a {
       text-decoration: none;
