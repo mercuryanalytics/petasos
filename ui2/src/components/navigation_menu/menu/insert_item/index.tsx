@@ -1,10 +1,11 @@
 import React from "react"
+import "./index.scss"
 
 import { UNSTABLE_TreeItem as TreeItem, UNSTABLE_TreeItemContent as TreeItemContent } from "react-aria-components"
 
 const InsertItem: React.FC<{ title: string }> = ({ title }) => {
   return (
-    <TreeItem textValue={title} className={"react-aria-TreeItem" + " " + "New-" + title}>
+    <TreeItem textValue={title}>
       <TreeItemContent>
         <a href="#">
           <span>

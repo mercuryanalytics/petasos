@@ -4,7 +4,7 @@ import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, Button } from "re
 
 import items from "../../../../public/menuItems"
 
-import InsertItem from "./InsertItem"
+import InsertItem from "./insert_item"
 import Content from "./Content"
 
 import "./index.scss"
@@ -15,7 +15,7 @@ const Menu: React.FC = () => {
       <Tree aria-label="Files" selectionMode="multiple" items={items}>
         {function renderItem({ title, children }) {
           return (
-            <TreeItem textValue={title} className={"react-aria-TreeItem" + " " + title}>
+            <TreeItem textValue={title}>
               <Content title={title} children={children} />
               {children.map((item, i) => {
                 const { title } = item
@@ -30,7 +30,7 @@ const Menu: React.FC = () => {
           )
         }}
       </Tree>
-      <Button className="New-Client">
+      <Button>
         <a href="#">+ Create New Client</a>
       </Button>
     </div>
