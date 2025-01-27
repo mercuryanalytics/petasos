@@ -1,0 +1,30 @@
+.Custom-Tabs {
+  .react-aria-Tabs {
+    .react-aria-TabList {
+      display: grid;
+      grid-template-columns: 0fr 0fr;
+      height: 46px;
+
+      .react-aria-Tab {
+        display: grid;
+        align-items: center;
+        padding: 0 36px;
+        border-color: transparent;
+        border-radius: 4px 4px 0 0;
+        background: #f1f1f1;
+        color: inherit;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: 0 -5px 14px -6px rgba(0, 0, 0, 0.09);
+
+        &[data-selected] {
+          outline: none;
+          color: #0d7997;
+          background: #ffffff;
+        }
+      }
+    }
+  }
+}

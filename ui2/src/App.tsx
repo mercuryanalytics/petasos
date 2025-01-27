@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import "./App.scss"
 import Navbar from "./components/navbar"
 import NavigationMenu from "./components/navigation_menu"
+import Form from "./components/form"
 
 const App: React.FC = () => {
   const [showSideMenu, setSideShowMenu] = useState(true)
@@ -9,7 +10,10 @@ const App: React.FC = () => {
   return (
     <>
       <Navbar onClick={() => setSideShowMenu(prev => !prev)} />
-      <NavigationMenu showSideMenu={showSideMenu} />
+      <div>
+        <NavigationMenu showSideMenu={showSideMenu} />
+        <Form />
+      </div>
     </>
   )
 }
