@@ -43,5 +43,9 @@
         font-weight: 700;
       }
     }
+
+    & > div:nth-child(2) > .react-aria-Button:focus-visible {
+      outline: none;
+    }
   }
 }
