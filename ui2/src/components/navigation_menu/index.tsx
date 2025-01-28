@@ -4,13 +4,11 @@ import "./index.scss"
 // import Client from "./client"
 import Menu from "./menu"
 
-const NavigationMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) => {
-  return (
-    <div className={`Navigation-Menu${showSideMenu ? "" : " slide"}`}>
-      <Search />
-      <Menu />
-    </div>
-  )
-}
+const NavigationMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) => (
+  <div className={`Navigation-Menu${showSideMenu ? "" : " slide"}`}>
+    <Search />
+    <Menu />
+  </div>
+)
 
 export default NavigationMenu
