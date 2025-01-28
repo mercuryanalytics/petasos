@@ -1,29 +1,23 @@
-import React, { useState } from "react";
-import {
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Popover,
-  Button,
-} from "react-aria-components";
+import React, { useState } from "react"
+import { Menu, MenuItem, MenuTrigger, Popover, Button } from "react-aria-components"
 
-import * as Icons from "../icons";
+import * as Icons from "../icons"
 
-import "./index.scss";
-import "./react_menu_stylesheet.scss";
+import "./index.scss"
+import "./react_menu_stylesheet.scss"
 
 const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  const { Back, Forward } = Icons;
+  const { Back, Forward } = Icons
 
   // TODO: Check which is the best way to toggle between icons in react-aria
-  const [showMenu, setShowMenu] = useState(true);
+  const [showMenu, setShowMenu] = useState(true)
 
   return (
     <div className="Navbar">
       <Button
         onPress={() => {
-          setShowMenu((prev) => !prev);
-          onClick();
+          setShowMenu(prev => !prev)
+          onClick()
         }}
       >
         {showMenu ? <Back /> : <Forward />}
@@ -49,7 +43,7 @@ const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
