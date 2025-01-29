@@ -1,0 +1,20 @@
+.Name-And-Type {
+  & > div:first-child {
+    display: grid;
+    align-items: center;
+    height: 16px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+
+  & > div:nth-child(2) {
+    .react-aria-TextField {
+      display: grid;
+      width: fit-content;
+    }
+  }
+}
