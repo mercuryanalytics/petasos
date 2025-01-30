@@ -10,9 +10,7 @@ const Selectbox: React.FC = () => (
       <Label>Partner Type</Label>
       <Button slot="chevron">
         <SelectValue>
-          {({ defaultChildren, isPlaceholder }) => {
-            return isPlaceholder ? <span>Partner</span> : defaultChildren
-          }}
+          {({ defaultChildren, isPlaceholder }) => (isPlaceholder ? <span>Partner</span> : defaultChildren)}
         </SelectValue>
         <ArrowDown />
       </Button>
