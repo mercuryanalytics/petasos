@@ -1,3 +1,4 @@
+export { default as ArrowDown } from "./ArrowDown"
 export { default as ArrowRight } from "./ArrowRight"
 export { default as Back } from "./Back"
 export { default as CustomCheckbox } from "./custom_checkbox"
