@@ -1,5 +1,8 @@
 .Name-And-Type {
-  & > div:first-child {
+  & > h1:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     align-items: center;
     height: 16px;
     margin-bottom: 24px;
@@ -7,21 +10,17 @@
     font-weight: 700;
     color: #333;
     line-height: 1rem;
-    white-space: nowrap;
     display: inline-block;
     width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   & > div:nth-child(2) {
     font-size: 0.75rem;
-    font-weight: 700;
+
     display: grid;
     grid-template:
       "a b"
-      "c c" / 1fr 1fr;
+      "c c" / 50%;
     gap: 20px;
 
     .react-aria-TextField {
@@ -30,6 +29,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+        font-weight: 700;
       }
 
       .react-aria-Input {
