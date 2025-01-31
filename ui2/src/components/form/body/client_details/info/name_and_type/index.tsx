@@ -6,9 +6,7 @@ import "./index.scss"
 
 const NameAndType: React.FC = () => (
   <div className="Name-And-Type">
-    <div>
-      <span>Name and Type</span>
-    </div>
+    <h1>Name and Type</h1>
     <div>
       <TextField name="name">
         <Label>Name</Label>
