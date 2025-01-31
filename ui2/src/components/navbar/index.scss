@@ -38,14 +38,19 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background-color: #fff;
+        background-color: #ffffff;
         font-size: 1.2rem;
         font-weight: 700;
       }
     }
 
-    & > div:nth-child(2) > .react-aria-Button:focus-visible {
-      outline: none;
+    & > div:nth-child(2) > .react-aria-Button {
+      border: 1px solid black;
+      padding: 1px 6px;
+
+      &:focus-visible {
+        outline: none;
+      }
     }
   }
 }
