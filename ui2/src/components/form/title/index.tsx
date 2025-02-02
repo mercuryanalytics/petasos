@@ -3,7 +3,7 @@ import React from "react"
 import "./index.scss"
 
 const Title: React.FC = () => (
-  <div className="Form-Title">
+  <div className="FormTitle">
     <span>title</span>
   </div>
 )

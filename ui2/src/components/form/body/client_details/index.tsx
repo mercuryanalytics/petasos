@@ -7,7 +7,7 @@ import SelectUser from "./select_user"
 import "./index.scss"
 
 const ClientDetails: React.FC = () => (
-  <Form className="Client-Details">
+  <Form className="ClientDetails">
     <Info />
     <SelectUser />
   </Form>
