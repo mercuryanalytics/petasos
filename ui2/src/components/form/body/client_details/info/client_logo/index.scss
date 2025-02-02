@@ -1,0 +1,37 @@
+.ClientLogo {
+  display: grid;
+  grid-template: "logo motto" "logo subdomain" / 1fr 1fr;
+  font-size: 0.75rem;
+  align-items: center;
+  gap: 20px;
+
+  & > div:first-child {
+    grid-row: logo;
+
+    & > h1:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      align-items: center;
+      height: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #333;
+      line-height: 1rem;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    & > img:nth-child(2) {
+      position: relative;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      border: 1px solid #dfdfdf;
+      overflow: hidden;
+      object-fit: cover;
+    }
+  }
+}
