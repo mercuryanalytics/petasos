@@ -8,11 +8,11 @@ const NameAndType: React.FC = () => (
   <div className="NameAndType">
     <h1>Name and Type</h1>
     <div>
-      <TextField name="name">
+      <TextField name="client name">
         <Label>Client name *</Label>
         <Input />
       </TextField>
-      <TextField name="name">
+      <TextField name="company name">
         <Label>Company name *</Label>
         <Input />
       </TextField>

@@ -2,8 +2,6 @@ import React from "react"
 import { Button, Label, ListBox, ListBoxItem, Popover, Select, SelectValue } from "react-aria-components"
 import { ArrowDown } from "../../../../../../icons"
 
-import "./index.scss"
-
 const Selectbox: React.FC = () => (
   <Select>
     <Label>Partner Type</Label>
