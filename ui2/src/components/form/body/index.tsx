@@ -4,7 +4,7 @@ import Tabs from "./tabs"
 import ClientDetails from "./client_details"
 
 const Body: React.FC = () => (
-  <div className="Form-Body">
+  <div className="FormBody">
     <Tabs />
     <ClientDetails />
   </div>
