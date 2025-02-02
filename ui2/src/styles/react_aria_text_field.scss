@@ -1,0 +1,24 @@
+.react-aria-TextField {
+  .react-aria-Label {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    font-weight: 700;
+  }
+
+  .react-aria-Input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5.5px 15px;
+    border: 1px solid #dfdfdf;
+    font-size: 0.75rem;
+
+    &[data-hovered],
+    &[data-focused],
+    &[data-pressed] {
+      outline: unset;
+      border: 1px solid #a0a0a0;
+    }
+  }
+}
