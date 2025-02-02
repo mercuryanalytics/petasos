@@ -4,7 +4,7 @@ import { Tab, Tabs, TabList } from "react-aria-components"
 import "./index.scss"
 
 const CustomTabs: React.FC = () => (
-  <div className="Custom-Tabs">
+  <div className="CustomTabs">
     <Tabs>
       <TabList aria-label="Client Details">
         <Tab id="Client-Details"> Client Details</Tab>

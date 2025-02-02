@@ -5,15 +5,15 @@ import Selectbox from "./select_box"
 import "./index.scss"
 
 const NameAndType: React.FC = () => (
-  <div className="Name-And-Type">
+  <div className="NameAndType">
     <h1>Name and Type</h1>
     <div>
       <TextField name="name">
-        <Label>Name</Label>
+        <Label>Client name *</Label>
         <Input />
       </TextField>
       <TextField name="name">
-        <Label>Name</Label>
+        <Label>Company name *</Label>
         <Input />
       </TextField>
       <Selectbox />

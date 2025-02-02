@@ -10,13 +10,13 @@ const Search: React.FC = () => {
   // TODO: Change this eventListener
   // window.addEventListener("click", () => setShowSearch(false));
   return (
-    <>
+    <div>
       <SearchField>
         <Label />
         <Input placeholder="Search" onInput={() => setShowSearch(true)} />
       </SearchField>
       {showSearch && (
-        <div className="Search-Dropdown">
+        <div className="SearchDropdown">
           <label>
             <strong>Search For</strong>
           </label>
@@ -38,7 +38,7 @@ const Search: React.FC = () => {
           </label>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

@@ -5,7 +5,7 @@ import "./index.scss"
 import Menu from "./menu"
 
 const NavigationMenu: React.FC<{ showSideMenu: boolean }> = ({ showSideMenu }) => (
-  <div className={`Navigation-Menu${showSideMenu ? "" : " slide"}`}>
+  <div className={`NavigationMenu${showSideMenu ? "" : " slide"}`}>
     <Search />
     <Menu />
   </div>
