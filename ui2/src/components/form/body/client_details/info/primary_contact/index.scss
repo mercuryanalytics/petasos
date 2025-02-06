@@ -1,4 +1,6 @@
 .PrimaryContact {
+  margin-bottom: 3rem;
+
   & > h1:first-child {
     overflow: hidden;
     white-space: nowrap;
@@ -21,6 +23,7 @@
       "name title"
       "phone-number fax-number"
       "email email" / 1fr 1fr;
-    gap: 20px;
+    row-gap: 1rem;
+    column-gap: 20px;
   }
 }
