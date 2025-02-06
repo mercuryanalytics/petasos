@@ -1,6 +1,6 @@
 .NavigationMenu {
   position: relative;
-  height: 100vh;
+  height: calc(100vh - 72px);
   width: 500px;
   left: 0;
   padding: 0 28px 2rem 18px;

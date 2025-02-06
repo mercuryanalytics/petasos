@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Label, SearchField } from "react-aria-components"
+import { Checkbox, Input, Label, SearchField } from "react-aria-components"
 
 import { CustomCheckbox } from "../../icons"
 
@@ -20,22 +20,22 @@ const Search: React.FC = () => {
           <label>
             <strong>Search For</strong>
           </label>
-          <label>
-            <span>Clients</span>
+          <Checkbox>
+            Clients
             <CustomCheckbox />
-          </label>
-          <label>
-            <span>Projects</span>
+          </Checkbox>
+          <Checkbox>
+            Projects
             <CustomCheckbox />
-          </label>
-          <label>
-            <span>Reports</span>
+          </Checkbox>
+          <Checkbox>
+            Reports
             <CustomCheckbox />
-          </label>
-          <label>
-            <strong>Hide Clients</strong>
-            <CustomCheckbox checked={false} />
-          </label>
+          </Checkbox>
+          <Checkbox>
+            Hide Clients
+            <CustomCheckbox />
+          </Checkbox>
         </div>
       )}
     </div>
