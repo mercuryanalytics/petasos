@@ -10,13 +10,17 @@
     white-space: nowrap;
     align-items: center;
     height: 16px;
-    margin-bottom: 24px;
     font-size: 1rem;
     font-weight: 700;
     color: #333;
     line-height: 1rem;
     display: inline-block;
     width: 100%;
+    margin-bottom: 3.51rem;
+  }
+
+  &:has(> div:nth-child(2) > label:first-child) > h1:first-child {
+    margin-bottom: 24px;
   }
 
   & > div:nth-child(2) {
