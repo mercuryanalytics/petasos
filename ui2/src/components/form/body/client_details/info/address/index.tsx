@@ -6,7 +6,7 @@ import "./index.scss"
 
 const Address: React.FC = () => (
   <div className="Address">
-    <CustomAddress />
+    <CustomAddress addressType="Mailing" />
     <CustomAddress alternateAddress addressType="Billing" />
   </div>
 )

@@ -2,11 +2,9 @@ import React from "react"
 import { Checkbox, Input, Label, TextField } from "react-aria-components"
 import { CustomCheckbox } from "../../../../../icons"
 
-import "./custom_address.scss"
+type Props = { alternateAddress?: boolean; addressType: "Mailing" | "Billing" }
 
-type Props = { alternateAddress?: boolean; addressType?: "Mailing" | "Billing" }
-
-const CustomAddress: React.FC<Props> = ({ alternateAddress = false, addressType = "Mailing" }) => {
+const CustomAddress: React.FC<Props> = ({ alternateAddress = false, addressType }) => {
   return (
     <div className="CustomAddress">
       <h1>{`${addressType} address`}</h1>
