@@ -23,6 +23,7 @@
     grid-template:
       "client-name company-name"
       "partner-type partner-type" / 1fr 1fr;
-    gap: 20px;
+    row-gap: 1rem;
+    column-gap: 20px;
   }
 }
