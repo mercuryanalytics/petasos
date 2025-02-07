@@ -1,8 +1,12 @@
 import React, { useState } from "react"
-import "./App.scss"
 import Navbar from "./components/navbar"
 import NavigationMenu from "./components/navigation_menu"
 import Form from "./components/form"
+
+import "./styles/react_aria_checkbox.scss"
+import "./styles/react_aria_search_field.scss"
+
+import "./App.scss"
 
 const App: React.FC = () => {
   const [showSideMenu, setSideShowMenu] = useState(true)
