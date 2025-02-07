@@ -12,7 +12,7 @@ const CustomAddress: React.FC<Props> = ({ alternateAddress = false, addressType 
         {alternateAddress && (
           <Checkbox>
             <CustomCheckbox />
-            Same as the mailing address
+            <Label>Same as the mailing address</Label>
           </Checkbox>
         )}
         <TextField name="address line 1">
