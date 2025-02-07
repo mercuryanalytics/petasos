@@ -28,5 +28,9 @@
     display: grid;
     row-gap: 1rem;
     column-gap: 20px;
+
+    & > label:first-child > label {
+      width: 13px;
+    }
   }
 }
