@@ -5,6 +5,7 @@ import Form from "./components/form"
 
 import "./styles/react_aria_checkbox.scss"
 import "./styles/react_aria_search_field.scss"
+import "./styles/react_aria_switch.scss"
 
 import "./App.scss"
 
