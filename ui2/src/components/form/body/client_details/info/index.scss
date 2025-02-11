@@ -18,6 +18,10 @@
   width: 14px;
 }
 
+.simplebar-track.simplebar-horizontal {
+  display: none;
+}
+
 .simplebar-scrollbar::before {
   background-color: #707070;
 }

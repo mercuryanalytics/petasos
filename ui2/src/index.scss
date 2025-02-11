@@ -1,4 +1,5 @@
 body {
+  background-color: #eff0f4;
   overflow: hidden;
 
   * {
@@ -7,6 +8,6 @@ body {
     border: 0;
     font-size: 100%;
     font: inherit;
-    vertical-align: baseline;
+    vertical-align: initial;
   }
 }
