@@ -3,17 +3,16 @@ import {
   UNSTABLE_Tree as Tree,
   UNSTABLE_TreeItem as TreeItem,
   UNSTABLE_TreeItemContent as TreeItemContent,
-  Button,
   Collection,
   Input,
   Label,
-  SearchField,
-  Switch
+  SearchField
 } from "react-aria-components"
 
 import items from "../../../../../../public/clientNames"
+import UserName from "./user_name"
 
-import { ArrowRight, TrailingDots } from "../../../../icons"
+import ClientList from "./client_list"
 
 import "./index.scss"
 
@@ -28,27 +27,9 @@ const SelectUser: React.FC = () => (
     <Tree aria-label="Files" selectionMode="multiple" items={items}>
       {function renderItem({ title, children }) {
         return (
-          <TreeItem
-            textValue={title}
-            className={"react-aria-TreeItem" + " " + `${children.length ? "Client" : "ClientName"}`}
-          >
+          <TreeItem textValue={title}>
             <TreeItemContent>
-              {children.length ? (
-                <Button slot="chevron">
-                  <ArrowRight />
-                </Button>
-              ) : null}
-              {children.length ? (
-                <>
-                  {title}
-                  <TrailingDots />
-                </>
-              ) : (
-                <Switch>
-                  {title}
-                  <div className="indicator" />
-                </Switch>
-              )}
+              {children.length ? <ClientList title={title} /> : <UserName title={title} />}
             </TreeItemContent>
             <Collection items={children}>{renderItem}</Collection>
           </TreeItem>

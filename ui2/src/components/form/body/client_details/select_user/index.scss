@@ -38,20 +38,6 @@
       &[data-focused] {
         outline: none;
       }
-    }
-
-    .react-aria-TreeItem.Client {
-      border-radius: 18px;
-      font-size: 1.072rem;
-
-      & > div {
-        display: grid !important; // TODO: Check for a better option instead of using important
-        grid-template-columns: 1fr 10fr 1fr;
-        align-items: center;
-        padding: 10px 10px 10px 0;
-        font-size: 1rem;
-        font-weight: 700;
-      }
 
       .react-aria-Button[slot="chevron"] {
         all: unset;
@@ -67,32 +53,6 @@
 
       &[data-expanded] .react-aria-Button[slot="chevron"] svg {
         rotate: 90deg;
-      }
-
-      &[data-hovered] {
-        background: #0c7997;
-        color: #ffffff;
-        svg {
-          fill: #ffffff;
-          stroke: #ffffff;
-        }
-      }
-    }
-
-    .react-aria-TreeItem.ClientName {
-      border-radius: 10px;
-      padding: 0 10px;
-
-      & > div > label {
-        display: grid;
-        grid-template-columns: 1fr 0fr;
-        padding: 10px 10px 10px 0;
-        font-size: 0.875rem;
-        color: #333333;
-      }
-
-      &[data-hovered] {
-        background: #eeeeee;
       }
     }
   }
