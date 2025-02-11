@@ -1,0 +1,19 @@
+.ClientList {
+  border-radius: 18px;
+  font-size: 1.072rem;
+  display: grid !important; // TODO: Check for a better option instead of using important
+  grid-template-columns: 1fr 10fr 1fr;
+  align-items: center;
+  padding: 10px 10px 10px 0;
+  font-size: 1rem;
+  font-weight: 700;
+
+  &:hover {
+    background: #0c7997;
+    color: #ffffff;
+    svg {
+      fill: #ffffff;
+      stroke: #ffffff;
+    }
+  }
+}
