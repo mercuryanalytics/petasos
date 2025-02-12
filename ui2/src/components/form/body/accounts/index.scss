@@ -1,56 +1,16 @@
-.react-aria-Tabs {
-  display: flex;
-  color: var(--text-color);
+.Accounts {
+  background: #ffffff;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 65px 100%;
 
-  &[data-orientation="horizontal"] {
-    flex-direction: column;
-  }
-}
-
-.react-aria-TabList {
-  display: flex;
-
-  &[data-orientation="horizontal"] {
-    border-bottom: 1px solid var(--border-color);
-
-    .react-aria-Tab {
-      border-bottom: 3px solid var(--border-color);
-    }
-  }
-}
-
-.react-aria-Tab {
-  padding: 10px;
-  cursor: default;
-  outline: none;
-  position: relative;
-  color: var(--text-color-base);
-  transition: color 200ms;
-  --border-color: transparent;
-  forced-color-adjust: none;
-
-  &[data-hovered],
-  &[data-focused] {
-    color: var(--text-color-hover);
+  & > div {
+    border-right: 1px solid #f0f0f0;
   }
 
-  &[data-selected] {
-    --border-color: var(--highlight-background);
-    color: var(--text-color);
-  }
-
-  &[data-disabled] {
-    color: var(--text-color-disabled);
-    &[data-selected] {
-      --border-color: var(--text-color-disabled);
-    }
-  }
-
-  &[data-focus-visible]:after {
-    content: "";
-    position: absolute;
-    inset: 4px;
-    border-radius: 4px;
-    border: 2px solid var(--focus-ring-color);
+  & > div:first-child {
+    box-sizing: border-box;
+    width: 325px;
+    padding: 1rem 2rem 0;
   }
 }
