@@ -1,0 +1,31 @@
+.ModifyUser {
+  width: 325px;
+  padding: 0 2rem;
+  box-sizing: border-box;
+
+  & > div:first-child {
+    margin: 0 -2rem;
+    padding: 10px 32px;
+    border-bottom: 1px solid #f0f0f0;
+    box-sizing: border-box;
+
+    & > h1:first-child {
+      color: #0c7997;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      border-radius: 15px;
+      line-height: 17px;
+      padding: 9px 10px;
+
+      &:hover {
+        background: #eeeeee;
+      }
+    }
+  }
+
+  & > div:nth-child(2) {
+    margin-top: 24px;
+  }
+}

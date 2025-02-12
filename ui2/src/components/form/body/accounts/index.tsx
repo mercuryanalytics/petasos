@@ -1,17 +1,14 @@
 import React from "react"
-import { Tabs, TabList, Tab } from "react-aria-components"
+import AccountsTabs from "./tabs"
 
 import "./index.scss"
+import Users from "./users"
 
 const Accounts: React.FC = () => {
   return (
-    <div>
-      <Tabs>
-        <TabList aria-label="History of Ancient Rome">
-          <Tab id="users">Users</Tab>
-          <Tab id="domains">Domains</Tab>
-        </TabList>
-      </Tabs>
+    <div className="Accounts">
+      <AccountsTabs />
+      <Users />
     </div>
   )
 }
