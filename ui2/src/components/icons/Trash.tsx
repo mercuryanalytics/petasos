@@ -11,7 +11,7 @@ const Trash: React.FC = () => {
           id={`Trash-${id}`}
         ></path>
       </defs>
-      <use fill="currentColor" href={`#Trash-${id}`} transform="translate(-540 -133)" fill-rule="evenodd"></use>
+      <use fill="currentColor" href={`#Trash-${id}`} transform="translate(-540 -133)" fillRule="evenodd"></use>
     </svg>
   )
 }
