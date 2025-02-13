@@ -1,51 +1,44 @@
 import React from "react"
+import { Input, TextField } from "react-aria-components"
 
 import "./index.scss"
 
-const Contact: React.FC = () => (
+// Note: This is a temporary data until real one is used
+const contactInfo = {
+  Name: "User Name",
+  Title: "",
+  ["Phone number"]: "",
+  ["Fax Number"]: "",
+  ["Address Line 1"]: "",
+  ["Address Line 2"]: "",
+  City: "",
+  State: "",
+  ["Zip code"]: "",
+  Country: "USA"
+}
+
+const Contact: React.FC<{ showInput: boolean }> = ({ showInput }) => (
   <div className="Contact">
     <h1>Primary Contact</h1>
     <div>
-      <div>
-        <label>Name</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Title</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Phone number</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Fax number</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Address Line 1</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Address Line 2</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>City</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>State</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Zip code</label>
-        <span>N/A</span>
-      </div>
-      <div>
-        <label>Country</label>
-        <span>N/A</span>
-      </div>
+      {Object.entries(contactInfo).map((c, i) => (
+        <div key={c[i] + i}>
+          <label>
+            {c[0] +
+              " " +
+              (showInput && c[0] !== "Title" && c[0] !== "Fax Number" && c[0] !== "Address Line 2" && c[0] !== "Country"
+                ? "*"
+                : "")}
+          </label>
+          {showInput ? (
+            <TextField>
+              <Input value={c[1]} />
+            </TextField>
+          ) : (
+            <span>N/A</span>
+          )}
+        </div>
+      ))}
     </div>
   </div>
 )

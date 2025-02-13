@@ -16,4 +16,17 @@
   span {
     font-size: 0.875rem;
   }
+
+  display: grid;
+  grid-template-columns: 1fr 0fr;
+  align-items: start;
+
+  & > button:nth-child(2) {
+    all: unset;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    color: #0c7997;
+    column-gap: 5px;
+    cursor: pointer;
+  }
 }
