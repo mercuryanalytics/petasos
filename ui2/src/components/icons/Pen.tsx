@@ -11,7 +11,7 @@ const Pen: React.FC = () => {
           id={`Pen-${id}`}
         ></path>
       </defs>
-      <use fill="currentColor" fill-rule="nonzero" transform="rotate(30 505.681 -862.11)" href={`#Pen-${id}`}></use>
+      <use fill="currentColor" fillRule="nonzero" transform="rotate(30 505.681 -862.11)" href={`#Pen-${id}`}></use>
     </svg>
   )
 }
