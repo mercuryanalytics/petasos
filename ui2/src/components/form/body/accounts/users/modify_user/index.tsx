@@ -22,8 +22,8 @@ const ModifyUser: React.FC = () => {
         <Tabs>
           <TabList aria-label="Users List">
             {/* TODO: Change this later when using real data */}
-            {Array.from(range(0, 20)).map((_, i) => (
-              <Tab id={`name${i}`}>
+            {Array.from(range(0, 20)).map((t, i) => (
+              <Tab key={t + i} id={`name${i}`}>
                 <span>name{i}</span> <Trash />
               </Tab>
             ))}
