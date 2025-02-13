@@ -1,0 +1,17 @@
+.Contact {
+  margin-bottom: 1.6rem;
+  display: grid;
+  gap: 16px;
+
+  & > div {
+    display: grid;
+    grid-template: "name title" "phone fax" "address-1 address-2" "city state" "zip country"/1fr 1fr;
+    row-gap: 16px;
+    column-gap: 45px;
+
+    & > div {
+      display: grid;
+      row-gap: 0.4rem;
+    }
+  }
+}

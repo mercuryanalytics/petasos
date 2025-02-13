@@ -1,10 +1,16 @@
 import React from "react"
 
+import AccountDetails from "./account_details"
+import Contact from "./contact"
+
+import "./index.scss"
+
 const UserInfo: React.FC = () => {
   return (
-    <div className="UserInfo">
-      <h1>User Template</h1>
-    </div>
+    <form className="UserInfo">
+      <AccountDetails />
+      <Contact />
+    </form>
   )
 }
 
