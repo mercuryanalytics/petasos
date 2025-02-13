@@ -1,13 +1,12 @@
 .ModifyUser {
   width: 325px;
-  padding: 0 2rem;
   box-sizing: border-box;
 
   & > div:first-child {
-    margin: 0 -2rem;
-    padding: 10px 32px;
+    padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
     box-sizing: border-box;
+    padding: 0 2rem;
 
     & > h1:first-child {
       color: #0c7997;
@@ -17,7 +16,7 @@
       white-space: nowrap;
       border-radius: 15px;
       line-height: 17px;
-      padding: 9px 10px;
+      padding: 19px 0;
 
       &:hover {
         background: #eeeeee;
@@ -27,5 +26,46 @@
 
   & > div:nth-child(2) {
     margin-top: 24px;
+    margin-bottom: 16px;
+    padding: 0 2rem;
+  }
+
+  & > button:nth-child(3) {
+    all: unset;
+    margin-bottom: 18px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0c7997;
+    cursor: pointer;
+    padding: 0 2rem;
+  }
+
+  .react-aria-Tabs {
+    padding: 0 2rem;
+
+    .react-aria-Tab {
+      display: grid;
+      grid-template-columns: 1fr 0fr;
+      align-items: center;
+      padding: 0 10px;
+      margin: 5px 0 5px 0;
+      border-radius: 10px;
+      cursor: pointer;
+
+      & > span {
+        padding: 0.6rem 0.6rem 0.6rem 0;
+        white-space: nowrap;
+      }
+
+      &[data-hovered] {
+        background: #eeeeee;
+      }
+
+      &[data-selected] {
+        background: #0c7997;
+        color: #ffffff;
+        fill: #ffffff;
+      }
+    }
   }
 }
