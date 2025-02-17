@@ -1,0 +1,68 @@
+.react-aria-Tooltip {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: #0b7693;
+  color: #ffffff;
+  outline: none;
+  padding: 2px 8px;
+  font-family: Arial, Helvetica, sans-serif;
+
+  & > div:nth-child(2) {
+    padding: 8px;
+    font-size: 0.75rem;
+    line-height: 20px;
+    white-space: nowrap;
+
+    & h2:first-child {
+      margin-top: 5px;
+    }
+
+    & h2 {
+      margin: 15px 0 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    & ul > li {
+      font-size: 0.8rem;
+      margin: 5px 0 5px 20px;
+    }
+  }
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 10;
+  }
+
+  &[data-placement="top"] {
+    margin-bottom: 8px;
+  }
+
+  &[data-placement="bottom"] {
+    margin-top: 8px;
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &[data-placement="right"] {
+    margin-left: 8px;
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  &[data-placement="left"] {
+    margin-right: 8px;
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(-90deg);
+    }
+  }
+
+  & .react-aria-OverlayArrow svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    fill: #0b7693;
+  }
+}
