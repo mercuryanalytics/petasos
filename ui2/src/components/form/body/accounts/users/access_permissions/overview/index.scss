@@ -1,6 +1,7 @@
 .Overview {
   display: grid;
   grid-template-columns: 0fr 0fr 0fr;
+  justify-content: end;
   gap: 10px;
   height: 13px;
   padding: 0 10px;
