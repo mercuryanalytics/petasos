@@ -22,7 +22,7 @@ const Contact: React.FC<{ showInput: boolean }> = ({ showInput }) => (
     <h1>Primary Contact</h1>
     <div>
       {Object.entries(contactInfo).map((c, i) => (
-        <div key={c[i] + i}>
+        <div key={i}>
           <label>
             {c[0] +
               " " +
@@ -31,7 +31,7 @@ const Contact: React.FC<{ showInput: boolean }> = ({ showInput }) => (
                 : "")}
           </label>
           {showInput ? (
-            <TextField>
+            <TextField aria-label="primary-contact-input-field">
               <Input value={c[1]} />
             </TextField>
           ) : (

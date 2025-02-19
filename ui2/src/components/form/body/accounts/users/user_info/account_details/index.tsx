@@ -10,7 +10,7 @@ const AccountDetails: React.FC<{ showInput: boolean }> = ({ showInput }) => (
     <div>
       <label>{"Account name " + (showInput ? "*" : "")}</label>
       {showInput ? (
-        <TextField isDisabled>
+        <TextField isDisabled aria-label="email-address">
           <Input value="account@gmail.com" />
         </TextField>
       ) : (

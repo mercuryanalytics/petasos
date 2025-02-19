@@ -3,10 +3,9 @@
   box-sizing: border-box;
 
   & > div:first-child {
-    padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
     box-sizing: border-box;
-    padding: 0 2rem;
+    padding: 19px 2rem;
 
     & > h1:first-child {
       color: #0c7997;
@@ -16,7 +15,7 @@
       white-space: nowrap;
       border-radius: 15px;
       line-height: 17px;
-      padding: 19px 0;
+      padding: 9px 10px;
 
       &:hover {
         background: #eeeeee;
