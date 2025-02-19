@@ -2,15 +2,31 @@
   background: #ffffff;
   height: 100%;
   display: grid;
-  grid-template-rows: 65px 100%;
+  grid-template: "account-tabs info-tabs" 65px "modify-user modify-user" / 325px 1fr;
 
-  & > div {
+  & > div:not(:nth-child(2)) {
     border-right: 1px solid #f0f0f0;
   }
 
   & > div:first-child {
     box-sizing: border-box;
-    width: 325px;
-    padding: 1rem 2rem 0;
+    padding: 0 2rem;
+  }
+
+  & > div:nth-child(3) {
+    grid-column: span 2;
+  }
+}
+
+.Accounts:has(.DomainInfo) {
+  display: grid;
+  grid-template: "account-tabs domain-info" 65px "modify-domain domain-info" / 325px 1fr;
+
+  & > div:nth-child(2) {
+    grid-row: span 2;
+  }
+
+  & > div:nth-child(3) {
+    grid-column: span 1;
   }
 }
