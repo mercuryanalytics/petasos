@@ -1,0 +1,29 @@
+.PrimaryContact {
+  margin-bottom: 3rem;
+
+  & > h1:first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: center;
+    height: 16px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    display: inline-block;
+    width: 100%;
+  }
+
+  & > div:nth-child(2) {
+    font-size: 0.75rem;
+
+    display: grid;
+    grid-template:
+      "name title"
+      "phone-number fax-number"
+      "email email" / 1fr 1fr;
+    row-gap: 1rem;
+    column-gap: 20px;
+  }
+}
