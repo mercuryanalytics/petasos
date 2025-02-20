@@ -1,0 +1,59 @@
+.SelectUser {
+  & > h1:first-child {
+    font-size: 1.25rem;
+    height: 16px;
+    margin-bottom: 24px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+
+  & > div:nth-child(2) {
+    margin-bottom: 16px;
+  }
+
+  & > button:nth-child(3) {
+    all: unset;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0c7997;
+    margin-bottom: 18px;
+    cursor: pointer;
+  }
+
+  .react-aria-Tree {
+    position: relative;
+    gap: 2px;
+    overflow: auto;
+
+    .react-aria-TreeItem {
+      align-items: center;
+      margin-bottom: 5px;
+      margin-left: calc((var(--tree-item-level) - 1) * 20px);
+      cursor: pointer;
+      position: relative;
+      transform: translateZ(0);
+
+      &[data-focused] {
+        outline: none;
+      }
+
+      .react-aria-Button[slot="chevron"] {
+        all: unset;
+        justify-content: center;
+        display: grid;
+
+        svg {
+          rotate: 0deg;
+          transition: rotate 200ms;
+          font-size: 1.2rem;
+        }
+      }
+
+      &[data-expanded] .react-aria-Button[slot="chevron"] svg {
+        rotate: 90deg;
+      }
+    }
+  }
+}
