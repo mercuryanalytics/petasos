@@ -9,16 +9,16 @@ import {
   SearchField
 } from "react-aria-components"
 
-import items from "../../../../../../public/clientNames"
+import items from "../../../../public/clientNames"
 import UserName from "./user_name"
 
 import ClientList from "./client_list"
 
 import "./index.scss"
 
-const SelectUser: React.FC = () => (
+const SelectUser: React.FC<{ name?: string }> = ({ name = "Client Name" }) => (
   <div className="SelectUser">
-    <h1>Client Name</h1>
+    <h1>{name}</h1>
     <SearchField>
       <Label />
       <Input placeholder="Search" />
