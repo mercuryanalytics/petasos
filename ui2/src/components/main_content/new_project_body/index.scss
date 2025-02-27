@@ -1,0 +1,49 @@
+.NewProjectBody {
+  width: 514px;
+  border-radius: 5px 5px 0 0;
+  height: 100%;
+  position: relative;
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
+  background-color: #fff;
+  padding: 2rem;
+  box-sizing: border-box;
+
+  & > h1:first-child {
+    align-items: center;
+    height: 20px;
+    margin-bottom: 24px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.25rem;
+    white-space: nowrap;
+  }
+
+  & div {
+    margin-bottom: 1rem;
+
+    & label {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
+  & .react-aria-Select > span:first-child {
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  & > button:last-child {
+    min-width: 120px;
+    height: 40px;
+    padding: 0 20px;
+    cursor: pointer;
+    border: 1px solid #0c7997;
+    border-radius: 4px;
+    background-color: #0c7997;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 0.875rem;
+    margin-top: 2rem;
+  }
+}
