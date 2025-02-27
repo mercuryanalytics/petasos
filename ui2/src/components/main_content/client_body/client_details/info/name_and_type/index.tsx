@@ -1,6 +1,6 @@
 import React from "react"
 import { Input, Label, TextField } from "react-aria-components"
-import Selectbox from "./select_box"
+import { Picker, Item } from "../../../../../common/picker"
 
 import "./index.scss"
 
@@ -16,7 +16,11 @@ const NameAndType: React.FC = () => (
         <Label>Company name *</Label>
         <Input />
       </TextField>
-      <Selectbox />
+      <Picker label="Partner type" placeholder="Partner">
+        <Item>Client</Item>
+        <Item>Partner</Item>
+        <Item>Other</Item>
+      </Picker>
     </div>
   </div>
 )
