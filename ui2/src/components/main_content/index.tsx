@@ -1,18 +1,25 @@
 import React from "react"
+import { useAtomValue } from "jotai"
 
-import "../../styles/react_aria_text_field.scss"
+import { showMainMenuAtom } from "../../atoms"
+
 import "../../styles/react_aria_select.scss"
 
 import Title from "./title"
-import Body from "./body"
+import ClientBody from "./client_body"
 
 import "./index.scss"
+import NewProjectBody from "./new_project_body"
 
-export const MainContent: React.FC = () => (
-  <div className="MainContent">
-    <Title />
-    <Body />
-  </div>
-)
+export const MainContent: React.FC = () => {
+  const showMainMenu = useAtomValue(showMainMenuAtom)
+
+  return (
+    <div className="MainContent">
+      <Title />
+      {showMainMenu === "Client" ? <ClientBody /> : showMainMenu === "New-Project" ? <NewProjectBody /> : null}
+    </div>
+  )
+}
 
 export default MainContent
