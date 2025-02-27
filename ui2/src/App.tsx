@@ -1,12 +1,14 @@
 import React, { useState } from "react"
+
 import Navbar from "./components/navbar"
 import NavigationMenu from "./components/navigation_menu"
-import Form from "./components/form"
+import MainContent from "./components/main_content"
 
 import "./styles/react_aria_checkbox.scss"
 import "./styles/react_aria_search_field.scss"
 import "./styles/react_aria_switch.scss"
 import "./styles/react_aria_tooltip.scss"
+import "./styles/react_aria_text_field.scss"
 
 import "./App.scss"
 
@@ -18,7 +20,7 @@ const App: React.FC = () => {
       <Navbar onClick={() => setSideShowMenu(prev => !prev)} />
       <div>
         <NavigationMenu showSideMenu={showSideMenu} />
-        <Form />
+        <MainContent />
       </div>
     </>
   )

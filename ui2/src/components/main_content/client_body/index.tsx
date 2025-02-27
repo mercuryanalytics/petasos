@@ -4,15 +4,15 @@ import Tabs from "./tabs"
 import ClientDetails from "./client_details"
 import Accounts from "./accounts"
 
-const Body: React.FC = () => {
+const ClientBody: React.FC = () => {
   const [showClientDetails, setShowClientDetails] = useState("ClientDetails")
 
   return (
-    <div className="FormBody">
+    <div className="ClientBody">
       <Tabs setShowClientDetails={setShowClientDetails} />
       {showClientDetails === "ClientDetails" ? <ClientDetails /> : <Accounts />}
     </div>
   )
 }
 
-export default Body
+export default ClientBody
