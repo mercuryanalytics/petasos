@@ -3,8 +3,6 @@ import { useAtomValue } from "jotai"
 
 import { showMainMenuAtom } from "../../atoms"
 
-import "../../styles/react_aria_select.scss"
-
 import Title from "./title"
 import ClientBody from "./client_body"
 
