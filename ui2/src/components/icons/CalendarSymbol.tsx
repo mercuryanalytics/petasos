@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 
-const Calendar: React.FC = () => {
+const CalendarSymbol: React.FC = () => {
   const id = useMemo(() => Math.random().toFixed(2), [])
 
   return (
@@ -16,4 +16,4 @@ const Calendar: React.FC = () => {
   )
 }
 
-export default Calendar
+export default CalendarSymbol
