@@ -25,12 +25,12 @@ const formatDate = (date: string, value: number | undefined) => {
   switch (date) {
     case "day":
       currentDate.setDate(value)
-      return " " + currentDate.toLocaleDateString("default", { weekday: "long" }) + " " + value + ", "
+      return currentDate.toLocaleDateString("default", { weekday: "long" }) + " " + value + ","
     case "month":
       currentDate.setMonth(value - 1)
-      return currentDate.toLocaleDateString("default", { month: "long" }) + ","
+      return " " + currentDate.toLocaleDateString("default", { month: "long" }) + ","
     case "year":
-      return " " + value
+      return " " + value + " "
     default:
       return null
   }
