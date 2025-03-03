@@ -1,6 +1,6 @@
 import React from "react"
 import { Button } from "react-aria-components"
-import { ArrowRight, TrailingDots } from "../../../../../icons"
+import { ArrowRight, TrailingDots } from "../../../icons"
 
 import "./index.scss"
 

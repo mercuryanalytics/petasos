@@ -1,4 +1,13 @@
 .SelectUser {
+  width: 400px;
+  max-width: 400px;
+  box-sizing: border-box;
+  border-left: 1px solid #f0f0f0;
+  background-color: #fbfbfd;
+  padding: 2rem;
+  box-sizing: border-box;
+  height: 100%;
+
   & > h1:first-child {
     font-size: 1.25rem;
     height: 16px;
