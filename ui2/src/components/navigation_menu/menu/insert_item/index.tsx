@@ -12,7 +12,7 @@ const InsertItem: React.FC<{ title: string }> = ({ title }) => {
   return (
     <TreeItem textValue={title}>
       <TreeItemContent>
-        <a href="#" onClick={() => setShowMainMenu(`New-${title}`)}>
+        <a href="#" onClick={() => setShowMainMenu(`New${title}`)}>
           <span>
             <strong>{`+ Add new ${title.toLowerCase()}`}</strong>
           </span>
