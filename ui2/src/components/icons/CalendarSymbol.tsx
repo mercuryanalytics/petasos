@@ -11,7 +11,7 @@ const CalendarSymbol: React.FC = () => {
           id={`Calendar-${id}`}
         ></path>
       </defs>
-      <use fill="currentColor" fill-rule="nonzero" href={`#Calendar-${id}`} transform="translate(-252 -135)"></use>
+      <use fill="currentColor" fillRule="nonzero" href={`#Calendar-${id}`} transform="translate(-252 -135)"></use>
     </svg>
   )
 }
