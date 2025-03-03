@@ -54,13 +54,18 @@
       background-color: #fff;
       font-size: 0.75rem;
       color: #333;
-    }
-  }
 
-  .react-aria-DateSegment {
-    &[data-focused],
-    &[data-pressed] {
-      outline: none;
+      .react-aria-DateSegment {
+        caret-color: transparent;
+
+        &[data-focused],
+        &[data-pressed] {
+          outline: none;
+          background: #3d9ee7;
+          color: white;
+          font-weight: 700;
+        }
+      }
     }
   }
 }
