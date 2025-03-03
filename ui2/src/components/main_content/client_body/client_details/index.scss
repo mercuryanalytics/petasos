@@ -11,12 +11,4 @@
     box-sizing: border-box;
     height: 100%;
   }
-
-  & > div:nth-child(2) {
-    width: 400px;
-    max-width: 400px;
-    box-sizing: border-box;
-    border-left: 1px solid #f0f0f0;
-    background-color: #fbfbfd;
-  }
 }
