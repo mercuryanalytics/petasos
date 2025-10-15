@@ -9,7 +9,7 @@ export const Validators = {
     return value !== null && typeof value !== 'undefined' && !!String(value).length;
   },
   isEmail: (value) => {
-    return !!/^\w+([+.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
+    return !!/^\w+([+.-]?\w+)*@\w+([.-]?\w+)*$/.test(value);
   },
   validateAuth0Password: (value) => {
     if (value.length < 8) {
