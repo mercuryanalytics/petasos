@@ -67,6 +67,17 @@
         }
       }
     }
+
+    &:has([aria-disabled]) {
+      & > .react-aria-DateInput {
+        background-color: #f4f5f7;
+      }
+
+      & > .react-aria-Button {
+        background-color: #f4f5f7;
+        cursor: default;
+      }
+    }
   }
 }
 

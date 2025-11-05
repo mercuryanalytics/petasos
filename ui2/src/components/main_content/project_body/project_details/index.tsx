@@ -1,4 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
+import { useAtomValue } from "jotai"
+
+import { showInput as showInputAtom } from "../../../../atoms"
 
 import ProjectDetailsHeader from "./header"
 import ProjectDetailsForm from "./form"
@@ -6,16 +9,13 @@ import ProjectDetailsFooter from "./footer"
 
 import "./index.scss"
 
-// Note: This is a temporary data until real one is used
-
 const ProjectDetails: React.FC = () => {
-  const [showInput, setShowInput] = useState(false)
-
+  const showInput = useAtomValue(showInputAtom)
   return (
     <div className="ProjectDetails">
-      <ProjectDetailsHeader showInput={showInput} setShowInput={setShowInput} />
-      <ProjectDetailsForm showInput={showInput} />
-      {showInput && <ProjectDetailsFooter setShowInput={setShowInput} />}
+      <ProjectDetailsHeader />
+      <ProjectDetailsForm />
+      {showInput && <ProjectDetailsFooter />}
     </div>
   )
 }

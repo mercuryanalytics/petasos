@@ -6,7 +6,9 @@ import {
   CalendarGrid,
   DateInput,
   DatePicker as DatePick,
+  DatePickerProps,
   DateSegment,
+  DateValue,
   Dialog,
   Group,
   Heading,
@@ -36,8 +38,12 @@ const formatDate = (date: string, value: number | undefined) => {
   }
 }
 
-const DatePicker: React.FC<{ label: string }> = ({ label }) => (
-  <DatePick>
+type Props = {
+  label: string
+} & DatePickerProps<DateValue>
+
+const DatePicker: React.FC<Props> = ({ label, ...props }) => (
+  <DatePick {...props}>
     <Label>{label}</Label>
     <Group>
       <DateInput>
