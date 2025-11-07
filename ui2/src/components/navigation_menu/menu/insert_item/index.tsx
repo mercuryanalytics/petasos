@@ -6,15 +6,15 @@ import { showMainMenuAtom } from "../../../../atoms"
 
 import "./index.scss"
 
-const InsertItem: React.FC<{ title: string }> = ({ title }) => {
+const InsertItem: React.FC<{ type: string }> = ({ type }) => {
   const setShowMainMenu = useSetAtom(showMainMenuAtom)
 
   return (
-    <TreeItem textValue={title}>
+    <TreeItem textValue={type}>
       <TreeItemContent>
-        <a href="#" onClick={() => setShowMainMenu(`New${title}`)}>
+        <a href="#" onClick={() => setShowMainMenu(`New${type}`)}>
           <span>
-            <strong>{`+ Add new ${title.toLowerCase()}`}</strong>
+            <strong>{`+ Add new ${type.toLowerCase()}`}</strong>
           </span>
         </a>
       </TreeItemContent>

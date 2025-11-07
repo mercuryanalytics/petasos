@@ -20,20 +20,19 @@ const Menu: React.FC = () => {
       className="Menu"
       // FIXME: Check if the project name or number is same as the body of the clicked element then dont setshowInput to false
       onClickCapture={() => {
-        console.log("hello")
         setShowInput(false)
       }}
     >
       <Tree aria-label="Files" selectionMode="multiple" items={items}>
-        {function renderItem({ title, children }) {
+        {function renderItem({ type, title, children }) {
           return (
             <TreeItem textValue={title}>
-              <Content title={title} children={children} />
+              <Content type={type} title={title} children={children} />
               {children.map((item, i) => {
-                const { title } = item
+                const { type } = item
                 return (
-                  <React.Fragment key={`${title}_${i}_child`}>
-                    {i === 0 && (title === "Project" || title === "Report") && <InsertItem title={title} />}
+                  <React.Fragment key={`${type}_${i}_child`}>
+                    {i === 0 && (type === "Project" || type === "Report") && <InsertItem type={type} />}
                     {renderItem(item)}
                   </React.Fragment>
                 )

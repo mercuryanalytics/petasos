@@ -8,24 +8,32 @@ import { showMainMenuAtom } from "../../../atoms"
 import { ArrowRight, Folder, File } from "../../icons"
 
 type Props = {
+  type: string
   title: string
   children: {
     id: number
+    type: string
     title: string
     children: {
       id: number
+      type: string
       title: string
       children: never[]
     }[]
   }[]
 }
 
-export const Content: React.FC<Props> = ({ title, children }) => {
+export const Content: React.FC<Props> = ({ type, title, children }) => {
   const setShowMainMenu = useSetAtom(showMainMenuAtom)
 
   return (
     <TreeItemContent>
-      <a href="#" onClick={() => setShowMainMenu(title)}>
+      <a
+        href="#"
+        onClick={() => {
+          setShowMainMenu(type)
+        }}
+      >
         {children.length ? (
           <Button slot="chevron">
             <ArrowRight />
