@@ -46,7 +46,7 @@
       }
     }
 
-    & > .react-aria-TreeItem:not(:first-child) a {
+    & > .react-aria-TreeItem:not([data-level="1"]) a {
       & > span:nth-child(2),
       & > span:nth-child(3) {
         font-size: 0.875rem;
@@ -93,6 +93,7 @@
       padding: 0 10px;
       min-height: 40px;
       align-items: center;
+      white-space: nowrap;
     }
   }
 
