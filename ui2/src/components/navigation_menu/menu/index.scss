@@ -13,6 +13,7 @@
       position: relative;
       transform: translateZ(0);
       border-radius: 18px;
+      outline: none;
 
       & > div {
         display: grid;
@@ -41,31 +42,34 @@
         }
       }
 
-      &[data-expanded] .react-aria-Button[slot="chevron"] svg {
-        rotate: 90deg;
-      }
-    }
-
-    & > .react-aria-TreeItem:not([data-level="1"]) a {
-      & > span:nth-child(2),
-      & > span:nth-child(3) {
-        font-size: 0.875rem;
-      }
-    }
-
-    .react-aria-TreeItem:hover {
-      background: #ffffff;
-    }
-
-    .react-aria-TreeItem:focus {
-      background: #0c7997;
-      svg {
-        fill: #ffffff;
-        stroke: #ffffff;
+      &[data-expanded] {
+        .react-aria-Button[slot="chevron"] svg {
+          rotate: 90deg;
+        }
       }
 
-      span {
-        color: #fff;
+      &:not([data-level="1"]) a {
+        & > span:nth-child(2),
+        & > span:nth-child(3) {
+          font-size: 0.875rem;
+        }
+      }
+
+      &:hover {
+        background: #ffffff;
+      }
+
+      &[data-selected],
+      &:focus {
+        background: #0c7997;
+        svg {
+          fill: #ffffff;
+          stroke: #ffffff;
+        }
+
+        span {
+          color: #fff;
+        }
       }
     }
 
