@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { PropsWithChildren, useState } from "react"
 
 import Navbar from "./components/navbar"
 import NavigationMenu from "./components/navigation_menu"
@@ -12,7 +12,7 @@ import "./styles/react_aria_text_field.scss"
 
 import "./App.scss"
 
-const App: React.FC = () => {
+const App: React.FC<PropsWithChildren> = ({ children }) => {
   const [showSideMenu, setSideShowMenu] = useState(true)
 
   return (
@@ -20,7 +20,7 @@ const App: React.FC = () => {
       <Navbar onClick={() => setSideShowMenu(prev => !prev)} />
       <div>
         <NavigationMenu showSideMenu={showSideMenu} />
-        <MainContent />
+        <MainContent>{children}</MainContent>
       </div>
     </>
   )

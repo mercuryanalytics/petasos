@@ -1,18 +1,22 @@
 import React from "react"
 import { UNSTABLE_TreeItem as TreeItem, UNSTABLE_TreeItemContent as TreeItemContent } from "react-aria-components"
 
-import { useSetAtom } from "jotai"
-import { showMainMenuAtom } from "../../../../atoms"
+import { useNavigate } from "@tanstack/react-router"
+import { dynamicLinks } from "../util"
 
 import "./index.scss"
 
-const InsertItem: React.FC<{ type: string }> = ({ type }) => {
-  const setShowMainMenu = useSetAtom(showMainMenuAtom)
+const InsertItem: React.FC<{ type: string; reference: string }> = ({ type, reference }) => {
+  const navigate = useNavigate()
 
   return (
     <TreeItem textValue={type}>
       <TreeItemContent>
-        <a href="#" onClick={() => setShowMainMenu(`New${type}`)}>
+        <a
+          onClick={() => {
+            navigate(dynamicLinks(type, reference, true))
+          }}
+        >
           <span>
             <strong>{`+ Add new ${type.toLowerCase()}`}</strong>
           </span>
