@@ -1,37 +1,19 @@
 import React from "react"
-
 import { UNSTABLE_TreeItemContent as TreeItemContent, Button } from "react-aria-components"
-
-import { useSetAtom } from "jotai"
-import { showMainMenuAtom } from "../../../atoms"
+import { useNavigate } from "@tanstack/react-router"
 
 import { ArrowRight, Folder, File } from "../../icons"
+import { MenuItem } from "../../common/types"
+import { dynamicLinks } from "./util"
 
-type Props = {
-  type: string
-  title: string
-  children: {
-    id: number
-    type: string
-    title: string
-    children: {
-      id: number
-      type: string
-      title: string
-      children: never[]
-    }[]
-  }[]
-}
-
-export const Content: React.FC<Props> = ({ type, title, children }) => {
-  const setShowMainMenu = useSetAtom(showMainMenuAtom)
+export const Content: React.FC<MenuItem> = ({ type, title, reference, children }) => {
+  const navigate = useNavigate()
 
   return (
     <TreeItemContent>
       <a
-        href="#"
         onClick={() => {
-          setShowMainMenu(type)
+          navigate(dynamicLinks(type, reference))
         }}
       >
         {children.length ? (
@@ -39,16 +21,16 @@ export const Content: React.FC<Props> = ({ type, title, children }) => {
             <ArrowRight />
           </Button>
         ) : null}
-        {title === "Client" ? (
+        {type === "clients" ? (
           <div className="logo">
-            <img src="images/mercury_logo.png" alt="" />
+            <img src="/images/mercury_logo.png" alt="" />
           </div>
-        ) : title === "Project" ? (
+        ) : type === "projects" ? (
           <Folder />
         ) : (
           <File />
         )}
-        <span>{title}</span>
+        <span>{type === "projects" ? reference + ": " + title : title}</span>
       </a>
     </TreeItemContent>
   )
