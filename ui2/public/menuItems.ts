@@ -1,50 +1,50 @@
 export default [
   {
     id: 1,
-    type: "Client",
+    type: "clients",
     title: "New Client 1",
-    reference: null,
+    reference: "0",
     children: [
       {
         id: 2,
-        type: "Project",
+        type: "projects",
         title: "Test",
         reference: "0000",
-        children: [{ id: 3, type: "Report", title: "Test Results", reference: null, children: [] }]
+        children: [{ id: 3, type: "reports", title: "Test Results", reference: "001", children: [] }]
       },
       {
         id: 4,
-        type: "Project",
+        type: "projects",
         title: "Test",
         reference: "0000",
         children: [
-          { id: 5, type: "Report", title: "Test Results", reference: null, children: [] },
-          { id: 6, type: "Report", title: "Test Results", reference: null, children: [] }
+          { id: 5, type: "reports", title: "Test Results", reference: "001", children: [] },
+          { id: 6, type: "reports", title: "Test Results", reference: "001", children: [] }
         ]
       }
     ]
   },
   {
     id: 7,
-    type: "Client",
+    type: "clients",
     title: "New Client 2",
-    reference: null,
+    reference: "1",
     children: [
       {
         id: 8,
-        type: "Project",
+        type: "projects",
         title: "Test",
         reference: "1111",
-        children: [{ id: 9, type: "Report", title: "Test Results", reference: null, children: [] }]
+        children: [{ id: 9, type: "reports", title: "Test Results", reference: "111", children: [] }]
       },
       {
         id: 10,
-        type: "Project",
+        type: "projects",
         title: "Test",
         reference: "1111",
         children: [
-          { id: 11, type: "Report", title: "Test Results", reference: null, children: [] },
-          { id: 12, type: "Report", title: "Test Results", reference: null, children: [] }
+          { id: 11, type: "reports", title: "Test Results", reference: "111", children: [] },
+          { id: 12, type: "reports", title: "Test Results", reference: "111", children: [] }
         ]
       }
     ]
