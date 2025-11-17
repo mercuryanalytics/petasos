@@ -1,6 +1,6 @@
-import { createRootRoute, Link, Outlet, useRouterState } from "@tanstack/react-router"
+import { createRootRoute, Outlet, useRouterState } from "@tanstack/react-router"
 import App from "../App"
-import { Button } from "react-aria-components"
+import PageNotFound from "../components/common/router/PageNotFound"
 
 const Root = () => {
   if (useRouterState().statusCode >= 400) return <Outlet />
@@ -14,12 +14,5 @@ const Root = () => {
 
 export const Route = createRootRoute({
   component: Root,
-  notFoundComponent: () => (
-    <div>
-      <h1>Page not Found</h1>
-      <Button>
-        <Link to="/"> Go Home </Link>
-      </Button>
-    </div>
-  )
+  notFoundComponent: () => <PageNotFound />
 })

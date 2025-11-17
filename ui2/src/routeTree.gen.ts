@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as _not_foundRouteImport } from './routes/__not_found'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportsReportIdRouteImport } from './routes/reports/$reportId'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
@@ -16,6 +17,10 @@ import { Route as ClientsClientIdRouteImport } from './routes/clients/$clientId'
 import { Route as ReportsNewProjectIdRouteImport } from './routes/reports/new/$projectId'
 import { Route as ProjectsNewClientIdRouteImport } from './routes/projects/new/$clientId'
 
+const _not_foundRoute = _not_foundRouteImport.update({
+  id: '/__not_found',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -66,6 +71,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/__not_found': typeof _not_foundRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/reports/$reportId': typeof ReportsReportIdRoute
@@ -92,6 +98,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/__not_found'
     | '/clients/$clientId'
     | '/projects/$projectId'
     | '/reports/$reportId'
@@ -101,6 +108,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  _not_foundRoute: typeof _not_foundRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ReportsReportIdRoute: typeof ReportsReportIdRoute
@@ -110,6 +118,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/__not_found': {
+      id: '/__not_found'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof _not_foundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -157,6 +172,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  _not_foundRoute: _not_foundRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ReportsReportIdRoute: ReportsReportIdRoute,
