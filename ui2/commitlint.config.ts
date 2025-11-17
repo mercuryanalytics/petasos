@@ -8,6 +8,5 @@ const Configuration: UserConfig = {
     "type-enum": [typeEnumSeverity, typeEnumRule, [...typeEnumValues, "debug", "wip"]]
   }
 }
-s
 
 export default Configuration
