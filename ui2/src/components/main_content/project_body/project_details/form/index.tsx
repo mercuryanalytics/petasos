@@ -2,19 +2,21 @@ import React from "react"
 import { useAtomValue } from "jotai"
 import { I18nProvider } from "react-aria-components"
 
-import CustomTextField from "../../../../common/CustomTextField"
-
-import DatePicker from "../../../../common/date_picker"
-
 import { showInput as showInputAtom } from "../../../../../atoms"
+import { Route } from "../../../../../routes/projects/$projectId"
+
+import CustomTextField from "../../../../common/CustomTextField"
+import DatePicker from "../../../../common/date_picker"
 
 import "./index.scss"
 
 const ProjectDetailsForm: React.FC = () => {
   const showInput = useAtomValue(showInputAtom)
+  const name = Route.useLoaderData()
+
   return (
     <form className="ProjectDetailsForm">
-      <CustomTextField label="Project name" value="name" showInput={showInput} />
+      <CustomTextField label="Project name" value={name} showInput={showInput} />
       <CustomTextField label="Project #" value="project" showInput={showInput} />
       <CustomTextField label="Project type" value="type" showInput={showInput} />
       <CustomTextField label="Description" value="description" showInput={showInput} />
