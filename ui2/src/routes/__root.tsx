@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet, useRouterState } from "@tanstack/react-router"
 import App from "../App"
-import PageNotFound from "../components/common/router/PageNotFound"
+
+import PageNotFound from "./-PageNoteFound"
 
 const Root = () => {
   if (useRouterState().statusCode >= 400) return <Outlet />
