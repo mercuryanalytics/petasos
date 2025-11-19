@@ -6,7 +6,7 @@ const clients = menuItems.filter(item => item.type === "clients")
 const projects = clients.flatMap(item => item.children.filter(item => item.type === "projects"))
 const reports = projects.flatMap(item => item.children.filter(item => item.type === "reports"))
 
-export const redirectTo = (
+export const findRecord = (
   params: {
     clientId?: string
     projectId?: string
@@ -19,16 +19,24 @@ export const redirectTo = (
 
   switch (type) {
     case "clients": {
-      if (!clients.some(item => item.reference === params.clientId)) throw redirect({ to: `/${params.clientId}` })
-      break
+      const client = clients.find(item => item.reference === params.clientId)
+      if (client == null) throw redirect({ to: `/${params.clientId}` })
+
+      return client
     }
     case "projects": {
-      if (!projects.some(item => item.reference === params.projectId)) throw redirect({ to: `/${params.projectId}` })
-      break
+      const project = projects.find(item => item.reference === params.projectId)
+      if (project == null) throw redirect({ to: `/${params.projectId}` })
+
+      return project
     }
+
     default: {
-      if (!reports.some(item => item.reference === params.reportId)) throw redirect({ to: `/${params.reportId}` })
-      break
+      const report = reports.find(item => item.reference === params.reportId)
+
+      if (report == null) throw redirect({ to: `/${params.reportId}` })
+
+      return report
     }
   }
 }
