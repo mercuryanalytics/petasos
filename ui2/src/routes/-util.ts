@@ -1,6 +1,6 @@
 import { ParsedLocation, redirect } from "@tanstack/react-router"
 
-import menuItems from "../../../../public/menuItems"
+import menuItems from "../../public/menuItems"
 
 const clients = menuItems.filter(item => item.type === "clients")
 const projects = clients.flatMap(item => item.children.filter(item => item.type === "projects"))
@@ -20,6 +20,7 @@ export const findRecord = (
   switch (type) {
     case "clients": {
       const client = clients.find(item => item.reference === params.clientId)
+      // NOTE: Do check if its required to redirect the user to not found home page or throw an error and show an Outlet component
       if (client == null) throw redirect({ to: `/${params.clientId}` })
 
       return client
