@@ -1,19 +1,21 @@
-import React, { useState } from "react"
+import React from "react"
+import { useAtom } from "jotai"
 import { Checkbox, Input, Label, SearchField } from "react-aria-components"
+
+import { search } from "../../../atoms"
 
 import { CustomCheckbox } from "../../icons"
 
 import "./index.scss"
 
 const Search: React.FC = () => {
-  const [showSearch, setShowSearch] = useState(false)
-  // TODO: Change this eventListener
-  // window.addEventListener("click", () => setShowSearch(false));
+  const [showSearch, setShowSearch] = useAtom(search)
+
   return (
     <div>
       <SearchField>
         <Label />
-        <Input placeholder="Search" onInput={() => setShowSearch(true)} />
+        <Input className="react-aria-Input NavigationInput" placeholder="Search" onInput={() => setShowSearch(true)} />
       </SearchField>
       {showSearch && (
         <div className="SearchDropdown">
