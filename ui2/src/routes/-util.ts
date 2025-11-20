@@ -1,10 +1,5 @@
 import { ParsedLocation, redirect } from "@tanstack/react-router"
-
-import menuItems from "../../public/menuItems"
-
-const clients = menuItems.filter(item => item.type === "clients")
-const projects = clients.flatMap(item => item.children.filter(item => item.type === "projects"))
-const reports = projects.flatMap(item => item.children.filter(item => item.type === "reports"))
+import { clients, projects, reports } from "../util/records"
 
 export const findRecord = (
   params: {
