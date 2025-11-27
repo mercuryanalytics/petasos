@@ -5,7 +5,7 @@ import Navbar from "./components/navbar"
 import NavigationMenu from "./components/navigation_menu"
 import MainContent from "./components/main_content"
 
-import { search } from "./atoms"
+import { showSearch as search } from "./atoms"
 
 import "./styles/react_aria_checkbox.scss"
 import "./styles/react_aria_search_field.scss"
@@ -17,20 +17,19 @@ import "./App.scss"
 
 const App: React.FC<PropsWithChildren> = ({ children }) => {
   const [showSideMenu, setSideShowMenu] = useState(true)
-  const setSeatch = useSetAtom(search)
+  const setShowSearch = useSetAtom(search)
 
   useEffect(() => {
     const handleGlobalClickCapture = (event: MouseEvent) => {
-      const target = event.target as HTMLInputElement
+      const target = event.target as HTMLElement | null
+      const isInSearch = target?.closest(".SearchMenu, .SearchDropdown") != null
 
-      if (!target.className.includes("NavigationInput")) {
-        setSeatch(false)
-      }
+      setShowSearch(isInSearch)
     }
 
     document.addEventListener("click", handleGlobalClickCapture, true)
     return () => document.removeEventListener("click", handleGlobalClickCapture, true)
-  }, [setSeatch])
+  }, [setShowSearch])
 
   return (
     <>
