@@ -1,12 +1,12 @@
 import React from "react"
 import SimpleBarReact from "simplebar-react"
-import { useSetAtom } from "jotai"
+import { useAtomValue, useSetAtom } from "jotai"
 
 import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, Button } from "react-aria-components"
 
 import items from "../../../../public/menuItems"
 
-import { showInput } from "../../../atoms"
+import { showInput, hideClients as clients } from "../../../atoms"
 
 import { MenuItem } from "../../common/types"
 
@@ -17,6 +17,8 @@ import "./index.scss"
 
 const Menu: React.FC = () => {
   const setShowInput = useSetAtom(showInput)
+  const hideClients = useAtomValue(clients)
+  const records = items.flatMap(item => (hideClients ? item.children : item))
 
   return (
     <SimpleBarReact style={{ height: "calc(100% - 59px)" }}>
@@ -27,7 +29,7 @@ const Menu: React.FC = () => {
           setShowInput(false)
         }}
       >
-        <Tree aria-label="Files" items={items}>
+        <Tree aria-label="Files" items={records}>
           {function renderItem({ type, title, reference, children }: MenuItem) {
             return (
               <TreeItem textValue={title}>

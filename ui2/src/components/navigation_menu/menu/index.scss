@@ -48,6 +48,10 @@
         }
       }
 
+      &[aria-label="Test"] a > span {
+        font-size: 0.875rem;
+      }
+
       &:not([data-level="1"]) a {
         & > span:nth-child(2),
         & > span:nth-child(3) {
