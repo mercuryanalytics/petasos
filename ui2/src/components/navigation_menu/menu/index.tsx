@@ -4,9 +4,9 @@ import { useAtomValue, useSetAtom } from "jotai"
 
 import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, Button } from "react-aria-components"
 
-import items from "../../../../public/menuItems"
+import { search } from "../../../util/search"
 
-import { showInput, hideClients as clients } from "../../../atoms"
+import * as atoms from "../../../atoms"
 
 import { MenuItem } from "../../common/types"
 
@@ -16,9 +16,12 @@ import Content from "./Content"
 import "./index.scss"
 
 const Menu: React.FC = () => {
-  const setShowInput = useSetAtom(showInput)
-  const hideClients = useAtomValue(clients)
-  const records = items.flatMap(item => (hideClients ? item.children : item))
+  const setShowInput = useSetAtom(atoms.showInput)
+  const hideClients = useAtomValue(atoms.hideClients)
+  const searchValue = useAtomValue(atoms.searchValue)
+
+  const searchRecords = search(searchValue)
+  const records = searchRecords?.flatMap(item => (hideClients ? item.children : item))
 
   return (
     <SimpleBarReact style={{ height: "calc(100% - 59px)" }}>
@@ -30,10 +33,10 @@ const Menu: React.FC = () => {
         }}
       >
         <Tree aria-label="Files" items={records}>
-          {function renderItem({ type, title, reference, children }: MenuItem) {
+          {function renderItem({ type, name, reference, children }: MenuItem) {
             return (
-              <TreeItem textValue={title}>
-                <Content type={type} title={title} reference={reference} children={children} />
+              <TreeItem textValue={name}>
+                <Content type={type} name={name} reference={reference} children={children} />
                 {children.map((item, i) => {
                   const { type } = item
                   return (

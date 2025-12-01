@@ -6,7 +6,7 @@ import { ArrowRight, Folder, File } from "../../icons"
 import { MenuItem } from "../../common/types"
 import { dynamicLinks } from "./util"
 
-export const Content: React.FC<MenuItem> = ({ type, title, reference, children }) => {
+export const Content: React.FC<MenuItem> = ({ type, name, reference, children }) => {
   const navigate = useNavigate()
 
   return (
@@ -30,7 +30,7 @@ export const Content: React.FC<MenuItem> = ({ type, title, reference, children }
         ) : (
           <File />
         )}
-        <span>{type === "projects" ? reference + ": " + title : title}</span>
+        <span>{type === "projects" ? reference + ": " + name : name}</span>
       </a>
     </TreeItemContent>
   )

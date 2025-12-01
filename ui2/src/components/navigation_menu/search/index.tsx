@@ -1,5 +1,5 @@
 import React from "react"
-import { useAtom, useAtomValue } from "jotai"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { Checkbox, Input, Label, SearchField } from "react-aria-components"
 
 import * as atoms from "../../../atoms"
@@ -11,12 +11,18 @@ import "./index.scss"
 const Search: React.FC = () => {
   const showSearch = useAtomValue(atoms.showSearch)
   const [hideClients, setHideClients] = useAtom(atoms.hideClients)
+  const setSearchValue = useSetAtom(atoms.searchValue)
 
   return (
     <div className="SearchMenu">
       <SearchField>
         <Label />
-        <Input placeholder="Search" />
+        <Input
+          placeholder="Search"
+          onChange={({ target: { value } }) => {
+            setSearchValue(value)
+          }}
+        />
       </SearchField>
       {showSearch && (
         <div className="SearchDropdown">
