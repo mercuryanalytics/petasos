@@ -1,6 +1,6 @@
 export type MenuItem = {
   type: string
-  title: string
+  name: string
   reference: string
   children: MenuItem[] | []
 }
