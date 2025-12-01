@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai"
 
 import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, Button } from "react-aria-components"
 
-import { search } from "../../../util/search"
+import { clients } from "../../../util/records"
 
 import * as atoms from "../../../atoms"
 
@@ -18,9 +18,9 @@ import "./index.scss"
 const Menu: React.FC = () => {
   const setShowInput = useSetAtom(atoms.showInput)
   const hideClients = useAtomValue(atoms.hideClients)
-  const searchValue = useAtomValue(atoms.searchValue)
+  const menuItems = useAtomValue(atoms.menuItems)
 
-  const searchRecords = search(searchValue)
+  const searchRecords = menuItems ?? clients
   const records = searchRecords?.flatMap(item => (hideClients ? item.children : item))
 
   return (

@@ -3,6 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { Checkbox, Input, Label, SearchField } from "react-aria-components"
 
 import * as atoms from "../../../atoms"
+import { search } from "../../../util/search"
 
 import { CustomCheckbox } from "../../icons"
 
@@ -11,7 +12,7 @@ import "./index.scss"
 const Search: React.FC = () => {
   const showSearch = useAtomValue(atoms.showSearch)
   const [hideClients, setHideClients] = useAtom(atoms.hideClients)
-  const setSearchValue = useSetAtom(atoms.searchValue)
+  const setMenuItems = useSetAtom(atoms.menuItems)
 
   return (
     <div className="SearchMenu">
@@ -20,7 +21,10 @@ const Search: React.FC = () => {
         <Input
           placeholder="Search"
           onChange={({ target: { value } }) => {
-            setSearchValue(value)
+            const text = value.toLowerCase().trim()
+            if (!text) return
+
+            setMenuItems(search(text))
           }}
         />
       </SearchField>
