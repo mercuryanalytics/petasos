@@ -19,9 +19,13 @@
     border-radius: 3px;
     color: #555555;
     border-color: #000000;
+
+    & svg {
+      display: none;
+    }
   }
 
   &[data-selected] > .CustomCheckbox:has(svg) > svg {
-    display: none;
+    display: block;
   }
 }
