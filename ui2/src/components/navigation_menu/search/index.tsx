@@ -3,7 +3,6 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { Checkbox, Input, Label, SearchField } from "react-aria-components"
 
 import * as atoms from "../../../atoms"
-import { search } from "../../../util/search"
 
 import { CustomCheckbox } from "../../icons"
 
@@ -12,7 +11,10 @@ import "./index.scss"
 const Search: React.FC = () => {
   const showSearch = useAtomValue(atoms.showSearch)
   const [hideClients, setHideClients] = useAtom(atoms.hideClients)
-  const setMenuItems = useSetAtom(atoms.menuItems)
+  const [searchClients, setSearchClients] = useAtom(atoms.searchClients)
+  const [searchProjects, setSearchProjects] = useAtom(atoms.searchProjects)
+  const [searchReports, setSearchReports] = useAtom(atoms.searchReports)
+  const setInputValue = useSetAtom(atoms.inputValue)
 
   return (
     <div className="SearchMenu">
@@ -21,10 +23,7 @@ const Search: React.FC = () => {
         <Input
           placeholder="Search"
           onChange={({ target: { value } }) => {
-            const text = value.toLowerCase().trim()
-            if (!text) return
-
-            setMenuItems(search(text))
+            setInputValue(value)
           }}
         />
       </SearchField>
@@ -33,24 +32,19 @@ const Search: React.FC = () => {
           <label>
             <strong>Search For</strong>
           </label>
-          <Checkbox>
+          <Checkbox isSelected={searchClients} onChange={setSearchClients}>
             Clients
             <CustomCheckbox />
           </Checkbox>
-          <Checkbox>
+          <Checkbox isSelected={searchProjects} onChange={setSearchProjects}>
             Projects
             <CustomCheckbox />
           </Checkbox>
-          <Checkbox>
+          <Checkbox isSelected={searchReports} onChange={setSearchReports}>
             Reports
             <CustomCheckbox />
           </Checkbox>
-          <Checkbox
-            isSelected={hideClients}
-            onChange={value => {
-              setHideClients(value)
-            }}
-          >
+          <Checkbox isSelected={hideClients} onChange={setHideClients}>
             Hide Clients
             <CustomCheckbox />
           </Checkbox>

@@ -2,9 +2,9 @@ import { MenuItem } from "../components/common/types"
 import { clients } from "./records"
 
 //FIXME: Check how to improve this method further
-export const search = (text: string) => {
+export const search = (text: string, searchClients: boolean, searchProjects: boolean, searchReports: boolean) => {
   const matchingClients = clients.filter(({ name }) => name.toLowerCase().includes(text))
-  if (matchingClients.length > 0) return matchingClients
+  if (searchClients && matchingClients.length > 0) return matchingClients
 
   const matchingRecordsByClient = clients.reduce<MenuItem[]>((acc, client) => {
     const matchingProjects = client.children.filter(project => project.name.toLowerCase().includes(text))
@@ -17,10 +17,10 @@ export const search = (text: string) => {
       })
       .filter(child => child != null)
 
-    if (matchingProjects.length > 0) {
+    if (searchProjects && matchingProjects.length > 0) {
       acc.push({ ...client, children: matchingProjects })
     } else {
-      if (matchingProjectsByReports.length > 0) {
+      if (searchReports && matchingProjectsByReports.length > 0) {
         acc.push({ ...client, children: matchingProjectsByReports })
       } else {
         return acc
