@@ -1,7 +1,7 @@
 import { MenuItem } from "../components/common/types"
 import { clients } from "./records"
 
-//FIXME: Check how to improve this method further
+//FIXME: Check how to improve this method further. Also add asynchronous functionality with loading to search through large dataset
 export const search = (text: string, searchClients: boolean, searchProjects: boolean, searchReports: boolean) => {
   const matchingClients = clients.filter(({ name }) => name.toLowerCase().includes(text))
   if (searchClients && matchingClients.length > 0) return matchingClients
