@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportsReportIdRouteImport } from './routes/reports/$reportId'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
+import { Route as ClientsNewRouteImport } from './routes/clients/new'
 import { Route as ClientsClientIdRouteImport } from './routes/clients/$clientId'
 import { Route as ReportsNewProjectIdRouteImport } from './routes/reports/new/$projectId'
 import { Route as ProjectsNewClientIdRouteImport } from './routes/projects/new/$clientId'
@@ -29,6 +30,11 @@ const ReportsReportIdRoute = ReportsReportIdRouteImport.update({
 const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientsNewRoute = ClientsNewRouteImport.update({
+  id: '/clients/new',
+  path: '/clients/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
@@ -50,6 +56,7 @@ const ProjectsNewClientIdRoute = ProjectsNewClientIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/clients/new': typeof ClientsNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/reports/$reportId': typeof ReportsReportIdRoute
   '/projects/new/$clientId': typeof ProjectsNewClientIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/clients/new': typeof ClientsNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/reports/$reportId': typeof ReportsReportIdRoute
   '/projects/new/$clientId': typeof ProjectsNewClientIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/clients/new': typeof ClientsNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/reports/$reportId': typeof ReportsReportIdRoute
   '/projects/new/$clientId': typeof ProjectsNewClientIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/clients/$clientId'
+    | '/clients/new'
     | '/projects/$projectId'
     | '/reports/$reportId'
     | '/projects/new/$clientId'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/clients/$clientId'
+    | '/clients/new'
     | '/projects/$projectId'
     | '/reports/$reportId'
     | '/projects/new/$clientId'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/clients/$clientId'
+    | '/clients/new'
     | '/projects/$projectId'
     | '/reports/$reportId'
     | '/projects/new/$clientId'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
+  ClientsNewRoute: typeof ClientsNewRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ReportsReportIdRoute: typeof ReportsReportIdRoute
   ProjectsNewClientIdRoute: typeof ProjectsNewClientIdRoute
@@ -131,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/clients/new': {
+      id: '/clients/new'
+      path: '/clients/new'
+      fullPath: '/clients/new'
+      preLoaderRoute: typeof ClientsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clients/$clientId': {
       id: '/clients/$clientId'
       path: '/clients/$clientId'
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
+  ClientsNewRoute: ClientsNewRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ReportsReportIdRoute: ReportsReportIdRoute,
   ProjectsNewClientIdRoute: ProjectsNewClientIdRoute,
