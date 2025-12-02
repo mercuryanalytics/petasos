@@ -2,7 +2,7 @@ import React from "react"
 import SimpleBarReact from "simplebar-react"
 import { useAtomValue, useSetAtom } from "jotai"
 
-import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, Button } from "react-aria-components"
+import { UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem } from "react-aria-components"
 
 import { clients } from "../../../util/records"
 
@@ -14,6 +14,7 @@ import InsertItem from "./insert_item"
 import Content from "./Content"
 
 import "./index.scss"
+import CreateClient from "./CreateClient"
 
 const Menu: React.FC = () => {
   const setShowInput = useSetAtom(atoms.showInput)
@@ -52,9 +53,7 @@ const Menu: React.FC = () => {
             )
           }}
         </Tree>
-        <Button>
-          <a href="#">+ Create New Client</a>
-        </Button>
+        <CreateClient />
       </div>
     </SimpleBarReact>
   )
