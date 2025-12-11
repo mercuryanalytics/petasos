@@ -1,0 +1,24 @@
+.NewClientFooter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  & > button {
+    min-width: 120px;
+    height: 40px;
+    padding: 0 20px;
+    cursor: pointer;
+    border: 1px solid #0c7997;
+    border-radius: 4px;
+    background-color: #0c7997;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 0.875rem;
+    margin-top: 2rem;
+  }
+
+  & > button:nth-child(2) {
+    background-color: #fff;
+    color: #333;
+    border: none;
+  }
+}
