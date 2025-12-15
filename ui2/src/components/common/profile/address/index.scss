@@ -1,0 +1,37 @@
+.Address {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.CustomAddress {
+  & > h1:first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: center;
+    height: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 3.51rem;
+  }
+
+  &:has(> div:nth-child(2) > label:first-child) > h1:first-child {
+    margin-bottom: 24px;
+  }
+
+  & > div:nth-child(2) {
+    font-size: 0.75rem;
+    display: grid;
+    row-gap: 1rem;
+    column-gap: 20px;
+
+    & > label:first-child > label {
+      width: 13px;
+    }
+  }
+}
