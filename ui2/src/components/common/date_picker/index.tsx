@@ -12,6 +12,7 @@ import {
   Dialog,
   Group,
   Heading,
+  I18nProvider,
   Label,
   Popover
 } from "react-aria-components"
@@ -43,33 +44,35 @@ type Props = {
 } & DatePickerProps<DateValue>
 
 const DatePicker: React.FC<Props> = ({ label, ...props }) => (
-  <DatePick {...props}>
-    <Label>{label}</Label>
-    <Group>
-      <DateInput>
-        {segment => (
-          <DateSegment segment={segment}>
-            {({ isPlaceholder, type, value }) => <pre>{isPlaceholder ? "" : formatDate(type, value)}</pre>}
-          </DateSegment>
-        )}
-      </DateInput>
-      <Button data-pressed="true">
-        <CalendarSymbol />
-      </Button>
-    </Group>
-    <Popover>
-      <Dialog>
-        <Calendar>
-          <header>
-            <Button slot="previous">◀</Button>
-            <Heading />
-            <Button slot="next">▶</Button>
-          </header>
-          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
-        </Calendar>
-      </Dialog>
-    </Popover>
-  </DatePick>
+  <I18nProvider locale="en-in">
+    <DatePick {...props}>
+      <Label>{label}</Label>
+      <Group>
+        <DateInput>
+          {segment => (
+            <DateSegment segment={segment}>
+              {({ isPlaceholder, type, value }) => <pre>{isPlaceholder ? "" : formatDate(type, value)}</pre>}
+            </DateSegment>
+          )}
+        </DateInput>
+        <Button data-pressed="true">
+          <CalendarSymbol />
+        </Button>
+      </Group>
+      <Popover>
+        <Dialog>
+          <Calendar>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          </Calendar>
+        </Dialog>
+      </Popover>
+    </DatePick>
+  </I18nProvider>
 )
 
 export default DatePicker
