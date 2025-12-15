@@ -10,6 +10,7 @@
     width: 100%;
     white-space: nowrap;
     font-weight: 700;
+    font-size: 0.75rem;
   }
 
   .react-aria-Button {
@@ -58,6 +59,12 @@
     margin-left: 1rem;
     padding: 1px;
     border-radius: 4px;
+  }
+
+  .react-aria-FieldError {
+    margin-top: 0.3rem;
+    color: #b60010;
+    font-size: 0.75rem;
   }
 }
 
