@@ -23,7 +23,7 @@ type Props = Omit<SelectProps, "children"> & {
   onSelectionChange?: ((key: Key) => void) | undefined
 } & PropsWithChildren
 
-const Picker: React.FC<Props> = ({ label, children, items, placeholder, errorMessage, ...props }) => (
+const Picker: React.FC<Props> = ({ label, children, items, placeholder, ...props }) => (
   <Select {...props}>
     <Label>{label}</Label>
     <Button slot="chevron">
@@ -34,9 +34,7 @@ const Picker: React.FC<Props> = ({ label, children, items, placeholder, errorMes
       </SelectValue>
       <ArrowDown />
     </Button>
-    <FieldError>
-      {({ validationDetails }) => (validationDetails.valueMissing && errorMessage ? errorMessage : "")}
-    </FieldError>
+    <FieldError>{({ validationDetails }) => validationDetails.valueMissing && "Field value is required."}</FieldError>
     <Popover>
       <ListBox items={items}>{children}</ListBox>
     </Popover>
