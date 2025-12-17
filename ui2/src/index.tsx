@@ -5,6 +5,13 @@ import { routeTree } from "./routeTree.gen"
 import "./index.scss"
 
 const router = createRouter({ routeTree })
+export type AppRouter = typeof router
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: AppRouter
+  }
+}
 
 const root = document.getElementById("root")
 
