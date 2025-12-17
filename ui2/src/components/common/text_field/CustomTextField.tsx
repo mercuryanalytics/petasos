@@ -1,31 +1,33 @@
-import React from "react"
+import React, { useState } from "react"
 import { useAtomValue } from "jotai"
-import { showInput } from "../../../atoms"
+import * as atoms from "../../../atoms"
 
-import {
-  TextField,
-  FieldError,
-  Input,
-  InputProps,
-  Label,
-  TextArea,
-  TextAreaProps,
-  TextFieldProps
-} from "react-aria-components"
+import { TextField, FieldError, Label, TextFieldProps } from "react-aria-components"
 
 import "./stylesheet.scss"
 
-type Props = { label: string; value?: string; tagName?: "input" | "textarea" } & TextFieldProps &
-  InputProps &
-  TextAreaProps
+type Props = {
+  label: string
+  value: string
+  children: (
+    value: string,
+    onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  ) => React.ReactNode
+  staticField?: boolean
+} & Omit<TextFieldProps, "children">
 
-const CustomTextField: React.FC<Props> = ({ label, tagName = "input", ...props }) => {
-  const input = useAtomValue(showInput)
+const CustomTextField: React.FC<Props> = ({ label, value: defaultValue, staticField = true, ...props }) => {
+  const input = useAtomValue(atoms.showInput)
+  const [value, setValue] = useState(defaultValue)
 
   return (
     <TextField {...props}>
       <Label>{label}</Label>
-      {input ? tagName === "input" ? <Input {...props} /> : <TextArea {...props} /> : <span>{props.defaultValue}</span>}
+      {staticField || input
+        ? props.children(value, event => {
+            setValue(event.target.value)
+          })
+        : props.children(value)}
       <FieldError>
         {({ validationDetails }) => {
           if (validationDetails.typeMismatch && props.type === "email")
