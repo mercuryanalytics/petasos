@@ -1,5 +1,5 @@
 .NameAndType {
-  margin-bottom: 20px;
+  margin-bottom: 3rem;
 
   & > h1:first-child {
     overflow: hidden;
@@ -22,8 +22,30 @@
     display: grid;
     grid-template:
       "client-name company-name"
-      "partner-type partner-type" / 1fr 1fr;
+      "type ."
+      "client-logo motto"
+      "client-logo ." / 1fr 1fr;
     row-gap: 1rem;
     column-gap: 20px;
+
+    & > div:first-child {
+      grid-area: client-logo;
+    }
+
+    & > div:nth-child(2) {
+      grid-area: client-name;
+    }
+
+    & > div:nth-child(3) {
+      grid-area: company-name;
+    }
+
+    & > div:nth-child(4) {
+      grid-area: type;
+    }
+
+    & > div:last-child {
+      grid-area: motto;
+    }
   }
 }

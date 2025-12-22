@@ -1,6 +1,7 @@
 import React from "react"
-import { Checkbox, Input, Label, TextField } from "react-aria-components"
+import { Checkbox, Input, Label } from "react-aria-components"
 import { CustomCheckbox } from "../../../../../icons"
+import TextField from "../../../../../common/text_field/CustomTextField"
 
 type Props = { alternateAddress?: boolean; addressType: "Mailing" | "Billing" }
 
@@ -15,29 +16,23 @@ const CustomAddress: React.FC<Props> = ({ alternateAddress = false, addressType 
             <Label>Same as the mailing address</Label>
           </Checkbox>
         )}
-        <TextField name="address line 1">
-          <Label>Address Line 1 *</Label>
-          <Input />
+        <TextField label="Address Line 1 *" name="address line 1" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField name="address line 2">
-          <Label>Address Line 2</Label>
-          <Input />
+        <TextField label="Address Line 2" name="address line 2" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField name="city">
-          <Label>City *</Label>
-          <Input />
+        <TextField label="City *" name="city" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField name="state">
-          <Label>State *</Label>
-          <Input />
+        <TextField label="State *" name="state" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField name="zip code">
-          <Label>Zip code *</Label>
-          <Input />
+        <TextField label="Zip code *" name="zip code" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField name="country">
-          <Label>Country</Label>
-          <Input />
+        <TextField label="Country" name="country" value="N/A">
+          {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
       </div>
     </div>

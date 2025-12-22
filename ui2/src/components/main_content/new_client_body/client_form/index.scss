@@ -1,0 +1,23 @@
+.NewClientForm {
+  padding: 5rem 3rem 2rem;
+  background-color: white;
+  width: 100%;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  & > div {
+    max-width: 240px;
+
+    & > div {
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+  }
+
+  & > div.Address {
+    max-width: 500px;
+  }
+}

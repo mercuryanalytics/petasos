@@ -2,8 +2,8 @@ import React from "react"
 import { Upload } from "../../../../icons"
 import "./index.scss"
 
-const NewClientLogo: React.FC = () => (
-  <div className="NewClientLogo">
+const ClientLogo: React.FC = () => (
+  <div className="ClientLogo">
     <h1>Client logo</h1>
     <div>
       <Upload />
@@ -11,4 +11,4 @@ const NewClientLogo: React.FC = () => (
   </div>
 )
 
-export default NewClientLogo
+export default ClientLogo

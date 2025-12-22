@@ -1,6 +1,6 @@
-.NewClientLogo {
+.ClientLogo {
   display: grid;
-  justify-content: center;
+  grid-template-rows: 0fr 1fr;
 
   & > h1 {
     font-size: 1rem;
