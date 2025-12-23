@@ -4,6 +4,6 @@ import { findRecord } from "../-util"
 
 export const Route = createFileRoute("/clients/$clientId")({
   beforeLoad: ({ params, location }) => ({ record: findRecord(params, location) }),
-  loader: ({ context }) => context.record.name,
+  loader: ({ context }) => context.record,
   component: () => <ClientBody />
 })

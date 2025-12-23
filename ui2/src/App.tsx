@@ -11,7 +11,6 @@ import "./styles/react_aria_checkbox.scss"
 import "./styles/react_aria_search_field.scss"
 import "./styles/react_aria_switch.scss"
 import "./styles/react_aria_tooltip.scss"
-import "./styles/react_aria_text_field.scss"
 
 import "./App.scss"
 

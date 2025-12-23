@@ -1,11 +1,11 @@
 import React from "react"
 import "./index.scss"
-import { PrimaryContact as Contact } from "../../../../../common/client"
+import { ClientForm } from "../../../../../common/form_components/"
 
 const PrimaryContact: React.FC = () => (
   <div className="PrimaryContact">
     <h1>Primary Contact</h1>
-    <Contact />
+    <ClientForm.PrimaryContact />
   </div>
 )
 

@@ -18,3 +18,5 @@ export const menuItems = atom(get => {
 
   return search(value, get(searchClients), get(searchProjects), get(searchReports))
 })
+
+export const newClientFormCount = atom(0)

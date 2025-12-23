@@ -1,5 +1,5 @@
 import React from "react"
-import { Upload } from "../../../../icons"
+import { Upload } from "../../../../../icons"
 import "./index.scss"
 
 const ClientLogo: React.FC = () => (

@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useAtomValue } from "jotai"
 import * as atoms from "../../../atoms"
 
 import { TextField, FieldError, Label, TextFieldProps } from "react-aria-components"
 
-import "./stylesheet.scss"
+import "./index.scss"
 
 type Props = {
   label: string
@@ -19,6 +19,10 @@ type Props = {
 const CustomTextField: React.FC<Props> = ({ label, value: defaultValue, staticField = true, ...props }) => {
   const input = useAtomValue(atoms.showInput)
   const [value, setValue] = useState(defaultValue)
+
+  useEffect(() => {
+    setValue(defaultValue)
+  }, [defaultValue])
 
   return (
     <TextField {...props}>

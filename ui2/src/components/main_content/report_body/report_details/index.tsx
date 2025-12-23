@@ -3,8 +3,9 @@ import { useAtomValue } from "jotai"
 
 import { showInput as showInputAtom } from "../../../../atoms"
 
+import { ReportDetailsForm } from "../../../common/form_components"
+
 import ReportDetailsHeader from "./header"
-import ReportDetailsForm from "./form"
 import ReportDetailsFooter from "./footer"
 
 import "./index.scss"
@@ -14,7 +15,7 @@ const ReportDetails: React.FC = () => {
   return (
     <div className="ReportDetails">
       <ReportDetailsHeader />
-      <ReportDetailsForm />
+      <ReportDetailsForm staticField={false} />
       {showInput && <ReportDetailsFooter />}
     </div>
   )
