@@ -1,7 +1,11 @@
 import { FormEvent } from "react"
-import { Address, ClientDetails, PrimaryContact } from "../../../common/client"
+import { ClientForm } from "../../../common/form_components"
 
-export const FORMS = [{ component: ClientDetails }, { component: PrimaryContact }, { component: Address }] as const
+export const FORMS = [
+  { component: ClientForm.ClientDetails },
+  { component: ClientForm.PrimaryContact },
+  { component: ClientForm.Address }
+] as const
 
 export const handleSubmit = (event: FormEvent<HTMLFormElement>, count: number, setCount: (value: number) => void) => {
   const data: object[] = []

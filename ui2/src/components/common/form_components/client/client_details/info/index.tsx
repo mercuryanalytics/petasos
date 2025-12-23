@@ -1,16 +1,20 @@
 import React, { useState } from "react"
 import { Input } from "react-aria-components"
+import { useMatch } from "@tanstack/react-router"
 
-import TextField from "../../../text_field/CustomTextField"
+import { Route } from "../../../../../../routes/clients/$clientId"
 
-import { Picker, Item } from "../../../picker"
+import TextField from "../../../../text_field"
 
-const ClientInfo: React.FC<{ name?: string }> = ({ name }) => {
+import { Picker, Item } from "../../../../picker"
+
+const ClientInfo: React.FC = () => {
   const [showDomain, setShowDomain] = useState(false)
+  const data = useMatch({ from: Route.fullPath, shouldThrow: false })?.loaderData
 
   return (
     <>
-      <TextField name="client name" isRequired label="Client name *" value={name ?? ""}>
+      <TextField name="client name" isRequired label="Client name *" value={data?.name ?? ""}>
         {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
       </TextField>
       <TextField name="company name" isRequired label="Company name *" value="N/A">

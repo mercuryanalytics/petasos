@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { Checkbox, Input, Label } from "react-aria-components"
 
-import { CustomCheckbox } from "../../../icons"
+import { CustomCheckbox } from "../../../../icons"
 
-import TextField from "../../text_field/CustomTextField"
+import TextField from "../../../text_field"
 
 type Props = { alternateAddress?: boolean; addressType: "Mailing" | "Billing"; value?: string }
 
