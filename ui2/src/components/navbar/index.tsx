@@ -1,5 +1,9 @@
 import React, { useState } from "react"
 import { Menu, MenuItem, MenuTrigger, Popover, Button } from "react-aria-components"
+import { useNavigate } from "@tanstack/react-router"
+import { useSetAtom } from "jotai"
+
+import { expandedKeys } from "../../atoms"
 
 import * as Icons from "../icons"
 
@@ -8,9 +12,9 @@ import "./react_menu_stylesheet.scss"
 
 const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const { Back, Forward } = Icons
-
-  // TODO: Check which is the best way to toggle between icons in react-aria
   const [showMenu, setShowMenu] = useState(true)
+  const setExpandedKeys = useSetAtom(expandedKeys)
+  const navigate = useNavigate()
 
   return (
     <div className="Navbar">
@@ -22,7 +26,13 @@ const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       >
         {showMenu ? <Back /> : <Forward />}
       </Button>
-      <img src="/images/mercury_logo.png" />
+      <img
+        onClick={() => {
+          navigate({ to: "/" })
+          setExpandedKeys([])
+        }}
+        src="/images/mercury_logo.png"
+      />
       <div>
         <div>
           <div>

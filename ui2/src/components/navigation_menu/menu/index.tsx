@@ -12,17 +12,20 @@ import { MenuItem } from "../../common/types"
 
 import InsertItem from "./insert_item"
 import Content from "./Content"
+import CreateClient from "./CreateClient"
 
 import "./index.scss"
-import CreateClient from "./CreateClient"
 
 const Menu: React.FC = () => {
   const setShowInput = useSetAtom(atoms.showInput)
   const hideClients = useAtomValue(atoms.hideClients)
   const menuItems = useAtomValue(atoms.menuItems)
+  const expandedKeys = useAtomValue(atoms.expandedKeys)
 
   const searchRecords = menuItems ?? clients
   const records = searchRecords?.flatMap(item => (hideClients ? item.children : item))
+
+  console.log(expandedKeys)
 
   return (
     <SimpleBarReact style={{ height: "calc(100% - 59px)" }}>
@@ -33,10 +36,10 @@ const Menu: React.FC = () => {
           setShowInput(false)
         }}
       >
-        <Tree aria-label="Files" items={records}>
+        <Tree aria-label="Files" items={records} expandedKeys={expandedKeys}>
           {function renderItem({ type, name, reference, children }: MenuItem) {
             return (
-              <TreeItem textValue={name}>
+              <TreeItem textValue={name} id={name}>
                 <Content type={type} name={name} reference={reference} children={children} />
                 {children.map((item, i) => {
                   const { type } = item
