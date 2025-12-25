@@ -20,3 +20,5 @@ export const menuItems = atom(get => {
 })
 
 export const newClientFormCount = atom(0)
+
+export const expandedKeys = atom<string[]>([])
