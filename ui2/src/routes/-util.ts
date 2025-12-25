@@ -16,13 +16,13 @@ export const findRecord = (
     case "clients": {
       const client = clients.find(item => item.reference === params.clientId)
       // NOTE: Do check if its required to redirect the user to not found home page or throw an error and show an Outlet component
-      if (client == null) throw redirect({ to: `/${params.clientId}` })
+      if (client == null) throw redirect({ to: ".." })
 
       return client
     }
     case "projects": {
       const project = projects.find(item => item.reference === params.projectId)
-      if (project == null) throw redirect({ to: `/${params.projectId}` })
+      if (project == null) throw redirect({ to: ".." })
 
       return project
     }
@@ -30,7 +30,7 @@ export const findRecord = (
     default: {
       const report = reports.find(item => item.reference === params.reportId)
 
-      if (report == null) throw redirect({ to: `/${params.reportId}` })
+      if (report == null) throw redirect({ to: ".." })
 
       return report
     }
