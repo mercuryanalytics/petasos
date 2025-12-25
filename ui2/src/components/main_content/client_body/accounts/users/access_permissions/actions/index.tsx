@@ -19,9 +19,9 @@ import "./index.scss"
 const Actions: React.FC = () => (
   <div className="Actions">
     <Tree aria-label="Files" selectionMode="multiple" items={items}>
-      {function renderItem({ title, children }) {
+      {function renderItem({ name, children }) {
         return (
-          <TreeItem textValue={title}>
+          <TreeItem textValue={name}>
             <TreeItemContent>
               <div className={children.length ? "" : "Report"}>
                 <div>
@@ -30,7 +30,7 @@ const Actions: React.FC = () => (
                       <ArrowRight />
                     </Button>
                   ) : null}
-                  <span>{title}</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   {children.length ? <Button aria-label="Info">ⓘ</Button> : ""}

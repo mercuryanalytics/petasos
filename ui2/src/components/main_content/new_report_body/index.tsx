@@ -7,11 +7,11 @@ import { ReportDetailsForm } from "../../common/form_components"
 import "./index.scss"
 
 const NewReportBody: React.FC = () => (
-  <form className="NewReportBody">
+  <div className="NewReportBody">
     <h1>Report details</h1>
     <ReportDetailsForm />
     <Button>Create</Button>
-  </form>
+  </div>
 )
 
 export default NewReportBody
