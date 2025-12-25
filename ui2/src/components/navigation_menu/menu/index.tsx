@@ -25,8 +25,6 @@ const Menu: React.FC = () => {
   const searchRecords = menuItems ?? clients
   const records = searchRecords?.flatMap(item => (hideClients ? item.children : item))
 
-  console.log(expandedKeys)
-
   return (
     <SimpleBarReact style={{ height: "calc(100% - 59px)" }}>
       <div
