@@ -1,6 +1,7 @@
 export { default as ArrowDown } from "./ArrowDown"
 export { default as ArrowRight } from "./ArrowRight"
 export { default as Back } from "./Back"
+export { default as BreadcrumbsArrow } from "./BreadcrumbsArrow"
 export { default as CalendarSymbol } from "./CalendarSymbol"
 export { default as CustomCheckbox } from "./CustomCheckbox"
 export { default as Forward } from "./Forward"
