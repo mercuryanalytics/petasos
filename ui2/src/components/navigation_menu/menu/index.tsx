@@ -34,11 +34,11 @@ const Menu: React.FC = () => {
           setShowInput(false)
         }}
       >
-        <Tree aria-label="Files" items={records} expandedKeys={expandedKeys}>
+        <Tree aria-label="Files" selectionMode="single" items={records} expandedKeys={expandedKeys}>
           {function renderItem({ type, name, reference, children }: MenuItem) {
             return (
               <TreeItem textValue={name} id={name}>
-                <Content type={type} name={name} reference={reference} children={children} />
+                <Content type={type} name={name} reference={reference} children={children} records={records} />
                 {children.map((item, i) => {
                   const { type } = item
                   return (

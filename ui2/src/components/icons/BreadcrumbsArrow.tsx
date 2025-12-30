@@ -4,7 +4,7 @@ const BreadcrumbsArrow: React.FC = () => (
   <svg
     stroke="#333"
     fill="#333"
-    stroke-width="0"
+    strokeWidth="0"
     viewBox="0 0 256 512"
     height="1em"
     width="1em"
