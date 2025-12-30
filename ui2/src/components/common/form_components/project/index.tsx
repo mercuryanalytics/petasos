@@ -1,6 +1,7 @@
 import React from "react"
 import { useAtomValue } from "jotai"
 import { Input, TextArea } from "react-aria-components"
+import { useMatch } from "@tanstack/react-router"
 
 import { showInput as input } from "../../../../atoms"
 
@@ -11,7 +12,6 @@ import DatePicker from "../../date_picker"
 import { Route } from "../../../../routes/projects/$projectId"
 
 import "./index.scss"
-import { useMatch } from "@tanstack/react-router"
 
 const ProjectDetailsForm: React.FC<{ staticField?: boolean }> = ({ staticField }) => {
   const showInput = useAtomValue(input)

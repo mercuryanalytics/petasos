@@ -1,26 +1,35 @@
 import React from "react"
 import { UNSTABLE_TreeItemContent as TreeItemContent, Button } from "react-aria-components"
 import { useNavigate } from "@tanstack/react-router"
-import { useAtom } from "jotai"
+import { useSetAtom } from "jotai"
 
-import { expandedKeys } from "../../../atoms"
+import * as atoms from "../../../atoms"
 
 import { ArrowRight, Folder, File } from "../../icons"
 import { MenuItem } from "../../common/types"
-import { dynamicLinks } from "./util"
+import { dynamicLinks, findPathByName } from "./util"
 
-export const Content: React.FC<MenuItem> = ({ type, name, reference, children }) => {
+export const Content: React.FC<MenuItem & { records: MenuItem[] }> = ({ type, name, reference, children, records }) => {
   const navigate = useNavigate()
-  const [keys, setKeys] = useAtom(expandedKeys)
+  const setExpandedKeys = useSetAtom(atoms.expandedKeys)
+  const setBreadCrumbs = useSetAtom(atoms.breadcrumbs)
 
   return (
     <TreeItemContent>
       <a
         onClick={() => {
           navigate(dynamicLinks(type, reference))
-          if (keys.includes(name)) {
-            setKeys(current => current.filter(key => key !== name))
-          } else setKeys(current => [...current, name])
+
+          setExpandedKeys(current => {
+            if (current.has(name)) {
+              const set = new Set(current)
+              set.delete(name)
+              return set
+            }
+            return new Set(current).add(name)
+          })
+
+          setBreadCrumbs(findPathByName(records, name))
         }}
       >
         {children.length ? (

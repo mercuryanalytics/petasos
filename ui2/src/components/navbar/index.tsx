@@ -3,7 +3,7 @@ import { Menu, MenuItem, MenuTrigger, Popover, Button } from "react-aria-compone
 import { useNavigate } from "@tanstack/react-router"
 import { useSetAtom } from "jotai"
 
-import { expandedKeys } from "../../atoms"
+import * as atoms from "../../atoms"
 
 import * as Icons from "../icons"
 
@@ -13,7 +13,7 @@ import "./react_menu_stylesheet.scss"
 const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const { Back, Forward } = Icons
   const [showMenu, setShowMenu] = useState(true)
-  const setExpandedKeys = useSetAtom(expandedKeys)
+  const setExpandedKeys = useSetAtom(atoms.expandedKeys)
   const navigate = useNavigate()
 
   return (
@@ -29,7 +29,7 @@ const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       <img
         onClick={() => {
           navigate({ to: "/" })
-          setExpandedKeys([])
+          setExpandedKeys(new Set())
         }}
         src="/images/mercury_logo.png"
       />

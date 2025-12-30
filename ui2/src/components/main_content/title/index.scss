@@ -1,9 +1,54 @@
-.MainContentTitle {
+.react-aria-Breadcrumbs {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: black;
   font-size: 0.875rem;
   line-height: 1.2rem;
-  margin-bottom: 15px;
+  font-weight: 700;
+  height: 34px;
 
-  & > span {
-    font-weight: 700;
+  .react-aria-Breadcrumb {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .react-aria-Link {
+    color: black;
+    outline: none;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &[data-hovered],
+    &[data-focus-visible] {
+      text-decoration: underline;
+    }
+
+    &[data-current] {
+      color: black;
+      font-weight: 600;
+    }
+
+    &[data-focus-visible] {
+      border-radius: var(--radius-sm);
+      outline: 2px solid var(--focus-ring-color);
+    }
+
+    &[data-disabled] {
+      cursor: default;
+
+      &:not([data-current]) {
+        color: var(--text-color-disabled);
+      }
+    }
   }
 }
