@@ -19,7 +19,6 @@ export const handleSubmit = (event: FormEvent<HTMLFormElement>, count: number, s
 
   setCount(FORMS.length - 1)
 
-  console.log(data)
 }
 
 export const handleReset = (event: FormEvent<HTMLFormElement>) => {
