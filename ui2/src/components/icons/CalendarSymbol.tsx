@@ -1,7 +1,8 @@
-import React, { useMemo } from "react"
+import React from "react"
+import useStableId from "../../hooks/useStableId"
 
 const CalendarSymbol: React.FC = () => {
-  const id = useMemo(() => Math.random().toFixed(2), [])
+  const id = useStableId()
 
   return (
     <svg width="15" height="16">

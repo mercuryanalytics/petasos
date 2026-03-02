@@ -1,6 +1,8 @@
-import React, { useMemo } from "react"
+import React from "react"
+import useStableId from "../../hooks/useStableId"
+
 const Folder: React.FC = () => {
-  const id = useMemo(() => Math.random().toFixed(2), [])
+  const id = useStableId()
 
   return (
     <svg width="19" height="14" fill="black" fillRule="nonzero">
