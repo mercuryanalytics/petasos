@@ -19,7 +19,6 @@
     "react-aria": "^3.36.0",
     "react-aria-components": "^1.5.0",
     "react-dom": "^19.0.0",
-    "react-select": "^5.9.0",
     "resize-observer-polyfill": "^1.5.1",
     "simplebar-react": "^3.3.0"
   },
