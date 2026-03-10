@@ -1,0 +1,19 @@
+.ReportDetailsForm {
+  display: grid;
+  row-gap: 1rem;
+  color: #333;
+
+  & > div {
+    display: grid;
+    row-gap: 0.4rem;
+
+    & > label {
+      font-size: 0.8125rem;
+      font-weight: 700;
+    }
+
+    & > span {
+      font-size: 0.875rem;
+    }
+  }
+}

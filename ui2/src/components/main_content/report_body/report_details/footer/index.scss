@@ -1,0 +1,34 @@
+.ReportDetailsFooter {
+  display: grid;
+  grid-template-columns: 0fr 0fr;
+  margin-top: 2rem;
+  column-gap: 10px;
+
+  & > button:first-child {
+    display: grid;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    border: 1px solid #0c7997;
+    border-radius: 4px;
+    background-color: #0c7997;
+    box-sizing: border-box;
+    color: #ffffff;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  & > button:last-child {
+    display: grid;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: initial;
+    box-sizing: border-box;
+    color: #333333;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+}

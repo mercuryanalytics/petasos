@@ -1,0 +1,9 @@
+# dependencies
+/node_modules
+
+#temp and dist files
+/tmp
+/dist
+/docs/plans
+tsconfig.tsbuildinfo
+

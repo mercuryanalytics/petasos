@@ -1,0 +1,23 @@
+.ClientList {
+  border-radius: 18px;
+  font-size: 1.072rem;
+  // `display: grid !important` is required here because React Aria's UNSTABLE_TreeItemContent
+  // sets `display: contents` on its wrapper, which causes some browsers/versions to inherit
+  // an unexpected display value on direct children. The !important ensures the 3-column grid
+  // layout (chevron | title | trailing dots) is always applied regardless of parent styles.
+  display: grid !important;
+  grid-template-columns: 1fr 10fr 1fr;
+  align-items: center;
+  padding: 10px 10px 10px 0;
+  font-size: 1rem;
+  font-weight: 700;
+
+  &:hover {
+    background: #0c7997;
+    color: #ffffff;
+    svg {
+      fill: #ffffff;
+      stroke: #ffffff;
+    }
+  }
+}
