@@ -27,12 +27,12 @@ export const findRecord = (
       return project
     }
 
-    default: {
+    case "reports": {
       const report = reports.find(item => item.reference === params.reportId)
-
       if (report == null) throw redirect({ to: ".." })
-
       return report
     }
+    default:
+      throw redirect({ to: "/" })
   }
 }
