@@ -29,7 +29,12 @@ const Menu: React.FC = () => {
     <SimpleBarReact style={{ height: "calc(100% - 59px)" }}>
       <div
         className="Menu"
-        // FIXME: Check if the project name or number is same as the body of the clicked element then dont setshowInput to false
+        // NOTE: `onClickCapture` hides the inline text input whenever anything in the menu is clicked.
+        // The intent is to close the input when the user navigates away, but it also fires when clicking
+        // the expand toggle of a tree item. To fix: check whether the clicked element is the active input
+        // (e.g. compare event.target against the input ref) before calling setShowInput(false).
+        // React Aria's UNSTABLE_TreeItem fires onAction for both expand and navigate — use onExpandedChange
+        // on the Tree or filter by event.target.closest('[data-type="input"]') to distinguish.
         onClickCapture={() => {
           setShowInput(false)
         }}

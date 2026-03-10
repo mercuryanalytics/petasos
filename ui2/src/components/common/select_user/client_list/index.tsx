@@ -4,8 +4,6 @@ import { ArrowRight, TrailingDots } from "../../../icons"
 
 import "./index.scss"
 
-//TODO: Check if this component name needs to be changed in future
-
 const ClientList: React.FC<{ title: string }> = ({ title }) => (
   <div className="ClientList">
     <Button slot="chevron">

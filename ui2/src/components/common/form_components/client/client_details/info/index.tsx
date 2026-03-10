@@ -3,6 +3,7 @@ import { Input } from "react-aria-components"
 import { useMatch } from "@tanstack/react-router"
 
 import { Route } from "../../../../../../routes/clients/$clientId"
+import { EMPTY_VALUE } from "../../../../../../util/constants"
 
 import TextField from "../../../../text_field"
 
@@ -17,7 +18,7 @@ const ClientInfo: React.FC = () => {
       <TextField name="client name" isRequired label="Client name *" value={data?.name ?? ""}>
         {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
       </TextField>
-      <TextField name="company name" isRequired label="Company name *" value="N/A">
+      <TextField name="company name" isRequired label="Company name *" value={EMPTY_VALUE}>
         {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
       </TextField>
       <Picker
@@ -33,11 +34,11 @@ const ClientInfo: React.FC = () => {
         <Item id="partner">Partner</Item>
         <Item id="other">Other</Item>
       </Picker>
-      <TextField name="motto" label="Motto" value="N/A">
+      <TextField name="motto" label="Motto" value={EMPTY_VALUE}>
         {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
       </TextField>
       {showDomain && (
-        <TextField name="subdomain" label="Subdomain" value="N/A">
+        <TextField name="subdomain" label="Subdomain" value={EMPTY_VALUE}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
       )}

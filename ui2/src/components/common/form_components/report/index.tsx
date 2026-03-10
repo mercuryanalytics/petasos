@@ -5,6 +5,7 @@ import { useMatch } from "@tanstack/react-router"
 
 import { Route } from "../../../../routes/reports/$reportId"
 import { showInput as showInputAtom } from "../../../../atoms"
+import { EMPTY_VALUE } from "../../../../util/constants"
 
 import TextField from "../../text_field"
 import DatePicker from "../../date_picker"
@@ -23,13 +24,13 @@ const ReportDetailsForm: React.FC<{ staticField?: boolean }> = ({ staticField })
         }
       </TextField>
       {showInput && (
-        <TextField label="URL" defaultValue="url" value="N/A" staticField={staticField}>
+        <TextField label="URL" defaultValue="url" value={EMPTY_VALUE} staticField={staticField}>
           {(value, onChange) =>
             onChange ? <Input type="text" value={value} onChange={onChange} /> : <span>{value}</span>
           }
         </TextField>
       )}
-      <TextField label="Description" defaultValue="description" value="N/A" staticField={staticField}>
+      <TextField label="Description" defaultValue="description" value={EMPTY_VALUE} staticField={staticField}>
         {(value, onChange) => (onChange ? <TextArea value={value} onChange={onChange} /> : <span>{value}</span>)}
       </TextField>
       {showInput || staticField == null ? (
@@ -39,10 +40,10 @@ const ReportDetailsForm: React.FC<{ staticField?: boolean }> = ({ staticField })
         </>
       ) : (
         <>
-          <TextField label="Last presented on" defaultValue="N/A" value="N/A">
+          <TextField label="Last presented on" defaultValue={EMPTY_VALUE} value={EMPTY_VALUE}>
             {value => <span>{value}</span>}
           </TextField>
-          <TextField label="Last updated" defaultValue="N/A" value="N/A">
+          <TextField label="Last updated" defaultValue={EMPTY_VALUE} value={EMPTY_VALUE}>
             {value => <span>{value}</span>}
           </TextField>
         </>

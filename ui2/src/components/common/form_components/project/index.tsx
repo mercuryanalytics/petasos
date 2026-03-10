@@ -10,6 +10,7 @@ import { Item, Picker } from "../../picker"
 import TextField from "../../text_field"
 import DatePicker from "../../date_picker"
 import { Route } from "../../../../routes/projects/$projectId"
+import { EMPTY_VALUE } from "../../../../util/constants"
 
 import "./index.scss"
 
@@ -18,24 +19,28 @@ const ProjectDetailsForm: React.FC<{ staticField?: boolean }> = ({ staticField }
   const data = useMatch({ from: Route.fullPath, shouldThrow: false })?.loaderData
 
   return (
-    // FIXME: Whenever we get the overall data change the input field to the correct type. Eg: if value is of type number so input type should be of number and also add further states
+    // NOTE: All text inputs are currently hardcoded as type="text". Once the data model is defined,
+    // inspect each field's type and render the appropriate input: type="number" for numeric fields,
+    // type="date" for dates (or use the existing DatePicker component), type="email" for emails, etc.
+    // The Picker component already handles enum/select fields. This applies to ProjectDetailsForm,
+    // ReportDetailsForm, and the client form components.
     <form className="ProjectDetailsForm">
       <TextField label="Project name" value={data?.name ?? ""} {...(staticField != null && { staticField })}>
         {(value, onChange) =>
           onChange ? <Input type="text" value={value} onChange={onChange} /> : <span>{value}</span>
         }
       </TextField>
-      <TextField label="Project #" value="N/A" {...(staticField != null && { staticField })}>
+      <TextField label="Project #" value={EMPTY_VALUE} {...(staticField != null && { staticField })}>
         {(value, onChange) =>
           onChange ? <Input type="text" value={value} onChange={onChange} /> : <span>{value}</span>
         }
       </TextField>
-      <TextField label="Project type" value="N/A" {...(staticField != null && { staticField })}>
+      <TextField label="Project type" value={EMPTY_VALUE} {...(staticField != null && { staticField })}>
         {(value, onChange) =>
           onChange ? <Input type="text" value={value} onChange={onChange} /> : <span>{value}</span>
         }
       </TextField>
-      <TextField label="Description" value="N/A" {...(staticField != null && { staticField })}>
+      <TextField label="Description" value={EMPTY_VALUE} {...(staticField != null && { staticField })}>
         {(value, onChange) => (onChange ? <TextArea value={value} onChange={onChange} /> : <span>{value}</span>)}
       </TextField>
       {showInput ? (
@@ -48,7 +53,7 @@ const ProjectDetailsForm: React.FC<{ staticField?: boolean }> = ({ staticField }
         </>
       ) : (
         <>
-          <TextField label="Research contact" value="N/A" {...(staticField != null && { staticField })}>
+          <TextField label="Research contact" value={EMPTY_VALUE} {...(staticField != null && { staticField })}>
             {(value, onChange) =>
               onChange ? <Input type="text" value={value} onChange={onChange} /> : <span>{value}</span>
             }

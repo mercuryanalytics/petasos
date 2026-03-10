@@ -1,6 +1,7 @@
 import React from "react"
 import TextField from "../../../text_field"
 import { Input } from "react-aria-components"
+import { EMPTY_VALUE } from "../../../../../util/constants"
 
 const PrimaryContact: React.FC = () => (
   <div>
@@ -10,13 +11,13 @@ const PrimaryContact: React.FC = () => (
     <TextField name="title" label="Title" value="title">
       {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
     </TextField>
-    <TextField name="phone number" isRequired label="Phone number *" value="N/A">
+    <TextField name="phone number" isRequired label="Phone number *" value={EMPTY_VALUE}>
       {(value, onChange) => <Input type="number" value={value} onChange={onChange} />}
     </TextField>
-    <TextField name="fax number" label="Fax number" value="N/A">
+    <TextField name="fax number" label="Fax number" value={EMPTY_VALUE}>
       {(value, onChange) => <Input type="number" value={value} onChange={onChange} />}
     </TextField>
-    <TextField name="email" isRequired label="Email *" type="email" value="N/A">
+    <TextField name="email" isRequired label="Email *" type="email" value={EMPTY_VALUE}>
       {(value, onChange) => <Input type="email" value={value} onChange={onChange} />}
     </TextField>
   </div>
