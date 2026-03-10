@@ -17,7 +17,7 @@ const ReportDetailsHeader: React.FC = () => {
         <>
           <button>
             <Trash />
-            <span>Delete project</span>
+            <span>Delete report</span>
           </button>
           <button onClick={() => setShowInput(true)}>
             <Pen />
