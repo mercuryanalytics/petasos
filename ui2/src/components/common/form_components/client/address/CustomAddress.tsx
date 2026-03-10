@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Checkbox, Input, Label } from "react-aria-components"
 
 import { CustomCheckbox } from "../../../../icons"
+import { EMPTY_VALUE } from "../../../../../util/constants"
 
 import TextField from "../../../text_field"
 
@@ -51,19 +52,19 @@ const CustomAddress: React.FC<Props> = ({ alternateAddress = false, addressType,
             />
           )}
         </TextField>
-        <TextField label="Address Line 2" name="address line 2" value="N/A" isDisabled={disabled}>
+        <TextField label="Address Line 2" name="address line 2" value={EMPTY_VALUE} isDisabled={disabled}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField label="City *" name="city" value="N/A" isDisabled={disabled}>
+        <TextField label="City *" name="city" value={EMPTY_VALUE} isDisabled={disabled}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField label="State *" name="state" value="N/A" isDisabled={disabled}>
+        <TextField label="State *" name="state" value={EMPTY_VALUE} isDisabled={disabled}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField label="Zip code *" name="zip code" value="N/A" isDisabled={disabled}>
+        <TextField label="Zip code *" name="zip code" value={EMPTY_VALUE} isDisabled={disabled}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
-        <TextField label="Country" name="country" value="N/A" isDisabled={disabled}>
+        <TextField label="Country" name="country" value={EMPTY_VALUE} isDisabled={disabled}>
           {(value, onChange) => <Input type="text" value={value} onChange={onChange} />}
         </TextField>
       </div>

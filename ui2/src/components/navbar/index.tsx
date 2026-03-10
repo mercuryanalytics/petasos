@@ -6,6 +6,7 @@ import { useSetAtom } from "jotai"
 import * as atoms from "../../atoms"
 
 import * as Icons from "../icons"
+import { PLACEHOLDER_USER_INITIALS, PLACEHOLDER_USER_NAME } from "../../util/constants"
 
 import "./index.scss"
 import "./react_menu_stylesheet.scss"
@@ -36,9 +37,9 @@ const Navbar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       <div>
         <div>
           <div>
-            <span>UL</span>
+            <span>{PLACEHOLDER_USER_INITIALS}</span>
           </div>
-          <span>User Name</span>
+          <span>{PLACEHOLDER_USER_NAME}</span>
         </div>
         <div>
           <MenuTrigger>

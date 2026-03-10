@@ -1,7 +1,11 @@
 import { MenuItem } from "../components/common/types"
 import { clients } from "./records"
 
-//FIXME: Check how to improve this method further. Also add asynchronous functionality with loading to search through large dataset
+// NOTE: This synchronous filter works well for the current static JSON dataset.
+// When data is fetched from a real API, consider moving search server-side (query param on the API endpoint)
+// or switching to a debounced async approach with a loading state shown in the search UI.
+// A client-side async approach would need: (1) a loading atom, (2) a useTransition or setTimeout debounce,
+// (3) a spinner or skeleton in the navigation menu while results resolve.
 export const search = (text: string, searchClients: boolean, searchProjects: boolean, searchReports: boolean) => {
   const matchingClients = clients.filter(({ name }) => name.toLowerCase().includes(text))
   if (searchClients && matchingClients.length > 0) return matchingClients

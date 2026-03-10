@@ -21,7 +21,9 @@ const ModifyUser: React.FC = () => {
       <SimpleBarReact style={{ height: "530px" }}>
         <Tabs>
           <TabList aria-label="Users List">
-            {/* TODO: Change this later when using real data */}
+            {/* NOTE: Rendering 20 placeholder tabs with generated names. When API integration is added,
+                replace Array.from(range(0, 20)) with the actual user list loaded via a TanStack Router
+                loader. The loader data should be typed and accessed via useMatch() or useLoaderData(). */}
             {Array.from(range(0, 20)).map((t, i) => (
               <Tab key={t + i} id={`name${i}`}>
                 <span>name{i}</span> <Trash />

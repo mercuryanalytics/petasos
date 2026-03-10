@@ -1,7 +1,11 @@
 import { linkOptions } from "@tanstack/react-router"
 import { MenuItem } from "../../common/types"
 
-// FIXME: Check later for routing with better functionality
+// NOTE: `dynamicLinks` builds route paths via string concatenation, which bypasses TanStack Router's
+// compile-time type checking. Typos in `type` (e.g. "client" vs "clients") are not caught at build time.
+// To migrate: replace with explicit `linkOptions({ to: "/clients/$clientId", params: { clientId: reference } })`
+// per route type, and update callers (Content.tsx) to pass the literal route strings instead.
+// Prerequisite: route shapes must be stable before this refactor.
 export const dynamicLinks = (type: string, reference: string, insertItem: boolean = false) => {
   return linkOptions({
     to: "/" + type + (insertItem ? "/new/" : "/") + reference
