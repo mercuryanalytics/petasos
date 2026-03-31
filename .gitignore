@@ -1,0 +1,13 @@
+# Claude configuration
+.claude/sessions/
+.claude/checkpoints/
+.claude/worktrees/
+.claude/*.local.*
+.CLAUDE.local.md
+.claudeignore
+
+.envrc
+
+sandbox
+
+buildspec.yml
