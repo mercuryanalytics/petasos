@@ -18,7 +18,7 @@ DISTRIBUTION_ID="E2IN2S8Y736ATD"
 if [ "${1:-}" = "--staging" ]; then
   STAGE="staging"
   LIVE_BUCKET="researchresultswebsite-staging"
-  DISTRIBUTION_ID=""  # set after apply; override via env if needed: DISTRIBUTION_ID=XYZ ./rollback-ui.sh --staging abc1234
+  DISTRIBUTION_ID="E1J9NLGI9G05ZN"
   shift
 fi
 
