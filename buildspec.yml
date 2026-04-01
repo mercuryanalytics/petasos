@@ -20,4 +20,4 @@ phases:
       - cd ui
       - zip -r /tmp/deploy-${COMMIT_SHA}.zip build/
       - aws s3 cp /tmp/deploy-${COMMIT_SHA}.zip s3://${ARTIFACTS_BUCKET}/${STAGE}/deploy-${COMMIT_SHA}.zip
-      - echo "Artifact saved: ${STAGE}/deploy-${COMMIT_SHA}.zip"
+      - echo "Artifact saved ${STAGE}/deploy-${COMMIT_SHA}.zip"
