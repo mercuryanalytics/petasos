@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      nodejs: 12
   pre_build:
     commands:
       - echo Installing dependencies...
@@ -11,7 +11,13 @@ phases:
       - npm install
   build:
     commands:
-      - echo Building.........
-      - echo Bucket name---------
-      - echo $BUCKET_NAME
+      - echo Building...
+      - cd ui
       - npm run s3deploy
+  post_build:
+    commands:
+      - COMMIT_SHA=$(git rev-parse --short HEAD)
+      - cd ui
+      - zip -r /tmp/deploy-${COMMIT_SHA}.zip build/
+      - aws s3 cp /tmp/deploy-${COMMIT_SHA}.zip s3://${ARTIFACTS_BUCKET}/${STAGE}/deploy-${COMMIT_SHA}.zip
+      - echo "Artifact saved: ${STAGE}/deploy-${COMMIT_SHA}.zip"
