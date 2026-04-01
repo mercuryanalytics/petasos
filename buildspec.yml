@@ -15,7 +15,7 @@ phases:
       - npm run s3deploy
   post_build:
     commands:
-      - COMMIT_SHA=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+      - COMMIT_SHA=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - zip -r /tmp/deploy-${COMMIT_SHA}.zip build/
       - aws s3 cp /tmp/deploy-${COMMIT_SHA}.zip s3://${ARTIFACTS_BUCKET}/${STAGE}/deploy-${COMMIT_SHA}.zip
       - echo "Artifact saved ${STAGE}/deploy-${COMMIT_SHA}.zip"
