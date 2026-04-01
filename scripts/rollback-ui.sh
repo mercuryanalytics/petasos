@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-ARTIFACTS_BUCKET="researchresultswebsite-deploy-artifacts"
+ARTIFACTS_BUCKET="petasos-deploy-artifacts"
 REGION="us-east-1"
 
 # Parse optional --staging flag
@@ -17,7 +17,7 @@ DISTRIBUTION_ID="E2IN2S8Y736ATD"
 
 if [ "${1:-}" = "--staging" ]; then
   STAGE="staging"
-  LIVE_BUCKET="researchresultswebsite-staging"
+  LIVE_BUCKET="petasos-staging"
   DISTRIBUTION_ID="E1J9NLGI9G05ZN"
   shift
 fi
