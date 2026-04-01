@@ -31,6 +31,20 @@ const Header = props => {
         {!!slogan && <span className={styles.slogan}>{slogan}</span>}
       </div>
       <div className={styles.controls}>
+        {process.env.REACT_APP_STAGE && process.env.REACT_APP_STAGE !== 'production' && (
+          <span style={{
+            background: '#f59e0b',
+            color: '#fff',
+            fontSize: '0.65rem',
+            fontWeight: 'bold',
+            letterSpacing: '0.05em',
+            padding: '2px 8px',
+            borderRadius: '9999px',
+            textTransform: 'uppercase',
+          }}>
+            {process.env.REACT_APP_STAGE}
+          </span>
+        )}
         {isSuperUser(localUser.id) && <SuperUserLink />}
         <UserMenu authUser={authUser} localUser={userInStore} isSocialLogin={isSocialLogin} />
       </div>
