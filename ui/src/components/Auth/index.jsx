@@ -310,7 +310,7 @@ const Auth = props => {
     if (tokenVerificationSuccess || tokenVerificationError) return;
 
     handleTokenVerification(token);
-  }, []);
+  }, [handleTokenVerification, tokenVerificationError, tokenVerificationSuccess]);
 
   const handleViewChange = useCallback((type) => {
     clearErrors();
