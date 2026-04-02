@@ -89,7 +89,7 @@ const ProjectManage = props => {
         }
       });
     }
-  }, [editMode, id, user, data, dispatch, isEditClicked]);
+  }, [editMode, id, user, data, dispatch]);
 
   useEffect(init, [id]);
 

@@ -30,7 +30,7 @@ const SuperUser = () => {
     if (isTablet) {
       setShowUserActions(!showUserActions);
     }
-  }, [tab]);
+  }, [isTablet, showUserActions]);
 
   useEffect(() => {
     dispatch(setLocationData({ superUser: true }));
