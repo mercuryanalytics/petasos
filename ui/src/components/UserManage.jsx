@@ -52,7 +52,7 @@ const UserManage = props => {
       mailing_state: data.mailing_state || '',
       mailing_zip: data.mailing_zip || '',
       mailing_country: data.mailing_country || '',
-      last_login: data.last_login && new Date(data.last_login).toLocaleString() || '-',
+      last_login: (data.last_login && new Date(data.last_login).toLocaleString()) || '-',
     } : {},
     validate: (values) => {
       let errors = {};

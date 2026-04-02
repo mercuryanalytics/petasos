@@ -21,7 +21,7 @@ const Scrollable = props => {
       });
 
     }
-  }, [containerRef, document]);
+  }, [containerRef]);
 
   return (
     <SimpleBarReact ref={containerRef} data-scrollable className={`${props.className || ''}`}>

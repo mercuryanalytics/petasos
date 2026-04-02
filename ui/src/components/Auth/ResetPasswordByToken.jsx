@@ -19,7 +19,7 @@ const ResetPasswordByEmail = props => {
       const token = parse(window.location.href, true).query.token;
       onPasswordReset(token);
     }
-  }, []);
+  }, [onPasswordReset]);
 
   return (
     <div className={styles.container}>
