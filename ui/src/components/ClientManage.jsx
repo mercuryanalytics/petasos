@@ -420,7 +420,7 @@ const ClientManage = props => {
       }
 
     }
-  }, [usersTab]);
+  }, [isTablet]);
 
   const renderAvatarUploader = (centered, preview) => {
     const avatarUrl = !!avatar && !avatarErrors ? avatar.dataURL : (

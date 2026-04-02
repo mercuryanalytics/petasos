@@ -93,7 +93,7 @@ const Screen = props => {
     if (history.location.pathname !== '/') {
       setShowSideMenu(!showSideMenu)
     }
-  }, [showSideMenu]);
+  }, [showSideMenu, history.location.pathname]);
 
   const handleSideMenuLoad = useCallback((emptyState) => {
     setRealEmptyState(emptyState);

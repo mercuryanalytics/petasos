@@ -9,7 +9,7 @@ import Tooltip from './common/Tooltip';
 import {Checkbox, Input, Validators} from './FormFields';
 import { File, Folder, InfoStroke } from './Icons';
 import { MdPlayArrow, MdFilterList } from 'react-icons/md';
-import { getClients, getClient, getClientsFromSA } from '../store/clients/actions';
+import { getClient, getClientsFromSA } from '../store/clients/actions';
 import { getProjects } from '../store/projects/actions';
 import { getReports } from '../store/reports/actions';
 import {

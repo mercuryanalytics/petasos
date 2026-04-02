@@ -194,7 +194,7 @@ const UserActions = props => {
     dispatch(authorizeUser(itemId, parentId, authorizedOptions, { authorize: status }, context))
       .then(() => {}, () => {});
     setActiveStates(prev => ({ ...prev, [`${parentId}-${itemId}`]: status }));
-  }, [authorizedOptions, dispatch]);
+  }, [authorizedOptions, dispatch, context]);
 
   const grantAll = useCallback((id, event) => {
     users.forEach(user => {
