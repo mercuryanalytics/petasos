@@ -1,64 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Datepicker.module.css';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { Calendar } from '../Icons';
+import React, { useState, useEffect } from "react"
+import styles from "./Datepicker.module.css"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { Calendar } from "../Icons"
 
 const Datepicker = props => {
-  const { field, preview, label, disabled, placeholder } = props;
-  const [value, setValue] = useState(new Date());
-  const [isOpen, setIsOpen] = useState(false);
+  const { field, preview, label, disabled, placeholder } = props
+  const [value, setValue] = useState(new Date())
+  const [isOpen, setIsOpen] = useState(false)
   const classes = `
     ${styles.container}
-    ${props.className || ''}
-    ${isOpen ? styles.open : ''}
-    ${disabled ? styles.disabled : ''}
-  `;
+    ${props.className || ""}
+    ${isOpen ? styles.open : ""}
+    ${disabled ? styles.disabled : ""}
+  `
 
-  const togglePicker = (event) => {
+  const togglePicker = event => {
     if (!disabled) {
-      setIsOpen(!isOpen);
+      setIsOpen(!isOpen)
     }
-    event.stopPropagation();
-  };
+    event.stopPropagation()
+  }
 
-  const handleChange = (date) => {
-    setValue(date || new Date());
-    setIsOpen(false);
+  const handleChange = date => {
+    setValue(date || new Date())
+    setIsOpen(false)
     if (field) {
-      field.input.onChange((date || new Date()).toString());
+      field.input.onChange((date || new Date()).toString())
     }
-  };
+  }
 
   useEffect(() => {
     if (field.input.value.length) {
-      setValue(new Date(field.input.value));
+      setValue(new Date(field.input.value))
     } else {
-      setValue(null);
+      setValue(null)
     }
-  }, [field.input.value]);
+  }, [field.input.value])
 
   return (
     <div data-field data-field-preview={preview} className={classes}>
-      {!!label && (
-        <label data-field-label>{label}</label>
-      )}
+      {!!label && <label data-field-label>{label}</label>}
       {!preview ? (
         <div className={styles.controlWrapper}>
           <DatePicker
             className={styles.control}
             wrapperClassName={styles.pickerWrapper}
-            popperPlacement={'top-end'}
+            popperPlacement={"top-end"}
             popperClassName={styles.picker}
-            customInput={
-              <input
-                {...field.input}
-                disabled={!!disabled}
-                placeholder={placeholder}
-              />
-            }
+            customInput={<input {...field.input} disabled={!!disabled} placeholder={placeholder} />}
             selected={value}
-            dateFormat={'EEEE, MMMM dd, yyyy'}
+            dateFormat={"EEEE, MMMM dd, yyyy"}
             {...(!!props.maxToday ? { maxDate: new Date() } : {})}
             disabled={!!disabled}
             open={isOpen}
@@ -70,19 +62,22 @@ const Datepicker = props => {
         </div>
       ) : (
         <span className={styles.preview}>
-          {field.input.value !== '' ? new Date(field.input.value).toLocaleDateString(
-            undefined,
-            { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-            ) : 'N/A'}
+          {field.input.value !== ""
+            ? new Date(field.input.value).toLocaleDateString(undefined, {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              })
+            : "N/A"}
         </span>
       )}
-      {!!field && !preview && (
-        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
-      ) && field.meta.error && (
-        <div className={styles.error}>{field.meta.error}</div>
-      )}
+      {!!field &&
+        !preview &&
+        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
+        field.meta.error && <div className={styles.error}>{field.meta.error}</div>}
     </div>
-  );
-};
+  )
+}
 
-export default Datepicker;
+export default Datepicker

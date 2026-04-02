@@ -18,7 +18,7 @@
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
   background-color: #fff;
 }
 
@@ -27,7 +27,7 @@
   flex-direction: column;
   align-items: center;
   padding: 24px 0 20px 0;
-  background-color: #FBFBFD;
+  background-color: #fbfbfd;
   user-select: none;
 }
 
@@ -62,9 +62,9 @@
 }
 
 .errors span {
-  color: #B60010;
-  font-size: .8rem;
-  line-height: .95rem;
+  color: #b60010;
+  font-size: 0.8rem;
+  line-height: 0.95rem;
 }
 
 .errors span:not(:first-child) {
@@ -86,8 +86,8 @@
 
 .success span {
   color: #333330;
-  font-size: .8rem;
-  line-height: .95rem;
+  font-size: 0.8rem;
+  line-height: 0.95rem;
 }
 
 .buttons {

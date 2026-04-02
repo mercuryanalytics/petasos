@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgNoGlobe(props) {
   return (
@@ -9,14 +9,9 @@ function SvgNoGlobe(props) {
           id="NoGlobe_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#NoGlobe_svg__a"
-        transform="translate(-335 -134)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#NoGlobe_svg__a" transform="translate(-335 -134)" />
     </svg>
-  );
+  )
 }
 
-export default SvgNoGlobe;
+export default SvgNoGlobe

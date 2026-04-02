@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgGlobe(props) {
   return (
@@ -9,14 +9,9 @@ function SvgGlobe(props) {
           id="Globe_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#Globe_svg__a"
-        transform="translate(-291 -133)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#Globe_svg__a" transform="translate(-291 -133)" />
     </svg>
-  );
+  )
 }
 
-export default SvgGlobe;
+export default SvgGlobe

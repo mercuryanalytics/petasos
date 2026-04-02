@@ -36,18 +36,18 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -.4rem;
-  margin-left: -.4rem;
-  font-size: .8rem;
+  margin-top: -0.4rem;
+  margin-left: -0.4rem;
+  font-size: 0.8rem;
 }
 
 .container:not(.disabled):hover .toggle {
-  border-color: #A0A0A0;
+  border-color: #a0a0a0;
 }
 
 .container:not(.disabled) input:checked ~ .toggle {
-  border-color: #0D7997;
-  background-color: #0D7997;
+  border-color: #0d7997;
+  background-color: #0d7997;
   color: #fff;
 }
 
@@ -58,12 +58,12 @@
 .label {
   display: inline-block;
   margin-left: 10px;
-  font-size: .75rem;
+  font-size: 0.75rem;
   color: #333;
 }
 
 .error {
-  margin-top: .3rem;
-  color: #B60010;
-  font-size: .75rem;
+  margin-top: 0.3rem;
+  color: #b60010;
+  font-size: 0.75rem;
 }

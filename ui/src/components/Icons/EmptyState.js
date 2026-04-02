@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgEmptyState(props) {
   return (
@@ -19,22 +19,14 @@ function SvgEmptyState(props) {
             <mask id="EmptyState_svg__b" fill="#fff">
               <use xlinkHref="#EmptyState_svg__a" />
             </mask>
-            <use
-              fill="#12BAC5"
-              fillRule="nonzero"
-              xlinkHref="#EmptyState_svg__a"
-            />
+            <use fill="#12BAC5" fillRule="nonzero" xlinkHref="#EmptyState_svg__a" />
             <g mask="url(#EmptyState_svg__b)" fill="#333">
               <path d="M-90-122h256v256H-90z" />
             </g>
           </g>
           <circle fill="#333" cx={30.5} cy={54.5} r={2.5} />
           <circle fill="#333" cx={65.5} cy={54.5} r={2.5} />
-          <path
-            d="M37 65.883c3.707-1.333 7.374-2 11-2 3.626 0 7.293.667 11 2"
-            stroke="#333"
-            strokeWidth={2}
-          />
+          <path d="M37 65.883c3.707-1.333 7.374-2 11-2 3.626 0 7.293.667 11 2" stroke="#333" strokeWidth={2} />
         </g>
         <path
           stroke="#333"
@@ -47,22 +39,14 @@ function SvgEmptyState(props) {
             <mask id="EmptyState_svg__d" fill="#fff">
               <use xlinkHref="#EmptyState_svg__c" />
             </mask>
-            <use
-              fill="#12BAC5"
-              fillRule="nonzero"
-              xlinkHref="#EmptyState_svg__c"
-            />
+            <use fill="#12BAC5" fillRule="nonzero" xlinkHref="#EmptyState_svg__c" />
             <g mask="url(#EmptyState_svg__d)" fill="#333">
               <path d="M-100-112h256v256h-256z" />
             </g>
           </g>
           <circle fill="#333" cx={38.5} cy={45.5} r={2.5} />
           <circle fill="#333" cx={57.5} cy={45.5} r={2.5} />
-          <path
-            d="M41 59.883c2.36-1.333 4.692-2 7-2s4.64.667 7 2"
-            stroke="#333"
-            strokeWidth={2}
-          />
+          <path d="M41 59.883c2.36-1.333 4.692-2 7-2s4.64.667 7 2" stroke="#333" strokeWidth={2} />
         </g>
         <circle stroke="#333" opacity={0.2} cx={134} cy={34} r={4.5} />
         <circle stroke="#333" opacity={0.2} cx={73} cy={46.5} r={3} />
@@ -75,7 +59,7 @@ function SvgEmptyState(props) {
         <circle stroke="#333" opacity={0.2} cx={79.5} cy={115.5} r={3} />
       </g>
     </svg>
-  );
+  )
 }
 
-export default SvgEmptyState;
+export default SvgEmptyState

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgFolder(props) {
   return (
@@ -9,14 +9,9 @@ function SvgFolder(props) {
           id="Folder_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#Folder_svg__a"
-        transform="translate(-663 -136)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#Folder_svg__a" transform="translate(-663 -136)" />
     </svg>
-  );
+  )
 }
 
-export default SvgFolder;
+export default SvgFolder

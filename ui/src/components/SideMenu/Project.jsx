@@ -1,70 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Project.module.css';
-import Routes from '../../utils/routes';
-import { Link } from 'react-router-dom';
-import { MdPlayArrow } from 'react-icons/md';
-import { Folder } from '../Icons';
-import Loader from '../common/Loader';
-import Report from './Report';
-import ReportAdd from './ReportAdd';
+import React, { useState, useEffect } from "react"
+import styles from "./Project.module.css"
+import Routes from "../../utils/routes"
+import { Link } from "react-router-dom"
+import { MdPlayArrow } from "react-icons/md"
+import { Folder } from "../Icons"
+import Loader from "../common/Loader"
+import Report from "./Report"
+import ReportAdd from "./ReportAdd"
 
 const Project = props => {
-  const { data, reports, open, loaded, isSearching, filteredProjects, filteredReports } = props;
-  const [isTouched, setIsTouched] = useState(false);
-  const [isOpen, setIsOpen] = useState(!!open);
+  const { data, reports, open, loaded, isSearching, filteredProjects, filteredReports } = props
+  const [isTouched, setIsTouched] = useState(false)
+  const [isOpen, setIsOpen] = useState(!!open)
 
   useEffect(() => {
     if (isOpen) {
       if (!isTouched) {
-        setIsTouched(true);
+        setIsTouched(true)
       } else if (props.onOpen) {
-        props.onOpen(data);
+        props.onOpen(data)
       }
     } else if (props.onClose && isTouched) {
-      props.onClose(data);
+      props.onClose(data)
     }
-  // eslint-disable-next-line
-  }, [isOpen]);
+    // eslint-disable-next-line
+  }, [isOpen])
 
   useEffect(() => {
     if (!!open !== isOpen) {
-      setIsOpen(!!open);
+      setIsOpen(!!open)
     }
-  // eslint-disable-next-line
-  }, [open]);
+    // eslint-disable-next-line
+  }, [open])
 
-  const toggleOpen = (event) => {
-    setIsTouched(true);
-    setIsOpen(!isOpen);
-    event.stopPropagation();
-    event.preventDefault();
-  };
+  const toggleOpen = event => {
+    setIsTouched(true)
+    setIsOpen(!isOpen)
+    event.stopPropagation()
+    event.preventDefault()
+  }
 
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAdding, setIsAdding] = useState(false)
 
   useEffect(() => {
-    setIsAdding(props.isActiveAddLink && props.active);
-  }, [props.active, props.isActiveAddLink]);
+    setIsAdding(props.isActiveAddLink && props.active)
+  }, [props.active, props.isActiveAddLink])
 
   return (
     <div
-      style={isSearching && !filteredProjects[data.id] ? { display: 'none' } : {}}
-      className={`${styles.container} ${props.active && !isAdding ? styles.active : ''}`}
+      style={isSearching && !filteredProjects[data.id] ? { display: "none" } : {}}
+      className={`${styles.container} ${props.active && !isAdding ? styles.active : ""}`}
       id={`sidemenu-project-${data.id}`}
     >
-      <Link className={styles.title} to={Routes.ManageProject.replace(':id', data.id)} title={data.name}>
-        <MdPlayArrow
-          className={`${styles.arrow} ${isOpen ? styles.open : ''}`}
-          onClick={toggleOpen}
-        />
+      <Link className={styles.title} to={Routes.ManageProject.replace(":id", data.id)} title={data.name}>
+        <MdPlayArrow className={`${styles.arrow} ${isOpen ? styles.open : ""}`} onClick={toggleOpen} />
         <Folder className={styles.icon} />
-        <span className={styles.name}>{data.project_number ? data.project_number + ': ' : ''}{data.name}</span>
+        <span className={styles.name}>
+          {data.project_number ? data.project_number + ": " : ""}
+          {data.name}
+        </span>
       </Link>
       {isOpen && (
         <div className={styles.content}>
-          {!!props.canCreateReports[data.id] && (
-              <ReportAdd projectId={data.id} active={isAdding} />
-          )}
+          {!!props.canCreateReports[data.id] && <ReportAdd projectId={data.id} active={isAdding} />}
           {!!reports && !!reports.length ? (
             reports.map(report => (
               <Report
@@ -75,17 +73,15 @@ const Project = props => {
                 filteredReports={filteredReports}
               />
             ))
+          ) : !loaded ? (
+            <Loader inline className={styles.loader} />
           ) : (
-            !loaded ? (
-              <Loader inline className={styles.loader} />
-            ) : (
-              <div className={styles.noResults}>No results</div>
-            )
+            <div className={styles.noResults}>No results</div>
           )}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Project;
+export default Project

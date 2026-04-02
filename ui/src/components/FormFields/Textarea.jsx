@@ -1,47 +1,39 @@
-import React, { useEffect } from 'react';
-import styles from './Textarea.module.css';
+import React, { useEffect } from "react"
+import styles from "./Textarea.module.css"
 
 const Textarea = props => {
-  const { field, preview, label, disabled, placeholder } = props;
+  const { field, preview, label, disabled, placeholder } = props
   const classes = `
     ${styles.container}
-    ${props.className || ''}
-    ${disabled ? styles.disabled : ''}
-  `;
+    ${props.className || ""}
+    ${disabled ? styles.disabled : ""}
+  `
 
   useEffect(() => {
-    if (typeof props.value !== 'undefined') {
+    if (typeof props.value !== "undefined") {
       try {
-        field.input.onChange(props.value);
+        field.input.onChange(props.value)
       } catch (e) {}
     }
-  // eslint-disable-next-line
-  }, [props.value]);
+    // eslint-disable-next-line
+  }, [props.value])
 
   return (
     <div data-field data-field-preview={preview} className={classes}>
-      {!!label && (
-        <label data-field-label>{label}</label>
-      )}
+      {!!label && <label data-field-label>{label}</label>}
       {!preview ? (
-        <textarea
-          {...field.input}
-          className={styles.control}
-          disabled={!!disabled}
-          placeholder={placeholder}
-        />
+        <textarea {...field.input} className={styles.control} disabled={!!disabled} placeholder={placeholder} />
       ) : (
         <span data-field-value className={styles.preview}>
-          {field.input.value !== '' ? field.input.value : 'N/A'}
+          {field.input.value !== "" ? field.input.value : "N/A"}
         </span>
       )}
-      {!!field && !preview && (
-        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
-      ) && field.meta.error && (
-        <div className={styles.error}>{field.meta.error}</div>
-      )}
+      {!!field &&
+        !preview &&
+        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
+        field.meta.error && <div className={styles.error}>{field.meta.error}</div>}
     </div>
-  );
-};
+  )
+}
 
-export default Textarea;
+export default Textarea
