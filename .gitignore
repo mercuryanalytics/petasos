@@ -12,3 +12,5 @@ sandbox
 
 buildspec.yml
 .worktrees/
+
+docs/superpowers/

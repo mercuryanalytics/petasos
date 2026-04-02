@@ -27,12 +27,14 @@
     "build": "REACT_APP_VERSION=$(git rev-parse HEAD) react-scripts build",
     "test": "REACT_APP_VERSION=$(git rev-parse HEAD) react-scripts test",
     "eject": "react-scripts eject",
+    "lint": "eslint src/ --ext .js,.jsx",
+    "format": "prettier --write src/",
     "sync": "aws s3 sync build/ s3://$BUCKET_NAME",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
     "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": ["react-app", "plugin:prettier/recommended"]
   },
   "browserslist": {
     "production": [
@@ -45,5 +47,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8",
+    "eslint-plugin-prettier": "^3",
+    "prettier": "^2"
   }
 }
