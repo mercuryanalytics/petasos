@@ -4,7 +4,7 @@
   position: relative;
   margin: 0 0 0 30px;
   border-radius: 5px 0 0 0;
-  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
   background-color: #fff;
 }
 
@@ -21,12 +21,12 @@
 }
 
 .actions > :not(:first-child) {
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
 
 .actions .deleteIcon {
   font-size: 1.3rem;
-  margin-right: .2rem;
+  margin-right: 0.2rem;
 }
 
 .section {
@@ -45,8 +45,8 @@
   max-width: 400px;
   height: 100%;
   box-sizing: border-box;
-  border-left: 1px solid #F0F0F0;
-  background-color: #FBFBFD;
+  border-left: 1px solid #f0f0f0;
+  background-color: #fbfbfd;
 }
 
 .section.right .grantActions {
@@ -76,11 +76,11 @@
 }
 
 .section .form [data-field-preview="true"] [data-field-label] {
-  font-size: .8125rem !important;
+  font-size: 0.8125rem !important;
 }
 
 .section .form [data-field-preview="true"] [data-field-value] {
-  font-size: .875rem !important;
+  font-size: 0.875rem !important;
 }
 
 .section .form .formControl {

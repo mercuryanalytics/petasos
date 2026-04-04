@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgUpload(props) {
   return (
@@ -9,14 +9,9 @@ function SvgUpload(props) {
           id="Upload_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#Upload_svg__a"
-        transform="translate(-164 -135)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#Upload_svg__a" transform="translate(-164 -135)" />
     </svg>
-  );
+  )
 }
 
-export default SvgUpload;
+export default SvgUpload

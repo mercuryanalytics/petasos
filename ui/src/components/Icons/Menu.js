@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgMenu(props) {
   return (
@@ -9,14 +9,9 @@ function SvgMenu(props) {
           id="Menu_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        xlinkHref="#Menu_svg__a"
-        transform="translate(-581 -141)"
-        fillRule="evenodd"
-      />
+      <use fill="currentColor" xlinkHref="#Menu_svg__a" transform="translate(-581 -141)" fillRule="evenodd" />
     </svg>
-  );
+  )
 }
 
-export default SvgMenu;
+export default SvgMenu

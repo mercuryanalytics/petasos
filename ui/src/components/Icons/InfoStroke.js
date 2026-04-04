@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgInfoStroke(props) {
   return (
@@ -9,7 +9,7 @@ function SvgInfoStroke(props) {
         fillRule="nonzero"
       />
     </svg>
-  );
+  )
 }
 
-export default SvgInfoStroke;
+export default SvgInfoStroke

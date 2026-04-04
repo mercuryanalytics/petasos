@@ -15,12 +15,12 @@
 }
 
 .actions > :not(:first-child) {
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
 
 .actions .deleteIcon {
   font-size: 1.3rem;
-  margin-right: .2rem;
+  margin-right: 0.2rem;
 }
 
 .actions .view {
@@ -35,21 +35,21 @@
   user-select: none;
   border-radius: 4px 4px 0 0;
   overflow: hidden;
-  box-shadow: 0px -5px 14px -6px rgba(0,0,0,0.09);
+  box-shadow: 0px -5px 14px -6px rgba(0, 0, 0, 0.09);
 }
 
 .tab {
   padding: 1rem 36px;
-  background-color: #F1F1F1;
+  background-color: #f1f1f1;
   cursor: pointer;
-  font-size: .875rem;
+  font-size: 0.875rem;
   font-weight: bold;
   color: #333;
   white-space: nowrap;
 }
 
 .tab:not(:first-child) {
-  border-left: 1px solid #DEDEDE;
+  border-left: 1px solid #dedede;
 }
 
 .tab.active + .tab {
@@ -60,7 +60,7 @@
   border-color: transparent;
   border-radius: 4px 4px 0 0;
   background-color: #fff;
-  color: #0D7997;
+  color: #0d7997;
 }
 
 .tab:not(.active):hover {
@@ -74,7 +74,7 @@
   background-color: #fff;
   padding: 2rem;
   box-sizing: border-box;
-  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
 }
 
 .container.noTabs .section {
@@ -112,7 +112,7 @@
 
 .section .textBlock {
   margin-bottom: 2rem;
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 20px;
 }
 
@@ -171,11 +171,11 @@
 }
 
 .section .form [data-field-preview="true"] [data-field-label] {
-  font-size: .8125rem !important;
+  font-size: 0.8125rem !important;
 }
 
 .section .form [data-field-preview="true"] [data-field-value] {
-  font-size: .875rem !important;
+  font-size: 0.875rem !important;
 }
 
 .section .form .formSection {
@@ -238,8 +238,8 @@
   max-width: 310px;
   padding: 2rem;
   box-sizing: border-box;
-  border-right: 1px solid #F0F0F0;
-  background-color: #FBFBFD;
+  border-right: 1px solid #f0f0f0;
+  background-color: #fbfbfd;
 }
 
 .section.details .navigate .navigateLinks {
@@ -256,12 +256,12 @@
   color: #333;
   font-weight: bold;
   cursor: default;
-  opacity: .5;
+  opacity: 0.5;
   white-space: nowrap;
 }
 
 .section.details .navigate .navigateLinks div.active span {
-  color: #0D7997;
+  color: #0d7997;
   opacity: 1;
 }
 
@@ -307,7 +307,7 @@
   height: 82px;
   border-radius: 50%;
   box-sizing: border-box;
-  border: 1px solid #DFDFDF;
+  border: 1px solid #dfdfdf;
   background-color: #fff;
   overflow: hidden;
 }
@@ -325,8 +325,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #F7F7F7;
-  opacity: .6;
+  background-color: #f7f7f7;
+  opacity: 0.6;
   cursor: pointer;
 }
 
@@ -348,7 +348,7 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  color: #0C7997;
+  color: #0c7997;
   cursor: pointer;
 }
 
@@ -367,8 +367,8 @@
   height: 100%;
   padding: 2rem;
   box-sizing: border-box;
-  border-left: 1px solid #F0F0F0;
-  background-color: #FBFBFD;
+  border-left: 1px solid #f0f0f0;
+  background-color: #fbfbfd;
 }
 
 .section.details .grant .grantActions {
@@ -386,7 +386,7 @@
   max-width: 325px;
   height: 100%;
   padding: 0 2rem 2rem 2rem;
-  border-right: 1px solid #F0F0F0;
+  border-right: 1px solid #f0f0f0;
   box-sizing: border-box;
 }
 
@@ -433,7 +433,7 @@
 .accountsTabs .template {
   margin: 0 -2rem;
   padding: 19px 32px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
   height: 55px;
   box-sizing: border-box;
   user-select: none;
@@ -444,20 +444,20 @@
   margin: -9px -10px;
   padding: 9px 10px;
   border-radius: 14px;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   line-height: 17px;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .accountsTabs .template:not(.active) span:hover {
-  background-color: #EFEFEF;
+  background-color: #efefef;
 }
 
 .accountsTabs .template.active span {
-  background-color: #0D7997;
+  background-color: #0d7997;
   color: #fff;
 }
 
@@ -468,7 +468,7 @@
   height: 65px;
   padding: 1rem 2rem 0 2rem;
   box-sizing: border-box;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
   user-select: none;
 }
 
@@ -500,7 +500,7 @@
 }
 
 .innerTab.active {
-  color: #0D7997;
+  color: #0d7997;
 }
 
 .innerTab.active::after {
@@ -510,7 +510,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #0D7997;
+  background-color: #0d7997;
 }
 
 .innerContent {
@@ -532,8 +532,8 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .875rem;
-  color: #A9A9A9;
+  font-size: 0.875rem;
+  color: #a9a9a9;
 }
 
 .container_over {
@@ -545,7 +545,7 @@
 }
 
 .avatarError {
-  margin-top: .3rem;
-  color: #B60010;
-  font-size: .75rem
+  margin-top: 0.3rem;
+  color: #b60010;
+  font-size: 0.75rem;
 }

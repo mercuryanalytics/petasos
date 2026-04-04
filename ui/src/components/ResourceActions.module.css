@@ -9,7 +9,7 @@
 
 .globals {
   height: 86px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
   margin-bottom: 25px;
   padding-bottom: 25px;
   box-sizing: border-box;
@@ -44,7 +44,7 @@
   display: flex;
   align-items: center;
   padding-bottom: 10px;
-  color: #0C7997;
+  color: #0c7997;
   cursor: default;
 }
 
@@ -55,7 +55,7 @@
 
 .filter .trigger .triggerTitle {
   margin-right: 6px;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   white-space: nowrap;
 }
 
@@ -66,10 +66,10 @@
   border-radius: 50%;
   text-align: center;
   color: #fff;
-  font-size: .75rem;
+  font-size: 0.75rem;
   line-height: 21px;
   font-weight: normal;
-  background-color: #0C7997;
+  background-color: #0c7997;
 }
 
 .filter .items {
@@ -82,7 +82,7 @@
   box-sizing: border-box;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
 }
 
 .filter .items .controls {
@@ -100,9 +100,9 @@
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
 }
 
 .filter .items .itemRow label {
@@ -113,7 +113,7 @@
 }
 
 .filter .items .itemRow:hover label {
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 
 .resources {
@@ -140,7 +140,7 @@
 }
 
 .arrow {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   font-size: 1.2rem;
   color: #333;
 }
@@ -175,7 +175,7 @@
 .client > .title .logo {
   width: 1.75rem;
   height: 1.75rem;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
 .client > .title .name {
@@ -202,7 +202,7 @@
 }
 
 .client > .title:hover {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   color: #000;
 }
 
@@ -228,7 +228,7 @@
 }
 
 .project > .title .icon {
-  margin: .125rem .5rem .125rem 0;
+  margin: 0.125rem 0.5rem 0.125rem 0;
   font-size: 1.6rem;
   color: #333;
 }
@@ -239,7 +239,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 1.3rem;
   color: #333;
 }
@@ -249,7 +249,7 @@
 }
 
 .project > .title:hover {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   color: #000;
 }
 
@@ -271,13 +271,13 @@
 }
 
 .report > .title .icon {
-  margin: .125rem .5rem .125rem .8rem;
+  margin: 0.125rem 0.5rem 0.125rem 0.8rem;
   font-size: 1.2rem;
   color: #333;
 }
 
 .report.orphan > .title .icon {
-  margin-left: .4rem;
+  margin-left: 0.4rem;
 }
 
 .report > .title .name {
@@ -286,7 +286,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 1.3rem;
   color: #333;
 }
@@ -296,7 +296,7 @@
 }
 
 .report > .title:hover {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   color: #000;
 }
 
@@ -310,7 +310,7 @@
 }
 
 [data-checkbox-label] {
-  font-size: .875rem;
+  font-size: 0.875rem;
   font-weight: normal;
 }
 
@@ -324,7 +324,8 @@
   margin-left: 300px;
 }
 
-.checkboxesTitles .checkboxTitle.separator, .itemCheckbox.separator {
+.checkboxesTitles .checkboxTitle.separator,
+.itemCheckbox.separator {
   margin-left: 80px;
 }
 
@@ -336,14 +337,14 @@
   top: 0;
   width: 0px;
   height: 100%;
-  border-left: 1px dashed #F37646;
+  border-left: 1px dashed #f37646;
 }
 
 .checkboxTitle > div {
   position: relative;
   padding-right: 26px;
   text-align: right;
-  font-size: .8125rem;
+  font-size: 0.8125rem;
   color: #333;
 }
 
@@ -362,7 +363,7 @@
 }
 
 .checkboxTitle > svg {
-  color: #0C7997;
+  color: #0c7997;
 }
 
 .checkboxTitle .tooltip {
@@ -378,7 +379,7 @@
 
 .checkboxTitle .tooltip .title {
   margin: 15px 0 0px 0;
-  font-size: .85rem;
+  font-size: 0.85rem;
   font-weight: bold;
 }
 
@@ -389,7 +390,7 @@
 .checkboxTitle .tooltip .item {
   position: relative;
   display: block;
-  font-size: .8rem;
+  font-size: 0.8rem;
   margin: 5px 0 5px 20px;
 }
 
@@ -410,12 +411,15 @@
   font-size: 1rem;
 }
 
-.globalCheckboxes > *:not(.local) [data-checked], .itemCheckbox.scoped [data-checked] {
-  border-color: #F37646 !important;
-  background-color: #F37646 !important;
+.globalCheckboxes > *:not(.local) [data-checked],
+.itemCheckbox.scoped [data-checked] {
+  border-color: #f37646 !important;
+  background-color: #f37646 !important;
 }
 
-.itemCheckbox, .itemToggle, .checkboxesTitles .checkboxTitle {
+.itemCheckbox,
+.itemToggle,
+.checkboxesTitles .checkboxTitle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -424,7 +428,8 @@
   max-width: 70px;
 }
 
-.itemCheckbox.scoped, .checkboxesTitles .checkboxTitle.scoped {
+.itemCheckbox.scoped,
+.checkboxesTitles .checkboxTitle.scoped {
   width: 70px;
   min-width: 70px;
   max-width: 70px;
@@ -468,8 +473,8 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .875rem;
-  color: #A9A9A9;
+  font-size: 0.875rem;
+  color: #a9a9a9;
 }
 
 .noResults.left {
@@ -483,12 +488,12 @@
 
 .modalText {
   margin-bottom: 25px;
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
 .modalTextError {
   margin-bottom: 25px;
-  font-size: .85rem;
+  font-size: 0.85rem;
   color: red;
 }
 
@@ -521,12 +526,12 @@
 }
 
 .labelModal {
-  display:flex;
+  display: flex;
   margin-top: 15px;
 }
 
 .nonClickable {
-  background-color: rgba(100,100,100, 0.6);
+  background-color: rgba(100, 100, 100, 0.6);
   z-index: 100;
   width: 100%;
   height: 100%;

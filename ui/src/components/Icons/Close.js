@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgClose(props) {
   return (
@@ -9,14 +9,9 @@ function SvgClose(props) {
           id="Close_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        transform="rotate(45 401.874 -481.976)"
-        xlinkHref="#Close_svg__a"
-        fillRule="evenodd"
-      />
+      <use fill="currentColor" transform="rotate(45 401.874 -481.976)" xlinkHref="#Close_svg__a" fillRule="evenodd" />
     </svg>
-  );
+  )
 }
 
-export default SvgClose;
+export default SvgClose

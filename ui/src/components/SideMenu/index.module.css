@@ -28,8 +28,8 @@
 .orphansSeparator {
   margin: 15px 10px 15px 10px;
   padding: 20px 0 0 0;
-  border-top: 1px solid #E0E0E0;
-  font-size: .75rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.75rem;
   color: #333;
 }
 
@@ -50,6 +50,6 @@
   display: block;
   margin-bottom: 18px;
   text-align: center;
-  font-size: .875rem;
-  color: #A9A9A9;
+  font-size: 0.875rem;
+  color: #a9a9a9;
 }

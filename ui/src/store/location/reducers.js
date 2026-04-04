@@ -5,22 +5,22 @@ const initialState = {
     client: null,
     project: null,
     report: null,
-    superUser: null,
-  },
-};
+    superUser: null
+  }
+}
 
 const locationReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_LOCATION_DATA': {
+    case "SET_LOCATION_DATA": {
       return {
         ...state,
-        data: { ...initialState.data, ...action.payload },
-      };
+        data: { ...initialState.data, ...action.payload }
+      }
     }
     default: {
-      return state;
+      return state
     }
   }
-};
+}
 
-export default locationReducer;
+export default locationReducer

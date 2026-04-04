@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgSuperUser(props) {
   return (
@@ -9,7 +9,7 @@ function SvgSuperUser(props) {
         fillRule="evenodd"
       />
     </svg>
-  );
+  )
 }
 
-export default SvgSuperUser;
+export default SvgSuperUser

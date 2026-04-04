@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgInfoFill(props) {
   return (
@@ -9,14 +9,9 @@ function SvgInfoFill(props) {
           id="InfoFill_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#InfoFill_svg__a"
-        transform="translate(-777 -133)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#InfoFill_svg__a" transform="translate(-777 -133)" />
     </svg>
-  );
+  )
 }
 
-export default SvgInfoFill;
+export default SvgInfoFill
