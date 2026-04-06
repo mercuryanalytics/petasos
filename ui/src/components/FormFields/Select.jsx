@@ -1,72 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Select.module.css';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import React, { useState, useEffect } from "react"
+import styles from "./Select.module.css"
+import { MdKeyboardArrowDown } from "react-icons/md"
 
 const Select = props => {
-  const { field, preview, options, label, disabled, placeholder } = props;
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const { field, preview, options, label, disabled, placeholder } = props
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState(null)
   const classes = `
     ${styles.container}
-    ${props.className || ''}
-    ${isOpen ? styles.open : ''}
-    ${disabled ? styles.disabled : ''}
-  `;
+    ${props.className || ""}
+    ${isOpen ? styles.open : ""}
+    ${disabled ? styles.disabled : ""}
+  `
 
   useEffect(() => {
-    if (typeof props.value !== 'undefined') {
+    if (typeof props.value !== "undefined") {
       try {
-        field.input.onChange(props.value);
+        field.input.onChange(props.value)
       } catch (e) {}
     }
-  // eslint-disable-next-line
-  }, [props.value]);
+    // eslint-disable-next-line
+  }, [props.value])
 
   useEffect(() => {
     if (field) {
       for (let i = 0; i < options.length; i++) {
         if (options[i].value === field.input.value) {
-          setSelectedOption(options[i]);
-          return;
+          setSelectedOption(options[i])
+          return
         }
       }
     }
-    setSelectedOption(null);
-  // eslint-disable-next-line
-  }, [field]);
+    setSelectedOption(null)
+    // eslint-disable-next-line
+  }, [field])
 
   const handleToggle = () => {
     if (!disabled) {
-      setIsOpen(!isOpen);
+      setIsOpen(!isOpen)
     }
-  };
+  }
 
-  const handleChange = (option) => {
-    setSelectedOption(option);
-    setIsOpen(false);
+  const handleChange = option => {
+    setSelectedOption(option)
+    setIsOpen(false)
     if (field) {
-      field.input.onChange(option.value);
+      field.input.onChange(option.value)
     }
-  };
+  }
 
   return (
     <div data-field data-field-preview={preview} className={classes}>
-      {!!label && (
-        <label data-field-label>{label}</label>
-      )}
+      {!!label && <label data-field-label>{label}</label>}
       {!preview ? (
         <div className={styles.controlWrapper}>
-          <select {...field.input} disabled={!!disabled} style={{ display: 'none' }}>
-            {!!options && !!options.length && options.map((option, i) => (
-              <option key={i} value={option.value}/>
-            ))}
+          <select {...field.input} disabled={!!disabled} style={{ display: "none" }}>
+            {!!options && !!options.length && options.map((option, i) => <option key={i} value={option.value} />)}
           </select>
           <div className={styles.control}>
             <div className={styles.trigger} onClick={handleToggle}>
               {!!selectedOption ? (
                 <span>{selectedOption.text}</span>
               ) : (
-                <span className={styles.placeholder}>{placeholder || 'Select...'}</span>
+                <span className={styles.placeholder}>{placeholder || "Select..."}</span>
               )}
               <MdKeyboardArrowDown className={styles.triggerIcon} />
             </div>
@@ -91,16 +87,15 @@ const Select = props => {
         </div>
       ) : (
         <span data-field-value className={styles.preview}>
-          {selectedOption ? selectedOption.text : 'N/A'}
+          {selectedOption ? selectedOption.text : "N/A"}
         </span>
       )}
-      {!!field && !preview && (
-        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
-      ) && field.meta.error && (
-        <div className={styles.error}>{field.meta.error}</div>
-      )}
+      {!!field &&
+        !preview &&
+        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
+        field.meta.error && <div className={styles.error}>{field.meta.error}</div>}
     </div>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select

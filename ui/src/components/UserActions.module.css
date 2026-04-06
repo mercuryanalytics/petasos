@@ -22,9 +22,9 @@
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
 }
 
 .permissions {
@@ -62,12 +62,12 @@
 
 .permissions .group .groupTitle:hover,
 .permissions .group .groupTitle.active {
-  background-color: #0C7997;
+  background-color: #0c7997;
   color: #fff;
 }
 
 .permissions .group .groupTitle .arrow {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   font-size: 1.2rem;
   color: #333;
 }
@@ -120,7 +120,7 @@
   padding: 8px 20px;
   border-radius: 4px;
   background-color: #fff;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   cursor: default;
 }
@@ -140,16 +140,15 @@
   border-radius: 10px;
   box-sizing: content-box;
   background-color: transparent;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
   text-align: left;
 }
 
 .permissions .group .groupTitle .settings button:hover {
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
-
 
 .permissions .group .items .item {
   display: flex;
@@ -165,12 +164,12 @@
 }
 
 .permissions .group .items .item.selectedItem {
-  background-color: #0C7997;
+  background-color: #0c7997;
   color: #fff;
 }
 
 .permissions .group .items .item:not(.selectedItem):hover {
-  background-color: #EFEFEF;
+  background-color: #efefef;
   color: #000;
 }
 
@@ -180,18 +179,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .875rem;
-  padding: .6rem .6rem .6rem 0;
+  font-size: 0.875rem;
+  padding: 0.6rem 0.6rem 0.6rem 0;
 }
 
 .permissions .group .items .item .itemStatus {
   font-size: 1.2rem;
   cursor: pointer;
-  color: #B60010;
+  color: #b60010;
 }
 
 .permissions .group .items .item .itemStatus.success {
-  color: #1EBE5A;
+  color: #1ebe5a;
 }
 
 .modal {
@@ -200,7 +199,7 @@
 
 .modalText {
   margin-bottom: 25px;
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
 .modalInput {
@@ -211,7 +210,8 @@
   margin-bottom: 8px;
 }
 
-.modalButtons {}
+.modalButtons {
+}
 
 .loader {
   display: flex !important;
@@ -232,6 +232,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .875rem;
-  color: #A9A9A9;
+  font-size: 0.875rem;
+  color: #a9a9a9;
 }

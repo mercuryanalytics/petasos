@@ -1,6 +1,6 @@
 .container {
   overflow: visible;
-  background-color: #EFF0F4;
+  background-color: #eff0f4;
 }
 
 .head {
@@ -26,37 +26,72 @@
   animation: hideNav 500ms linear;
   min-width: 0;
   width: 0;
-
 }
 
 @keyframes showNav {
-  from { min-width: 0; width: 0; }
-  to { min-width: 500px;  width: 500px; }
+  from {
+    min-width: 0;
+    width: 0;
+  }
+  to {
+    min-width: 500px;
+    width: 500px;
+  }
 }
 
 @keyframes hideNav {
-  from { min-width: 500px; width: 500px; }
-  to { min-width: 0;  width: 0; }
+  from {
+    min-width: 500px;
+    width: 500px;
+  }
+  to {
+    min-width: 0;
+    width: 0;
+  }
 }
 
 @-webkit-keyframes showNav {
-  from { min-width: 0; width: 0; }
-  to { min-width: 500px;  width: 500px; }
+  from {
+    min-width: 0;
+    width: 0;
+  }
+  to {
+    min-width: 500px;
+    width: 500px;
+  }
 }
 
 @-webkit-keyframes hideNav {
-  from { min-width: 500px; width: 500px; }
-  to { min-width: 0;  width: 0; }
+  from {
+    min-width: 500px;
+    width: 500px;
+  }
+  to {
+    min-width: 0;
+    width: 0;
+  }
 }
 
 @-moz-keyframes showNav {
-  from { min-width: 0; width: 0; }
-  to { min-width: 500px;  width: 500px; }
+  from {
+    min-width: 0;
+    width: 0;
+  }
+  to {
+    min-width: 500px;
+    width: 500px;
+  }
 }
 
 @-moz-keyframes hideNav {
-  from { min-width: 500px; width: 500px; }
-  to { min-width: 0;  width: 0; }
+  from {
+    min-width: 500px;
+    width: 500px;
+  }
+  to {
+    min-width: 0;
+    width: 0;
+  }
 }
 
 .nonHidden {
@@ -69,7 +104,7 @@
 .styledSideMenu {
   position: absolute;
   z-index: 999;
-  background-color: #EFF0F4;
+  background-color: #eff0f4;
 }
 
 .body .content {

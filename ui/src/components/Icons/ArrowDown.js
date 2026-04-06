@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgArrowDown(props) {
   return (
@@ -9,14 +9,9 @@ function SvgArrowDown(props) {
           id="ArrowDown_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        transform="rotate(-180 359.429 74)"
-        xlinkHref="#ArrowDown_svg__a"
-        fillRule="evenodd"
-      />
+      <use fill="currentColor" transform="rotate(-180 359.429 74)" xlinkHref="#ArrowDown_svg__a" fillRule="evenodd" />
     </svg>
-  );
+  )
 }
 
-export default SvgArrowDown;
+export default SvgArrowDown

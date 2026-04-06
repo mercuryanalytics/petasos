@@ -4,7 +4,7 @@
   margin: 0 0 0 30px;
   padding: 2rem;
   border-radius: 5px 0 0 0;
-  box-shadow: 0 1px 62px 0 rgba(0,0,0,0.09);
+  box-shadow: 0 1px 62px 0 rgba(0, 0, 0, 0.09);
   background-color: #fff;
   box-sizing: border-box;
 }
@@ -28,15 +28,15 @@
   right: 0;
   top: 0;
   min-width: auto !important;
-  margin-top: -.8rem !important;
+  margin-top: -0.8rem !important;
   padding: 0 !important;
-  font-size: .95rem !important;
-  color: #0C7997 !important;
+  font-size: 0.95rem !important;
+  color: #0c7997 !important;
   font-weight: bold;
 }
 
 .editButton > * {
-  color: #0C7997 !important;
+  color: #0c7997 !important;
 }
 
 .editButton svg {
@@ -70,7 +70,7 @@
 }
 
 .container.embed .title {
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
 .section {
@@ -89,11 +89,11 @@
 }
 
 .section .form [data-field-preview="true"] [data-field-label] {
-  font-size: .8125rem !important;
+  font-size: 0.8125rem !important;
 }
 
 .section .form [data-field-preview="true"] [data-field-value] {
-  font-size: .875rem !important;
+  font-size: 0.875rem !important;
 }
 
 .section .form .formSection {
@@ -102,8 +102,8 @@
 
 .section .form .formSection.passwordSection .passwordLink {
   text-decoration: none;
-  color: #0C7997;
-  font-size: .8125rem;
+  color: #0c7997;
+  font-size: 0.8125rem;
   font-weight: bold;
 }
 
@@ -151,6 +151,6 @@
 
 .textError {
   margin-bottom: 25px;
-  font-size: .85rem;
+  font-size: 0.85rem;
   color: red;
 }

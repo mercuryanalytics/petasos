@@ -1,7 +1,7 @@
 .container {
   display: flex;
   align-items: center;
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 1.2rem;
   user-select: none;
 }

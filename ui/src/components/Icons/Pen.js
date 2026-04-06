@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgPen(props) {
   return (
@@ -9,14 +9,9 @@ function SvgPen(props) {
           id="Pen_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        transform="rotate(30 505.681 -862.11)"
-        xlinkHref="#Pen_svg__a"
-      />
+      <use fill="currentColor" fillRule="nonzero" transform="rotate(30 505.681 -862.11)" xlinkHref="#Pen_svg__a" />
     </svg>
-  );
+  )
 }
 
-export default SvgPen;
+export default SvgPen

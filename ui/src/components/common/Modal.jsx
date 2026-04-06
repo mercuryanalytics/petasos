@@ -1,37 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Modal.module.css';
-import { MdClose } from 'react-icons/md';
+import React, { useState, useEffect } from "react"
+import styles from "./Modal.module.css"
+import { MdClose } from "react-icons/md"
 
 const Modal = props => {
-  const { open, title, background } = props;
-  const [isOpen, setIsOpen] = useState(false);
-  const [isTouched, setIsTouched] = useState(false);
+  const { open, title, background } = props
+  const [isOpen, setIsOpen] = useState(false)
+  const [isTouched, setIsTouched] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
-      setIsTouched(true);
+      setIsTouched(true)
       if (props.onOpen) {
-        props.onOpen();
+        props.onOpen()
       }
     } else if (props.onClose && isTouched) {
-      props.onClose();
+      props.onClose()
     }
-  // eslint-disable-next-line
-  }, [isOpen]);
+    // eslint-disable-next-line
+  }, [isOpen])
 
   useEffect(() => {
     if (!!open !== isOpen) {
-      setIsOpen(!!open);
+      setIsOpen(!!open)
     }
-  // eslint-disable-next-line
-  }, [open]);
+    // eslint-disable-next-line
+  }, [open])
 
   return isOpen ? (
     <>
-      {background !== false && (
-        <div className={styles.container} />
-      )}
-      <div className={`${styles.modal} ${styles.className || ''}`}>
+      {background !== false && <div className={styles.container} />}
+      <div className={`${styles.modal} ${styles.className || ""}`}>
         <div className={styles.header}>
           {!!title && <span className={styles.title}>{title}</span>}
           <MdClose className={styles.close} onClick={() => setIsOpen(false)} />
@@ -39,7 +37,9 @@ const Modal = props => {
         {props.children}
       </div>
     </>
-  ) : '';
-};
+  ) : (
+    ""
+  )
+}
 
-export default Modal;
+export default Modal

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgArrowBack(props) {
   return (
@@ -9,14 +9,9 @@ function SvgArrowBack(props) {
           id="ArrowBack_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#ArrowBack_svg__a"
-        transform="translate(-207 -136)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#ArrowBack_svg__a" transform="translate(-207 -136)" />
     </svg>
-  );
+  )
 }
 
-export default SvgArrowBack;
+export default SvgArrowBack

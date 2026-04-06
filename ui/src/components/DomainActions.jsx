@@ -1,27 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styles from './DomainActions.module.css';
-import { getDomains, createDomain, deleteDomain } from '../store/clients/actions';
-import { useForm, useField } from 'react-final-form-hooks';
-import Loader from './common/Loader';
-import { Bin } from './Icons';
-import { confirm } from './common/Confirm';
-import Modal from './common/Modal';
-import Button from './common/Button';
-import Scrollable from './common/Scrollable';
-import { Validators, Input } from './FormFields';
+import React, { useState, useEffect, useCallback } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import styles from "./DomainActions.module.css"
+import { getDomains, createDomain, deleteDomain } from "../store/clients/actions"
+import { useForm, useField } from "react-final-form-hooks"
+import Loader from "./common/Loader"
+import { Bin } from "./Icons"
+import { confirm } from "./common/Confirm"
+import Modal from "./common/Modal"
+import Button from "./common/Button"
+import Scrollable from "./common/Scrollable"
+import { Validators, Input } from "./FormFields"
 
 const DomainActions = props => {
-  const { clientId, canCreate, canDelete } = props;
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isBusy, setIsBusy] = useState(false);
-  const [isDeleteBusy, setIsDeleteBusy] = useState({});
-  const [isAddDomainOpen, setIsAddDomainOpen] = useState(false);
+  const { clientId, canCreate, canDelete } = props
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isBusy, setIsBusy] = useState(false)
+  const [isDeleteBusy, setIsDeleteBusy] = useState({})
+  const [isAddDomainOpen, setIsAddDomainOpen] = useState(false)
   // eslint-disable-next-line
-  const [selectedDomain, setSelectedDomain] = useState(null);
-  const domains = useSelector(state =>
-    state.clientsReducer.domains.filter(d => d.client_id === clientId));
+  const [selectedDomain, setSelectedDomain] = useState(null)
+  const domains = useSelector(state => state.clientsReducer.domains.filter(d => d.client_id === clientId))
 
   // const handleDomainSelect = useCallback((id) => {
   //   setSelectedDomain(id);
@@ -31,70 +30,74 @@ const DomainActions = props => {
   // }, [clientId, props.onDomainSelect]);
 
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(getDomains(clientId)).then(() => setIsLoading(false), () => {});
-  // eslint-disable-next-line
-  }, [clientId]);
+    setIsLoading(true)
+    dispatch(getDomains(clientId)).then(
+      () => setIsLoading(false),
+      () => {}
+    )
+    // eslint-disable-next-line
+  }, [clientId])
 
-  const handleDomainDelete = useCallback((id, event) => {
-    const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }));
-    event.stopPropagation();
-    setIsDeleteBusy(prev => ({ ...prev, [id]: true }));
-    dispatch(deleteDomain(id, clientId)).then(stopLoading, stopLoading);
-  }, [clientId, dispatch]);
+  const handleDomainDelete = useCallback(
+    (id, event) => {
+      const stopLoading = () => setIsDeleteBusy(prev => ({ ...prev, [id]: false }))
+      event.stopPropagation()
+      setIsDeleteBusy(prev => ({ ...prev, [id]: true }))
+      dispatch(deleteDomain(id, clientId)).then(stopLoading, stopLoading)
+    },
+    [clientId, dispatch]
+  )
 
   const { form, handleSubmit, submitting } = useForm({
-    validate: (values) => {
-      let err;
+    validate: values => {
+      let err
       if (!Validators.hasValue(values.add_domain_name)) {
-        err = 'Field value is required.';
+        err = "Field value is required."
       }
-      return err ? { add_domain_name: err } : {};
+      return err ? { add_domain_name: err } : {}
     },
-    onSubmit: (values) => {
-      setIsBusy(true);
+    onSubmit: values => {
+      setIsBusy(true)
       const result = {
-        name: values.add_domain_name,
-      };
-      dispatch(createDomain(result, clientId)).then(() => {
-        form.reset();
-        setIsBusy(false);
-        setIsAddDomainOpen(false);
-      }, () => {
-        setIsBusy(false);
-      });
-    },
-  });
+        name: values.add_domain_name
+      }
+      dispatch(createDomain(result, clientId)).then(
+        () => {
+          form.reset()
+          setIsBusy(false)
+          setIsAddDomainOpen(false)
+        },
+        () => {
+          setIsBusy(false)
+        }
+      )
+    }
+  })
 
-  const addDomainField = useField('add_domain_name', form);
+  const addDomainField = useField("add_domain_name", form)
 
   const handleAddDomainClose = useCallback(() => {
-    setIsAddDomainOpen(false);
-    form.reset();
-  }, [form]);
+    setIsAddDomainOpen(false)
+    form.reset()
+  }, [form])
 
   return (
-    <div className={`${styles.container} ${props.className || ''}`}>
+    <div className={`${styles.container} ${props.className || ""}`}>
       <Modal
         className={styles.modal}
         title="Add new domain"
         open={isAddDomainOpen}
         onClose={() => handleAddDomainClose()}
       >
-        <div className={styles.modalText}>
-          Enter domain address.
-        </div>
+        <div className={styles.modalText}>Enter domain address.</div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.modalInputContainer}>
             <span className={styles.modalInputPrefix}>@</span>
-            <Input
-              className={styles.modalInput}
-              field={addDomainField}
-            />
+            <Input className={styles.modalInput} field={addDomainField} />
           </div>
           <div className={styles.modalButtons}>
             <Button type="submit" disabled={isBusy || submitting} loading={isBusy}>
-              {!isBusy ? 'Add new domain' : 'Adding new domain'}
+              {!isBusy ? "Add new domain" : "Adding new domain"}
             </Button>
             <Button transparent onClick={() => handleAddDomainClose()}>
               <span>Cancel</span>
@@ -107,30 +110,31 @@ const DomainActions = props => {
           <button onClick={() => setIsAddDomainOpen(true)}>+ Add domain</button>
         </div>
       )}
-      <Scrollable className={`${styles.domains} ${!canCreate ? styles.tall : ''}`}>
+      <Scrollable className={`${styles.domains} ${!canCreate ? styles.tall : ""}`}>
         {!isLoading ? (
           domains && !!domains.length ? (
             domains.map(domain => (
               <div
                 key={`client-domain-${domain.id}`}
-                className={`${styles.domain} ${selectedDomain === domain.id ? styles.selected : ''}`}
+                className={`${styles.domain} ${selectedDomain === domain.id ? styles.selected : ""}`}
                 title={domain.name}
                 // onClick={() => handleDomainSelect(domain.id)}
               >
                 <span className={styles.name}>@{domain.name}</span>
-                {!!canDelete && (
-                  !!isDeleteBusy[domain.id] ? (
+                {!!canDelete &&
+                  (!!isDeleteBusy[domain.id] ? (
                     <Loader inline size={3} className={styles.busyLoader} />
                   ) : (
                     <Bin
                       className={styles.delete}
-                      onClick={e => confirm({
-                        text: 'Are you sure you want to delete this domain ?',
-                        onConfirm: () => handleDomainDelete(domain.id, e),
-                      })}
+                      onClick={e =>
+                        confirm({
+                          text: "Are you sure you want to delete this domain ?",
+                          onConfirm: () => handleDomainDelete(domain.id, e)
+                        })
+                      }
                     />
-                  )
-                )}
+                  ))}
               </div>
             ))
           ) : (
@@ -141,7 +145,7 @@ const DomainActions = props => {
         )}
       </Scrollable>
     </div>
-  );
-};
+  )
+}
 
-export default DomainActions;
+export default DomainActions

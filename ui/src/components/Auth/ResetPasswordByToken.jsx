@@ -1,25 +1,25 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import styles from './ResetPassword.module.css';
-import Button from '../common/Button';
-import parse from "url-parse";
+import React, { useState, useEffect, useCallback } from "react"
+import styles from "./ResetPassword.module.css"
+import Button from "../common/Button"
+import parse from "url-parse"
 
 const ResetPasswordByEmail = props => {
-  const { successMessage, error, onPasswordReset } = props;
-  const [isBusy, setIsBusy] = useState(false);
+  const { successMessage, error, onPasswordReset } = props
+  const [isBusy, setIsBusy] = useState(false)
 
   useEffect(() => {
     if (successMessage || error) {
-      setIsBusy(false);
+      setIsBusy(false)
     }
-  }, [successMessage, error]);
+  }, [successMessage, error])
 
   const sendEmail = useCallback(() => {
-    setIsBusy(true);
+    setIsBusy(true)
     if (onPasswordReset) {
-      const token = parse(window.location.href, true).query.token;
-      onPasswordReset(token);
+      const token = parse(window.location.href, true).query.token
+      onPasswordReset(token)
     }
-  }, [onPasswordReset]);
+  }, [onPasswordReset])
 
   return (
     <div className={styles.container}>
@@ -29,16 +29,11 @@ const ResetPasswordByEmail = props => {
         <p>Check your inbox for the invitation and follow the instructions to access your account.</p>
       </div>
 
-      <Button
-        type="submit"
-        loading={isBusy}
-        disabled={isBusy}
-        onClick={() => sendEmail()}
-      >
-        <span>{!isBusy ? 'Send email' : 'Sending email'}</span>
+      <Button type="submit" loading={isBusy} disabled={isBusy} onClick={() => sendEmail()}>
+        <span>{!isBusy ? "Send email" : "Sending email"}</span>
       </Button>
     </div>
-  );
+  )
 }
 
-export default ResetPasswordByEmail;
+export default ResetPasswordByEmail

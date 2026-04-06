@@ -8,7 +8,7 @@
 }
 
 .container.active {
-  background-color: #0D7997;
+  background-color: #0d7997;
 }
 
 .container a {
@@ -26,16 +26,16 @@
 
 .icon {
   display: none;
-  margin: .125rem .5rem .125rem 1.1rem;
+  margin: 0.125rem 0.5rem 0.125rem 1.1rem;
   font-size: 1.6rem;
-  color: #BBBBBB;
+  color: #bbbbbb;
 }
 
 .name {
-  margin-left: .32rem;
-  font-size: .9375rem;
+  margin-left: 0.32rem;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
 }
 
 .container.active .name {
