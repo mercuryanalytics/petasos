@@ -1,17 +1,17 @@
 :global([role="tooltip"] > div > div:first-child > div) {
   padding: 8px !important;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  background-color: #0B7693 !important;
+  background-color: #0b7693 !important;
   color: #fff;
-  font-size: .75rem;
+  font-size: 0.75rem;
   line-height: 20px;
 }
 
 :global([role="tooltip"]:not([data-tt-location="top"]) > div > div:last-child) {
-  border-bottom-color: #0B7693 !important;
+  border-bottom-color: #0b7693 !important;
 }
 
 :global([role="tooltip"][data-tt-location="top"] > div > div:last-child) {
-  border-top-color: #0B7693 !important;
+  border-top-color: #0b7693 !important;
 }

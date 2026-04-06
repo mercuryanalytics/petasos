@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgArrowRightCircle(props) {
   return (
@@ -16,7 +16,7 @@ function SvgArrowRightCircle(props) {
         transform="translate(-72 -132)"
       />
     </svg>
-  );
+  )
 }
 
-export default SvgArrowRightCircle;
+export default SvgArrowRightCircle

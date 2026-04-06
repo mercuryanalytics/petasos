@@ -9,25 +9,26 @@
   height: 34px;
   padding: 0 24px;
   box-sizing: border-box;
-  border: 1px solid #E6E6E6;
+  border: 1px solid #e6e6e6;
   outline: none;
   background-color: #fff;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   color: #333;
-  line-height: .9375rem;
+  line-height: 0.9375rem;
   border-radius: 24px;
 }
 
 .container.shadows .input {
-  box-shadow: 0 1px 5px 2px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.02);
 }
 
 .input:hover {
-  border-color: #C6C6C6;
+  border-color: #c6c6c6;
 }
 
-input.active, .input:not(.active):focus {
-  border-color: #C6C6C6;
+input.active,
+.input:not(.active):focus {
+  border-color: #c6c6c6;
 }
 
 .input::placeholder {
@@ -45,9 +46,9 @@ input.active, .input:not(.active):focus {
   z-index: 1;
   right: 12px;
   top: 50%;
-  margin-top: -.7rem;
+  margin-top: -0.7rem;
   font-size: 1.4rem;
-  color: #E0E0E0;
+  color: #e0e0e0;
 }
 
 .targets {
@@ -59,21 +60,21 @@ input.active, .input:not(.active):focus {
   margin-top: 10px;
   padding: 10px 0;
   box-sizing: border-box;
-  border: 1px solid #E6E6E6;
+  border: 1px solid #e6e6e6;
   border-radius: 14px;
   background-color: #fff;
   overflow: hidden;
 }
 
 .container.shadows .targets {
-  box-shadow: 0 1px 5px 2px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.02);
 }
 
 .targets .title {
   display: block;
   margin: 5px 0 10px 0;
   padding: 0 15px;
-  font-size: .85rem;
+  font-size: 0.85rem;
   color: #555;
   font-weight: bold;
 }
@@ -81,7 +82,7 @@ input.active, .input:not(.active):focus {
 .targets .toggles {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #F0F0F0;
+  border-top: 1px solid #f0f0f0;
 }
 
 .targets label {
@@ -94,16 +95,16 @@ input.active, .input:not(.active):focus {
 
 .targets label span {
   color: #555;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 
 .targets .toggles label span {
-  font-size: .85rem;
+  font-size: 0.85rem;
   font-weight: bold;
 }
 
 .targets label:hover {
-  background-color: #F7F7F7 !important;
+  background-color: #f7f7f7 !important;
 }
 .targets label:not(.checked):hover span,
 .targets label.checked span {
@@ -123,7 +124,7 @@ input.active, .input:not(.active):focus {
 }
 
 .checkbox svg {
-  font-size: .7rem;
+  font-size: 0.7rem;
   color: #000;
 }
 

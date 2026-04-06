@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgArrowRight(props) {
   return (
@@ -9,14 +9,9 @@ function SvgArrowRight(props) {
           id="ArrowRight_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        transform="rotate(90 445.429 -297)"
-        xlinkHref="#ArrowRight_svg__a"
-        fillRule="evenodd"
-      />
+      <use fill="currentColor" transform="rotate(90 445.429 -297)" xlinkHref="#ArrowRight_svg__a" fillRule="evenodd" />
     </svg>
-  );
+  )
 }
 
-export default SvgArrowRight;
+export default SvgArrowRight

@@ -1,54 +1,54 @@
-import React, { useEffect } from 'react';
-import styles from './Input.module.css';
+import React, { useEffect } from "react"
+import styles from "./Input.module.css"
 
 const Input = props => {
-  const { field, preview, label, type, disabled, placeholder } = props;
+  const { field, preview, label, type, disabled, placeholder } = props
   const classes = `
     ${styles.container}
-    ${props.className || ''}
-    ${disabled ? styles.disabled : ''}
-  `;
+    ${props.className || ""}
+    ${disabled ? styles.disabled : ""}
+  `
 
   useEffect(() => {
-    if (typeof props.value !== 'undefined') {
+    if (typeof props.value !== "undefined") {
       try {
-        field.input.onChange(props.value);
+        field.input.onChange(props.value)
       } catch (e) {}
     }
-  // eslint-disable-next-line
-  }, [props]);
+    // eslint-disable-next-line
+  }, [props])
 
   return (
     <div data-field data-field-preview={preview} className={classes}>
-      {!!label && (
-        <label data-field-label>{label}</label>
-      )}
+      {!!label && <label data-field-label>{label}</label>}
       {!preview ? (
         <input
           {...field.input}
           className={styles.control}
-          type={type || 'text'}
+          type={type || "text"}
           disabled={!!disabled}
           placeholder={placeholder}
         />
       ) : (
         <span data-field-value className={styles.preview}>
-          {field.input.value !== '' ? field.input.value : 'N/A'}
+          {field.input.value !== "" ? field.input.value : "N/A"}
         </span>
       )}
-      {!!field && !preview && (
-        !!props.persistErrors || field.meta.dirty || field.meta.submitFailed
-      ) && field.meta.error && (
-        field.meta.error.indexOf('[') === 0 ? (
+      {!!field &&
+        !preview &&
+        (!!props.persistErrors || field.meta.dirty || field.meta.submitFailed) &&
+        field.meta.error &&
+        (field.meta.error.indexOf("[") === 0 ? (
           JSON.parse(field.meta.error).map((error, i) => (
-            <div key={i} className={styles.error}>{error}</div>
+            <div key={i} className={styles.error}>
+              {error}
+            </div>
           ))
         ) : (
           <div className={styles.error}>{field.meta.error}</div>
-        )
-      )}
+        ))}
     </div>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

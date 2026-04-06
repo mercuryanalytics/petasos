@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgArrowDropDown(props) {
   return (
@@ -9,14 +9,9 @@ function SvgArrowDropDown(props) {
           id="ArrowDropDown_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#ArrowDropDown_svg__a"
-        transform="translate(-420 -139)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#ArrowDropDown_svg__a" transform="translate(-420 -139)" />
     </svg>
-  );
+  )
 }
 
-export default SvgArrowDropDown;
+export default SvgArrowDropDown

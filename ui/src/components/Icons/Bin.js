@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgBin(props) {
   return (
@@ -9,14 +9,9 @@ function SvgBin(props) {
           id="Bin_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        xlinkHref="#Bin_svg__a"
-        transform="translate(-540 -133)"
-        fillRule="evenodd"
-      />
+      <use fill="currentColor" xlinkHref="#Bin_svg__a" transform="translate(-540 -133)" fillRule="evenodd" />
     </svg>
-  );
+  )
 }
 
-export default SvgBin;
+export default SvgBin

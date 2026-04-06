@@ -4,8 +4,8 @@
 
 .container label {
   display: block;
-  margin-bottom: .4rem;
-  font-size: .75rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
   font-weight: bold;
   color: #333;
 }
@@ -14,41 +14,41 @@
   width: 100%;
   padding: 7.5px 15px;
   box-sizing: border-box;
-  border: 1px solid #DFDFDF;
+  border: 1px solid #dfdfdf;
   border-radius: 3px;
   outline: none;
   background-color: #fff;
-  font-size: .75rem;
-  line-height: .75rem;
+  font-size: 0.75rem;
+  line-height: 0.75rem;
   color: #333;
 }
 
 .container:not(.disabled) .control:hover {
-  border-color: #A0A0A0;
+  border-color: #a0a0a0;
 }
 
 .container:not(.disabled) .control:focus {
-  border-color: #A0A0A0;
+  border-color: #a0a0a0;
 }
 
 .container.disabled .control {
-  background-color: #F4F5F7;
+  background-color: #f4f5f7;
 }
 
 .control::placeholder {
-  color: #B9B9B9;
+  color: #b9b9b9;
 }
 .control::-ms-input-placeholder {
-  color: #B9B9B9;
+  color: #b9b9b9;
 }
 
 .preview {
-  font-size: .75rem;
+  font-size: 0.75rem;
   color: #333;
 }
 
 .error {
-  margin-top: .3rem;
-  color: #B60010;
-  font-size: .75rem;
+  margin-top: 0.3rem;
+  color: #b60010;
+  font-size: 0.75rem;
 }

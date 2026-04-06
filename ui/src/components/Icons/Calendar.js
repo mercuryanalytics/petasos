@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function SvgCalendar(props) {
   return (
@@ -9,14 +9,9 @@ function SvgCalendar(props) {
           id="Calendar_svg__a"
         />
       </defs>
-      <use
-        fill="currentColor"
-        fillRule="nonzero"
-        xlinkHref="#Calendar_svg__a"
-        transform="translate(-252 -135)"
-      />
+      <use fill="currentColor" fillRule="nonzero" xlinkHref="#Calendar_svg__a" transform="translate(-252 -135)" />
     </svg>
-  );
+  )
 }
 
-export default SvgCalendar;
+export default SvgCalendar

@@ -5,7 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Structure
 
 This is a monorepo for Mercury Analytics, containing:
-- `api/` — Rails 6 API-only backend (Ruby 3.3.4, PostgreSQL)
+
+- `api/` — Rails 6 API-only backend (Ruby 2.5.3, PostgreSQL)
 - `ui/` — React 16 frontend (Create React App, Redux)
 - `sso/` — `mercury_sso_auth0` Ruby gem for Auth0 SSO authentication
 
@@ -32,8 +33,7 @@ bundle exec rspec spec/models/user_spec.rb:42
 bundle exec rubocop
 
 # DB
-bundle exec rails db:migrate
-bundle exec rails db:migrate RAILS_ENV=test
+bundle exec rails db:migrate db:test:prepare
 ```
 
 ### Architecture

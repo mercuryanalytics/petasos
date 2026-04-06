@@ -17,9 +17,9 @@
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  font-size: .9375rem;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #0C7997;
+  color: #0c7997;
 }
 
 .domains {
@@ -44,12 +44,12 @@
 }
 
 .domain.selected {
-  background-color: #0C7997;
+  background-color: #0c7997;
   color: #fff;
 }
 
 .domain:not(.selected):hover {
-  background-color: #EFEFEF;
+  background-color: #efefef;
   color: #000;
 }
 
@@ -59,8 +59,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .875rem;
-  padding: .6rem .6rem .6rem 0;
+  font-size: 0.875rem;
+  padding: 0.6rem 0.6rem 0.6rem 0;
 }
 
 .domain .delete {
@@ -73,7 +73,7 @@
 
 .modalText {
   margin-bottom: 25px;
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
 .modalInputContainer {
@@ -93,7 +93,8 @@
   flex-grow: 1;
 }
 
-.modalButtons {}
+.modalButtons {
+}
 
 .loader {
   display: flex !important;
@@ -110,6 +111,6 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  font-size: .875rem;
-  color: #A9A9A9;
+  font-size: 0.875rem;
+  color: #a9a9a9;
 }

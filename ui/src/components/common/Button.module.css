@@ -6,12 +6,12 @@
   height: 40px;
   padding: 0 20px;
   cursor: pointer;
-  border: 1px solid #0C7997;
+  border: 1px solid #0c7997;
   border-radius: 4px;
-  background-color: #0C7997;
+  background-color: #0c7997;
   box-sizing: border-box;
   color: #fff;
-  font-size: .875rem;
+  font-size: 0.875rem;
   outline: none;
   user-select: none;
 }
@@ -31,18 +31,18 @@
 }
 
 .container.action {
-  background-color: #F37646;
-  border-color: #F37646;
+  background-color: #f37646;
+  border-color: #f37646;
   color: #fff;
 }
 
 .container.action.transparent {
-  border-color: #F37646;
-  color: #F37646;
+  border-color: #f37646;
+  color: #f37646;
 }
 
 .container:not(.disabled):not(.transparent):hover {
-  opacity: .85;
+  opacity: 0.85;
 }
 
 .container:not(.disabled):not(.action).transparent:hover {
