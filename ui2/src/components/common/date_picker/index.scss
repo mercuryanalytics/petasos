@@ -1,0 +1,183 @@
+.react-aria-DatePicker {
+  width: 100%;
+  max-width: 250px;
+  color: #000000;
+
+  & > span:first-child {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .react-aria-Group {
+    display: grid;
+    grid-template-columns: 1fr 0fr 0fr;
+    width: 100%;
+    align-items: center;
+
+    .react-aria-Button {
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #ffffff;
+      border-radius: 4px;
+      border: none;
+      margin-left: -1.929rem;
+      width: 1.429rem;
+      height: 1.429rem;
+      padding: 0;
+      font-size: 0.857rem;
+      box-sizing: content-box;
+
+      &[data-pressed] {
+        box-shadow: none;
+        outline: none;
+      }
+
+      &[data-focus-visible] {
+        outline: none;
+        outline-offset: 2px;
+      }
+    }
+
+    .react-aria-DateInput {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 0fr 0fr 0fr 0fr 0fr;
+      height: 30px;
+      padding: 0 35px 0 15px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #dfdfdf;
+      border-radius: 3px;
+      outline: none;
+      background-color: #fff;
+      font-size: 0.75rem;
+      color: #333;
+
+      .react-aria-DateSegment {
+        caret-color: transparent;
+
+        &[data-focused],
+        &[data-pressed] {
+          outline: none;
+          background: #3d9ee7;
+          color: white;
+          font-weight: 700;
+        }
+      }
+    }
+
+    &:has([aria-disabled]) {
+      & > .react-aria-DateInput {
+        background-color: #f4f5f7;
+      }
+
+      & > .react-aria-Button {
+        background-color: #f4f5f7;
+        cursor: default;
+      }
+    }
+  }
+}
+
+.react-aria-Popover[data-trigger="DatePicker"] {
+  font-size: 0.8rem;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 1;
+  width: 100%;
+  max-height: 477px;
+  --trigger-width: 188px;
+  left: 349px;
+  bottom: -308px;
+  background: #ffffff;
+  border: 1px solid #aeaeae;
+  border-radius: 0.3rem;
+  outline: none;
+  max-width: 250px;
+
+  & .react-aria-Dialog {
+    width: 100%;
+    max-height: inherit;
+    box-sizing: border-box;
+    outline: none;
+    overflow: auto;
+  }
+
+  & .react-aria-Calendar {
+    max-width: 100%;
+
+    & header {
+      display: grid;
+      grid-template-columns: 0fr 1fr 0fr;
+      align-items: center;
+      justify-items: center;
+      background-color: #f0f0f0;
+
+      & > button {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        font-size: 12px;
+        color: #cccccc;
+
+        &[data-hovered] {
+          color: #aaaaaa;
+        }
+      }
+
+      & > h2 {
+        color: #000;
+        font-weight: 700;
+        font-size: 0.944rem;
+      }
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+
+      & tbody > tr {
+        & > td:has([aria-disabled]) div {
+          display: none;
+        }
+
+        & > td > div {
+          border-radius: 5px;
+          outline: none;
+          line-height: 27.2px;
+          text-align: center;
+          margin: 2.656px;
+          cursor: pointer;
+
+          &[data-focused],
+          &[data-selected] {
+            background: #2a87d0;
+            color: #ffffff;
+          }
+        }
+
+        & > td:has([data-hovered]) {
+          & > div {
+            background: #f0f0f0;
+          }
+
+          & > div[data-selected] {
+            background: #1d5d90;
+          }
+        }
+      }
+
+      & > thead {
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #aeaeae;
+
+        & th {
+          width: 1.7rem;
+          line-height: 1.7rem;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
