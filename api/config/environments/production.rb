@@ -84,6 +84,12 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.hosts << 'api.researchresultswebsite.com'
+  config.hosts << 'api-staging.researchresultswebsite.com'
+
+  # ALB target group health checks send the target's private IP as the Host
+  # header. Allow the VPC CIDR so /up succeeds for ALB health checks.
+  require 'ipaddr'
+  config.hosts << IPAddr.new('172.31.0.0/16')
 
   config.action_mailer.smtp_settings = {
     :address              => Rails.application.credentials[:smtp][:host],
