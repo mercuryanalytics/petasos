@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
+
+  # Health check for ALB target groups. No DB hit, no auth.
+  get '/up', to: proc { [200, { 'Content-Type' => 'text/plain' }, ['ok']] }
+
   get 'test', to: 'test#hello'
 
   namespace :api do
