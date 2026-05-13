@@ -32,7 +32,7 @@ module Users
 
     def update_user_email
       RestClient.patch(
-        URI.encode(endpoint),
+        URI::DEFAULT_PARSER.escape(endpoint),
         payload,
         authorization_header
       ) do |response, _, _|
