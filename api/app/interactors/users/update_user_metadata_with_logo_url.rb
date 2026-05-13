@@ -14,7 +14,7 @@ module Users
 
     def update_user_metadata
       RestClient.patch(
-        URI.encode(endpoint),
+        URI::DEFAULT_PARSER.escape(endpoint),
         user_metadata,
         authorization_header
       ) do |response, _, _|

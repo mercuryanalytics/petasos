@@ -8,7 +8,7 @@ module Users
       return unless context.remove_user_from_system
       return unless user.auth_id
 
-      RestClient.delete(URI.encode(endpoint), authorization_header) do |response, _, _|
+      RestClient.delete(URI::DEFAULT_PARSER.escape(endpoint), authorization_header) do |response, _, _|
         context.fail!(message: JSON.parse(response.body)['message']) unless response.code == 204
       end
     end
