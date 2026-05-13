@@ -10,7 +10,10 @@ class AddServiceNameToActiveStorageBlobs < ActiveRecord::Migration[6.0]
         ActiveStorage::Blob.unscoped.update_all(service_name: configured_service)
       end
 
-      change_column :active_storage_blobs, :service_name, :string, null: false
+      # TODO: re-add NOT NULL after the production app cuts over to Rails 6.1.
+      # Production Rails 6.0 has no knowledge of service_name and would fail
+      # to insert new blobs while staging shares this database.
+      # change_column :active_storage_blobs, :service_name, :string, null: false
     end
   end
 
