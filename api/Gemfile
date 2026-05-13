@@ -27,6 +27,11 @@ gem 'jwt', '~> 2.2', '>= 2.2.1'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+# TODO: remove once Passenger activates the Gemfile-pinned base64 instead of the
+# Ruby default gem. Ruby 3.3 ships base64 0.2.0 and Passenger preloads it before
+# Bundler runs, causing a Gem::LoadError if Gemfile.lock resolves to a newer version.
+gem 'base64', '~> 0.2.0'
+
 gem 'cancancan', '~> 3.3.0'
 
 gem 'rswag-api', '~> 2.10.1', require: 'rswag/api'
