@@ -52,7 +52,7 @@ group :development, :test do
   gem "pry-rails"
   gem "pry-byebug"
 
-  gem 'rspec-rails', '~> 5.1'
+  gem 'rspec-rails', '~> 6.1'
   gem 'rswag-specs', '~> 2.10.1', require: 'rswag/specs'
 end
 
