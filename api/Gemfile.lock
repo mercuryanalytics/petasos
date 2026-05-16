@@ -128,7 +128,10 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
-    database_cleaner (1.99.0)
+    database_cleaner-active_record (2.2.2)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0)
+    database_cleaner-core (2.0.1)
     date (3.5.1)
     diff-lcs (1.6.2)
     domain_name (0.6.20240107)
@@ -423,7 +426,7 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rails-collection
   capistrano-rbenv
-  database_cleaner (~> 1.8, >= 1.8.3)
+  database_cleaner-active_record (~> 2.2)
   ed25519 (>= 1.2, < 2.0)
   factory_bot (~> 6.4)
   faker (~> 3.0)
