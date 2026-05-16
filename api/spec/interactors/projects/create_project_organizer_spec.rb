@@ -31,7 +31,7 @@ RSpec.describe Projects::CreateProjectOrganizer, type: :interactor do
   it "exposes data errors to the UI" do
     create(:project, name: project_params[:name])
     result = Projects::CreateProjectOrganizer.call(params: project_params, user: current_user)
-    pending "This should surface the error in a way that the UI can use it"
+    skip "This should surface the error in a way that the UI can use it"
     expect(result).to be_a_success
   end
 end
