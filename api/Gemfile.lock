@@ -338,8 +338,8 @@ GEM
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
     ruby-progressbar (1.13.0)
-    shoulda-matchers (4.5.1)
-      activesupport (>= 4.2.0)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     solargraph (0.58.3)
       ast (~> 2.4.3)
       backport (~> 1.2)
@@ -444,7 +444,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails
   rubocop-rspec
-  shoulda-matchers (~> 4.3)
+  shoulda-matchers (~> 6.4)
   solargraph
   webmock (~> 3.0)
 
