@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from "react"
 import { useSelector } from "react-redux"
 import "./static/global.css"
 import Constants from "./utils/constants"
+import Env, { EnvTypes } from "./utils/env"
 import Routes from "./utils/routes"
 import apiCall from "./utils/api-call"
 import { Route, Switch } from "react-router-dom"
@@ -18,6 +19,7 @@ import ChangePassword from "./screens/ChangePassword"
 import PageNotFound from "./screens/PageNotFound"
 
 export const getPartner = () => {
+  if (Env.type !== EnvTypes.PRODUCTION) return null
   let parts = window.location.hostname.split("."),
     subdomain = null
   if (parts.length > 2) {
