@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 set :ssh_options, forward_agent: true
+set :branch, "staging"
 
 server "petasos-staging.us-east-1", user: "deployer", roles: %w[web app db]
 
