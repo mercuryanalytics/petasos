@@ -31,7 +31,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :amazon
+  config.active_storage.service = :local
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -91,22 +91,6 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.hosts << 'api.researchresultswebsite.com'
-  config.hosts << 'api-staging.researchresultswebsite.com'
-
-  # ALB target group health checks send the target's private IP as the Host
-  # header. Allow the VPC CIDR so /up succeeds for ALB health checks.
-  require 'ipaddr'
-  config.hosts << IPAddr.new('172.31.0.0/16')
-
-  config.action_mailer.smtp_settings = {
-    :address              => Rails.application.credentials[:smtp][:host],
-    :port                 => Rails.application.credentials[:smtp][:port],
-    :user_name            => Rails.application.credentials[:smtp][:username],
-    :password             => Rails.application.credentials[:smtp][:password],
-    :authentication       => :login,
-    :enable_starttls_auto => Rails.application.credentials[:smtp][:tls]
-  }
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
   # middleware. The `delay` is used to determine how long to wait after a write
@@ -127,4 +111,24 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+
+  # NOTE: Mercury customizations follow.
+  config.active_storage.service = :amazon
+
+  config.hosts << 'api.researchresultswebsite.com'
+  config.hosts << 'api-staging.researchresultswebsite.com'
+
+  # ALB target group health checks send the target's private IP as the Host
+  # header. Allow the VPC CIDR so /up succeeds for ALB health checks.
+  require 'ipaddr'
+  config.hosts << IPAddr.new('172.31.0.0/16')
+
+  config.action_mailer.smtp_settings = {
+    :address              => Rails.application.credentials[:smtp][:host],
+    :port                 => Rails.application.credentials[:smtp][:port],
+    :user_name            => Rails.application.credentials[:smtp][:username],
+    :password             => Rails.application.credentials[:smtp][:password],
+    :authentication       => :login,
+    :enable_starttls_auto => Rails.application.credentials[:smtp][:tls]
+  }
 end
