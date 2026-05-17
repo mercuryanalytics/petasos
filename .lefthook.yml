@@ -1,0 +1,31 @@
+pre-commit:
+  parallel: true
+  commands:
+    git-secrets:
+      run: git secrets --pre_commit_hook -- {staged_files}
+    prettier:
+      root: "ui/"
+      glob: "*.{js,jsx,css}"
+      run: ./node_modules/.bin/prettier -c {staged_files}
+    rubocop:
+      root: "api/"
+      glob: "*.rb"
+      run: bundle exec rubocop --force-exclusion {staged_files}
+
+commit-msg:
+  parallel: true
+  commands:
+    git-secrets:
+      run: git secrets --commit_msg_hook -- {1}
+    commitlint:
+      skip:
+        - merge
+        - rebase
+        - ref: main
+      run: ./ui/node_modules/.bin/commitlint --config ui/.commitlint.config.ts --edit {1}
+
+prepare-commit-msg:
+  parallel: true
+  commands:
+    git-secrets:
+      run: git secrets --prepare_commit_msg_hook -- {1} {2} {3}
