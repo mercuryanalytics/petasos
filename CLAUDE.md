@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a monorepo for Mercury Analytics, containing:
 
 - `api/` — Rails 6 API-only backend (Ruby 2.5.3, PostgreSQL)
-- `ui/` — React 16 frontend (Create React App, Redux)
+- `ui/` — React 16 frontend (Vite, Redux)
 - `sso/` — `mercury_sso_auth0` Ruby gem for Auth0 SSO authentication
 
 ## API (Rails)
@@ -65,17 +65,12 @@ yarn
 # Start dev server (port 3004)
 npm start
 
-# Run tests
-npm test
-
 # Production build
 npm run build
 
 # Build + deploy to S3 + CloudFront invalidation
 npm run s3deploy
 ```
-
-Set `NODE_OPTIONS=--openssl-legacy-provider` (already in `.envrc`) before running npm commands.
 
 ### Architecture
 
