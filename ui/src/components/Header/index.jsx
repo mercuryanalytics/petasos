@@ -23,17 +23,13 @@ const Header = props => {
             {showTabletSidebar ? <CloseMenu /> : <OpenMenu />}
           </Button>
         )}
-        <a
-          className={styles.link}
-          href={Routes.Home}
-          title={`Reports Access Manager\n${process.env.REACT_APP_VERSION}`}
-        >
+        <a className={styles.link} href={Routes.Home} title={`Reports Access Manager\n${import.meta.env.VITE_VERSION}`}>
           <img src={logo || defaultLogo} alt="" className={styles.logo} />
         </a>
         {!!slogan && <span className={styles.slogan}>{slogan}</span>}
       </div>
       <div className={styles.controls}>
-        {process.env.REACT_APP_STAGE && process.env.REACT_APP_STAGE !== "production" && (
+        {import.meta.env.VITE_STAGE && import.meta.env.VITE_STAGE !== "production" && (
           <span
             style={{
               background: "#f59e0b",
@@ -46,7 +42,7 @@ const Header = props => {
               textTransform: "uppercase"
             }}
           >
-            {process.env.REACT_APP_STAGE}
+            {import.meta.env.VITE_STAGE}
           </span>
         )}
         {isSuperUser(localUser.id) && <SuperUserLink />}
