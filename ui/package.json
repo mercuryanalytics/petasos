@@ -29,9 +29,16 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/ --ext .js,.jsx",
     "format": "prettier --write src/",
+    "cz": "cz",
     "sync": "aws s3 sync build/ s3://$BUCKET_NAME",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
-    "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate"
+    "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate",
+    "prepare": "lefthook install"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "eslintConfig": {
     "extends": ["react-app", "plugin:prettier/recommended"]
@@ -49,8 +56,14 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/types": "^20.5.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint-config-prettier": "^8",
     "eslint-plugin-prettier": "^3",
+    "lefthook": "^1.5.2",
     "prettier": "^2"
   }
 }
