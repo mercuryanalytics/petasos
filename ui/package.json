@@ -15,7 +15,6 @@
     "react-redux": "^7.2.0",
     "react-responsive": "^8.2.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0",
     "react-tt": "^1.1.8",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
@@ -23,14 +22,13 @@
     "url-parse": "^1.4.7"
   },
   "scripts": {
-    "start": "PORT=3004 REACT_APP_VERSION=$(git rev-parse HEAD) react-scripts start",
-    "build": "REACT_APP_VERSION=$(git rev-parse HEAD) react-scripts build",
-    "test": "REACT_APP_VERSION=$(git rev-parse HEAD) react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "VITE_VERSION=$(git rev-parse HEAD) vite",
+    "build": "VITE_VERSION=$(git rev-parse HEAD) vite build",
+    "preview": "vite preview",
     "lint": "eslint src/ --ext .js,.jsx",
     "format": "prettier --write src/",
     "cz": "cz",
-    "sync": "aws s3 sync build/ s3://$BUCKET_NAME",
+    "sync": "aws s3 sync dist/ s3://$BUCKET_NAME",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
     "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate",
     "prepare": "lefthook install"
@@ -41,7 +39,7 @@
     }
   },
   "eslintConfig": {
-    "extends": ["react-app", "plugin:prettier/recommended"]
+    "extends": ["plugin:prettier/recommended"]
   },
   "browserslist": {
     "production": [
@@ -64,6 +62,8 @@
     "eslint-config-prettier": "^8",
     "eslint-plugin-prettier": "^3",
     "lefthook": "^1.5.2",
-    "prettier": "^2"
+    "prettier": "^2",
+    "vite": "^7.0.0",
+    "@vitejs/plugin-react": "^4.3.0"
   }
 }

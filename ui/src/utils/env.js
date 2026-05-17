@@ -12,7 +12,7 @@ export function detectEnvType({ host, stage }) {
 }
 
 const host = window.location.host
-const stage = process.env.REACT_APP_STAGE
+const stage = import.meta.env.VITE_STAGE
 const type = detectEnvType({ host, stage })
 const isLocal = type === EnvTypes.DEVELOPMENT
 const url = `${isLocal && !host.endsWith(".test") ? "http" : "https"}://${host}`
