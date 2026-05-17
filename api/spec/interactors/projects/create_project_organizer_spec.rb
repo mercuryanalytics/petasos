@@ -29,9 +29,9 @@ RSpec.describe Projects::CreateProjectOrganizer, type: :interactor do
   end
 
   it "exposes data errors to the UI" do
-    create(:project, name: project_params[:name])
+    create(:project, name: project_params[:name], client: client)
     result = Projects::CreateProjectOrganizer.call(params: project_params, user: current_user)
-    skip "This should surface the error in a way that the UI can use it"
-    expect(result).to be_a_success
+    expect(result).not_to be_a_success
+    expect(result.message[:name]).to include("has already been taken")
   end
 end
