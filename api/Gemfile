@@ -32,6 +32,10 @@ gem 'rack-cors'
 # Bundler runs, causing a Gem::LoadError if Gemfile.lock resolves to a newer version.
 gem 'base64', '~> 0.2.0'
 
+# Same Passenger/default-gem activation issue as base64 above. Ruby 3.3.4 ships
+# stringio 3.1.1; lockfile must not unlock it. Guarded by bin/check_gem_versions.sh.
+gem 'stringio', '= 3.1.1'
+
 gem 'cancancan', '~> 3.3.0'
 
 gem 'rswag-api', '~> 2.17.0', require: 'rswag/api'
