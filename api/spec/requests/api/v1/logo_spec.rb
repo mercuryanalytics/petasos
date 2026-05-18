@@ -36,14 +36,14 @@ RSpec.describe 'Api::V1::Logo', type: :request do
     # allowlists `localhost` in config.hosts, so request specs need to set
     # the host explicitly to avoid a Rails 6 host-authorization 403.
     host! 'localhost'
-    # ActiveStorage's Disk service builds blob URLs against
-    # `ActiveStorage::Current.host`. The application does not configure a
-    # default URL host at boot, and `ActiveStorage::Current` (an
+    # ActiveStorage's Disk service builds blob URLs from
+    # `ActiveStorage::Current.url_options`. The application does not configure
+    # a default URL host at boot, and `ActiveStorage::Current` (an
     # ActiveSupport::CurrentAttributes subclass) is reset by middleware at
     # the start of every request -- so setting it in this `before` block
     # alone doesn't survive into the controller action. Stubbing the
     # accessor keeps the host visible inside the request as well.
-    allow(ActiveStorage::Current).to receive(:host).and_return('http://localhost')
+    allow(ActiveStorage::Current).to receive(:url_options).and_return(host: 'localhost')
   end
 
   describe 'GET /api/v1/logo' do
@@ -51,7 +51,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
       let!(:client) do
         c = create(:client, subdomain: 'acme')
         c.logo.attach(
-          io: File.open(Rails.root.join('spec/fixtures/files/test_logo.png')),
+          io: Rails.root.join('spec/fixtures/files/test_logo.png').open,
           filename: 'test_logo.png',
           content_type: 'image/png'
         )
@@ -62,7 +62,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
         get logo_path, params: { subdomain: 'acme' }
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         expect(body['data']).to have_key('logo')
         # ActiveStorage's :test service builds blob URLs under
@@ -82,7 +82,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
         get logo_path, params: { subdomain: 'naked' }
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to have_key('logo')
         # Falls back to image_url for mercury-analytics-logo.png.
         expect(body['data']['logo']).to include('mercury-analytics-logo')
@@ -94,7 +94,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
         get logo_path, params: { subdomain: 'does-not-exist' }
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to have_key('logo')
         expect(body['data']['logo']).to include('mercury-analytics-logo')
       end
@@ -105,7 +105,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
         get logo_path
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to have_key('logo')
         expect(body['data']['logo']).to include('mercury-analytics-logo')
       end
@@ -117,7 +117,7 @@ RSpec.describe 'Api::V1::Logo', type: :request do
       # ignored, NOT a 401-producing case.
       it 'still returns 200 (endpoint does not require auth)' do
         get logo_path,
-            params:  { subdomain: 'whatever' },
+            params: { subdomain: 'whatever' },
             headers: { 'Authorization' => 'Bearer not-a-real-token' }
 
         expect(response).to have_http_status(:ok)
