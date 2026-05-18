@@ -430,7 +430,7 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
-    stringio (3.2.0)
+    stringio (3.1.1)
     thor (1.5.0)
     tilt (2.7.0)
     timeout (0.6.1)
@@ -501,6 +501,7 @@ DEPENDENCIES
   rubocop-rspec
   shoulda-matchers (~> 6.4)
   solargraph
+  stringio (= 3.1.1)
   webmock (~> 3.0)
 
 RUBY VERSION
