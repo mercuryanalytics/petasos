@@ -5,6 +5,7 @@
 .claude/*.local.*
 .CLAUDE.local.md
 .claudeignore
+api/.claude/*.local.*
 
 docs/superpowers
 
