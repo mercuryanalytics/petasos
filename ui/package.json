@@ -28,7 +28,7 @@
     "lint": "eslint src/ --ext .js,.jsx",
     "format": "prettier --write src/",
     "cz": "cz",
-    "sync": "aws s3 sync dist/ s3://$BUCKET_NAME",
+    "sync": "aws s3 sync dist/ s3://$BUCKET_NAME --delete",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths \"/*\"",
     "s3deploy": "npm run-script build && npm run-script sync && npm run-script invalidate",
     "prepare": "if git rev-parse --git-dir > /dev/null 2>&1; then lefthook install; fi"
