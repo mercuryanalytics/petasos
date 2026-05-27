@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react"
-import "./Tooltip.module.css"
+import "./Tooltip.css"
 import { default as ReactTooltip } from "react-tt"
 
 const Tooltip = props => {
