@@ -14,7 +14,12 @@ MercurySsoAuth0.setup do |ma|
   # this will be app url which also needs to be in auth0 authorized callbacks
   # in auth0 authorized callbacks, the URL must also contain `auth/auth0/callback` path
   ma.host      = 'https://domain.tld' 
-                  
+  # Must match the Auth0 tenant's Max Session Lifetime. Used to compute
+  # `session_expires_at` (and `session_valid?`) from the `auth_time` claim
+  # in the id_token, so consumers can warn users before they're bounced.
+  # If omitted, `session_valid?` falls back to the OAuth access-token
+  # expiry (legacy behavior — inaccurate but non-breaking).
+  ma.session_lifetime = 8.hours
 end
 ```
 
@@ -28,6 +33,8 @@ end
 
 Defined methods:
 * `current_user` returns the current authenticated user as a `MercurySsoAuth0::User` instance
+* `session_valid?` returns true if the Auth0 session has not yet expired
+* `session_expires_at` returns the `Time` when the Auth0 session will require re-authentication (auth_time + `session_lifetime`), or `nil` if `session_lifetime` isn't configured. Use this to drive client-side expiration warnings.
 * `MercurySsoAuth0::User#email` -  returns the email
 * `MercurySsoAuth0::User#scopes(session || {})`
     * sends a GET request to RAM Api and saves the returned scopes in session or a simple hash or a hash structure of your choice (you can also cache it through Rails.cache)

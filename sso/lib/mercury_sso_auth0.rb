@@ -35,6 +35,13 @@ module MercurySsoAuth0
   mattr_accessor :callback_path
   @@callback_path = '/auth/auth0/callback'
 
+  # Maximum session lifetime as an ActiveSupport::Duration.
+  # Must match the Auth0 tenant's Max Session Lifetime so that
+  # `session_expires_at` reflects when Auth0 will actually require
+  # the user to re-authenticate.
+  mattr_accessor :session_lifetime
+  @@session_lifetime = nil
+
   def self.setup
     yield self
   end
