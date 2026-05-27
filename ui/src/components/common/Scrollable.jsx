@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react"
-import "./Scrollable.module.css"
+import "./Scrollable.css"
 import SimpleBarReact from "simplebar-react"
 import "simplebar/src/simplebar.css"
 
