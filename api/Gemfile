@@ -49,6 +49,11 @@ gem 'active_storage_base64', '~> 3.0'
 gem 'ed25519', '>= 1.2', '< 2.0'
 gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 
+# Structured one-line-per-request JSON logging (production.json) for CloudWatch,
+# alongside Rails' native human-readable production.log. See
+# config/initializers/lograge.rb.
+gem 'lograge', '~> 0.14.0'
+
 group :development, :test do
   # Dev/test web server. Production runs Passenger Standalone.
   gem 'puma', '~> 6.4'
