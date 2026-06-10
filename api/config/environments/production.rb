@@ -105,4 +105,13 @@ Rails.application.configure do
     authentication: :login,
     enable_starttls_auto: Rails.application.credentials[:smtp][:tls]
   }
+
+  # Log to log/production.log, not $stdout. The Rails 8.1 generator's default
+  # (set above) logs to $stdout for containerized deploys; we run Passenger
+  # Standalone, where that lands in passenger.log intermixed with Passenger's
+  # own output and leaves production.log empty. Reassigning here (the
+  # customizations block runs last) restores file logging without editing the
+  # generated config in place. Mirrors the generated line's TaggedLogging
+  # wrapping so config.log_tags still applies.
+  config.logger = ActiveSupport::TaggedLogging.logger(Rails.root.join("log", "#{Rails.env}.log"))
 end
