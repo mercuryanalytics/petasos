@@ -44,7 +44,7 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-production:
+production: &production
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
   database: <%= Rails.application.credentials[:database][:RDS_DB_NAME] %>
@@ -52,3 +52,8 @@ production:
   password: <%= Rails.application.credentials[:database][:RDS_PASSWORD] %>
   host: <%= Rails.application.credentials[:database][:RDS_HOSTNAME] %>
   port: <%= Rails.application.credentials[:database][:RDS_PORT] %>
+
+# Staging shares the production database (see config/deploy/staging.rb, which
+# disables deploy:migrate so staging deploys never alter the shared schema).
+staging:
+  <<: *production
