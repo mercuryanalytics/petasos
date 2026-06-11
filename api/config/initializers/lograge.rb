@@ -6,11 +6,10 @@
 # extraction lives in LogrageFields so it stays unit-testable. See
 # docs/superpowers/specs/2026-06-10-lograge-json-logging-design.md.
 #
-# Production only. Staging deploys today run with RAILS_ENV=production, so this
-# covers staging too. If staging becomes a real Rails env, change the guard to
-# `Rails.env.production? || Rails.env.staging?` (the .json path already follows
-# Rails.env).
-if Rails.env.production?
+# Production and staging. Staging is a real Rails env that loads production
+# config (see config/environments/staging.rb), and the .json/.log paths already
+# follow Rails.env, so staging emits log/staging.json on its own box.
+if Rails.env.production? || Rails.env.staging?
   Rails.application.configure do
     config.lograge.enabled = true
     config.lograge.keep_original_rails_log = true

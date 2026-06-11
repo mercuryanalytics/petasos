@@ -15,6 +15,13 @@ AllCops:
 Rails:
   Enabled: true
 
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - production
+    - staging
+
 Rails/SkipsModelValidations:
   Exclude:
     - "db/migrate/*"
