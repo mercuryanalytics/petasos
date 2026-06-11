@@ -36,6 +36,16 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+# The :test storage service is Disk, which can only generate blob URLs when
+# ActiveStorage::Current.url_options is set. The main app never sets it (only
+# ActiveStorage's own controllers do, via SetCurrent), and the executor resets
+# Current at the start of every request -- so a plain before hook is wiped before
+# the action runs. Re-apply it from an executor callback that runs each request,
+# after the reset. Production uses the S3 service, which needs no url_options.
+Rails.application.executor.to_run do
+  ActiveStorage::Current.url_options ||= { host: "www.example.com" }
+end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join("spec/fixtures").to_s]

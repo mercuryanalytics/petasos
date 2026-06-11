@@ -83,9 +83,9 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get '/api/v1/clients', headers: admin_headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
-        names = body.fetch('data').map { |c| c['name'] }
+        names = body.fetch('data').pluck('name')
         expect(names).to include(client_a.name, client_b.name)
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get '/api/v1/clients', headers: unprivileged_headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to eq('data' => [])
       end
     end
@@ -130,7 +130,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get "/api/v1/clients/#{client.id}", headers: admin_headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.fetch('data')).to include('id' => client.id, 'name' => client.name)
       end
     end
@@ -151,7 +151,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get "/api/v1/clients/#{client.id}", headers: unprivileged_headers
 
         expect(response).to have_http_status(:unauthorized)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
@@ -171,24 +171,48 @@ RSpec.describe 'Api::V1::Clients', type: :request do
 
     context 'authenticated as admin with valid params' do
       it 'returns 201 and creates the client' do
-        expect {
+        expect do
           post '/api/v1/clients', params: valid_params.to_json, headers: admin_headers
-        }.to change(Client, :count).by(1)
+        end.to change(Client, :count).by(1)
 
         expect(response).to have_http_status(:created)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.fetch('data')).to include('name' => 'Delta Corp')
+      end
+    end
+
+    context 'authenticated as admin with a base64 logo (bare data-URI string, as the UI sends)' do
+      # ui/src/components/ClientManage.jsx sets client.logo = avatar.dataURL,
+      # i.e. a bare base64 data-URI string. Under Rails 8.1 a bare-string
+      # attachable is treated as a signed blob id, so client creation 500'd
+      # with ActiveSupport::MessageVerifier::InvalidSignature. The controller
+      # must hand active_storage_base64 its documented { data: ... } shape.
+      let(:logo_bytes) { (+"\x89PNG\r\n\x1a\nmercury-spec-logo").b }
+      let(:logo_data_uri) { "data:image/png;base64,#{Base64.strict_encode64(logo_bytes)}" }
+      let(:logo_params) { { client: { name: 'Logo Corp', logo: logo_data_uri } } }
+
+      it 'creates the client and attaches the decoded logo' do
+        expect do
+          post '/api/v1/clients', params: logo_params.to_json, headers: admin_headers
+        end.to change(Client, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+
+        client = Client.find_by!(name: 'Logo Corp')
+        expect(client.logo).to be_attached
+        expect(client.logo.download.b).to eq(logo_bytes)
+        expect(client.logo.blob.content_type).to eq('image/png')
       end
     end
 
     context 'authenticated as admin with invalid params' do
       it 'returns 422 with an errors envelope' do
-        expect {
+        expect do
           post '/api/v1/clients', params: invalid_params.to_json, headers: admin_headers
-        }.not_to change(Client, :count)
+        end.not_to change(Client, :count)
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
@@ -206,7 +230,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         post '/api/v1/clients', params: valid_params.to_json, headers: unprivileged_headers
 
         expect(response).to have_http_status(:unauthorized)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
@@ -235,7 +259,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
             headers: admin_headers
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
         expect(client.reload.name).to eq('Epsilon Corp')
       end
@@ -265,9 +289,9 @@ RSpec.describe 'Api::V1::Clients', type: :request do
 
     context 'authenticated as admin' do
       it 'returns 200 and removes the client' do
-        expect {
+        expect do
           delete "/api/v1/clients/#{client.id}", headers: admin_headers
-        }.to change(Client, :count).by(-1)
+        end.to change(Client, :count).by(-1)
 
         expect(response).to have_http_status(:ok)
       end
@@ -283,9 +307,9 @@ RSpec.describe 'Api::V1::Clients', type: :request do
 
     context 'authenticated but without sufficient scope' do
       it 'returns 401' do
-        expect {
+        expect do
           delete "/api/v1/clients/#{client.id}", headers: unprivileged_headers
-        }.not_to change(Client, :count)
+        end.not_to change(Client, :count)
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -300,7 +324,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get "/api/v1/clients/#{client.id}/orphans", headers: admin_headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         # Admin path: Reports::OrphanPerClient short-circuits to [].
         expect(body.fetch('data')).to eq([])
@@ -369,7 +393,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      # Note: ClientsController#authorize does NOT call
+      # NOTE: ClientsController#authorize does NOT call
       # load_and_authorize_resource for the member action (the controller
       # uses Client.find directly inside the action). The route is still
       # behind the controller-class-level `load_and_authorize_resource`
@@ -393,7 +417,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
         get "/api/v1/clients/#{client.id}/authorized", headers: admin_headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         expect(body.fetch('data')).to be_an(Array)
       end

@@ -58,6 +58,14 @@ Layout/LineLength:
 Naming/MethodParameterName:
   Enabled: false
 
+# The codebase uses numbered identifiers under both conventions for external
+# reasons that rule out either EnforcedStyle: snake_case DB columns
+# (mailing_address_1, billing_address_2, ...) AND normalcase brand/version names
+# (:auth0, :v1). No single style fits, and none of them can be renamed, so the
+# cop is disabled rather than fighting legitimate domain names.
+Naming/VariableNumber:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - "config/initializers/rswag-api.rb"
