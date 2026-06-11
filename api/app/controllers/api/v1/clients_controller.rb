@@ -1,23 +1,27 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class ClientsController < BaseController
-      before_action :set_client, only: [:show, :update, :destroy]
+      before_action :set_client, only: %i[show update destroy]
 
-      load_and_authorize_resource
+      # Build the authorization resource without :logo. CanCanCan's build_resource
+      # does Client.new(...) purely to authorize #create; the created record is built
+      # separately by Clients::ValidateClient (which owns logo handling). Assigning the
+      # bare base64 data-URI string here reaches Active Storage as a signed blob id and
+      # raises ActiveSupport::MessageVerifier::InvalidSignature. ClientAbility#create is
+      # class-level and never inspects the logo, so excluding it is safe.
+      load_and_authorize_resource param_method: :create_authorization_params
 
       def index
         @clients = Client.accessible_by(current_ability).order(name: :asc).all
-        if params[:user_id]
-          Authorizations::ChildrenAccess.call(collection: @clients, type: Client, user_id: params[:user_id])
-        end
+        Authorizations::ChildrenAccess.call(collection: @clients, type: Client, user_id: params[:user_id]) if params[:user_id]
 
         json_response(@clients)
       end
 
       def show
-        if params[:user_id]
-          Authorizations::ChildrenAccess.call(collection: [@client], type: Client, user_id: params[:user_id])
-        end
+        Authorizations::ChildrenAccess.call(collection: [@client], type: Client, user_id: params[:user_id]) if params[:user_id]
 
         json_response(@client)
       end
@@ -61,8 +65,8 @@ module Api
         client = Client.find(params[:id])
 
         options = {
-            params: authorize_params.to_h,
-            client: client
+          params: authorize_params.to_h,
+          client: client
         }
 
         options[:params].merge!({ access: params[:access] }) if params.key?(:access)
@@ -87,9 +91,11 @@ module Api
                   end
                 else
                   User.includes(:memberships).find_each.collect do |user|
-                    user.authorized = (user.membership_ids & membership_ids).any? ?
-                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id) :
+                    user.authorized = if (user.membership_ids & membership_ids).any?
+                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id)
+                                      else
                                         []
+                                      end
                     user
                   end
                 end
@@ -101,6 +107,11 @@ module Api
 
       def set_client
         @client = Client.find(params[:id])
+      end
+
+      # Used only by CanCanCan to build the resource it authorizes #create against.
+      def create_authorization_params
+        client_params.except(:logo)
       end
 
       def client_params
@@ -117,7 +128,7 @@ module Api
       end
 
       def authorize_params
-        params.permit(:user_id, :client_id,  :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
+        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
       end
     end
   end
