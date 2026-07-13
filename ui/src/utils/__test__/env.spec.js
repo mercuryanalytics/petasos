@@ -1,4 +1,5 @@
-import { EnvTypes, detectEnvType } from "./env"
+import { describe, it, expect } from "vitest"
+import { EnvTypes, detectEnvType } from "../env"
 
 describe("detectEnvType", () => {
   it("returns DEVELOPMENT for localhost", () => {
