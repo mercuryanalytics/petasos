@@ -11,6 +11,21 @@ import createFetchMock from "vitest-fetch-mock"
 const fetchMocker = createFetchMock(vi)
 fetchMocker.enableMocks()
 
+// jsdom does not implement matchMedia; react-responsive's useMediaQuery needs
+// it. Default every query to non-matching.
+if (!window.matchMedia) {
+  window.matchMedia = query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false
+  })
+}
+
 beforeEach(() => {
   fetchMocker.resetMocks()
 })

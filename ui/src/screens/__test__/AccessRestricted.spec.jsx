@@ -1,0 +1,13 @@
+import React from "react"
+import { describe, it, expect } from "vitest"
+import { screen } from "@testing-library/react"
+import AccessRestricted from "../AccessRestricted"
+import { renderWithProviders } from "../../test-utils"
+
+describe("AccessRestricted", () => {
+  it("renders the restricted message and a home link", () => {
+    renderWithProviders(<AccessRestricted />)
+    expect(screen.getByText("Access to this location is restricted.")).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Go Home" })).toHaveAttribute("href", "/")
+  })
+})

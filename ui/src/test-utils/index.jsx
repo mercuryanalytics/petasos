@@ -1,7 +1,8 @@
 import React from "react"
 import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
-import { createStore, combineReducers } from "redux"
+import { createStore, combineReducers, applyMiddleware } from "redux"
+import thunk from "redux-thunk"
 import { MemoryRouter } from "react-router-dom"
 
 import authReducer from "../store/auth/reducers"
@@ -23,7 +24,7 @@ const rootReducer = combineReducers({
 // Build a fresh store per render so tests never share mutable state. Pass
 // preloadedState to seed reducer slices, or a ready-made store to inspect it.
 export function makeStore(preloadedState) {
-  return createStore(rootReducer, preloadedState)
+  return createStore(rootReducer, preloadedState, applyMiddleware(thunk))
 }
 
 // Render a component inside the providers real app code expects: redux store and
