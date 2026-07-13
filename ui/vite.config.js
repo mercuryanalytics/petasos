@@ -29,5 +29,15 @@ export default defineConfig({
     esbuildOptions: {
       loader: { ".js": "jsx" }
     }
+  },
+  test: {
+    // jsdom gives component tests a DOM; env.js reads window.location at import.
+    environment: "jsdom",
+    // Expose describe/it/expect without importing them in every spec.
+    globals: true,
+    // jest-dom matchers + cleanup between tests.
+    setupFiles: ["./src/setupTests.js"],
+    // Co-located specs (talaria convention): Component.test.js next to source.
+    include: ["src/**/*.{test,spec}.{js,jsx}"]
   }
 })
