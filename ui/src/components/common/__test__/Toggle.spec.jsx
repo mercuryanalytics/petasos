@@ -1,11 +1,7 @@
 import React from "react"
-import { describe, it, expect, vi, afterEach } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent, act } from "@testing-library/react"
 import Toggle from "../Toggle"
-
-afterEach(() => {
-  vi.useRealTimers()
-})
 
 describe("Toggle", () => {
   it("renders a checkbox reflecting the checked prop", () => {

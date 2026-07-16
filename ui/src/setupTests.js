@@ -18,10 +18,10 @@ if (!window.matchMedia) {
     matches: false,
     media: query,
     onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
+    addListener: () => undefined,
+    removeListener: () => undefined,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
     dispatchEvent: () => false
   })
 }
@@ -32,4 +32,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup()
+  // Restore real timers so a spec that opted into fake timers can't leak them
+  // into the next test/file. No-op when fake timers were never installed.
+  vi.useRealTimers()
 })

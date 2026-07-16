@@ -1,8 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
 
-// Mock the network boundary (talaria's vi.mock("@/server") pattern). Thunks are
-// then exercised with a plain vi.fn() dispatch — no redux-mock-store needed.
-vi.mock("../../../utils/api-call", () => ({ default: vi.fn() }))
+// Mock the network boundary (talaria's vi.mock("@/server") pattern) via the
+// shared api-call mock. Thunks are then exercised with a plain vi.fn() dispatch
+// — no redux-mock-store needed.
+vi.mock("../../../utils/api-call", async () => {
+  const { makeApiCallMock } = await import("../../../test-utils/api-call-mock")
+  return makeApiCallMock()
+})
 
 import apiCall from "../../../utils/api-call"
 import Constants from "../../../utils/constants"

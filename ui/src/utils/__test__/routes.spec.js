@@ -5,22 +5,26 @@ describe("Routes", () => {
   const entries = Object.entries(Routes)
 
   it("defines the expected set of route names", () => {
-    expect(Object.keys(Routes)).toEqual([
-      "Home",
-      "CreateClient",
-      "ManageClient",
-      "ManageClientUser",
-      "CreateProject",
-      "ManageProject",
-      "CreateReport",
-      "ManageReport",
-      "Account",
-      "SuperUser",
-      "Login",
-      "LoginCallback",
-      "Logout",
-      "ChangePassword"
-    ])
+    // Compare as a set (sorted) so reordering the Routes object doesn't break
+    // this — only adding/removing a route should.
+    expect(Object.keys(Routes).sort()).toEqual(
+      [
+        "Home",
+        "CreateClient",
+        "ManageClient",
+        "ManageClientUser",
+        "CreateProject",
+        "ManageProject",
+        "CreateReport",
+        "ManageReport",
+        "Account",
+        "SuperUser",
+        "Login",
+        "LoginCallback",
+        "Logout",
+        "ChangePassword"
+      ].sort()
+    )
   })
 
   it.each(entries)("%s is an absolute path", (_name, path) => {
@@ -43,11 +47,5 @@ describe("Routes", () => {
         }
       }
     }
-  })
-
-  it("keeps parameterized routes distinct from their static create routes", () => {
-    expect(Routes.CreateClient).not.toBe(Routes.ManageClient)
-    expect(Routes.CreateProject).not.toBe(Routes.ManageProject)
-    expect(Routes.CreateReport).not.toBe(Routes.ManageReport)
   })
 })

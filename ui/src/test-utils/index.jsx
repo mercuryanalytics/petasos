@@ -41,7 +41,14 @@ export function renderWithProviders(ui, { route = "/", preloadedState, store = m
 // react-final-form-hooks field shape the FormFields components consume.
 export function makeField({ input = {}, meta = {} } = {}) {
   return {
-    input: { name: "field", value: "", onChange: () => {}, onBlur: () => {}, onFocus: () => {}, ...input },
+    input: {
+      name: "field",
+      value: "",
+      onChange: () => undefined,
+      onBlur: () => undefined,
+      onFocus: () => undefined,
+      ...input
+    },
     meta: { dirty: false, submitFailed: false, error: undefined, ...meta }
   }
 }

@@ -1,8 +1,9 @@
 import React from "react"
 import { describe, it, expect } from "vitest"
 import { screen } from "@testing-library/react"
-import PageNotFound from "../PageNotFound"
+
 import { renderWithProviders } from "../../test-utils"
+import PageNotFound from "../PageNotFound"
 
 describe("PageNotFound", () => {
   it("renders the not-found message and a home link", () => {

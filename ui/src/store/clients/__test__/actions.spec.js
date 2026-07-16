@@ -1,13 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
 
-// Mock the network boundary; give the default export the static helpers the
-// thunks call (isCalled/forget). Default: not cached -> take the apiCall path.
-vi.mock("../../../utils/api-call", () => {
-  const fn = vi.fn()
-  fn.isCalled = vi.fn(() => false)
-  fn.forget = vi.fn()
-  fn.forgetAll = vi.fn()
-  return { default: fn }
+// Mock the network boundary via the shared api-call mock (default export plus
+// the isCalled/forget static helpers the thunks call).
+vi.mock("../../../utils/api-call", async () => {
+  const { makeApiCallMock } = await import("../../../test-utils/api-call-mock")
+  return makeApiCallMock()
 })
 
 // Real helpers (hasValue/handleActionFailure) but a controllable queryState so
