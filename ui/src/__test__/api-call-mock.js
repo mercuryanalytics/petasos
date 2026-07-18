@@ -5,7 +5,7 @@ import { vi } from "vitest"
 // to false so specs take the network path unless they opt into the cached read.
 // Use inside a vi.mock factory so every store spec mocks the boundary the same
 // way: vi.mock(path, async () => (await import(".../api-call-mock")).makeApiCallMock())
-export function makeApiCallMock() {
+export const makeApiCallMock = () => {
   const fn = vi.fn()
   fn.isCalled = vi.fn(() => false)
   fn.forget = vi.fn()

@@ -23,32 +23,15 @@ const rootReducer = combineReducers({
 
 // Build a fresh store per render so tests never share mutable state. Pass
 // preloadedState to seed reducer slices, or a ready-made store to inspect it.
-export function makeStore(preloadedState) {
-  return createStore(rootReducer, preloadedState, applyMiddleware(thunk))
-}
+export const makeStore = preloadedState => createStore(rootReducer, preloadedState, applyMiddleware(thunk))
 
 // Render a component inside the providers real app code expects: redux store and
 // a router. Returns the store alongside Testing Library's queries.
-export function renderWithProviders(ui, { route = "/", preloadedState, store = makeStore(preloadedState) } = {}) {
+export const renderWithProviders = (ui, { route = "/", preloadedState, store = makeStore(preloadedState) } = {}) => {
   const Wrapper = ({ children }) => (
     <Provider store={store}>
       <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
     </Provider>
   )
   return { store, ...render(ui, { wrapper: Wrapper }) }
-}
-
-// react-final-form-hooks field shape the FormFields components consume.
-export function makeField({ input = {}, meta = {} } = {}) {
-  return {
-    input: {
-      name: "field",
-      value: "",
-      onChange: () => undefined,
-      onBlur: () => undefined,
-      onFocus: () => undefined,
-      ...input
-    },
-    meta: { dirty: false, submitFailed: false, error: undefined, ...meta }
-  }
 }

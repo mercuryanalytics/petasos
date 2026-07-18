@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest"
 // Mock the network boundary via the shared api-call mock (default export plus
 // the isCalled/forget static helpers the thunks call).
 vi.mock("../../../utils/api-call", async () => {
-  const { makeApiCallMock } = await import("../../../test-utils/api-call-mock")
+  const { makeApiCallMock } = await import("../../../__test__/api-call-mock")
   return makeApiCallMock()
 })
 

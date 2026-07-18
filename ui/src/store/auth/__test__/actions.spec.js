@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest"
 // shared api-call mock. Thunks are then exercised with a plain vi.fn() dispatch
 // — no redux-mock-store needed.
 vi.mock("../../../utils/api-call", async () => {
-  const { makeApiCallMock } = await import("../../../test-utils/api-call-mock")
+  const { makeApiCallMock } = await import("../../../__test__/api-call-mock")
   return makeApiCallMock()
 })
 

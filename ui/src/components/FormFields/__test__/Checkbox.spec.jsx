@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import Checkbox from "../Checkbox"
-import { makeField } from "../../../test-utils"
+import { makeField } from "../../../__test__/form"
 
 describe("Checkbox", () => {
   it("renders its label", () => {
