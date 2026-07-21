@@ -4,6 +4,6 @@
 #temp and dist files
 /tmp
 /dist
-/docs/plans
+/docs
 tsconfig.tsbuildinfo
 
