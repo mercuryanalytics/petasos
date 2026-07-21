@@ -8,24 +8,33 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "api:types": "openapi-typescript api/openapi.yaml -o src/api/schema.d.ts",
+    "api:zod": "openapi-zod-client api/openapi.yaml -o src/api/client.zod.ts --export-schemas",
+    "api:gen": "npm run api:types && npm run api:zod",
+    "mock": "prism mock api/openapi.yaml -p 3000",
+    "api:docs": "node api/serve-docs.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.132.47",
     "jotai": "^2.11.1",
     "json-server": "^1.0.0-beta.3",
+    "openapi-fetch": "^0.17.0",
     "prettier": "^3.4.2",
     "react": "^19.0.0",
     "react-aria": "^3.36.0",
     "react-aria-components": "^1.5.0",
     "react-dom": "^19.0.0",
     "resize-observer-polyfill": "^1.5.1",
-    "simplebar-react": "^3.3.0"
+    "simplebar-react": "^3.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.17.0",
+    "@stoplight/prism-cli": "^5.14.2",
     "@tanstack/router-plugin": "^1.134.12",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -35,9 +44,13 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "lefthook": "^2.0.4",
+    "openapi-typescript": "^7.13.0",
+    "openapi-zod-client": "^1.18.3",
     "sass": "^1.83.1",
+    "swagger-ui-dist": "^5.32.8",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "vitest": "^4.1.9"
   }
 }
