@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "id": 2131,
+      "name": "Example Dial Testing Project",
+      "description": "View Project \"4627: Example Dial Testing Project\"",
+      "project_number": "4627",
+      "domain_id": 74,
+      "project_type": "Media/Message Test",
+      "account_id": "1",
+      "modified_on": null,
+      "created_at": "2021-06-03T20:19:20.205Z",
+      "updated_at": "2021-06-03T20:19:51.702Z",
+      "children_access": null
+    },
+    {
+      "id": 2132,
+      "name": "Second Example Project",
+      "description": "View Project \"4628: Second Example Project\"",
+      "project_number": "4628",
+      "domain_id": 74,
+      "project_type": "Survey",
+      "account_id": "1",
+      "modified_on": "2021-07-01T10:00:00.000Z",
+      "created_at": "2021-06-04T20:19:20.205Z",
+      "updated_at": "2021-06-04T20:19:51.702Z",
+      "children_access": null
+    }
+  ]
+}
