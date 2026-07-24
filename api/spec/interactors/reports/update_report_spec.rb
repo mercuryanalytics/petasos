@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Reports::UpdateReport do
@@ -26,17 +28,16 @@ RSpec.describe Reports::UpdateReport do
   context 'when the (mutated) report is invalid' do
     before { report.assign_attributes(name: nil) }
 
-    # NOTE: The production interactor references `client.errors` in its failure
-    # branch, but `client` is not defined on this class. As a result, an invalid
-    # update raises NameError rather than failing the context cleanly. This spec
-    # pins that externally observable behavior so the upgrade work surfaces a
-    # change in it.
-    it 'raises NameError because the failure branch references an undefined `client`' do
-      expect { interactor }.to raise_error(NameError, /client/)
+    it 'fails the context' do
+      expect(interactor).to be_a_failure
+    end
+
+    it 'exposes the report validation errors as the failure message' do
+      expect(interactor.message).to be_a(ActiveModel::Errors)
     end
 
     it 'does not persist the invalid change' do
-      expect { interactor rescue nil }.not_to change { report.reload.name }
+      expect { interactor }.not_to(change { report.reload.name })
     end
   end
 end

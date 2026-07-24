@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Users::ValidateUser do
@@ -23,6 +25,21 @@ RSpec.describe Users::ValidateUser do
 
     it 'flags the user as new via new_user = 1' do
       expect(interactor.new_user).to eq(1)
+    end
+  end
+
+  context 'on an update payload without :email' do
+    let!(:existing) { create(:user, email: 'existing@example.com') }
+    let(:params) { { contact_name: 'Renamed' } }
+
+    subject(:interactor) { described_class.call(params: params, user: existing) }
+
+    it 'is successful (does not require :email)' do
+      expect(interactor).to be_a_success
+    end
+
+    it 'updates the supplied user' do
+      expect(interactor.user.contact_name).to eq('Renamed')
     end
   end
 
