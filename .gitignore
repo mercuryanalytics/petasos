@@ -7,8 +7,6 @@
 .claudeignore
 api/.claude/*.local.*
 
-docs/superpowers
-
 .envrc
 
 sandbox
@@ -17,3 +15,5 @@ buildspec.yml
 .worktrees/
 
 docs/superpowers/
+api/docs/superpowers/
+ui/docs/superpowers/
