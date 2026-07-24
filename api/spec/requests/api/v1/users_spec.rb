@@ -266,12 +266,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'validation failure (missing email)' do
-      before do
-        grant_admin!
-        # ValidateUser unconditionally calls `params[:email].downcase!`; an
-        # empty-but-present string keeps that call valid and lets us reach
-        # the validation path with a User that has no email persisted.
-      end
+      before { grant_admin! }
 
       it 'responds 422 when ValidateUser fails' do
         # User#email has no presence validation, but the request still needs
@@ -297,9 +292,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
   describe 'PATCH /api/v1/users/:id (update)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
-    # ValidateUser unconditionally calls `params[:email].downcase!`, so the
-    # update payload must always include :email -- even when the test isn't
-    # exercising email-change behavior.
     let(:update_payload) do
       { user: { email: target.email, contact_name: 'Renamed Contact' } }
     end
