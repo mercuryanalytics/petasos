@@ -23,10 +23,10 @@ class ReportAbility
       end
     end
 
-    all_authorizations.find_each do |authorization|
-      project_ids = client_project_ids(authorization.subject_id)
+    client_authorizations.find_each do |client_authorization|
+      project_ids = client_project_ids(client_authorization.subject_id)
 
-      authorization.scopes.each do |scope|
+      client_authorization.scopes.each do |scope|
         can :view, Report, project_id: project_ids if scope.action == 'access'
 
         if scope.action == 'update'
@@ -90,11 +90,13 @@ class ReportAbility
     @memberships ||= user.memberships
   end
 
-  # Every authorization for the user, across all subject types (Client, Project,
-  # Report) -- not just Client subjects. The caller treats each subject_id as a
-  # client/domain id via #client_project_ids, which is a no-op for non-Client rows.
-  def all_authorizations
-    @all_authorizations ||= Authorization.preload(:scopes).joins(:membership).where(memberships: { user_id: user.id })
+  # Client-subject authorizations only. The caller treats each subject_id as a
+  # client/domain id via #client_project_ids; without the for_clients filter,
+  # Report/Project authorizations leak in and over-grant whenever a project's
+  # domain_id happens to equal a report/project subject_id.
+  def client_authorizations
+    @client_authorizations ||=
+      Authorization.preload(:scopes).joins(:membership).where(memberships: { user_id: user.id }).for_clients
   end
 
   def client_project_ids(client_id)
