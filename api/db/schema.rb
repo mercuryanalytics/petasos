@@ -10,28 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_23_190736) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
     t.bigint "byte_size", null: false
     t.string "checksum"
+    t.string "content_type"
     t.datetime "created_at", precision: nil, null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -43,13 +43,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
   end
 
   create_table "authorizations", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "client_id"
+    t.datetime "created_at", null: false
+    t.bigint "membership_id"
     t.string "subject_class"
     t.integer "subject_id"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "membership_id"
-    t.bigint "client_id"
+    t.integer "user_id"
     t.index ["membership_id"], name: "index_authorizations_on_membership_id"
     t.index ["user_id"], name: "index_authorizations_on_user_id"
   end
@@ -62,57 +62,57 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
   end
 
   create_table "client_accesses", force: :cascade do |t|
-    t.bigint "client_id", null: false
     t.string "account_id"
+    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_client_accesses_on_client_id"
   end
 
   create_table "clients", force: :cascade do |t|
-    t.string "name"
-    t.string "uuid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "company_name"
-    t.string "contact_type"
-    t.string "contact_name"
-    t.string "contact_title"
-    t.string "contact_phone"
-    t.string "contact_fax"
-    t.string "contact_email"
-    t.string "mailing_address_1"
-    t.string "mailing_address_2"
-    t.string "mailing_city"
-    t.string "mailing_state"
-    t.string "mailing_zip"
     t.string "billing_address_1"
     t.string "billing_address_2"
     t.string "billing_city"
+    t.string "billing_country"
     t.string "billing_state"
     t.string "billing_zip"
-    t.integer "parent_id"
-    t.string "mailing_country"
-    t.string "billing_country"
-    t.boolean "default_template_enabled", default: false
-    t.text "slogan"
-    t.string "subdomain"
     t.text "client_text"
     t.string "closing"
+    t.string "company_name"
+    t.string "contact_email"
+    t.string "contact_fax"
+    t.string "contact_name"
+    t.string "contact_phone"
+    t.string "contact_title"
+    t.string "contact_type"
+    t.datetime "created_at", null: false
+    t.boolean "default_template_enabled", default: false
     t.string "homepage"
+    t.string "mailing_address_1"
+    t.string "mailing_address_2"
+    t.string "mailing_city"
+    t.string "mailing_country"
+    t.string "mailing_state"
+    t.string "mailing_zip"
+    t.string "name"
+    t.integer "parent_id"
+    t.text "slogan"
+    t.string "subdomain"
+    t.datetime "updated_at", null: false
+    t.string "uuid"
   end
 
   create_table "domains", force: :cascade do |t|
     t.bigint "client_id", null: false
-    t.string "name"
     t.datetime "created_at", null: false
+    t.string "name"
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_domains_on_client_id"
   end
 
   create_table "memberships", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.bigint "client_id", null: false
+    t.bigint "user_id", null: false
     t.index ["client_id"], name: "index_memberships_on_client_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
@@ -123,14 +123,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "project_number"
-    t.integer "domain_id"
-    t.string "project_type"
     t.string "account_id"
-    t.date "modified_on"
     t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "domain_id"
+    t.date "modified_on"
+    t.string "name"
+    t.string "project_number"
+    t.string "project_type"
     t.datetime "updated_at", null: false
   end
 
@@ -140,25 +140,25 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
   end
 
   create_table "reports", force: :cascade do |t|
-    t.string "name"
-    t.string "url"
-    t.text "description"
-    t.integer "project_id"
-    t.date "presented_on"
-    t.date "modified_on"
     t.datetime "created_at", null: false
+    t.text "description"
+    t.date "modified_on"
+    t.string "name"
+    t.date "presented_on"
+    t.integer "project_id"
     t.datetime "updated_at", null: false
+    t.string "url"
   end
 
   create_table "scopes", force: :cascade do |t|
-    t.string "scope"
     t.string "action"
-    t.text "description"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "global", default: false
+    t.text "description"
     t.boolean "dynamic", default: false
+    t.boolean "global", default: false
     t.string "name"
+    t.string "scope"
+    t.datetime "updated_at", null: false
   end
 
   create_table "scopes_users", id: false, force: :cascade do |t|
@@ -169,26 +169,26 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_18_210254) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email"
     t.string "auth_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "company_name"
-    t.string "contact_name"
-    t.string "contact_title"
-    t.string "contact_phone"
-    t.string "contact_fax"
     t.string "contact_email"
+    t.string "contact_fax"
+    t.string "contact_name"
+    t.string "contact_phone"
+    t.string "contact_title"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.datetime "last_login", precision: nil
     t.string "mailing_address_1"
     t.string "mailing_address_2"
     t.string "mailing_city"
+    t.string "mailing_country"
     t.string "mailing_state"
     t.string "mailing_zip"
-    t.string "mailing_country"
-    t.string "password_reset_token"
-    t.datetime "password_reset_expires_at", precision: nil
     t.string "password_reset_domain"
-    t.datetime "last_login", precision: nil
+    t.datetime "password_reset_expires_at", precision: nil
+    t.string "password_reset_token"
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

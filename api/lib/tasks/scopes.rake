@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "csv"
 
 namespace :scopes do
@@ -17,7 +19,7 @@ namespace :scopes do
       o.on("--scope", "--scope reports,projects,clients") {|input| options[:scope] = input }
       o.on("--description", "--description DESCRIPTION") {|input| options[:description] = input }
       o.on("--name", "--name NAME") {|input| options[:name] = input }
-      o.parse!(o.order(ARGV) {})
+      o.parse!(o.order(ARGV) {}) # rubocop:disable Lint/EmptyBlock -- discards non-option args intentionally
 
       scope = Scope.new(dynamic: true, **options)
       if scope.save
@@ -36,7 +38,7 @@ namespace :scopes do
 
     desc "Add talaria scopes"
     task talaria: :environment do
-      TALARIA_GLOBAL_SCOPES = [
+      talaria_global_scopes = [
         {
           scope: "workbench",
           action: "operator",
@@ -68,7 +70,7 @@ namespace :scopes do
       ].freeze
 
       # TODO: Reemplement these scopes once dynamic scopes are fixed
-      TALARIA_DYNAMIC_SCOPES = [
+      talaria_dynamic_scopes = [
         # {
         #   scope: "clients",
         #   action: "download_hart_data",
@@ -99,17 +101,7 @@ namespace :scopes do
         # }
       ].freeze
 
-      NBCU_SCOPES = [
-        {
-          scope: "clients",
-          action: "access_biometrics",
-          name: "Biometrics Access",
-          description: "Can use the NBCU biometrics tool",
-          global: true
-        }
-      ].freeze
-
-      (TALARIA_GLOBAL_SCOPES + TALARIA_DYNAMIC_SCOPES + NBCU_SCOPES).each do |scope|
+      (talaria_global_scopes + talaria_dynamic_scopes).each do |scope|
         permission = Scope.where(scope: scope[:scope], action: scope[:action], global: scope[:global], dynamic: scope[:dynamic]).first_or_initialize.tap do |p|
           p.name = scope[:name]
           p.description = scope[:description]
@@ -118,7 +110,7 @@ namespace :scopes do
         puts "Created/Updated talaria scope #{permission.action} with name #{permission.name}"
       end
 
-      DEPRICATED_SCOPE_DESCRIPTIONS = [
+      deprecated_scope_descriptions = [
         {
           scope: "projects",
           action: "financial_access",
@@ -137,11 +129,11 @@ namespace :scopes do
         }
       ].freeze
 
-      DEPRICATED_SCOPE_DESCRIPTIONS.each do |desc|
+      deprecated_scope_descriptions.each do |desc|
         s = Scope.find_by(desc)
         if s.present?
           s.destroy!
-          puts "Found depricated e-spres-oh scope #{s.action} with name #{s.name}. Destroying..."
+          puts "Found deprecated e-spres-oh scope #{s.action} with name #{s.name}. Destroying..."
         end
       end
     end
@@ -152,7 +144,8 @@ namespace :scopes do
     CSV do |csv|
       csv << %w[scope type action name description]
       scopes = Scope.all.map do |scope|
-        global, dynamic = [scope.global, scope.dynamic]
+        global = scope.global
+        dynamic = scope.dynamic
         scope_type = if global && dynamic
                        "global_dynamic"
                      elsif global
