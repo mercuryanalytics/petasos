@@ -1,17 +1,24 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class UsersController < BaseController
-      before_action :set_user, only: [:show, :update, :destroy, :authorized]
+      before_action :set_user, only: %i[show update destroy authorized]
 
-      load_and_authorize_resource except: [:create, :destroy, :researchers, :me, :update_last_login]
+      # Actions NOT in this except: list (notably #copy and #reset_password) are
+      # gated by CanCan here -- a non-admin is denied with 401 before the action
+      # body runs. `except:` is the on/off switch for that gate.
+      load_and_authorize_resource except: %i[create destroy researchers me update_last_login]
 
       def index
-        users = (client_id = params[:client_id]) ?
+        users = if (client_id = params[:client_id])
                   User
                     .preload(:memberships)
                     .joins(:clients).where(clients: { id: client_id })
-                    .accessible_by(current_ability) :
+                    .accessible_by(current_ability)
+                else
                   User.preload(:memberships).accessible_by(current_ability)
+                end
 
         json_response(users)
       end
@@ -35,12 +42,11 @@ module Api
         json_response([]) && return unless memberships_ids
 
         auths = Authorization.preload(:scopes)
-                           .preload(:dynamic_scopes)
-                           .left_joins(:scopes)
-                           .where(membership_id: memberships_ids)
-                           .select(:id, :subject_class, :subject_id)
-                           .distinct
-
+                             .preload(:dynamic_scopes)
+                             .left_joins(:scopes)
+                             .where(membership_id: memberships_ids)
+                             .select(:id, :subject_class, :subject_id)
+                             .distinct
 
         authorizations = auths.map do |authorization|
           [
@@ -50,7 +56,7 @@ module Api
           ]
         end
 
-        authorizations = authorizations.group_by { |i| i.first.subject_class }.map do |k, v|
+        authorizations = authorizations.group_by {|i| i.first.subject_class }.map do |k, v|
           { k.downcase => v }
         end
 
@@ -58,10 +64,14 @@ module Api
         global_scopes = { global: current_user.scopes }
 
         dynamic_scopes = {
-          dynamic: auths.map { |authorization| authorization.dynamic_scopes }.flatten
+          dynamic: auths.map(&:dynamic_scopes).flatten
         }
 
         json_response((client || {}).merge(report || {}).merge(project || {}).merge(global_scopes || {}).merge(dynamic_scopes))
+      end
+
+      def show
+        json_response(@user)
       end
 
       def create
@@ -69,10 +79,10 @@ module Api
         authorize! :create, @authorization
 
         result = Users::CreateUserOrganizer.call(
-          params:               user_params,
+          params: user_params,
           authorization_params: authorization_params,
-          no_auth:              params.fetch(:no_auth, 0),
-          current_user:         current_user
+          no_auth: params.fetch(:no_auth, 0),
+          current_user: current_user
         )
 
         if result.success?
@@ -107,17 +117,12 @@ module Api
         end
       end
 
-      def show
-        json_response(@user)
-      end
-
       def copy
         email = params[:copy_from]
         copy_to_user = User.find(params[:id])
         copy_from_user = User.find_by(email: email)
         append = params[:append]
         return error_response('Wrong email') if copy_from_user.nil?
-        return error_response('The action is forbidden for your account') unless current_user.admin?
 
         Users::CopyUserPermissions.call(copy_from: copy_from_user, copy_to: copy_to_user, append: append)
 
@@ -126,7 +131,7 @@ module Api
 
       def authorized
         memberships_ids = if params[:client_id]
-                            @user.memberships.select { |membership| membership.client_id == params[:client_id].to_i }.first
+                            @user.memberships.select {|membership| membership.client_id == params[:client_id].to_i }.first
                           else
                             @user.memberships.pluck(:id)
                           end
@@ -134,12 +139,12 @@ module Api
         json_response([]) && return unless memberships_ids
 
         authorizations = Authorization
-                           .preload(:scopes)
-                           .preload(:dynamic_scopes)
-                           .left_joins(:scopes)
-                           .where(membership_id: memberships_ids)
-                           .select(:id, :subject_class, :subject_id)
-                           .distinct
+                         .preload(:scopes)
+                         .preload(:dynamic_scopes)
+                         .left_joins(:scopes)
+                         .where(membership_id: memberships_ids)
+                         .select(:id, :subject_class, :subject_id)
+                         .distinct
 
         authorizations = authorizations.map do |authorization|
           [
@@ -149,7 +154,7 @@ module Api
           ]
         end
 
-        authorizations = authorizations.group_by { |i| i.first.subject_class }.map do |k, v|
+        authorizations = authorizations.group_by {|i| i.first.subject_class }.map do |k, v|
           { k.downcase => v }
         end
 
