@@ -23,10 +23,10 @@ class ReportAbility
       end
     end
 
-    all_authorizations.find_each do |client_authorization|
-      project_ids = client_project_ids(client_authorization.subject_id)
+    all_authorizations.find_each do |authorization|
+      project_ids = client_project_ids(authorization.subject_id)
 
-      client_authorization.scopes.each do |scope|
+      authorization.scopes.each do |scope|
         can :view, Report, project_id: project_ids if scope.action == 'access'
 
         if scope.action == 'update'

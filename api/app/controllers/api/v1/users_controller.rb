@@ -64,10 +64,10 @@ module Api
         global_scopes = { global: current_user.scopes }
 
         dynamic_scopes = {
-          dynamic: auths.map(&:dynamic_scopes).flatten
+          dynamic: auths.flat_map(&:dynamic_scopes)
         }
 
-        json_response((client || {}).merge(report || {}).merge(project || {}).merge(global_scopes || {}).merge(dynamic_scopes))
+        json_response((client || {}).merge(report || {}).merge(project || {}).merge(global_scopes).merge(dynamic_scopes))
       end
 
       def show
