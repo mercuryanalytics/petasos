@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_23_190736) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_24_174811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -159,6 +159,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_190736) do
     t.string "name"
     t.string "scope"
     t.datetime "updated_at", null: false
+    t.index ["scope", "action", "global", "dynamic"], name: "index_scopes_on_scope_action_global_dynamic", unique: true
   end
 
   create_table "scopes_users", id: false, force: :cascade do |t|
