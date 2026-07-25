@@ -19,6 +19,12 @@ module MercurySsoAuth0
   mattr_accessor :scopes
   @@scopes = 'openid email profile'
 
+  # Auth0 API audience. When set, Auth0 returns a JWT access token scoped to
+  # that API (instead of its default opaque one), which the app can forward to
+  # the API as a bearer credential. Leave nil for apps that only need login.
+  mattr_accessor :audience
+  @@audience = nil
+
   # RAM login url
   mattr_accessor :login_url
   @@login_url = nil
