@@ -28,7 +28,6 @@
     "lint": "eslint src/ --ext .js,.jsx",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
     "format": "prettier --write src/",
     "cz": "cz",
     "sync": "aws s3 sync dist/ s3://$BUCKET_NAME --delete",
