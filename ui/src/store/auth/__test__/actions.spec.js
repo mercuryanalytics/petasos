@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
 
-// Mock the network boundary (talaria's vi.mock("@/server") pattern) via the
-// shared api-call mock. Thunks are then exercised with a plain vi.fn() dispatch
-// — no redux-mock-store needed.
+// Mock the network boundary (utils/api-call) via the shared api-call mock.
+// Thunks are then exercised with a plain vi.fn() dispatch — no redux-mock-store
+// needed.
 vi.mock("../../../utils/api-call", async () => {
   const { makeApiCallMock } = await import("../../../__test__/api-call-mock")
   return makeApiCallMock()

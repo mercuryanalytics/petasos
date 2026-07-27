@@ -37,8 +37,8 @@ export default defineConfig({
     globals: true,
     // jest-dom matchers + cleanup between tests.
     setupFiles: ["./src/setupTests.js"],
-    // Talaria convention: specs live in __test__/ folders next to source,
-    // named *.spec.js.
+    // Co-locate specs in __test__/ folders next to source; the *.spec suffix
+    // keeps shared helpers in those folders from being collected as tests.
     include: ["src/**/__test__/**/*.spec.{js,jsx}"]
   }
 })

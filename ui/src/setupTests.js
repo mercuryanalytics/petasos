@@ -6,8 +6,9 @@ import { cleanup } from "@testing-library/react"
 import { afterEach, beforeEach, vi } from "vitest"
 import createFetchMock from "vitest-fetch-mock"
 
-// Replace global fetch with a mock (talaria convention). Specs that exercise
-// the network boundary (utils/api-call) drive it via the global `fetchMock`.
+// Replace global fetch with a mock so no test hits the network. Specs that
+// exercise the network boundary (utils/api-call) drive it via the global
+// `fetchMock`.
 const fetchMocker = createFetchMock(vi)
 fetchMocker.enableMocks()
 
