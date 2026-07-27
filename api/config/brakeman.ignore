@@ -1,0 +1,189 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "00c08d0a72ecc90a2571b1861463d4c75663849aa24b6afe1e50ab05544b2886",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/api/v1/projects_controller.rb",
+      "line": 113,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:project).permit(:name, :description, :project_number, :project_type, :account_id, :domain_id)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::V1::ProjectsController",
+        "method": "project_params"
+      },
+      "user_input": ":account_id",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "1c907f18833a8cc9bcb51a5495b4cd334d70dadc90033ed379a1cdce81e9c3a8",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/api/v1/clients_controller.rb",
+      "line": 131,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::V1::ClientsController",
+        "method": "authorize_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "1d72e1fb557133c4f265e06d004af94e946531280461770245b60d171b7cab21",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/interactors/users/copy_user_permissions.rb",
+      "line": 45,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Authorization.connection.execute(\"INSERT INTO authorizations_scopes(authorization_id, scope_id) VALUES #{authorization.scopes.collect do\n \"(#{Authorization.find_or_create_by(:membership_id => Membership.find_or_create_by(:client_id => membership.client_id, :user_id => copy_to.id).id, :subject_id => authorization.subject_id, :subject_class => authorization.subject_class).id}, #{scope.id})\"\n end.join(\",\")}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Users::CopyUserPermissions",
+        "method": "copy_memberships"
+      },
+      "user_input": "Authorization.find_or_create_by(:membership_id => Membership.find_or_create_by(:client_id => membership.client_id, :user_id => copy_to.id).id, :subject_id => authorization.subject_id, :subject_class => authorization.subject_class)",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "2aa698e170bf4cc20ae313f910cd5897601883e89114d7f5c552c56f1452e4e0",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/api/v1/templates_controller.rb",
+      "line": 29,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:client_id, :resource_type, :resource_id, :state, :role, :role_state)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::V1::TemplatesController",
+        "method": "template_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "44641be1708b605fe3a2e0e2189a7ac53cf71c74f4eb9b676489082aeda29973",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/api/v1/projects_controller.rb",
+      "line": 124,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::V1::ProjectsController",
+        "method": "authorize_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "6d9f9bcf7dc0b6939bcefb47d7835348c03a9b497592a33cba7d9e68d60806b5",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/interactors/users/copy_user_permissions.rb",
+      "line": 21,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Authorization.connection.execute(\"DELETE FROM authorizations_scopes WHERE authorization_id IN (#{copy_to.memberships.map(&:authorizations).flatten.map(&:id).join(\",\")})\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Users::CopyUserPermissions",
+        "method": "remove_all_memberships"
+      },
+      "user_input": "copy_to.memberships.map(&:authorizations).flatten.map(&:id).join(\",\")",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "dd661d25f9932c694f5355656b8dfb9fef4966344c6a90eb6c8be6066d8f3859",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/api/v1/reports_controller.rb",
+      "line": 145,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::V1::ReportsController",
+        "method": "authorize_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "eb579bf60cf416b0151e98046e584fddb458e663451789ee6caa1015ad79bdf5",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/interactors/users/copy_user_permissions.rb",
+      "line": 23,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Authorization.connection.execute(\"DELETE FROM authorizations WHERE id IN (#{copy_to.memberships.map(&:authorizations).flatten.map(&:id).join(\",\")})\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Users::CopyUserPermissions",
+        "method": "remove_all_memberships"
+      },
+      "user_input": "copy_to.memberships.map(&:authorizations).flatten.map(&:id).join(\",\")",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "Baselined 2026-07-24 — pre-existing since CI gate landed (#40). SQL Injection: interpolated values are integer AR ids, not user input. Mass Assignment: intentional API params. Tracked in ENG-64."
+    }
+  ],
+  "brakeman_version": null
+}
