@@ -16,6 +16,18 @@ const nextUrl = () => `https://api.test/resource/${counter++}`
 
 const lastCall = () => fetch.mock.calls[fetch.mock.calls.length - 1]
 
+// Mock a single successful fetch whose body is irrelevant to the test.
+const mockOk = () => fetch.mockResponseOnce(JSON.stringify({ data: {} }))
+
+// Perform a GET that succeeds and is recorded in apiCall's call tracker,
+// returning the URL used so the test can assert against it.
+const trackGet = async () => {
+  const url = nextUrl()
+  mockOk()
+  await apiCall("GET", url)
+  return url
+}
+
 beforeEach(() => {
   mockState.authKey = "TEST-TOKEN"
   apiCall.forgetAll()
@@ -31,7 +43,7 @@ describe("apiCall requests", () => {
 
   it("still fetches unauthenticated when noAuth is set, without an Authorization header", async () => {
     mockState.authKey = null
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
+    mockOk()
     await apiCall("GET", nextUrl(), { noAuth: true })
     const [, init] = lastCall()
     expect(fetch).toHaveBeenCalled()
@@ -39,7 +51,7 @@ describe("apiCall requests", () => {
   })
 
   it("sends the bearer token and JSON content type when authenticated", async () => {
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
+    mockOk()
     await apiCall("GET", nextUrl())
     const [, init] = lastCall()
     expect(init.headers.get("Authorization")).toBe("Bearer TEST-TOKEN")
@@ -47,7 +59,7 @@ describe("apiCall requests", () => {
   })
 
   it("passes method and body through on POST", async () => {
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
+    mockOk()
     const body = JSON.stringify({ name: "x" })
     await apiCall("POST", nextUrl(), { body })
     const [, init] = lastCall()
@@ -92,7 +104,7 @@ describe("apiCall response handling", () => {
 
 describe("apiCall GET de-duplication", () => {
   it("returns the same in-flight promise for concurrent GETs to one URL", async () => {
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
+    mockOk()
     const url = nextUrl()
     const p1 = apiCall("GET", url)
     const p2 = apiCall("GET", url)
@@ -104,9 +116,7 @@ describe("apiCall GET de-duplication", () => {
 
 describe("apiCall call tracking", () => {
   it("records successful GETs and forgets them on demand", async () => {
-    const url = nextUrl()
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
-    await apiCall("GET", url)
+    const url = await trackGet()
 
     expect(apiCall.isCalled(url)).toBe(true)
     expect(apiCall.isCalled(nextUrl())).toBe(false)
@@ -116,24 +126,18 @@ describe("apiCall call tracking", () => {
   })
 
   it("isCalled returns true if any url in an array was called", async () => {
-    const url = nextUrl()
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
-    await apiCall("GET", url)
+    const url = await trackGet()
     expect(apiCall.isCalled(["https://api.test/never", url])).toBe(true)
   })
 
   it("forget accepts a RegExp", async () => {
-    const url = nextUrl()
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
-    await apiCall("GET", url)
+    const url = await trackGet()
     apiCall.forget(/resource/)
     expect(apiCall.isCalled(url)).toBe(false)
   })
 
   it("forgetAll clears everything", async () => {
-    const url = nextUrl()
-    fetch.mockResponseOnce(JSON.stringify({ data: {} }))
-    await apiCall("GET", url)
+    const url = await trackGet()
     apiCall.forgetAll()
     expect(apiCall.isCalled(url)).toBe(false)
   })
