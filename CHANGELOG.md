@@ -26,6 +26,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **api:** Bootstrap RSpec workflow on main (#30)
 - **api:** Skip RSpec on draft PRs
 - Automate CHANGELOG.md from conventional commits (#39) (#64)
+- **api:** Baseline 8 pre-existing Brakeman warnings to unblock gate (#66)
 
 ### Chores
 - **ui:** Add prettier with eslint integration (#3)
@@ -67,6 +68,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 ### Documentation
 - Update CLAUDE.md after CRA → Vite migration
 - Hide the superpowers-generated docs from the repo
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
