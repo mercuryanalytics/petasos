@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from "vitest"
 import { screen } from "@testing-library/react"
 
 import { renderWithProviders } from "../../__test__/render"
-
 import Login from "../Login"
 
 // Mock only the non-component seams: getLogo (a module function Auth invokes)

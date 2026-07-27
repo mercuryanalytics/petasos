@@ -2,8 +2,9 @@ import React from "react"
 import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import Button from "../Button"
+
 import { renderWithProviders } from "../../../__test__/render"
+import Button from "../Button"
 
 describe("Button", () => {
   it("renders a native button and fires onClick", async () => {

@@ -1,8 +1,9 @@
 import React from "react"
 import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
-import Textarea from "../Textarea"
+
 import { makeField } from "../../../__test__/form"
+import Textarea from "../Textarea"
 
 describe("Textarea", () => {
   it("renders a label and a textarea with the placeholder", () => {

@@ -2,8 +2,9 @@ import React from "react"
 import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import Input from "../Input"
+
 import { makeField } from "../../../__test__/form"
+import Input from "../Input"
 
 describe("Input", () => {
   it("renders a label and a text input with the placeholder", () => {
