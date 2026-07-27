@@ -23,7 +23,7 @@ const rootReducer = combineReducers({
 
 // Build a fresh store per render so tests never share mutable state. Pass
 // preloadedState to seed reducer slices, or a ready-made store to inspect it.
-export const makeStore = preloadedState => createStore(rootReducer, preloadedState, applyMiddleware(thunk))
+const makeStore = preloadedState => createStore(rootReducer, preloadedState, applyMiddleware(thunk))
 
 // Render a component inside the providers real app code expects: redux store and
 // a router. Returns the store alongside Testing Library's queries.
