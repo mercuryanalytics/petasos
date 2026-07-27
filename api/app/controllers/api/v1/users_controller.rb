@@ -5,10 +5,18 @@ module Api
     class UsersController < BaseController
       before_action :set_user, only: %i[show update destroy authorized]
 
-      # Actions NOT in this except: list (notably #copy and #reset_password) are
-      # gated by CanCan here -- a non-admin is denied with 401 before the action
-      # body runs. `except:` is the on/off switch for that gate.
+      # Actions NOT in this except: list are gated by CanCan here -- but "gated"
+      # is not "admin-only". UserAbility grants `can :manage, User, memberships:
+      # { client_id: ... }` to any caller holding an access/authorize scope on a
+      # client, so such a caller passes `authorize! :copy, @user` without being
+      # an admin. #copy is admin-only only because of :require_admin below, and
+      # that callback is the whole enforcement -- don't delete it as redundant.
+      # #reset_password needs no gate of its own: it only acts on current_user.
       load_and_authorize_resource except: %i[create destroy researchers me update_last_login]
+
+      # Declared after the CanCan gate so a caller CanCan already rejects still
+      # gets its 401 -- this only catches the ones CanCan lets through.
+      before_action :require_admin, only: %i[copy]
 
       def index
         users = if (client_id = params[:client_id])
@@ -185,6 +193,10 @@ module Api
       end
 
       private
+
+      def require_admin
+        error_response('The action is forbidden for your account') unless current_user.admin?
+      end
 
       def user_params
         params
