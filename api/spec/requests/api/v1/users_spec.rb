@@ -2,8 +2,6 @@
 
 require 'rails_helper'
 
-# Request spec for Api::V1::UsersController.
-#
 # Auth flows through the real `Secured` concern (JWKS-only stub via the Issue
 # 001 helpers). All outbound Auth0 Management-API HTTP is WebMock-stubbed so
 # the suite never touches live network.
@@ -110,9 +108,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     allow(Rails.application.credentials).to receive(:[]).with(:app_host).and_return('https://app.example.test')
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users  (index)
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users (index)' do
     let(:path) { '/api/v1/users' }
 
@@ -173,9 +168,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/:id  (show)
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/:id (show)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -221,9 +213,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users  (create)
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users (create)' do
     let(:path) { '/api/v1/users' }
     let(:valid_payload) do
@@ -305,9 +294,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # PATCH /api/v1/users/:id  (update)
-  # -------------------------------------------------------------------------
   describe 'PATCH /api/v1/users/:id (update)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -387,9 +373,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # DELETE /api/v1/users/:id  (destroy)
-  # -------------------------------------------------------------------------
   describe 'DELETE /api/v1/users/:id (destroy)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -440,9 +423,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/me
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/me' do
     let(:path) { '/api/v1/users/me' }
 
@@ -479,9 +459,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/:id/scopes
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/:id/scopes' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let!(:global_scope_record) { create(:scope, :client, :read, global: true) }
@@ -542,9 +519,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/:id/authorized
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/:id/authorized' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}/authorized" }
@@ -578,9 +552,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/:id/copy
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/:id/copy' do
     let!(:source) { create(:user, email: 'source@example.test', auth_id: 'auth0|source') }
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
@@ -610,11 +581,8 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope (non-admin with no memberships)' do
-      # `copy` is *not* in the controller's load_and_authorize_resource
-      # `except:` list, so CanCan denies a caller with no abilities over the
-      # target first, and :require_admin never runs. 401 with the CanCan
-      # envelope. Note this passes with or without the admin gate -- the
-      # client-scoped case below is the one that pins the gate itself.
+      # CanCan denies this caller before :require_admin runs, so the example
+      # passes with or without the admin gate -- the next context is its pin.
       it 'responds 401 (CanCan::AccessDenied -> Unauthorized envelope)' do
         post path,
              params: { copy_from: source.email },
@@ -626,14 +594,10 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'non-admin holding a client access scope over the target' do
-      # UserAbility grants `can :manage, User, memberships: { client_id: ... }`
-      # for every client the caller holds an access/authorize scope on, and
-      # :manage covers the custom :copy action -- so CanCan lets this caller
-      # through. Only UsersController's :require_admin callback stops them, and
-      # without it they could copy an admin's whole permission set onto anyone
-      # in their client (CopyUserPermissions is not client-scoped). Deleting
-      # that callback as "unreachable dead code" is a privilege escalation;
-      # this example is the pin that catches it.
+      # UserAbility grants :manage over the client's users to this caller and
+      # :manage covers :copy, so CanCan lets them through -- only :require_admin
+      # stops them, and CopyUserPermissions is not client-scoped, so what they
+      # would reach is any user's permissions, not just their client's.
       let!(:client) { create(:client, name: 'Shared Client') }
       let!(:other_client) { create(:client, name: 'Source Only Client') }
       let!(:caller_membership) { create(:membership, user_id: current_user.id, client_id: client.id) }
@@ -643,7 +607,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         create(:membership, user_id: target.id, client_id: client.id)
         create(:client_auth, membership_id: caller_membership.id, subject_id: client.id,
                              scopes: [client_access_scope])
-        # Source carries a membership the caller has no rights over at all.
         create(:membership, user_id: source.id, client_id: other_client.id)
       end
 
@@ -655,8 +618,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.parsed_body['errors']).to eq('The action is forbidden for your account')
-        # Without the gate, CopyUserPermissions would have wiped the target's
-        # own memberships and replaced them with the source's.
         expect(target.reload.memberships.pluck(:client_id)).to eq([client.id])
       end
     end
@@ -677,9 +638,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/researchers
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/researchers' do
     let(:path) { '/api/v1/users/researchers' }
 
@@ -702,9 +660,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/reset_password
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/reset_password' do
     let(:path) { '/api/v1/users/reset_password' }
 
@@ -744,9 +699,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/update_last_login
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/update_last_login' do
     let(:path) { '/api/v1/users/update_last_login' }
 
