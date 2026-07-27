@@ -18,6 +18,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **ui:** Restore Tooltip and Scrollable global CSS overrides (#52)
 - **api:** Restore file logging + add lograge JSON request logs (Rails 8.1) (#55)
 - **api:** Stop CanCanCan building client logo on authorize (Rails 8.1) (#54)
+- **deps:** Clear bundler-audit CVEs blocking api CI (#65)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -68,6 +69,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 ### Documentation
 - Update CLAUDE.md after CRA → Vite migration
 - Hide the superpowers-generated docs from the repo
+- **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 
 ### Features
