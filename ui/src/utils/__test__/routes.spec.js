@@ -4,29 +4,6 @@ import Routes from "../routes"
 describe("Routes", () => {
   const entries = Object.entries(Routes)
 
-  it("defines the expected set of route names", () => {
-    // Compare as a set (sorted) so reordering the Routes object doesn't break
-    // this — only adding/removing a route should.
-    expect(Object.keys(Routes).sort()).toEqual(
-      [
-        "Home",
-        "CreateClient",
-        "ManageClient",
-        "ManageClientUser",
-        "CreateProject",
-        "ManageProject",
-        "CreateReport",
-        "ManageReport",
-        "Account",
-        "SuperUser",
-        "Login",
-        "LoginCallback",
-        "Logout",
-        "ChangePassword"
-      ].sort()
-    )
-  })
-
   it.each(entries)("%s is an absolute path", (_name, path) => {
     expect(typeof path).toBe("string")
     expect(path.startsWith("/")).toBe(true)

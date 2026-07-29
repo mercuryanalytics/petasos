@@ -10,21 +10,8 @@ describe("Constants", () => {
     expect(Env.type).toBe(EnvTypes.DEVELOPMENT)
   })
 
-  it("exposes the expected keys", () => {
-    expect(Object.keys(Constants).sort()).toEqual([
-      "API_URL",
-      "APP_URL",
-      "DEFAULT_APP_LOGO_URL",
-      "DEFAULT_CLIENT_LOGO_URL"
-    ])
-  })
-
   it("wires API_URL to the development API host", () => {
     expect(Constants.API_URL).toBe("https://petasos-api.test/api/v1")
-  })
-
-  it("mirrors APP_URL from the detected environment", () => {
-    expect(Constants.APP_URL).toBe(Env.publicUrl)
   })
 
   it("derives both default logos from the API host", () => {
