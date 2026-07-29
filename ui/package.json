@@ -41,9 +41,7 @@
     }
   },
   "eslintConfig": {
-    "extends": [
-      "plugin:prettier/recommended"
-    ]
+    "extends": ["plugin:prettier/recommended"]
   },
   "browserslist": {
     "production": [
@@ -64,7 +62,6 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^12",
     "@testing-library/user-event": "^13",
-    "@vitejs/plugin-react": "^4.3.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint-config-prettier": "^8",
@@ -74,6 +71,7 @@
     "prettier": "^2",
     "vite": "^7.0.0",
     "vitest": "^3",
-    "vitest-fetch-mock": "^0.4.5"
+    "vitest-fetch-mock": "^0.4.5",
+    "@vitejs/plugin-react": "^4.3.0"
   }
 }
