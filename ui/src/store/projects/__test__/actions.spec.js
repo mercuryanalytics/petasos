@@ -28,7 +28,6 @@ import {
 const API = Constants.API_URL
 
 beforeEach(() => {
-  vi.clearAllMocks()
   apiCall.isCalled.mockReturnValue(false)
 })
 

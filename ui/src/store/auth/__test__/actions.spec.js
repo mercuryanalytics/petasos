@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 
 // Mock the network boundary (utils/api-call) via the shared api-call mock.
 // Thunks are then exercised with a plain vi.fn() dispatch — no redux-mock-store
@@ -22,10 +22,6 @@ import {
   changePassword,
   changePasswordSuccess
 } from "../actions"
-
-beforeEach(() => {
-  vi.clearAllMocks()
-})
 
 describe("auth plain action creators", () => {
   it.each([
