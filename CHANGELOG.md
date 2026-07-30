@@ -75,6 +75,8 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- Add root README with deploy procedure
 
 ### Features
 - Petasos staging backend support (#6)
