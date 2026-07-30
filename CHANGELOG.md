@@ -71,6 +71,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - Hide the superpowers-generated docs from the repo
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
@@ -94,4 +95,5 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **users:** Cover Auth0-touching interactors with WebMock-stubbed specs
 - **api:** Add specs for six untested models
 - **api:** Expand user_mailer spec with one example per delivered message
+- **ui:** Define and seed a UI test suite (#38) [ENG-15] (#57)
 ## [legacy-production] - 2022-12-02
