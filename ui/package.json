@@ -26,6 +26,8 @@
     "build": "VITE_VERSION=$(git rev-parse HEAD) vite build",
     "preview": "vite preview",
     "lint": "eslint src/ --ext .js,.jsx",
+    "test": "vitest",
+    "test:run": "vitest run",
     "format": "prettier --write src/",
     "cz": "cz",
     "sync": "aws s3 sync dist/ s3://$BUCKET_NAME --delete",
@@ -57,13 +59,19 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/types": "^20.5.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^12",
+    "@testing-library/user-event": "^13",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint-config-prettier": "^8",
     "eslint-plugin-prettier": "^3",
+    "jsdom": "^29.1.1",
     "lefthook": "^1.5.2",
     "prettier": "^2",
     "vite": "^7.0.0",
+    "vitest": "^3",
+    "vitest-fetch-mock": "^0.4.5",
     "@vitejs/plugin-react": "^4.3.0"
   }
 }
