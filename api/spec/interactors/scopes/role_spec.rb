@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Scopes::Role do
   subject(:interactor) { described_class.call(role: role) }
   let!(:scopes) do
-    %i(user domain client project report).collect do |resource|
-      %i(create update destroy authorize authorized).collect do |action|
+    %i[user domain client project report].collect do |resource|
+      %i[create update destroy authorize authorized].collect do |action|
         create(:scope, resource, action)
       end
     end
   end
-  let(:interactor_scopes) { interactor.scopes.select { |i| i.scope == resource }}
+  let(:interactor_scopes) { interactor.scopes.select {|i| i.scope == resource } }
 
   describe 'unknown role' do
     let(:role) { 'unknown' }
@@ -31,17 +33,17 @@ RSpec.describe Scopes::Role do
         Scope.for_client.where(action: 'update') +
         Scope.for_domain.where.not(
           action: [
-                    described_class::AUTHORIZE_ACTION,
-                    described_class::AUTHORIZED_ACTION,
-                    described_class::INVITE_ACTION
-                  ]
+            described_class::AUTHORIZE_ACTION,
+            described_class::AUTHORIZED_ACTION,
+            described_class::INVITE_ACTION
+          ]
         ) + Scope.for_user.where.not(
-        action: [
-                  described_class::AUTHORIZE_ACTION,
-                  described_class::AUTHORIZED_ACTION,
-                  described_class::INVITE_ACTION
-                ]
-      )
+          action: [
+            described_class::AUTHORIZE_ACTION,
+            described_class::AUTHORIZED_ACTION,
+            described_class::INVITE_ACTION
+          ]
+        )
     end
 
     it 'returns correct scopes' do
@@ -92,7 +94,7 @@ RSpec.describe Scopes::Role do
       end
 
       it 'returns all scopes' do
-        expect(interactor_scopes).to eq(Scope.where.not(action: %w(authorize authorized invite)).for_user.to_a)
+        expect(interactor_scopes).to match_array(Scope.where.not(action: %w[authorize authorized invite]).for_user.to_a)
       end
     end
 
@@ -104,7 +106,7 @@ RSpec.describe Scopes::Role do
       end
 
       it 'returns all scopes' do
-        expect(interactor_scopes).to eq(Scope.where.not(action: %w(authorize authorized invite)).for_domain.to_a)
+        expect(interactor_scopes).to match_array(Scope.where.not(action: %w[authorize authorized invite]).for_domain.to_a)
       end
     end
   end
@@ -112,15 +114,15 @@ RSpec.describe Scopes::Role do
   describe 'client_admin' do
     let(:role) { described_class::CLIENT_ADMIN_ROLE }
     let(:resource) { 'client' }
-    let(:correct_scopes) {
+    let(:correct_scopes) do
       Scope.for_client.where(
         action: [
-            described_class::AUTHORIZE_ACTION,
-            described_class::AUTHORIZED_ACTION,
-            described_class::INVITE_ACTION
-          ]
+          described_class::AUTHORIZE_ACTION,
+          described_class::AUTHORIZED_ACTION,
+          described_class::INVITE_ACTION
+        ]
       )
-    }
+    end
 
     it 'returns the correct scopes' do
       expect(interactor_scopes).to match_array correct_scopes
@@ -130,15 +132,15 @@ RSpec.describe Scopes::Role do
   describe 'project_admin' do
     let(:role) { described_class::PROJECT_ADMIN_ROLE }
     let(:resource) { 'project' }
-    let(:correct_scopes) {
+    let(:correct_scopes) do
       Scope.for_project.where(
         action: [
-                  described_class::AUTHORIZE_ACTION,
-                  described_class::AUTHORIZED_ACTION,
-                  described_class::INVITE_ACTION
-                ]
+          described_class::AUTHORIZE_ACTION,
+          described_class::AUTHORIZED_ACTION,
+          described_class::INVITE_ACTION
+        ]
       )
-    }
+    end
 
     it 'returns the correct scopes' do
       expect(interactor_scopes).to match_array correct_scopes
@@ -150,16 +152,16 @@ RSpec.describe Scopes::Role do
     let(:correct_scopes) do
       Scope.for_project.where.not(
         action: [
-                  described_class::AUTHORIZE_ACTION,
-                  described_class::AUTHORIZED_ACTION,
-                  described_class::INVITE_ACTION
-                ]
+          described_class::AUTHORIZE_ACTION,
+          described_class::AUTHORIZED_ACTION,
+          described_class::INVITE_ACTION
+        ]
       ) + Scope.for_report.where.not(
         action: [
-                  described_class::AUTHORIZE_ACTION,
-                  described_class::AUTHORIZED_ACTION,
-                  described_class::INVITE_ACTION
-                ]
+          described_class::AUTHORIZE_ACTION,
+          described_class::AUTHORIZED_ACTION,
+          described_class::INVITE_ACTION
+        ]
       )
     end
 
@@ -175,7 +177,7 @@ RSpec.describe Scopes::Role do
       end
 
       it 'returns the update scope' do
-        expect(interactor_scopes).to match_array(Scope.for_project.where(action: %w(create update destroy)).to_a)
+        expect(interactor_scopes).to match_array(Scope.for_project.where(action: %w[create update destroy]).to_a)
       end
     end
 
@@ -187,7 +189,7 @@ RSpec.describe Scopes::Role do
       end
 
       it 'returns the update scope' do
-        expect(interactor_scopes).to match_array(Scope.for_report.where(action: %w(create update destroy)).to_a)
+        expect(interactor_scopes).to match_array(Scope.for_report.where(action: %w[create update destroy]).to_a)
       end
     end
   end
@@ -195,15 +197,15 @@ RSpec.describe Scopes::Role do
   describe 'report_admin' do
     let(:role) { described_class::REPORT_ADMIN_ROLE }
     let(:resource) { 'report' }
-    let(:correct_scopes) {
+    let(:correct_scopes) do
       Scope.for_report.where(
         action: [
-                  described_class::AUTHORIZE_ACTION,
-                  described_class::AUTHORIZED_ACTION,
-                  described_class::INVITE_ACTION
-                ]
+          described_class::AUTHORIZE_ACTION,
+          described_class::AUTHORIZED_ACTION,
+          described_class::INVITE_ACTION
+        ]
       )
-    }
+    end
 
     it 'returns the correct scopes' do
       expect(interactor_scopes).to match_array correct_scopes
