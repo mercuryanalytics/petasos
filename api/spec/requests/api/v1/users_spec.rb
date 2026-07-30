@@ -2,8 +2,6 @@
 
 require 'rails_helper'
 
-# Request spec for Api::V1::UsersController.
-#
 # Auth flows through the real `Secured` concern (JWKS-only stub via the Issue
 # 001 helpers). All outbound Auth0 Management-API HTTP is WebMock-stubbed so
 # the suite never touches live network.
@@ -21,18 +19,20 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
   # `Rails.application.credentials[:auth0][:management_api][:base_url]`. We
   # stub a synthetic base URL here and have the interactors' downstream calls
   # observe it.
+  # rubocop:disable Lint/ConstantDefinitionInBlock -- fixed test values the `def` stub helpers reference
   AUTH0_BASE_URL = 'https://auth0-test.example.test/'
   AUTH0_MGMT_TOKEN = 'stubbed-mgmt-token'
+  # rubocop:enable Lint/ConstantDefinitionInBlock
 
   def stub_auth0_credentials!
     creds = {
-      iss:            AuthHelpers::TEST_ISS,
-      audience:       AuthHelpers::TEST_AUDIENCE,
+      iss: AuthHelpers::TEST_ISS,
+      audience: AuthHelpers::TEST_AUDIENCE,
       management_api: {
-        base_url:      AUTH0_BASE_URL,
-        client_id:     'mgmt-client',
+        base_url: AUTH0_BASE_URL,
+        client_id: 'mgmt-client',
         client_secret: 'mgmt-secret',
-        audience:      "#{AUTH0_BASE_URL}api/v2/"
+        audience: "#{AUTH0_BASE_URL}api/v2/"
       }
     }
     allow(Rails.application.credentials).to receive(:[]).and_call_original
@@ -40,13 +40,13 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     # Short-circuit the management-API token fetch (avoids stubbing oauth/token
     # AND the Rails.cache write semantics). The token value is opaque to the
     # outbound Auth0 calls -- WebMock matches on URL, not Authorization header.
-    allow(::Auth0::UserManagementToken).to receive(:call).and_return(AUTH0_MGMT_TOKEN)
+    allow(Auth0::UserManagementToken).to receive(:call).and_return(AUTH0_MGMT_TOKEN)
   end
 
   def stub_auth0_create_user(auth_id: 'auth0|created-user', status: 201)
     stub_request(:post, "#{AUTH0_BASE_URL}api/v2/users").to_return(
       status: status,
-      body:   { user_id: auth_id }.to_json,
+      body: { user_id: auth_id }.to_json,
       headers: { 'Content-Type' => 'application/json' }
     )
   end
@@ -55,16 +55,16 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     url = "#{AUTH0_BASE_URL}api/v2/users-by-email?email=#{CGI.escape(email)}"
     body = status == 200 ? [{ user_id: auth_id, email: email }].to_json : '[]'
     stub_request(:get, url).to_return(
-      status:  status,
-      body:    body,
+      status: status,
+      body: body,
       headers: { 'Content-Type' => 'application/json' }
     )
   end
 
   def stub_auth0_update_user(auth_id:, status: 200)
     stub_request(:patch, "#{AUTH0_BASE_URL}api/v2/users/#{auth_id}").to_return(
-      status:  status,
-      body:    { user_id: auth_id }.to_json,
+      status: status,
+      body: { user_id: auth_id }.to_json,
       headers: { 'Content-Type' => 'application/json' }
     )
   end
@@ -72,7 +72,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
   def stub_auth0_delete_user(auth_id:, status: 204)
     stub_request(:delete, "#{AUTH0_BASE_URL}api/v2/users/#{auth_id}").to_return(
       status: status,
-      body:   '',
+      body: '',
       headers: {}
     )
   end
@@ -108,9 +108,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     allow(Rails.application.credentials).to receive(:[]).with(:app_host).and_return('https://app.example.test')
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users  (index)
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users (index)' do
     let(:path) { '/api/v1/users' }
 
@@ -123,9 +120,9 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
-        emails = body['data'].map { |u| u['email'] }
+        emails = body['data'].pluck('email')
         expect(emails).to include(current_user.email, other.email)
       end
     end
@@ -162,18 +159,15 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         # current_user is always visible to itself per UserAbility's
         # `can [:read, :update, :authorized], User, id: user.id`.
-        emails = body['data'].map { |u| u['email'] }
+        emails = body['data'].pluck('email')
         expect(emails).to eq([current_user.email])
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/:id  (show)
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/:id (show)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -185,7 +179,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']['email']).to eq(target.email)
       end
     end
@@ -203,7 +197,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:unauthorized)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to eq('errors' => 'You are not authorized')
       end
     end
@@ -212,16 +206,13 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       it 'raises ActiveRecord::RecordNotFound for an unknown id' do
         grant_admin!
 
-        expect {
+        expect do
           get '/api/v1/users/0', headers: auth_header(token)
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users  (create)
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users (create)' do
     let(:path) { '/api/v1/users' }
     let(:valid_payload) do
@@ -246,12 +237,12 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         # AddClientDefaultAuthorizations.
         payload = valid_payload.merge(no_auth: 1, client_id: host_client.id)
 
-        expect {
+        expect do
           post path, params: payload, headers: auth_header(token), as: :json
-        }.to change(User, :count).by(1)
+        end.to change(User, :count).by(1)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']['email']).to eq('newbie@example.test')
 
         expect(WebMock).to have_requested(:post, "#{AUTH0_BASE_URL}api/v2/users").once
@@ -292,20 +283,17 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         stub_auth0_get_user_by_email(email: 'broken@example.test', status: 404)
 
         post path,
-             params:  { user: { email: 'broken@example.test', password: 'x' } },
+             params: { user: { email: 'broken@example.test', password: 'x' } },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # PATCH /api/v1/users/:id  (update)
-  # -------------------------------------------------------------------------
   describe 'PATCH /api/v1/users/:id (update)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -323,7 +311,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         patch path, params: update_payload, headers: auth_header(token), as: :json
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']['contact_name']).to eq('Renamed Contact')
         expect(target.reload.contact_name).to eq('Renamed Contact')
         # UpdateAuth0User only calls out when email_changed? or :password
@@ -339,9 +327,9 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         stub_auth0_update_user(auth_id: target.auth_id)
 
         patch path,
-              params:  { user: { email: target.email, password: 'newpass!' } },
+              params: { user: { email: target.email, password: 'newpass!' } },
               headers: auth_header(token),
-              as:      :json
+              as: :json
 
         expect(response).to have_http_status(:ok)
         expect(WebMock).to have_requested(:patch, "#{AUTH0_BASE_URL}api/v2/users/#{target.auth_id}").once
@@ -369,25 +357,22 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
       it 'responds 422 when UpdateAuth0User fails' do
         stub_request(:patch, "#{AUTH0_BASE_URL}api/v2/users/#{target.auth_id}").to_return(
-          status:  400,
-          body:    { message: 'bad email' }.to_json,
+          status: 400,
+          body: { message: 'bad email' }.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
 
         # Force an email change to exercise the UpdateAuth0User branch.
         patch path,
-              params:  { user: { email: 'renamed@example.test' } },
+              params: { user: { email: 'renamed@example.test' } },
               headers: auth_header(token),
-              as:      :json
+              as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # DELETE /api/v1/users/:id  (destroy)
-  # -------------------------------------------------------------------------
   describe 'DELETE /api/v1/users/:id (destroy)' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}" }
@@ -399,9 +384,9 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       end
 
       it 'deletes the user and calls Auth0 delete' do
-        expect {
+        expect do
           delete path, headers: auth_header(token), as: :json
-        }.to change(User, :count).by(-1)
+        end.to change(User, :count).by(-1)
 
         # `render head: :ok` returns 200 but with the user's body partial -
         # we assert on the user-count change and a non-error status.
@@ -425,7 +410,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         grant_admin!
         stub_request(:delete, "#{AUTH0_BASE_URL}api/v2/users/#{target.auth_id}").to_return(
           status: 400,
-          body:   { message: 'auth0 boom' }.to_json,
+          body: { message: 'auth0 boom' }.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
       end
@@ -438,9 +423,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/me
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/me' do
     let(:path) { '/api/v1/users/me' }
 
@@ -449,7 +431,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to have_key('global')
         expect(body['data']).to have_key('dynamic')
       end
@@ -477,9 +459,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/:id/scopes
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/:id/scopes' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let!(:global_scope_record) { create(:scope, :client, :read, global: true) }
@@ -490,12 +469,12 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
       it 'applies a global scope to the user' do
         post path,
-             params:  { scope_id: global_scope_record.id, scope_state: 1 },
+             params: { scope_id: global_scope_record.id, scope_state: 1 },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:created)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to eq('Scopes has been applied')
         expect(target.reload.scopes).to include(global_scope_record)
       end
@@ -505,7 +484,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       it 'responds 401' do
         post path,
              params: { scope_id: global_scope_record.id, scope_state: 1 },
-             as:     :json
+             as: :json
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -514,9 +493,9 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     context 'insufficient scope (non-admin attempting to authorize)' do
       it 'responds 401' do
         post path,
-             params:  { scope_id: global_scope_record.id, scope_state: 1 },
+             params: { scope_id: global_scope_record.id, scope_state: 1 },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -529,20 +508,17 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
       it 'responds 422 when UserScopes rejects the scope as non-appliable' do
         post path,
-             params:  { scope_id: non_global_scope.id, scope_state: 1 },
+             params: { scope_id: non_global_scope.id, scope_state: 1 },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['errors']).to eq('Wrong scope type for the given resource')
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/:id/authorized
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/:id/authorized' do
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
     let(:path) { "/api/v1/users/#{target.id}/authorized" }
@@ -554,7 +530,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to have_key('global')
       end
     end
@@ -576,9 +552,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/:id/copy
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/:id/copy' do
     let!(:source) { create(:user, email: 'source@example.test', auth_id: 'auth0|source') }
     let!(:target) { create(:user, email: 'target@example.test', auth_id: 'auth0|target') }
@@ -589,12 +562,12 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
       it 'copies permissions from the source user' do
         post path,
-             params:  { copy_from: source.email },
+             params: { copy_from: source.email },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['email']).to eq(source.email)
       end
     end
@@ -607,20 +580,45 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       end
     end
 
-    context 'insufficient scope (non-admin)' do
-      # `copy` is *not* in the controller's load_and_authorize_resource
-      # `except:` list, so CanCan denies a non-admin first -- the inline
-      # `unless current_user.admin?` guard inside #copy never executes.
-      # Observable behavior: 401 with the CanCan envelope. If the controller
-      # is later refactored to bypass CanCan for #copy, this expectation
-      # should flip to the 422 admin-guard envelope.
+    context 'insufficient scope (non-admin with no memberships)' do
+      # CanCan denies this caller before :require_admin runs, so the example
+      # passes with or without the admin gate -- the next context is its pin.
       it 'responds 401 (CanCan::AccessDenied -> Unauthorized envelope)' do
         post path,
-             params:  { copy_from: source.email },
+             params: { copy_from: source.email },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'non-admin holding a client access scope over the target' do
+      # UserAbility grants :manage over the client's users to this caller and
+      # :manage covers :copy, so CanCan lets them through -- only :require_admin
+      # stops them, and CopyUserPermissions is not client-scoped, so what they
+      # would reach is any user's permissions, not just their client's.
+      let!(:client) { create(:client, name: 'Shared Client') }
+      let!(:other_client) { create(:client, name: 'Source Only Client') }
+      let!(:caller_membership) { create(:membership, user_id: current_user.id, client_id: client.id) }
+      let!(:client_access_scope) { create(:scope, :client, action: 'access') }
+
+      before do
+        create(:membership, user_id: target.id, client_id: client.id)
+        create(:client_auth, membership_id: caller_membership.id, subject_id: client.id,
+                             scopes: [client_access_scope])
+        create(:membership, user_id: source.id, client_id: other_client.id)
+      end
+
+      it 'responds 422 with the admin-guard envelope, leaving memberships untouched' do
+        post path,
+             params: { copy_from: source.email },
+             headers: auth_header(token),
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.parsed_body['errors']).to eq('The action is forbidden for your account')
+        expect(target.reload.memberships.pluck(:client_id)).to eq([client.id])
       end
     end
 
@@ -629,20 +627,17 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
       it 'responds 422 with the "Wrong email" error envelope' do
         post path,
-             params:  { copy_from: 'nobody@example.test' },
+             params: { copy_from: 'nobody@example.test' },
              headers: auth_header(token),
-             as:      :json
+             as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['errors']).to eq('Wrong email')
       end
     end
   end
 
-  # -------------------------------------------------------------------------
-  # GET /api/v1/users/researchers
-  # -------------------------------------------------------------------------
   describe 'GET /api/v1/users/researchers' do
     let(:path) { '/api/v1/users/researchers' }
 
@@ -651,7 +646,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         get path, headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to be_an(Array)
       end
     end
@@ -665,9 +660,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/reset_password
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/reset_password' do
     let(:path) { '/api/v1/users/reset_password' }
 
@@ -707,9 +699,6 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
   end
 
-  # -------------------------------------------------------------------------
-  # POST /api/v1/users/update_last_login
-  # -------------------------------------------------------------------------
   describe 'POST /api/v1/users/update_last_login' do
     let(:path) { '/api/v1/users/update_last_login' }
 
@@ -721,7 +710,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         post path, headers: auth_header(token), as: :json
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['data']).to be_present
         expect(current_user.reload.last_login).to be_within(1.second).of(freeze_time)
       end
@@ -742,7 +731,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
         post path, headers: auth_header(token), as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['errors']).to eq('Could not update last login timestamp')
       end
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReportAbility
   include CanCan::Ability
 
@@ -25,18 +27,14 @@ class ReportAbility
       project_ids = client_project_ids(client_authorization.subject_id)
 
       client_authorization.scopes.each do |scope|
-        if scope.action == 'access'
-          can :view, Report, project_id: project_ids
-        end
+        can :view, Report, project_id: project_ids if scope.action == 'access'
 
         if scope.action == 'update'
           can :create, Report, project_id: project_ids
           can :update, Report, project_id: project_ids
         end
 
-        if scope.action == 'authorize'
-          can :manage, Report, project_id: project_ids
-        end
+        can :manage, Report, project_id: project_ids if scope.action == 'authorize'
       end
     end
 
@@ -44,18 +42,14 @@ class ReportAbility
 
     projects_authorizations.find_each do |authorization|
       authorization.scopes.each do |scope|
-        if scope.action == 'access'
-          can :view, Report, project_id: authorization.subject_id
-        end
+        can :view, Report, project_id: authorization.subject_id if scope.action == 'access'
 
         if scope.action == 'update'
           can :create, Report, project_id: authorization.subject_id
           can :update, Report, project_id: authorization.subject_id
         end
 
-        if scope.action == 'authorize'
-          can :manage, Report, project_id: authorization.subject_id
-        end
+        can :manage, Report, project_id: authorization.subject_id if scope.action == 'authorize'
       end
     end
   end
@@ -67,23 +61,23 @@ class ReportAbility
   def report_authorization
     @report_authorization ||=
       Authorization
-        .preload(:scopes)
-        .joins(:scopes)
-        .joins(:membership)
-        .where(memberships: { user_id: user.id })
-        .for_reports
-        .where(subject_id: report_ids)
+      .preload(:scopes)
+      .joins(:scopes)
+      .joins(:membership)
+      .where(memberships: { user_id: user.id })
+      .for_reports
+      .where(subject_id: report_ids)
   end
 
   def projects_authorizations
-    @project_authorizations ||=
+    @projects_authorizations ||=
       Authorization
-        .preload(:scopes)
-        .joins(:scopes)
-        .joins(:membership)
-        .where(memberships: { user_id: user.id })
-        .for_projects
-        .where(subject_id: project_id)
+      .preload(:scopes)
+      .joins(:scopes)
+      .joins(:membership)
+      .where(memberships: { user_id: user.id })
+      .for_projects
+      .where(subject_id: project_id)
   end
 
   def report_ids
@@ -96,8 +90,13 @@ class ReportAbility
     @memberships ||= user.memberships
   end
 
+  # Client-subject authorizations only. The caller treats each subject_id as a
+  # client/domain id via #client_project_ids; without the for_clients filter,
+  # Report/Project authorizations leak in and over-grant whenever a project's
+  # domain_id happens to equal a report/project subject_id.
   def client_authorizations
-    @client_authorizations ||= Authorization.preload(:scopes).joins(:membership).where(memberships: { user_id: user.id })
+    @client_authorizations ||=
+      Authorization.preload(:scopes).joins(:membership).where(memberships: { user_id: user.id }).for_clients
   end
 
   def client_project_ids(client_id)
