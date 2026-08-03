@@ -45,8 +45,13 @@ Pushing `staging` with changes under `ui/**` triggers `petasos-staging-codepipel
 and does the same for the staging bucket.
 
 Both pipelines run the root `buildspec.yml`; bucket and CloudFront distribution
-come from per-project environment variables, not from this repo. Neither pipeline
-is in `hg-terraform` — they were created in the console.
+come from per-project environment variables, not from this repo. Both are defined
+in `hg-terraform/petasos.tf` (`aws_codepipeline.petasos` and
+`aws_codepipeline.petasos_staging`), along with their CodeBuild projects, the
+staging bucket and distribution, and the CodeStar GitHub connection. They are
+CodePipeline V2 with an explicit `trigger` block filtered to `ui/**` on their
+respective branch, and `DetectChanges = "false"` — the trigger is the only thing
+that starts them, there is no polling fallback.
 
 Backend-only changes trigger neither pipeline.
 
@@ -83,6 +88,30 @@ what will ship and becomes a third codebase to reconcile. This has already
 happened once, during the Rails 6.1→8.1 upgrade.
 
 Using staging is optional. Plenty of changes do not need it.
+
+### Resync staging after you are done with it
+
+Once whatever you were smoke-testing has merged, point `staging` back at `main`.
+Left pointing at a merged feature branch, it stops being a preview of what ships
+and the next person to use it starts from a stale base.
+
+```bash
+git push -f origin origin/main:staging
+cd api && bundle exec cap staging deploy
+```
+
+Two steps, because staging is asymmetric the same way production is: the frontend
+pipeline fires off the branch push, the Rails half does not move until someone
+runs Capistrano. Skip the second and the staging frontend runs ahead of the
+staging API — the same full-stack breakage described below, just somewhere you
+would rather find it.
+
+This is still a force-push, not a merge. Moving the pointer is the model; merging
+is what breaks it.
+
+For a change that needs a migration, resync *after* the production deploy has run
+it. Staging shares production's database and cannot migrate, so resyncing first
+gives you new code against an old schema, on the live database.
 
 ## Rules
 
