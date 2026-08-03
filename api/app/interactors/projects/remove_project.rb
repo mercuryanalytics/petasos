@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Projects
   class RemoveProject
     include Interactor
@@ -5,7 +7,7 @@ module Projects
     delegate :project, to: :context
 
     def call
-      project.destroy
+      context.fail!(message: project.errors) unless project.destroy
     end
   end
 end

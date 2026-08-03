@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Authorizations
   class AddAuthorizationFromParent
     include Interactor
@@ -7,7 +9,7 @@ module Authorizations
     attr_reader :instance
 
     def call
-      @instance = report || project || client
+      @instance = report || project
 
       klass, parent_id = parent
 
@@ -25,7 +27,9 @@ module Authorizations
         }
       end
 
-      Authorization.insert_all(mapped_memberships) if mapped_memberships.any?
+      # Bulk-insert the copied parent authorizations in one query; validations
+      # are unnecessary (rows are built here from known-valid FKs).
+      Authorization.insert_all(mapped_memberships) if mapped_memberships.any? # rubocop:disable Rails/SkipsModelValidations
     end
 
     def parent

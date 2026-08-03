@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Authorizations::AddAuthorizationFromParent do
@@ -66,7 +68,7 @@ RSpec.describe Authorizations::AddAuthorizationFromParent do
       end
 
       it 'does not create any authorizations' do
-        expect { interactor }.to_not change { Authorization.count }
+        expect { interactor }.to_not(change { Authorization.count })
       end
     end
 
@@ -74,7 +76,16 @@ RSpec.describe Authorizations::AddAuthorizationFromParent do
       subject(:interactor) { described_class.call(report: report) }
 
       it 'reports success and creates nothing' do
-        expect { interactor }.to_not change { Authorization.count }
+        expect { interactor }.to_not(change { Authorization.count })
+        expect(interactor).to be_a_success
+      end
+    end
+
+    context 'when neither report nor project is supplied' do
+      subject(:interactor) { described_class.call }
+
+      it 'no-ops without raising' do
+        expect { interactor }.to_not(change { Authorization.count })
         expect(interactor).to be_a_success
       end
     end

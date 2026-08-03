@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Reports
   class UpdateReport
     include Interactor
@@ -5,7 +7,7 @@ module Reports
     delegate :report, to: :context
 
     def call
-      context.fail!(message: client.errors) unless report.save
+      context.fail!(message: report.errors) unless report.save
     end
   end
 end
