@@ -43,6 +43,22 @@ RSpec.describe Users::ValidateUser do
     end
   end
 
+  context 'on a create payload without :email' do
+    let(:params) { { contact_name: 'No Email' } }
+
+    it 'fails rather than initializing a nil-email user' do
+      expect(interactor).to be_a_failure
+      expect(interactor.message).to eq('Email is required')
+    end
+
+    it 'does not claim an existing nil-email user' do
+      orphan = create(:user, email: nil)
+
+      expect(interactor).to be_a_failure
+      expect(orphan.reload.contact_name).not_to eq('No Email')
+    end
+  end
+
   context 'with an existing user' do
     let!(:existing) { create(:user, email: 'new.user@example.com') }
 
