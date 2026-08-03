@@ -20,6 +20,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **api:** Stop CanCanCan building client logo on authorize (Rails 8.1) (#54)
 - **deps:** Clear bundler-audit CVEs blocking api CI (#65)
 - **api:** Unique index on scopes (scope, action, global, dynamic) (#20) (#63)
+- **api:** Wave 1 post-upgrade interactor bug fixes (#8, #9, #10, #11) (#60)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -77,6 +78,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - Add root README with deploy procedure
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
