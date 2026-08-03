@@ -47,8 +47,9 @@ and does the same for the staging bucket.
 Both pipelines run the root `buildspec.yml`; bucket and CloudFront distribution
 come from per-project environment variables, not from this repo. Both are defined
 in `hg-terraform/petasos.tf` (`aws_codepipeline.petasos` and
-`aws_codepipeline.petasos_staging`), along with their CodeBuild projects, the
-staging bucket and distribution, and the CodeStar GitHub connection. They are
+`aws_codepipeline.petasos_staging`), along with their CodeBuild projects, both
+environments' S3 buckets and CloudFront distributions, and the CodeStar GitHub
+connection. They are
 CodePipeline V2 with an explicit `trigger` block filtered to `ui/**` on their
 respective branch, and `DetectChanges = "false"` — the trigger is the only thing
 that starts them, there is no polling fallback.
