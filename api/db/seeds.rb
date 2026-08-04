@@ -11,7 +11,7 @@
 Scope.where(action: "admin")
      .first_or_create!(scope: "admin", description: "Global admin", global: true, dynamic: false, name: "Mercury Analytics Admin")
 Scope.find_or_create_by(name: 'Researcher', action: 'research', scope: 'user', description: 'Research project', global: true)
-Scope.find_or_create_by(name: 'Brand Lift Benchmarks', action: 'brand_lift_benchmarks', scope: 'user', description: 'Access to the brand lift benchmark tool in workbench', global: true)
+Scope.find_or_create_by(name: 'Brand Lift Benchmarks', action: 'brand_lift_benchmarks', scope: 'workbench', description: 'Access to the brand lift benchmark tool in workbench', global: true)
 
 # Client scopes
 Scope.find_or_create_by(action: 'update', scope: 'client', description: 'Allows editing the client')
