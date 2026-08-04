@@ -81,6 +81,8 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - Add root README with deploy procedure
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- Correct pipeline provenance and document staging resync (#71)
 
 ### Features
 - Petasos staging backend support (#6)
