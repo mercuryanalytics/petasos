@@ -20,6 +20,13 @@ MercurySsoAuth0.setup do |ma|
   # If omitted, `session_valid?` falls back to the OAuth access-token
   # expiry (legacy behavior — inaccurate but non-breaking).
   ma.session_lifetime = 8.hours
+  # Optional. Auth0 API identifier to request tokens for. When set, Auth0
+  # returns a JWT access token scoped to that API (`aud` = this value) rather
+  # than its default opaque one, so the app can forward it to that API as a
+  # bearer credential. Add `offline_access` to `scopes` as well if you need a
+  # refresh token to renew it. Omit both for login-only apps.
+  ma.audience = 'https://api.example.com/'
+  ma.scopes   = 'openid email profile offline_access'
 end
 ```
 

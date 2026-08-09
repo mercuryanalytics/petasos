@@ -14,8 +14,9 @@ module MercurySsoAuth0
         MercurySsoAuth0.domain,
         callback_path: MercurySsoAuth0.callback_path,
         authorize_params: {
-          scope: MercurySsoAuth0.scopes
-        }
+          scope: MercurySsoAuth0.scopes,
+          audience: MercurySsoAuth0.audience
+        }.compact
       )
     end
 
