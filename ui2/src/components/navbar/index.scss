@@ -1,0 +1,56 @@
+.Navbar {
+  display: grid;
+  grid-template-columns: 0fr 1fr 200px;
+  align-items: center;
+  height: 72px;
+
+  & > button:nth-child(1) {
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 0 50px 50px 0;
+    background-color: #0c7997;
+    border-color: transparent;
+  }
+
+  & > img:nth-child(2) {
+    width: auto;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  & > div:nth-child(3) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    cursor: pointer;
+
+    & > div:nth-child(1) {
+      display: grid;
+      grid-template-columns: 1fr 2fr 0fr;
+      align-items: center;
+      width: 150px;
+
+      & > div:nth-child(1) {
+        display: grid;
+        align-content: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+    }
+
+    & > div:nth-child(2) > .react-aria-Button {
+      border: 1px solid black;
+      padding: 1px 6px;
+
+      &:focus-visible {
+        outline: none;
+      }
+    }
+  }
+}

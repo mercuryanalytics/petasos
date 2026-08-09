@@ -1,0 +1,51 @@
+.NameAndType {
+  margin-bottom: 3rem;
+
+  & > h1:first-child {
+    overflow: hidden;
+    // text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: center;
+    height: 16px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    display: inline-block;
+    width: 100%;
+  }
+
+  & > div:nth-child(2) {
+    font-size: 0.75rem;
+
+    display: grid;
+    grid-template:
+      "client-name company-name"
+      "type ."
+      "client-logo motto"
+      "client-logo ." / 1fr 1fr;
+    row-gap: 1rem;
+    column-gap: 20px;
+
+    & > div:first-child {
+      grid-area: client-logo;
+    }
+
+    & > div:nth-child(2) {
+      grid-area: client-name;
+    }
+
+    & > div:nth-child(3) {
+      grid-area: company-name;
+    }
+
+    & > div:nth-child(4) {
+      grid-area: type;
+    }
+
+    & > div:last-child {
+      grid-area: motto;
+    }
+  }
+}

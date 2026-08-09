@@ -1,0 +1,38 @@
+.CreateClient {
+  width: 310px;
+  min-width: 310px;
+  max-width: 310px;
+  padding: 2rem;
+  box-sizing: border-box;
+  border-right: 1px solid #f0f0f0;
+  background-color: #fbfbfd;
+
+  & > h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1rem;
+    white-space: nowrap;
+    margin-bottom: 24px;
+  }
+
+  & > p {
+    margin-bottom: 50px;
+    font-size: 0.875rem;
+    line-height: 20px;
+  }
+
+  & > ol {
+    font-size: 1rem;
+    line-height: 28px;
+    color: #333;
+    font-weight: 700;
+    list-style-position: inside;
+    opacity: 0.5;
+
+    & > li {
+      margin: 14px 0;
+      user-select: none;
+    }
+  }
+}

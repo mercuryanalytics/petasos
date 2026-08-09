@@ -1,0 +1,129 @@
+.Menu {
+  .react-aria-Tree {
+    position: relative;
+    gap: 2px;
+    overflow: auto;
+
+    .react-aria-TreeItem {
+      align-items: center;
+      margin-bottom: 5px;
+      margin-left: calc((var(--tree-item-level) - 1) * 20px);
+      cursor: pointer;
+      font-size: 1.072rem;
+      position: relative;
+      transform: translateZ(0);
+      border-radius: 18px;
+      outline: none;
+
+      & > div {
+        display: grid;
+        row-gap: 5px;
+        font-size: 1.2rem;
+
+        & > a {
+          grid-template-columns: 0fr 0fr 1fr;
+        }
+
+        & > a:has(span:first-child) {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .react-aria-Button[slot="chevron"] {
+        all: unset;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          rotate: 0deg;
+          transition: rotate 200ms;
+          font-size: 1.2rem;
+        }
+      }
+
+      &[data-expanded] {
+        .react-aria-Button[slot="chevron"] svg {
+          rotate: 90deg;
+        }
+      }
+
+      &[aria-label="Test"] a > span {
+        font-size: 0.875rem;
+      }
+
+      &:not([data-level="1"]) a {
+        & > span:nth-child(2),
+        & > span:nth-child(3) {
+          font-size: 0.875rem;
+        }
+      }
+
+      &:hover {
+        background: #ffffff;
+      }
+
+      &[data-selected],
+      &:focus {
+        background: #0c7997;
+        svg {
+          fill: #ffffff;
+          stroke: #ffffff;
+        }
+
+        span {
+          color: #fff;
+        }
+      }
+    }
+
+    .logo {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background-color: #fff;
+      overflow: hidden;
+
+      & > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    a {
+      display: grid;
+      column-gap: 8px;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 0 10px;
+      min-height: 40px;
+      align-items: center;
+      white-space: nowrap;
+    }
+  }
+
+  & > .react-aria-Button {
+    border: 1px solid #ff6d35;
+    border-color: #ff6d35;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 0 20px;
+    font-size: 0.875rem;
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    a {
+      text-decoration: none;
+      display: grid;
+      align-items: center;
+      min-width: 120px;
+      height: 40px;
+      color: #f37646;
+    }
+  }
+}

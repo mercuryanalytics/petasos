@@ -1,0 +1,115 @@
+.react-aria-Select {
+  &[data-open] .react-aria-Button[slot="chevron"] svg {
+    rotate: 180deg;
+  }
+
+  .react-aria-Label {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+
+  .react-aria-Button {
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    box-sizing: border-box;
+    border: 1px solid #dfdfdf;
+    background: #ffffff;
+    font-size: 1.072rem;
+    padding: 5.5px 15px;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    align-items: center;
+    justify-items: start;
+    width: 100%;
+    line-height: 0.75rem;
+    font-size: 0.75rem;
+    color: #333;
+    cursor: pointer;
+    overflow: hidden;
+
+    &[data-focus-visible] {
+      outline: none;
+    }
+    &[data-focused],
+    &[data-pressed],
+    &[data-hovered] {
+      border-color: #a0a0a0;
+      outline: unset;
+    }
+
+    svg {
+      font-size: 1rem;
+    }
+  }
+
+  .react-aria-SelectValue {
+    height: unset;
+
+    &[data-placeholder] {
+      color: #333;
+    }
+  }
+
+  span[aria-hidden] {
+    width: 1.5rem;
+    margin-left: 1rem;
+    padding: 1px;
+    border-radius: 4px;
+  }
+
+  .react-aria-FieldError {
+    margin-top: 0.3rem;
+    color: #b60010;
+    font-size: 0.75rem;
+  }
+}
+
+.react-aria-Popover[data-trigger="Select"] {
+  min-width: var(--trigger-width);
+  border: 1px solid #a0a0a0;
+  background: #ffffff;
+  box-sizing: border-box;
+  font-size: 0.75rem;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+
+  .react-aria-ListBox {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    min-height: unset;
+    border: none;
+
+    .react-aria-Header {
+      padding-left: 1.571rem;
+    }
+
+    &[data-hovered],
+    &[data-focused],
+    &[data-pressed] {
+      outline: unset;
+    }
+  }
+
+  .react-aria-ListBoxItem {
+    padding: 7.5px 15px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #333;
+
+    &[data-focus-visible] {
+      outline: unset;
+    }
+
+    &[data-hovered],
+    &[data-focused],
+    &[data-pressed] {
+      outline: unset;
+      background: #f8f8f8;
+    }
+  }
+}

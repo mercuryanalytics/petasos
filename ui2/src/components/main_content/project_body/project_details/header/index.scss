@@ -1,0 +1,29 @@
+.ProjectDetailsHeader {
+  display: grid;
+  grid-template-columns: 1fr 0fr 0fr;
+  gap: 20px;
+  margin-bottom: 14px;
+  height: 47px;
+  align-content: center;
+
+  & > h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.25rem;
+    white-space: nowrap;
+  }
+
+  & button {
+    all: unset;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    width: 100%;
+    white-space: nowrap;
+    column-gap: 0.2rem;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,12 @@
+.ModifyDomain {
+  & > button {
+    all: unset;
+    margin-bottom: 18px;
+    margin-top: 24px;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0c7997;
+    padding: 0 2rem;
+  }
+}
