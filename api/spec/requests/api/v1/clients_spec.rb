@@ -13,20 +13,8 @@ require 'rails_helper'
 # Coverage scenarios per action (per PRD user stories 1, 2, 9, 10):
 #   - authenticated happy path
 #   - missing or invalid token => 401
-#   - valid token, insufficient scope (authorization failure) => observable
-#     401 (production code rescues CanCan::AccessDenied with status
-#     :unauthorized; documented below)
+#   - valid token, insufficient scope (authorization failure) => 403
 #   - validation failure where applicable => 422
-#
-# IMPORTANT note on the 403 acceptance criterion in the issue:
-#   The PRD asks for a "valid token with insufficient scope (403)" scenario,
-#   but Api::V1::BaseController currently maps CanCan::AccessDenied to
-#   :unauthorized (HTTP 401), not :forbidden (HTTP 403). The PRD also
-#   explicitly says specs should assert *externally observable* behavior, not
-#   the intended-but-not-yet-implemented behavior. So these specs assert 401
-#   for the insufficient-scope path and document the discrepancy here so a
-#   future fix (flipping the status to :forbidden) is one line in both
-#   places. The same observation appears in the base_controller spec.
 RSpec.describe 'Api::V1::Clients', type: :request do
   # Use find_or_create_by to avoid sporadic PG deadlocks when sibling
   # worktrees / parallel agents share the petasos_test database -- the
@@ -54,7 +42,7 @@ RSpec.describe 'Api::V1::Clients', type: :request do
   let(:admin_headers) { auth_header(admin_token).merge('Content-Type' => 'application/json') }
 
   # A non-admin user with no memberships and no authorizations. Hits the
-  # ClientAbility `client_ids: []` branch -> CanCan::AccessDenied -> 401.
+  # ClientAbility `client_ids: []` branch -> CanCan::AccessDenied -> 403.
   let!(:unprivileged_user) do
     create(:user, email: 'no-scope@example.test', auth_id: 'auth0|no-scope')
   end
@@ -144,25 +132,15 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      # load_and_authorize_resource raises CanCan::AccessDenied for show ->
-      # base_controller rescues with :unauthorized. (Documented spec-file
-      # header note: BaseController maps AccessDenied to 401 not 403.)
-      it 'returns 401 with the error envelope' do
+      # load_and_authorize_resource raises CanCan::AccessDenied for show.
+      it 'returns 403 with the error envelope' do
         get "/api/v1/clients/#{client.id}", headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
-
-    # 404-when-missing is intentionally NOT tested at the request layer:
-    # config/environments/test.rb sets `show_exceptions = false`, so
-    # ActiveRecord::RecordNotFound propagates out instead of being mapped to
-    # 404. That's a Rails test-mode quirk, not a production behavior, and
-    # asserting it here would lock in implementation noise. Validation
-    # failures (the real 422 path in the acceptance criteria) are exercised
-    # by POST and PUT.
   end
 
   describe 'POST /api/v1/clients' do
@@ -226,10 +204,10 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      it 'returns 401' do
+      it 'returns 403' do
         post '/api/v1/clients', params: valid_params.to_json, headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         body = response.parsed_body
         expect(body).to have_key('errors')
       end
@@ -274,12 +252,12 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      it 'returns 401' do
+      it 'returns 403' do
         put "/api/v1/clients/#{client.id}",
             params: valid_params.to_json,
             headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -306,12 +284,12 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      it 'returns 401' do
+      it 'returns 403' do
         expect do
           delete "/api/v1/clients/#{client.id}", headers: unprivileged_headers
         end.not_to change(Client, :count)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -340,14 +318,14 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      it 'returns 401' do
+      it 'returns 403' do
         # ClientsController#orphans aliases through CanCan via
         # load_and_authorize_resource (member action -> :orphans on Client).
         # For a non-admin with no memberships, the resource cannot be
-        # authorized -> 401.
+        # authorized -> 403.
         get "/api/v1/clients/#{client.id}/orphans", headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -399,12 +377,12 @@ RSpec.describe 'Api::V1::Clients', type: :request do
       # behind the controller-class-level `load_and_authorize_resource`
       # before_action via CanCan's defaults, so an unprivileged user is
       # blocked before the action body runs.
-      it 'returns 401' do
+      it 'returns 403' do
         post "/api/v1/clients/#{client.id}/authorize",
              params: authorize_params.to_json,
              headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -432,10 +410,10 @@ RSpec.describe 'Api::V1::Clients', type: :request do
     end
 
     context 'authenticated but without sufficient scope' do
-      it 'returns 401' do
+      it 'returns 403' do
         get "/api/v1/clients/#{client.id}/authorized", headers: unprivileged_headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
