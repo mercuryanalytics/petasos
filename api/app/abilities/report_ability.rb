@@ -54,10 +54,6 @@ class ReportAbility
     end
   end
 
-  def project_ids
-    @project_ids ||= Project.authorized_for_user(user.memberships.map(&:id)).pluck(:id)
-  end
-
   def report_authorization
     @report_authorization ||=
       Authorization
@@ -81,13 +77,7 @@ class ReportAbility
   end
 
   def report_ids
-    return [] if memberships.empty?
-
     @report_ids ||= Report.authorized_for_user(user.memberships.map(&:id)).pluck(:id)
-  end
-
-  def memberships
-    @memberships ||= user.memberships
   end
 
   # Client-subject authorizations only. The caller treats each subject_id as a
