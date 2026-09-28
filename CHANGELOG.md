@@ -23,6 +23,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **api:** Wave 1 post-upgrade interactor bug fixes (#8, #9, #10, #11) (#60)
 - **deps:** Bump Rails 8.1.3 → 8.1.3.1 for activestorage CVE-2026-66066 (#70)
 - **api:** Move brand_lift_benchmarks global scope to the workbench scope
+- **deps:** Bump json 2.21.1 → 2.21.2 for CVE-2026-71847 (#74)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -84,6 +85,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - Correct pipeline provenance and document staging resync (#71)
+- **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 
 ### Features
