@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 module Secured
   extend ActiveSupport::Concern
 
   included do
     before_action :authenticate_request!
 
-    rescue_from ::JWT::ExpiredSignature, CanCan::AccessDenied,
+    rescue_from ::JWT::ExpiredSignature,
                 ::JWT::VerificationError,
                 ::JWT::DecodeError,
                 ::UserNotFoundError,
                 with: :render_error
-
   end
 
   private
@@ -24,9 +25,9 @@ module Secured
   end
 
   def http_token
-    if request.headers['Authorization'].present?
-      request.headers['Authorization'].split(' ').last
-    end
+    return if request.headers['Authorization'].blank?
+
+    request.headers['Authorization'].split.last
   end
 
   def auth_token
@@ -34,7 +35,8 @@ module Secured
   end
 
   def current_user
-    email, auth_id = auth_token.first['email'], auth_token.first['sub']
+    email = auth_token.first['email']
+    auth_id = auth_token.first['sub']
 
     interactor = Users::GetCurrentUser.call(email: email, auth_id: auth_id)
 
