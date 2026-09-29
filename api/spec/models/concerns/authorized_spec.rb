@@ -48,6 +48,14 @@ RSpec.describe Authorized, type: :model do
       expect(Client.authorized_for_user([membership.id])).to be_empty
     end
 
+    it 'filters on the subject join when composed after Client#authorizations' do
+      create(:client_auth, membership_id: other_membership.id, subject_id: client.id)
+      project = create(:project, client: client)
+      create(:project_auth, membership_id: membership.id, subject_id: project.id, client_id: client.id)
+
+      expect(Client.joins(:authorizations).authorized_for_user([membership.id])).to be_empty
+    end
+
     it 'scopes by the host model when included in Project' do
       project = create(:project, client: client)
       other_project = create(:project, client: other_client)
