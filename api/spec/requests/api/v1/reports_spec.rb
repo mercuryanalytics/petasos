@@ -15,16 +15,9 @@ require 'rails_helper'
 # Per-action scenarios cover (per PRD user story 2):
 #   * authenticated happy path,
 #   * missing/invalid token (401),
-#   * valid token with insufficient scope (rendered as 401 by
-#     BaseController's rescue_from CanCan::AccessDenied — see NOTE below),
+#   * valid token with insufficient scope (403),
 #   * validation failure (422).
 #
-# NOTE on 403 vs 401: BaseController rescues CanCan::AccessDenied with
-# `status: :unauthorized` (401). The Secured concern also returns 401 for
-# bad tokens. These specs assert what the API actually returns today: 401
-# for both cases. The discriminator is the response body:
-#   * invalid/missing token => 401, empty body
-#   * insufficient scope    => 401, {"errors":"You are not authorized"}
 RSpec.describe 'Api::V1::Reports', type: :request do
   let!(:client) { create(:client) }
   let!(:project) { create(:project, client: client) }
@@ -135,10 +128,10 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     end
 
     context 'with a valid token but no authorization for this report' do
-      it 'returns 401 with the not-authorized error envelope' do
+      it 'returns 403 with the not-authorized error envelope' do
         get "/api/v1/reports/#{report.id}", headers: headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
@@ -146,10 +139,10 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     context 'with a valid admin token but a non-existent report id' do
       before { make_user_admin! }
 
-      it 'raises RecordNotFound (no spec-wide rescue, so the request errors)' do
-        expect do
-          get '/api/v1/reports/0', headers: headers
-        end.to raise_error(ActiveRecord::RecordNotFound)
+      it 'returns 404' do
+        get '/api/v1/reports/0', headers: headers
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -207,10 +200,10 @@ RSpec.describe 'Api::V1::Reports', type: :request do
 
     context 'with a valid token but insufficient scope to create' do
       # Non-admin without `can :create, Report` on this project.
-      it 'returns 401 with the not-authorized error envelope' do
+      it 'returns 403 with the not-authorized error envelope' do
         post '/api/v1/reports', params: valid_params.to_json, headers: headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
@@ -282,12 +275,12 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     end
 
     context 'with a valid token but insufficient scope to update' do
-      it 'returns 401 with the not-authorized error envelope and leaves the report unchanged' do
+      it 'returns 403 with the not-authorized error envelope and leaves the report unchanged' do
         patch "/api/v1/reports/#{report.id}",
               params: update_params.to_json,
               headers: headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
         expect(report.reload.name).to eq('Original Name')
       end
@@ -324,9 +317,8 @@ RSpec.describe 'Api::V1::Reports', type: :request do
 
         expect(response).to have_http_status(:ok)
 
-        expect do
-          get "/api/v1/reports/#{report.id}", headers: headers
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        get "/api/v1/reports/#{report.id}", headers: headers
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -347,12 +339,12 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     end
 
     context 'with a valid token but insufficient scope to destroy' do
-      it 'returns 401 with the not-authorized error envelope and leaves the report intact' do
+      it 'returns 403 with the not-authorized error envelope and leaves the report intact' do
         expect do
           delete "/api/v1/reports/#{report.id}", headers: headers
         end.not_to(change { Report.count })
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
@@ -471,12 +463,12 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     end
 
     context 'with a valid token but insufficient scope' do
-      it 'returns 401 with the not-authorized error envelope' do
+      it 'returns 403 with the not-authorized error envelope' do
         post "/api/v1/reports/#{report.id}/authorize",
              params: authorize_params.to_json,
              headers: headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
@@ -523,11 +515,11 @@ RSpec.describe 'Api::V1::Reports', type: :request do
     end
 
     context 'with a valid token but insufficient scope' do
-      it 'returns 401 with the not-authorized error envelope' do
+      it 'returns 403 with the not-authorized error envelope' do
         get "/api/v1/reports/#{report.id}/authorized?project_id=#{project.id}",
             headers: headers
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end

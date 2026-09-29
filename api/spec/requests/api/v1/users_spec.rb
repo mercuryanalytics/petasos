@@ -5,13 +5,6 @@ require 'rails_helper'
 # Auth flows through the real `Secured` concern (JWKS-only stub via the Issue
 # 001 helpers). All outbound Auth0 Management-API HTTP is WebMock-stubbed so
 # the suite never touches live network.
-#
-# Note on the 401 vs 403 split: `BaseController#rescue_from CanCan::AccessDenied`
-# maps CanCan denials to **401 Unauthorized** (with a JSON body). The PRD's
-# "valid-token-but-insufficient-scope" scenario therefore asserts 401 here --
-# matching observable production behavior -- rather than 403. If a future
-# refactor distinguishes authentication failures from authorization denials,
-# these expectations should flip to `:forbidden`.
 RSpec.describe 'Api::V1::UsersController', type: :request do
   # --- Auth0 Management-API stubbing helpers ---------------------------------
   #
@@ -153,7 +146,7 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
 
     context 'authenticated but insufficient scope (non-admin)' do
       # A logged-in non-admin with no client memberships gets an empty result
-      # set rather than 401, because index uses `accessible_by(current_ability)`
+      # set rather than 403, because index uses `accessible_by(current_ability)`
       # rather than raising. We assert the observable outcome.
       it 'returns an empty data array' do
         get path, headers: auth_header(token)
@@ -193,22 +186,22 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope (non-admin viewing a different user)' do
-      it 'responds 401 (CanCan::AccessDenied -> Unauthorized envelope)' do
+      it 'responds 403 (CanCan::AccessDenied)' do
         get path, headers: auth_header(token)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         body = response.parsed_body
         expect(body).to eq('errors' => 'You are not authorized')
       end
     end
 
     context 'missing record (404 / invalid path param)' do
-      it 'raises ActiveRecord::RecordNotFound for an unknown id' do
+      it 'responds 404 for an unknown id' do
         grant_admin!
 
-        expect do
-          get '/api/v1/users/0', headers: auth_header(token)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        get '/api/v1/users/0', headers: auth_header(token)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -258,10 +251,10 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope (no membership-based create permission)' do
-      it 'responds 401 (CanCan::AccessDenied -> Unauthorized envelope)' do
+      it 'responds 403 (CanCan::AccessDenied)' do
         post path, params: valid_payload, headers: auth_header(token), as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -337,10 +330,10 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope' do
-      it 'responds 401' do
+      it 'responds 403' do
         patch path, params: update_payload, headers: auth_header(token), as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -483,13 +476,13 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope (non-admin attempting to authorize)' do
-      it 'responds 401' do
+      it 'responds 403' do
         post path,
              params: { scope_id: global_scope_record.id, scope_state: 1 },
              headers: auth_header(token),
              as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -536,10 +529,10 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope' do
-      it 'responds 401 (load_and_authorize_resource denies)' do
+      it 'responds 403 (load_and_authorize_resource denies)' do
         get path, headers: auth_header(token)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -575,13 +568,13 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     context 'insufficient scope (non-admin with no memberships)' do
       # CanCan denies this caller before :require_admin runs, so the example
       # passes with or without the admin gate -- the next context is its pin.
-      it 'responds 401 (CanCan::AccessDenied -> Unauthorized envelope)' do
+      it 'responds 403 (CanCan::AccessDenied)' do
         post path,
              params: { copy_from: source.email },
              headers: auth_header(token),
              as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -683,10 +676,10 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
     end
 
     context 'insufficient scope (non-admin)' do
-      it 'responds 401 (CanCan denies the reset_password ability)' do
+      it 'responds 403 (CanCan denies the reset_password ability)' do
         post path, headers: auth_header(token), as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

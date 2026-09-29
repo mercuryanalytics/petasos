@@ -30,13 +30,6 @@ require 'rails_helper'
 # spec/requests/api/v1/clients_spec.rb. The duplication is small and
 # intentional: this file is the home for the cross-cutting assertions and
 # can stay green even if a specific action's contract changes.
-#
-# Documented production-code quirk:
-#   `rescue_from CanCan::AccessDenied` currently renders status
-#   :unauthorized (HTTP 401), not :forbidden (HTTP 403). The PRD user-story
-#   text speaks of an "insufficient scope -> 403" case; the production code
-#   maps that to 401 today. These specs assert the observable behavior
-#   (401) and a single comment flags the discrepancy for the upgrade work.
 RSpec.describe 'Api::V1 cross-cutting behavior (BaseController)', type: :request do
   # See clients_spec.rb for the deadlock-avoidance rationale -- the Scope
   # model has no unique DB index, so concurrent INSERTs of the same
@@ -82,7 +75,7 @@ RSpec.describe 'Api::V1 cross-cutting behavior (BaseController)', type: :request
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to start_with('application/json')
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body).to be_a(Hash)
       expect(body.keys).to include('data')
       expect(body.fetch('data')).to be_an(Array)
@@ -94,13 +87,13 @@ RSpec.describe 'Api::V1 cross-cutting behavior (BaseController)', type: :request
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to start_with('application/json')
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body.keys).to eq(['data'])
       expect(body.fetch('data')).to be_a(Hash)
     end
   end
 
-  describe '401 mapping' do
+  describe 'auth failure mapping' do
     context 'missing token' do
       # Hits the Secured concern's `head :unauthorized` path -- no JSON body.
       # This documents that the missing-token branch returns a bare 401,
@@ -124,21 +117,24 @@ RSpec.describe 'Api::V1 cross-cutting behavior (BaseController)', type: :request
     end
 
     context 'authenticated but unauthorized (CanCan::AccessDenied)' do
-      # See file-header note: production code currently maps
-      # CanCan::AccessDenied to :unauthorized (401), not :forbidden (403).
-      # The PRD's "403" wording is a future-state target; today's observable
-      # behavior is 401 with the errors envelope.
-      it 'responds 401 with the errors envelope' do
+      it 'responds 403 with the errors envelope' do
         get "/api/v1/clients/#{client_record.id}",
             headers: auth_header(unprivileged_token)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(response.content_type).to start_with('application/json')
-
-        body = JSON.parse(response.body)
-        expect(body).to have_key('errors')
-        expect(body.fetch('errors')).to eq('You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
+    end
+  end
+
+  describe '404 mapping (ActiveRecord::RecordNotFound)' do
+    it 'responds 404 with the errors envelope for an unknown id' do
+      get '/api/v1/clients/0', headers: admin_headers
+
+      expect(response).to have_http_status(:not_found)
+      expect(response.content_type).to start_with('application/json')
+      expect(response.parsed_body).to eq('errors' => 'Not found')
     end
   end
 
@@ -151,7 +147,7 @@ RSpec.describe 'Api::V1 cross-cutting behavior (BaseController)', type: :request
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.content_type).to start_with('application/json')
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body).to have_key('errors')
       # The envelope value here is the ActiveModel::Errors object's JSON
       # representation (a hash of field -> messages). Asserting structural
