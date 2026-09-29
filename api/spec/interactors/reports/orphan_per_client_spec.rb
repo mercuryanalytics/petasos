@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Reports::OrphanPerClient, type: :interactor do
@@ -26,7 +28,7 @@ RSpec.describe Reports::OrphanPerClient, type: :interactor do
         membership_id: user.memberships.first.id,
         client_id: client.id
       )
-      authorization.client_scopes << create(:scope, :client, :read).tap { |s| s.update!(action: 'access') }
+      authorization.client_scopes << create(:scope, :client, :read).tap {|s| s.update!(action: 'access') }
       authorization
     end
 
@@ -48,6 +50,15 @@ RSpec.describe Reports::OrphanPerClient, type: :interactor do
 
     it 'exposes a (possibly empty) collection of reports on context.reports' do
       expect(interactor.reports).to respond_to(:each)
+    end
+  end
+
+  context 'when the user has no memberships' do
+    let!(:user) { create(:user) }
+    let!(:report) { create(:report, project: create(:project, client: client)) }
+
+    it 'returns no orphan reports' do
+      expect(interactor.reports).to be_empty
     end
   end
 end

@@ -71,9 +71,9 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get "/api/v1/reports?project_id=#{project.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
-        ids = body['data'].map { |r| r['id'] }
+        ids = body['data'].pluck('id')
         expect(ids).to include(report.id)
         expect(ids).not_to include(report_other.id)
       end
@@ -105,7 +105,20 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get "/api/v1/reports?project_id=#{project.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to eq('data' => [])
+        expect(response.parsed_body).to eq('data' => [])
+      end
+    end
+
+    context 'with a valid token, a client_id, and no memberships' do
+      let!(:report) { create(:report, project_id: project.id) }
+
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get "/api/v1/reports?client_id=#{client.id}", headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
       end
     end
   end
@@ -120,7 +133,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get "/api/v1/reports/#{report.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.dig('data', 'id')).to eq(report.id)
         expect(body.dig('data', 'name')).to eq(report.name)
       end
@@ -147,7 +160,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get "/api/v1/reports/#{report.id}", headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -155,9 +168,9 @@ RSpec.describe 'Api::V1::Reports', type: :request do
       before { make_user_admin! }
 
       it 'raises RecordNotFound (no spec-wide rescue, so the request errors)' do
-        expect {
+        expect do
           get '/api/v1/reports/0', headers: headers
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -178,18 +191,18 @@ RSpec.describe 'Api::V1::Reports', type: :request do
       before { make_user_admin! }
 
       it 'returns 201 and the created report is observable via GET' do
-        expect {
+        expect do
           post '/api/v1/reports', params: valid_params.to_json, headers: headers
-        }.to change { Report.count }.by(1)
+        end.to change { Report.count }.by(1)
 
         expect(response).to have_http_status(:created)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.dig('data', 'name')).to eq('New Report')
         created_id = body.dig('data', 'id')
 
         get "/api/v1/reports/#{created_id}", headers: headers
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('New Report')
+        expect(response.parsed_body.dig('data', 'name')).to eq('New Report')
       end
     end
 
@@ -219,7 +232,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         post '/api/v1/reports', params: valid_params.to_json, headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -237,12 +250,12 @@ RSpec.describe 'Api::V1::Reports', type: :request do
       end
 
       it 'returns 422 with an errors envelope and does not create a report' do
-        expect {
+        expect do
           post '/api/v1/reports', params: invalid_params.to_json, headers: headers
-        }.not_to change { Report.count }
+        end.not_to(change { Report.count })
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
@@ -262,10 +275,10 @@ RSpec.describe 'Api::V1::Reports', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('Updated Name')
+        expect(response.parsed_body.dig('data', 'name')).to eq('Updated Name')
 
         get "/api/v1/reports/#{report.id}", headers: headers
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('Updated Name')
+        expect(response.parsed_body.dig('data', 'name')).to eq('Updated Name')
       end
     end
 
@@ -296,7 +309,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
         expect(report.reload.name).to eq('Original Name')
       end
     end
@@ -312,7 +325,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
         expect(report.reload.name).to eq('Original Name')
       end
@@ -326,15 +339,15 @@ RSpec.describe 'Api::V1::Reports', type: :request do
       before { make_user_admin! }
 
       it 'returns 200 and the report is no longer reachable via GET' do
-        expect {
+        expect do
           delete "/api/v1/reports/#{report.id}", headers: headers
-        }.to change { Report.count }.by(-1)
+        end.to change { Report.count }.by(-1)
 
         expect(response).to have_http_status(:ok)
 
-        expect {
+        expect do
           get "/api/v1/reports/#{report.id}", headers: headers
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -356,12 +369,12 @@ RSpec.describe 'Api::V1::Reports', type: :request do
 
     context 'with a valid token but insufficient scope to destroy' do
       it 'returns 401 with the not-authorized error envelope and leaves the report intact' do
-        expect {
+        expect do
           delete "/api/v1/reports/#{report.id}", headers: headers
-        }.not_to change { Report.count }
+        end.not_to(change { Report.count })
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -388,7 +401,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get '/api/v1/reports/orphans', headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to eq('data' => [])
+        expect(response.parsed_body).to eq('data' => [])
       end
     end
 
@@ -417,7 +430,18 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get '/api/v1/reports/orphans', headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to eq('data' => [])
+        expect(response.parsed_body).to eq('data' => [])
+      end
+    end
+
+    context 'with a valid token but no memberships' do
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get '/api/v1/reports/orphans', headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
       end
     end
   end
@@ -481,7 +505,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
              headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -503,7 +527,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
             headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         expect(body['data']).to be_an(Array)
       end
@@ -532,7 +556,7 @@ RSpec.describe 'Api::V1::Reports', type: :request do
             headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 

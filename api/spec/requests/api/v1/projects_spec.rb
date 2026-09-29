@@ -67,9 +67,9 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get '/api/v1/projects', headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
-        names = body['data'].map { |p| p['name'] }
+        names = body['data'].pluck('name')
         expect(names).to include(project.name, project_other.name)
       end
 
@@ -77,8 +77,8 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get "/api/v1/projects?client_id=#{client.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
-        ids = body['data'].map { |p| p['id'] }
+        body = response.parsed_body
+        ids = body['data'].pluck('id')
         expect(ids).to include(project.id)
         expect(ids).not_to include(project_other.id)
       end
@@ -107,7 +107,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get '/api/v1/projects', headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to eq('data' => [])
       end
     end
@@ -123,7 +123,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get "/api/v1/projects/#{project.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.dig('data', 'id')).to eq(project.id)
         expect(body.dig('data', 'name')).to eq(project.name)
       end
@@ -152,7 +152,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get "/api/v1/projects/#{project.id}", headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -163,9 +163,9 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         # ActiveRecord::RecordNotFound is not rescued by BaseController, so
         # the request raises out of the controller. We just confirm the
         # request did not 2xx silently with a fabricated record.
-        expect {
+        expect do
           get '/api/v1/projects/0', headers: headers
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -188,18 +188,18 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       before { make_user_admin! }
 
       it 'returns 201 and the created project is observable via GET' do
-        expect {
+        expect do
           post '/api/v1/projects', params: valid_params.to_json, headers: headers
-        }.to change { Project.count }.by(1)
+        end.to change { Project.count }.by(1)
 
         expect(response).to have_http_status(:created)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body.dig('data', 'name')).to eq('New Project')
         created_id = body.dig('data', 'id')
 
         get "/api/v1/projects/#{created_id}", headers: headers
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('New Project')
+        expect(response.parsed_body.dig('data', 'name')).to eq('New Project')
       end
     end
 
@@ -227,7 +227,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         post '/api/v1/projects', params: valid_params.to_json, headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -245,12 +245,12 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       end
 
       it 'returns 422 with an errors envelope and does not create a project' do
-        expect {
+        expect do
           post '/api/v1/projects', params: invalid_params.to_json, headers: headers
-        }.not_to change { Project.count }
+        end.not_to(change { Project.count })
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
       end
     end
@@ -270,10 +270,10 @@ RSpec.describe 'Api::V1::Projects', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('Updated Name')
+        expect(response.parsed_body.dig('data', 'name')).to eq('Updated Name')
 
         get "/api/v1/projects/#{project.id}", headers: headers
-        expect(JSON.parse(response.body).dig('data', 'name')).to eq('Updated Name')
+        expect(response.parsed_body.dig('data', 'name')).to eq('Updated Name')
       end
     end
 
@@ -304,7 +304,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
         expect(project.reload.name).to eq('Original Name')
       end
     end
@@ -320,7 +320,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
               headers: headers
 
         expect(response).to have_http_status(:unprocessable_entity)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('errors')
         expect(project.reload.name).to eq('Original Name')
       end
@@ -334,15 +334,15 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       before { make_user_admin! }
 
       it 'returns 200 and the project is no longer reachable via GET' do
-        expect {
+        expect do
           delete "/api/v1/projects/#{project.id}", headers: headers
-        }.to change { Project.count }.by(-1)
+        end.to change { Project.count }.by(-1)
 
         expect(response).to have_http_status(:ok)
 
-        expect {
+        expect do
           get "/api/v1/projects/#{project.id}", headers: headers
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -364,12 +364,12 @@ RSpec.describe 'Api::V1::Projects', type: :request do
 
     context 'with a valid token but insufficient scope to destroy' do
       it 'returns 401 with the not-authorized error envelope and leaves the project intact' do
-        expect {
+        expect do
           delete "/api/v1/projects/#{project.id}", headers: headers
-        }.not_to change { Project.count }
+        end.not_to(change { Project.count })
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -391,7 +391,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get '/api/v1/projects/orphans', headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         expect(body['data']).to eq([])
       end
@@ -424,7 +424,18 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get '/api/v1/projects/orphans', headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to eq('data' => [])
+        expect(response.parsed_body).to eq('data' => [])
+      end
+    end
+
+    context 'with a valid token but no memberships' do
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get '/api/v1/projects/orphans', headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
       end
     end
   end
@@ -484,7 +495,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
              headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
@@ -504,7 +515,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get "/api/v1/projects/#{project.id}/authorized", headers: headers
 
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body).to have_key('data')
         expect(body['data']).to be_an(Array)
       end
@@ -531,7 +542,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         get "/api/v1/projects/#{project.id}/authorized", headers: headers
 
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to eq('errors' => 'You are not authorized')
+        expect(response.parsed_body).to eq('errors' => 'You are not authorized')
       end
     end
 
