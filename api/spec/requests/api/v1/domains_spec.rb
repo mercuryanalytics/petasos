@@ -12,11 +12,7 @@ require 'rails_helper'
 # Scenarios per action (per issue 005 acceptance criteria):
 #   * authenticated happy path
 #   * missing/invalid token (401)
-#   * valid token with insufficient scope (renders 401 in this codebase --
-#     both BaseController and Secured rescue CanCan::AccessDenied to
-#     :unauthorized; the PRD's "(403)" labelling describes the intent of the
-#     scenario, while the asserted status reflects observable behavior, per
-#     Testing Decisions in the PRD)
+#   * valid token with insufficient scope (403)
 #   * validation failure on the body (422)
 RSpec.describe 'Api::V1::Domains', type: :request do
   let!(:user) do
@@ -34,11 +30,11 @@ RSpec.describe 'Api::V1::Domains', type: :request do
   let!(:full_authorization) do
     create(
       :client_auth,
-      subject_id:    client_record.id,
-      client_id:     client_record.id,
+      subject_id: client_record.id,
+      client_id: client_record.id,
       membership_id: membership.id,
-      user_id:       user.id,
-      scopes:        [read_scope, create_scope, update_scope, destroy_scope]
+      user_id: user.id,
+      scopes: [read_scope, create_scope, update_scope, destroy_scope]
     )
   end
 
@@ -63,8 +59,8 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       get "/api/v1/clients/#{client_record.id}/domains", headers: auth_header(valid_token)
 
       expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
-      names = body.fetch('data').map { |row| row['name'] }
+      body = response.parsed_body
+      names = body.fetch('data').pluck('name')
       expect(names).to match_array([domain_a.name, domain_b.name])
       expect(names).not_to include(other_domain.name)
     end
@@ -92,23 +88,21 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       let!(:full_authorization) do
         create(
           :client_auth,
-          subject_id:    client_record.id,
-          client_id:     client_record.id,
+          subject_id: client_record.id,
+          client_id: client_record.id,
           membership_id: membership.id,
-          user_id:       user.id,
-          scopes:        []
+          user_id: user.id,
+          scopes: []
         )
       end
 
-      it 'responds 401 (CanCan::AccessDenied via load_and_authorize_resource)' do
+      it 'responds 403 (CanCan::AccessDenied via load_and_authorize_resource)' do
         get "/api/v1/clients/#{client_record.id}/domains",
             headers: auth_header(valid_token)
 
         # `load_and_authorize_resource` runs ahead of the controller body and
-        # raises when DomainAbility grants no rules at all. BaseController
-        # rescues CanCan::AccessDenied to :unauthorized -- this is the
-        # observable "insufficient scope" outcome for the index action.
-        expect(response).to have_http_status(:unauthorized)
+        # raises when DomainAbility grants no rules at all.
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -118,21 +112,21 @@ RSpec.describe 'Api::V1::Domains', type: :request do
     let(:invalid_attrs) { { domain: { name: '' } } }
 
     it 'creates a domain and returns it' do
-      expect {
+      expect do
         post "/api/v1/clients/#{client_record.id}/domains",
              params: valid_attrs,
              headers: auth_header(valid_token)
-      }.to change(Domain, :count).by(1)
+      end.to change(Domain, :count).by(1)
 
       expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body.fetch('data')).to include('name' => 'newdomain.test')
     end
 
     it 'responds 401 when the Authorization header is missing' do
-      expect {
+      expect do
         post "/api/v1/clients/#{client_record.id}/domains", params: valid_attrs
-      }.not_to change(Domain, :count)
+      end.not_to change(Domain, :count)
 
       expect(response).to have_http_status(:unauthorized)
     end
@@ -141,22 +135,22 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       let!(:full_authorization) do
         create(
           :client_auth,
-          subject_id:    client_record.id,
-          client_id:     client_record.id,
+          subject_id: client_record.id,
+          client_id: client_record.id,
           membership_id: membership.id,
-          user_id:       user.id,
-          scopes:        [read_scope]
+          user_id: user.id,
+          scopes: [read_scope]
         )
       end
 
-      it 'rejects the request with 401 (CanCan::AccessDenied)' do
-        expect {
+      it 'rejects the request with 403 (CanCan::AccessDenied)' do
+        expect do
           post "/api/v1/clients/#{client_record.id}/domains",
                params: valid_attrs,
                headers: auth_header(valid_token)
-        }.not_to change(Domain, :count)
+        end.not_to change(Domain, :count)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -170,11 +164,11 @@ RSpec.describe 'Api::V1::Domains', type: :request do
         # validation-failure scenario documents the absence of a 422 path
         # for Domain today and will fail loudly if request-handling
         # semantics shift under the Ruby/Rails upgrade.
-        expect {
+        expect do
           post "/api/v1/clients/#{client_record.id}/domains",
                params: {},
                headers: auth_header(valid_token)
-        }.to raise_error(ActionController::ParameterMissing)
+        end.to raise_error(ActionController::ParameterMissing)
       end
     end
   end
@@ -189,7 +183,7 @@ RSpec.describe 'Api::V1::Domains', type: :request do
           headers: auth_header(valid_token)
 
       expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body.fetch('data')).to include('id' => domain_record.id, 'name' => 'show.test')
     end
 
@@ -203,30 +197,27 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       let!(:full_authorization) do
         create(
           :client_auth,
-          subject_id:    client_record.id,
-          client_id:     client_record.id,
+          subject_id: client_record.id,
+          client_id: client_record.id,
           membership_id: membership.id,
-          user_id:       user.id,
-          scopes:        []
+          user_id: user.id,
+          scopes: []
         )
       end
 
-      it 'responds 401 (CanCan::AccessDenied via load_and_authorize_resource)' do
+      it 'responds 403 (CanCan::AccessDenied via load_and_authorize_resource)' do
         get "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}",
             headers: auth_header(valid_token)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
-    it 'raises ActiveRecord::RecordNotFound when the domain id is unknown' do
-      # set_domain uses .find, which raises RecordNotFound when no row
-      # matches. The test env has show_exceptions=false so the exception
-      # surfaces in the spec; production maps this to 404.
-      expect {
-        get "/api/v1/clients/#{client_record.id}/domains/0",
-            headers: auth_header(valid_token)
-      }.to raise_error(ActiveRecord::RecordNotFound)
+    it 'responds 404 when the domain id is unknown' do
+      get "/api/v1/clients/#{client_record.id}/domains/0",
+          headers: auth_header(valid_token)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -243,7 +234,7 @@ RSpec.describe 'Api::V1::Domains', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(domain_record.reload.name).to eq('after.test')
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body.fetch('data')).to include('name' => 'after.test')
     end
 
@@ -259,20 +250,20 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       let!(:full_authorization) do
         create(
           :client_auth,
-          subject_id:    client_record.id,
-          client_id:     client_record.id,
+          subject_id: client_record.id,
+          client_id: client_record.id,
           membership_id: membership.id,
-          user_id:       user.id,
-          scopes:        [read_scope]
+          user_id: user.id,
+          scopes: [read_scope]
         )
       end
 
-      it 'responds 401 (CanCan::AccessDenied)' do
+      it 'responds 403 (CanCan::AccessDenied)' do
         put "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}",
             params: valid_attrs,
             headers: auth_header(valid_token)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
         expect(domain_record.reload.name).to eq('before.test')
       end
     end
@@ -282,11 +273,11 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       # a malformed PUT body is strong parameters. show_exceptions=false in
       # test, so the exception surfaces rather than rendering 400 -- see
       # the equivalent POST scenario above.
-      expect {
+      expect do
         put "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}",
             params: {},
             headers: auth_header(valid_token)
-      }.to raise_error(ActionController::ParameterMissing)
+      end.to raise_error(ActionController::ParameterMissing)
 
       expect(domain_record.reload.name).to eq('before.test')
     end
@@ -298,10 +289,10 @@ RSpec.describe 'Api::V1::Domains', type: :request do
     end
 
     it 'destroys the domain' do
-      expect {
+      expect do
         delete "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}",
                headers: auth_header(valid_token)
-      }.to change(Domain, :count).by(-1)
+      end.to change(Domain, :count).by(-1)
 
       # The controller has no explicit render; Rails returns 204 No Content
       # for the implicit empty render of a destroy action with no template.
@@ -309,9 +300,9 @@ RSpec.describe 'Api::V1::Domains', type: :request do
     end
 
     it 'responds 401 without an Authorization header' do
-      expect {
+      expect do
         delete "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}"
-      }.not_to change(Domain, :count)
+      end.not_to change(Domain, :count)
 
       expect(response).to have_http_status(:unauthorized)
     end
@@ -320,29 +311,29 @@ RSpec.describe 'Api::V1::Domains', type: :request do
       let!(:full_authorization) do
         create(
           :client_auth,
-          subject_id:    client_record.id,
-          client_id:     client_record.id,
+          subject_id: client_record.id,
+          client_id: client_record.id,
           membership_id: membership.id,
-          user_id:       user.id,
-          scopes:        [read_scope]
+          user_id: user.id,
+          scopes: [read_scope]
         )
       end
 
-      it 'responds 401 (CanCan::AccessDenied)' do
-        expect {
+      it 'responds 403 (CanCan::AccessDenied)' do
+        expect do
           delete "/api/v1/clients/#{client_record.id}/domains/#{domain_record.id}",
                  headers: auth_header(valid_token)
-        }.not_to change(Domain, :count)
+        end.not_to change(Domain, :count)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
-    it 'raises ActiveRecord::RecordNotFound when the domain id is unknown' do
-      expect {
-        delete "/api/v1/clients/#{client_record.id}/domains/0",
-               headers: auth_header(valid_token)
-      }.to raise_error(ActiveRecord::RecordNotFound)
+    it 'responds 404 when the domain id is unknown' do
+      delete "/api/v1/clients/#{client_record.id}/domains/0",
+             headers: auth_header(valid_token)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end
