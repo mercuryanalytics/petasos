@@ -25,6 +25,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **api:** Move brand_lift_benchmarks global scope to the workbench scope
 - **deps:** Bump json 2.21.1 → 2.21.2 for CVE-2026-71847 (#74)
 - **api:** Return 403 for access denied and 404 for unknown records (#75)
+- **api:** Make Authorized scope match nothing for empty membership_ids (#73)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -86,6 +87,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - Correct pipeline provenance and document staging resync (#71)
+- **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
