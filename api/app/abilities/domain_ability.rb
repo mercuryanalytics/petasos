@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DomainAbility
   include CanCan::Ability
 
@@ -24,8 +26,6 @@ class DomainAbility
   end
 
   def client_ids
-    return [] if memberships.empty?
-
     @client_ids ||= Client.authorized_for_user(memberships.map(&:id)).pluck(:id)
   end
 
@@ -35,12 +35,13 @@ class DomainAbility
 
   def current_membership
     return unless client_id
-    @current_membership ||= memberships.select { |membership|  membership.client_id == client_id.to_i }.first
+
+    @current_membership ||= memberships.select {|membership| membership.client_id == client_id.to_i }.first
   end
 
   def current_authorization
     @current_authorization ||= user.authorizations
-                                   .select { |i| i.subject_class == 'Client' && i.subject_id == client_id.to_i }
+                                   .select {|i| i.subject_class == 'Client' && i.subject_id == client_id.to_i }
                                    .first
   end
 end

@@ -1,17 +1,13 @@
+# frozen_string_literal: true
+
 module Authorized
   extend ActiveSupport::Concern
 
   included do
-    scope :authorized_for_user, -> (membership_ids) do
-      join_query = sanitize_sql(
-        <<-SQL
-          INNER JOIN authorizations ON 
-            #{table_name}.id = authorizations.subject_id AND 
-            authorizations.subject_class = '#{name.to_s}' AND
-            authorizations.membership_id IN (#{membership_ids.join(',')})
-        SQL
-      )
-      joins(join_query) unless membership_ids.empty?
-    end
+    has_many :subject_authorizations, class_name: 'Authorization', as: :subject, foreign_type: :subject_class, dependent: nil
+
+    scope :authorized_for_user, lambda {|membership_ids|
+      joins(:subject_authorizations).where(subject_authorizations: { membership_id: membership_ids })
+    }
   end
 end

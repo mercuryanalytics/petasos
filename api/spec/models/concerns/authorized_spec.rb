@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 # The Authorized concern is mixed into Client, Project, and Report. We exercise
@@ -34,19 +36,25 @@ RSpec.describe Authorized, type: :model do
       expect(Client.authorized_for_user([membership.id])).to be_empty
     end
 
-    it 'falls back to all records when the membership ids list is empty' do
-      # The scope returns nil for an empty list, which Rails converts into the
-      # host model's default relation. This documents the current behavior so
-      # any future change to this branch is caught by the spec.
+    it 'returns an empty relation when the membership ids list is empty' do
       create(:client_auth, membership_id: membership.id, subject_id: client.id)
 
-      expect(Client.authorized_for_user([])).to contain_exactly(client)
+      expect(Client.authorized_for_user([])).to be_empty
     end
 
     it 'returns an empty relation when no authorizations match the memberships' do
       create(:client_auth, membership_id: other_membership.id, subject_id: other_client.id)
 
       expect(Client.authorized_for_user([membership.id])).to be_empty
+    end
+
+    it 'filters on the subject join when composed with Client#authorizations in either order' do
+      create(:client_auth, membership_id: other_membership.id, subject_id: client.id)
+      project = create(:project, client: client)
+      create(:project_auth, membership_id: membership.id, subject_id: project.id, client_id: client.id)
+
+      expect(Client.joins(:authorizations).authorized_for_user([membership.id])).to be_empty
+      expect(Client.authorized_for_user([membership.id]).joins(:authorizations)).to be_empty
     end
 
     it 'scopes by the host model when included in Project' do
