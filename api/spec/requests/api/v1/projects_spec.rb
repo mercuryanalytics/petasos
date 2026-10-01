@@ -261,6 +261,19 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       end
     end
 
+    context 'when the params try to move the project to another client' do
+      before { make_user_admin! }
+
+      it 'ignores domain_id' do
+        patch "/api/v1/projects/#{project.id}",
+              params: { project: { name: 'Updated Name', domain_id: other_client.id } }.to_json,
+              headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(project.reload.domain_id).to eq(client.id)
+      end
+    end
+
     context 'with no Authorization header' do
       it 'returns 401' do
         patch "/api/v1/projects/#{project.id}",
