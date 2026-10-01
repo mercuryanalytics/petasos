@@ -121,10 +121,6 @@ module Api
           params[:client_id] || params[:project]&.fetch(:domain_id, nil) || @project&.domain_id
         )
       end
-
-      def authorize_params
-        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
-      end
     end
   end
 end

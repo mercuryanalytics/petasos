@@ -495,6 +495,24 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       end
     end
 
+    context 'when a non-admin sends from_admin' do
+      let!(:other_client_membership) { create(:membership, user: other_user, client: other_client) }
+
+      before do
+        client_authorization = Authorization.create!(membership: membership, subject_class: 'Client', subject_id: client.id)
+        client_authorization.scopes << create(:scope, :client, :authorize)
+      end
+
+      it "leaves the target user's memberships in other clients alone" do
+        post "/api/v1/projects/#{project.id}/authorize",
+             params: authorize_params.to_json,
+             headers: headers
+
+        expect([201, 204]).to include(response.status)
+        expect(Authorization.where(membership: other_client_membership)).to be_empty
+      end
+    end
+
     # The `authorize` action does no Rails parameter validation that would
     # surface as 422 at this layer — the interactor branches on presence,
     # not validity. Validation-failure semantics for this endpoint are

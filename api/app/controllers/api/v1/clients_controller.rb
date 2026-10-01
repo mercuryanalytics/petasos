@@ -126,10 +126,6 @@ module Api
       def current_ability
         @current_ability ||= ::ClientAbility.new(current_user, params[:id])
       end
-
-      def authorize_params
-        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
-      end
     end
   end
 end
