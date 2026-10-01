@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Users::CopyUserPermissions do
@@ -14,7 +16,7 @@ RSpec.describe Users::CopyUserPermissions do
     auth = Authorization.create!(
       membership_id: source_membership.id,
       subject_class: 'Project',
-      subject_id:    project.id
+      subject_id: project.id
     )
     auth.scopes << scope
     auth
@@ -58,7 +60,7 @@ RSpec.describe Users::CopyUserPermissions do
       auth = Authorization.create!(
         membership_id: target_membership.id,
         subject_class: 'Client',
-        subject_id:    other_client.id
+        subject_id: other_client.id
       )
       auth.scopes << scope
       auth
@@ -76,6 +78,17 @@ RSpec.describe Users::CopyUserPermissions do
     it 'copies the source memberships to copy_to' do
       interactor
       expect(Membership.find_by(user_id: copy_to.id, client_id: client.id)).not_to be_nil
+    end
+
+    it 'deletes the pre-existing authorizations and their scope links' do
+      interactor
+      expect(Authorization.exists?(target_authorization.id)).to be(false)
+      expect(scope.authorizations.reload).not_to include(target_authorization)
+    end
+
+    it 'keeps the shared scope records' do
+      interactor
+      expect(Scope.exists?(scope.id)).to be(true)
     end
   end
 end
