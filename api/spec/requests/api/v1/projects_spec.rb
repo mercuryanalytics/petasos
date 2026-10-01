@@ -513,6 +513,21 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       end
     end
 
+    context 'when an admin sends from_admin' do
+      let!(:other_client_membership) { create(:membership, user: other_user, client: other_client) }
+
+      before { make_user_admin! }
+
+      it "authorizes the target user's memberships in every client" do
+        post "/api/v1/projects/#{project.id}/authorize",
+             params: authorize_params.to_json,
+             headers: headers
+
+        expect([201, 204]).to include(response.status)
+        expect(Authorization.where(membership: other_client_membership)).to exist
+      end
+    end
+
     # The `authorize` action does no Rails parameter validation that would
     # surface as 422 at this layer — the interactor branches on presence,
     # not validity. Validation-failure semantics for this endpoint are
