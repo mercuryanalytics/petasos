@@ -369,12 +369,6 @@ RSpec.describe 'Api::V1::Reports', type: :request do
   describe 'GET /api/v1/reports/orphans' do
     let!(:report) { create(:report, project_id: project.id) }
 
-    # `load_and_authorize_resource` does check this action:
-    # `authorize!(:orphans, Report)`, with `:orphans` aliased to `:view` in
-    # ReportAbility. A class-level check ignores rule conditions and every
-    # non-admin has a `can :view, Report` rule, so it passes like `index`
-    # does; `accessible_by` does the row filtering.
-
     context 'with a valid admin token (happy path)' do
       before { make_user_admin! }
 
