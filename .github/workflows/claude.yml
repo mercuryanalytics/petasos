@@ -32,12 +32,32 @@ jobs:
       id-token: write
       actions: read
     steps:
+      # petasos is public: run only when both the triggering user and the
+      # issue/PR author have write access. Not `author_association` — every
+      # team member's org membership is private, which can hide MEMBER.
+      - name: Ignore users outside the team
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOGINS: ${{ github.actor }} ${{ github.event.issue.user.login || github.event.pull_request.user.login }}
+        run: |
+          for login in $LOGINS; do
+            perm=$(gh api "repos/${{ github.repository }}/collaborators/$login/permission" --jq .permission 2>/dev/null || echo none)
+            case "$perm" in
+              admin|write) ;;
+              *) echo "::notice::Ignoring $login ($perm access)"; echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          done
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
       - name: Checkout repository
+        if: steps.gate.outputs.ok == 'true'
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Run Claude Code
+        if: steps.gate.outputs.ok == 'true'
         id: claude
         uses: anthropics/claude-code-action@v1
         env:
