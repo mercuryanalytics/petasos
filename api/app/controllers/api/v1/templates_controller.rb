@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class TemplatesController < BaseController
       before_action { authorize! :authorize, Client, id: params[:client_id] }
 
       def index
-        @client = Client.preload(:authorizations, projects: :reports).find(params[:client_id])
+        @client = Client.preload(:template_authorizations, projects: :reports).find(params[:client_id])
 
         json_response(
           ::V1::DefaultTemplate::ClientSerializer.new(
             @client,
-            scope:      @client.authorizations,
+            scope: @client.template_authorizations,
             scope_name: :authorizations
           )
         )
@@ -20,7 +22,7 @@ module Api
 
         error_response(interactor.message) && return unless interactor.success?
 
-        head :no_content && return if interactor.status == :removed
+        return head :no_content if interactor.status == :removed
 
         head :ok
       end
