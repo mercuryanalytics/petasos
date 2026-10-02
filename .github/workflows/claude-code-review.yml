@@ -1,0 +1,75 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    # No `synchronize`: each review is a full model pass, so one automatic
+    # review per PR; later rounds are an on-demand @claude mention (claude.yml).
+    types: [opened, ready_for_review, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  claude-review:
+    if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.draft) && github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-24.04
+    # Catches a stalled tool loop; not meant to bound a working review.
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+
+    steps:
+      # petasos is public: run only when both the triggering user and the
+      # issue/PR author have write access. Not `author_association` — every
+      # team member's org membership is private, which can hide MEMBER.
+      - name: Ignore users outside the team
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOGINS: ${{ github.actor }} ${{ github.event.issue.user.login || github.event.pull_request.user.login }}
+        run: |
+          for login in $LOGINS; do
+            perm=$(gh api "repos/${{ github.repository }}/collaborators/$login/permission" --jq .permission 2>/dev/null || echo none)
+            case "$perm" in
+              admin|write) ;;
+              *) echo "::notice::Ignoring $login ($perm access)"; echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            esac
+          done
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        if: steps.gate.outputs.ok == 'true'
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        if: steps.gate.outputs.ok == 'true'
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        env:
+          # The action ends the session at the main agent's first reply, killing
+          # any subagent still running in the background.
+          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+          plugins: 'code-review@claude-code-plugins'
+          prompt: '/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          # Headless runs deny anything unlisted. Mirrors the code-review command's
+          # `allowed-tools`, plus `git fetch`; re-sync when the plugin updates.
+          claude_args: >-
+            --allowedTools
+            "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),mcp__github_inline_comment__create_inline_comment,Bash(git fetch:*)"
+
+      - name: Upload Claude execution log
+        if: ${{ always() && steps.claude-review.outputs.execution_file != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: claude-review-execution
+          path: ${{ steps.claude-review.outputs.execution_file }}
+          retention-days: 14
