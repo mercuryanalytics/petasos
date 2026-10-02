@@ -24,6 +24,14 @@ module Api
       def error_response(errors)
         render json: { errors: errors }, status: :unprocessable_content
       end
+
+      private
+
+      # from_admin widens the grant to the user's memberships in every client, so only admins may send it.
+      def authorize_params
+        permitted = params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
+        current_user.admin? ? permitted : permitted.except(:from_admin)
+      end
     end
   end
 end

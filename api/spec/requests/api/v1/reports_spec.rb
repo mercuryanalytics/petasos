@@ -306,6 +306,22 @@ RSpec.describe 'Api::V1::Reports', type: :request do
       end
     end
 
+    context 'when the params try to move the report to a project in another client' do
+      before do
+        client_authorization = Authorization.create!(membership: membership, subject_class: 'Client', subject_id: client.id)
+        client_authorization.scopes << create(:scope, :client, :update)
+      end
+
+      it 'ignores project_id' do
+        patch "/api/v1/reports/#{report.id}",
+              params: { report: { name: 'Updated Name', project_id: other_project.id } }.to_json,
+              headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(report.reload.project_id).to eq(project.id)
+      end
+    end
+
     context 'with a valid admin token but invalid params (blank name)' do
       before { make_user_admin! }
 
