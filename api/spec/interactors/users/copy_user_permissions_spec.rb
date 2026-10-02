@@ -52,6 +52,18 @@ RSpec.describe Users::CopyUserPermissions do
     end
   end
 
+  context 'when append is true and copy_to already has the authorization with its scopes' do
+    let(:append) { true }
+
+    before { described_class.call(copy_from: copy_from, copy_to: copy_to, append: true) }
+
+    it 'does not link the same scope twice' do
+      interactor
+      target_auth = Membership.find_by(user_id: copy_to.id, client_id: client.id).authorizations.first
+      expect(target_auth.scopes.reload.count).to eq(1)
+    end
+  end
+
   context 'when append is false and copy_to has pre-existing memberships' do
     let(:append) { false }
     let!(:other_client) { create(:client) }
@@ -89,6 +101,14 @@ RSpec.describe Users::CopyUserPermissions do
     it 'keeps the shared scope records' do
       interactor
       expect(Scope.exists?(scope.id)).to be(true)
+    end
+
+    it 'keeps the pre-existing memberships when the rebuild fails' do
+      allow(Authorization).to receive(:find_or_create_by).and_raise(ActiveRecord::RecordInvalid)
+
+      expect { interactor }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(Membership.exists?(target_membership.id)).to be(true)
+      expect(Authorization.exists?(target_authorization.id)).to be(true)
     end
   end
 end

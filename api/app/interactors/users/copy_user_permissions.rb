@@ -7,8 +7,10 @@ module Users
     delegate :copy_from, :copy_to, :append, to: :context
 
     def call
-      remove_all_memberships unless append
-      copy_memberships
+      ActiveRecord::Base.transaction do
+        remove_all_memberships unless append
+        copy_memberships
+      end
     end
 
     def remove_all_memberships
@@ -25,7 +27,7 @@ module Users
             subject_class: authorization.subject_class
           )
 
-          auth.scopes << authorization.scopes
+          auth.scopes << (authorization.scopes - auth.scopes)
         end
       end
     end
