@@ -12,3 +12,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push("log", "tmp/pids", "tmp/cache", "
 set :linked_files, %w[config/master.key]
 set :keep_releases, 5
 set :passenger_restart_with_touch, true
+
+set :rollbar_token, ENV.fetch("ROLLBAR_TOKEN", nil)
+set :rollbar_env, -> { fetch :stage }
+set :rollbar_role, -> { :app }
