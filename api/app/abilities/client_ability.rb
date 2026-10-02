@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ClientAbility
   include CanCan::Ability
 
@@ -27,8 +29,6 @@ class ClientAbility
   end
 
   def client_ids
-    return [] if memberships.empty?
-
     @client_ids ||= Client.authorized_for_user(memberships.map(&:id)).pluck(:id)
   end
 
@@ -38,12 +38,13 @@ class ClientAbility
 
   def current_membership
     return unless client_id
-    @current_membership ||= memberships.select { |membership|  membership.client_id == client_id.to_i }.first
+
+    @current_membership ||= memberships.select {|membership| membership.client_id == client_id.to_i }.first
   end
 
   def current_authorization
     return current_membership.clients_authorizations.where(subject_id: client_id).first if current_membership
 
-    user.authorizations.select { |auth| auth.subject_class == 'Client' && auth.subject_id == client_id.to_i }.first
+    user.authorizations.select {|auth| auth.subject_class == 'Client' && auth.subject_id == client_id.to_i }.first
   end
 end

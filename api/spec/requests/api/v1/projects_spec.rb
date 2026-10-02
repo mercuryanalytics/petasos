@@ -410,6 +410,17 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         expect(response.parsed_body).to eq('data' => [])
       end
     end
+
+    context 'with a valid token but no memberships' do
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get '/api/v1/projects/orphans', headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
+      end
+    end
   end
 
   describe 'POST /api/v1/projects/:id/authorize' do

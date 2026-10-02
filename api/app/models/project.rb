@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 class Project < ApplicationRecord
   include Authorized
 
-  has_many :project_accesses
+  has_many :project_accesses, dependent: nil
   has_many :reports, dependent: :destroy
-  has_many :authorizations
-  belongs_to :client, foreign_key: 'domain_id'
+  belongs_to :client, foreign_key: 'domain_id', inverse_of: :projects
 
+  # rubocop:disable Rails/UniqueValidationWithoutIndex -- the index needs a migration and a prod duplicate check
   validates :name, presence: true, uniqueness: { scope: :domain_id, case_sensitive: true }
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   before_create :default_project_type, if: -> { project_type.nil? }
 

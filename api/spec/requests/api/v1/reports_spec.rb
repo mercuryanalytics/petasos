@@ -93,6 +93,19 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         expect(response.parsed_body).to eq('data' => [])
       end
     end
+
+    context 'with a valid token, a client_id, and no memberships' do
+      let!(:report) { create(:report, project_id: project.id) }
+
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get "/api/v1/reports?client_id=#{client.id}", headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
+      end
+    end
   end
 
   describe 'GET /api/v1/reports/:id (show)' do
@@ -406,6 +419,17 @@ RSpec.describe 'Api::V1::Reports', type: :request do
         get '/api/v1/reports/orphans', headers: auth_header(token)
 
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with a valid token but no memberships' do
+      before { membership.destroy! }
+
+      it 'returns 200 with an empty data array' do
+        get '/api/v1/reports/orphans', headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('data' => [])
       end
     end
   end

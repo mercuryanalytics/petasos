@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProjectAbility
   include CanCan::Ability
 
@@ -17,9 +19,7 @@ class ProjectAbility
 
     projects_authorizations.find_each do |project_authorization|
       project_authorization.project_scopes.each do |scope|
-        if scope.action =='access'
-          can :view, Project, id: project_authorization.subject_id
-        end
+        can :view, Project, id: project_authorization.subject_id if scope.action == 'access'
 
         can scope.action.to_sym, Project, id: project_authorization.subject_id
       end
@@ -28,25 +28,19 @@ class ProjectAbility
     # Client manager role has the create / edit all projects scopes
     client_authorizations.find_each do |client_authorization|
       client_authorization.scopes.each do |scope|
-        if scope.action == 'access'
-          can :view, Project, domain_id: client_authorization.subject_id
-        end
+        can :view, Project, domain_id: client_authorization.subject_id if scope.action == 'access'
 
         if scope.action == 'update'
           can :create, Project, domain_id: client_authorization.subject_id
           can :update, Project, domain_id: client_authorization.subject_id
         end
 
-        if scope.action == 'authorize'
-          can :manage, Project, domain_id: client_authorization.subject_id
-        end
+        can :manage, Project, domain_id: client_authorization.subject_id if scope.action == 'authorize'
       end
     end
   end
 
   def project_ids
-    return [] if memberships.empty?
-
     @project_ids ||= Project.authorized_for_user(memberships.map(&:id)).pluck(:id).uniq
   end
 
@@ -59,21 +53,21 @@ class ProjectAbility
   end
 
   def projects_authorizations
-    @project_authorizations ||= Authorization
-                                  .preload(:project_scopes)
-                                  .for_projects
-                                  .joins(:membership)
-                                  .where(memberships: { user_id: user.id })
-                                  .where(subject_id: project_ids)
+    @projects_authorizations ||= Authorization
+                                 .preload(:project_scopes)
+                                 .for_projects
+                                 .joins(:membership)
+                                 .where(memberships: { user_id: user.id })
+                                 .where(subject_id: project_ids)
   end
 
   def client_authorizations
     @client_authorizations ||= Authorization
-                                 .preload(:project_scopes)
-                                 .preload(:client_scopes)
-                                 .joins(:membership)
-                                 .where(memberships: { user_id: user.id })
-                                 .for_clients
-                                 .where(subject_id: client_id)
+                               .preload(:project_scopes)
+                               .preload(:client_scopes)
+                               .joins(:membership)
+                               .where(memberships: { user_id: user.id })
+                               .for_clients
+                               .where(subject_id: client_id)
   end
 end
