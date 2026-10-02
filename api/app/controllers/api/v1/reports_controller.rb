@@ -67,7 +67,7 @@ module Api
       end
 
       def update
-        context = Reports::UpdateReportOrganizer.call(params: report_params, report: @report)
+        context = Reports::UpdateReportOrganizer.call(params: report_params.except(:project_id), report: @report)
 
         return json_response(context.report) if context.success?
 
