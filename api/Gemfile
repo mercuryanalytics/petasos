@@ -54,6 +54,10 @@ gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 # config/initializers/lograge.rb.
 gem 'lograge', '~> 0.14.0'
 
+# Error reporting (config/initializers/rollbar.rb) and the rollbar/capistrano3
+# deploy notification (Capfile).
+gem 'rollbar'
+
 group :development, :test do
   # Dev/test web server. Production runs Passenger Standalone.
   gem 'puma', '~> 8.0'
