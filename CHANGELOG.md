@@ -98,6 +98,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
@@ -108,6 +109,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 
 ### Refactoring
 - **api:** Clarify implicit auth in UsersController + ReportAbility (#12, #15, #16) (#62)
+- **api:** Rename Client#authorizations to template_authorizations (#78)
 
 ### Tests
 - **api:** Add Auth0/JWT integration spec foundation
