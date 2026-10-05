@@ -261,6 +261,19 @@ RSpec.describe 'Api::V1::Projects', type: :request do
       end
     end
 
+    context 'when the params try to move the project to another client' do
+      before { make_user_admin! }
+
+      it 'ignores domain_id' do
+        patch "/api/v1/projects/#{project.id}",
+              params: { project: { name: 'Updated Name', domain_id: other_client.id } }.to_json,
+              headers: headers
+
+        expect(response).to have_http_status(:ok)
+        expect(project.reload.domain_id).to eq(client.id)
+      end
+    end
+
     context 'with no Authorization header' do
       it 'returns 401' do
         patch "/api/v1/projects/#{project.id}",
@@ -479,6 +492,39 @@ RSpec.describe 'Api::V1::Projects', type: :request do
 
         expect(response).to have_http_status(:forbidden)
         expect(response.parsed_body).to eq('errors' => 'You are not authorized')
+      end
+    end
+
+    context 'when a non-admin sends from_admin' do
+      let!(:other_client_membership) { create(:membership, user: other_user, client: other_client) }
+
+      before do
+        client_authorization = Authorization.create!(membership: membership, subject_class: 'Client', subject_id: client.id)
+        client_authorization.scopes << create(:scope, :client, :authorize)
+      end
+
+      it "leaves the target user's memberships in other clients alone" do
+        post "/api/v1/projects/#{project.id}/authorize",
+             params: authorize_params.to_json,
+             headers: headers
+
+        expect([201, 204]).to include(response.status)
+        expect(Authorization.where(membership: other_client_membership)).to be_empty
+      end
+    end
+
+    context 'when an admin sends from_admin' do
+      let!(:other_client_membership) { create(:membership, user: other_user, client: other_client) }
+
+      before { make_user_admin! }
+
+      it "authorizes the target user's memberships in every client" do
+        post "/api/v1/projects/#{project.id}/authorize",
+             params: authorize_params.to_json,
+             headers: headers
+
+        expect([201, 204]).to include(response.status)
+        expect(Authorization.where(membership: other_client_membership)).to exist
       end
     end
 
