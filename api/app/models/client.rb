@@ -8,16 +8,16 @@ class Client < ApplicationRecord
   PARTNER = 'Partner'
 
   has_many :client_accesses, dependent: :destroy
-  has_many :projects, foreign_key: 'domain_id', dependent: :destroy
+  has_many :projects, foreign_key: 'domain_id', dependent: :destroy, inverse_of: :client
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :domains, dependent: :destroy
-  has_many :children, class_name: 'Client', foreign_key: 'parent_id', dependent: :destroy
-  has_many :authorizations, dependent: :destroy
+  has_many :children, class_name: 'Client', foreign_key: 'parent_id', dependent: :destroy, inverse_of: :parent
+  has_many :template_authorizations, class_name: 'Authorization', dependent: :destroy
   has_one_base64_attached :logo
-  belongs_to :parent, foreign_key: 'parent_id', class_name: 'Client', optional: true
+  belongs_to :parent, class_name: 'Client', optional: true, inverse_of: :children
 
-  validates_presence_of :name
+  validates :name, presence: true
 
   before_create :set_uuid
 

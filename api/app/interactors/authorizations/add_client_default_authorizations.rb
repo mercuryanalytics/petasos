@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Authorizations
   class AddClientDefaultAuthorizations
     include Interactor
@@ -11,19 +13,20 @@ module Authorizations
       # when adding the user from clients -> accounts we send the no_auth parameter to 1
       return unless no_auth.to_i == 1 && client.default_template_enabled
 
-      membership_id = user.memberships.where(client_id: client.id).pluck(:id).first
+      membership_id = user.memberships.where(client_id: client.id).pick(:id)
 
       membership_authorizations = client_authorizations.collect do |authorization|
         {
-          subject_id:    authorization.subject_id,
+          subject_id: authorization.subject_id,
           subject_class: authorization.subject_class,
           membership_id: membership_id,
-          created_at:    Time.zone.now,
-          updated_at:    Time.zone.now
+          created_at: Time.zone.now,
+          updated_at: Time.zone.now
         }
       end
 
-      Authorization.insert_all(membership_authorizations) if membership_authorizations.any?
+      # subject_class/subject_id are copied from template rows that already passed validation.
+      Authorization.insert_all(membership_authorizations) if membership_authorizations.any? # rubocop:disable Rails/SkipsModelValidations
 
       client_authorizations.each do |client_authorization|
         user_authorization = Authorization.find_by(
@@ -38,7 +41,7 @@ module Authorizations
     private
 
     def client_authorizations
-      @client_authorizations ||= client.authorizations
+      @client_authorizations ||= client.template_authorizations
     end
   end
 end
