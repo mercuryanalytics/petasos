@@ -548,6 +548,51 @@ RSpec.describe 'Api::V1::Projects', type: :request do
         expect(body).to have_key('data')
         expect(body['data']).to be_an(Array)
       end
+
+      context 'with users authorized through memberships' do
+        let!(:another_client) { create(:client) }
+        let!(:reader) { create(:user, email: 'reader@example.test') }
+        let!(:reader_membership) { create(:membership, user: reader, client: client) }
+        let!(:reader_other_membership) { create(:membership, user: reader, client: another_client) }
+        let!(:bystander) { create(:user, email: 'bystander@example.test') }
+        let!(:bystander_membership) { create(:membership, user: bystander, client: client) }
+
+        before do
+          create(:project_auth, subject_id: project.id, membership_id: reader_membership.id)
+        end
+
+        it 'without client_id, lists every user with the client ids of their authorized memberships' do
+          get "/api/v1/projects/#{project.id}/authorized", headers: headers
+
+          expect(response).to have_http_status(:ok)
+          expect(response.parsed_body['data'].size).to eq(3)
+          expect(authorized_for('reader@example.test')).to eq([client.id])
+          expect(authorized_for('bystander@example.test')).to eq([])
+          expect(authorized_for(user_email)).to eq([])
+        end
+
+        it 'with client_id, lists that client\'s users with a boolean' do
+          get "/api/v1/projects/#{project.id}/authorized?client_id=#{client.id}", headers: headers
+
+          expect(response).to have_http_status(:ok)
+          expect(authorized_for('reader@example.test')).to be(true)
+          expect(authorized_for('bystander@example.test')).to be(false)
+        end
+
+        it 'without client_id, does not run a query per authorized user' do
+          baseline = count_queries { get "/api/v1/projects/#{project.id}/authorized", headers: headers }
+
+          3.times do |i|
+            extra = create(:user, email: "extra#{i}@example.test")
+            extra_membership = create(:membership, user: extra, client: client)
+            create(:project_auth, subject_id: project.id, membership_id: extra_membership.id)
+          end
+
+          with_more_users = count_queries { get "/api/v1/projects/#{project.id}/authorized", headers: headers }
+
+          expect(with_more_users).to eq(baseline)
+        end
+      end
     end
 
     context 'with no Authorization header' do
