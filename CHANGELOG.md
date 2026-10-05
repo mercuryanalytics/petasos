@@ -27,6 +27,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **api:** Return 403 for access denied and 404 for unknown records (#75)
 - **api:** Make Authorized scope match nothing for empty membership_ids (#73)
 - **api:** Nil-safe report project_id lookup in ReportsController#current_ability (#72)
+- **api:** Resolve Brakeman warnings (#77)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -89,6 +90,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - Correct pipeline provenance and document staging resync (#71)
+- **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
