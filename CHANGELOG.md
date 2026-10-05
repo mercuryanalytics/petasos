@@ -26,6 +26,8 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **deps:** Bump json 2.21.1 → 2.21.2 for CVE-2026-71847 (#74)
 - **api:** Return 403 for access denied and 404 for unknown records (#75)
 - **api:** Make Authorized scope match nothing for empty membership_ids (#73)
+- **api:** Nil-safe report project_id lookup in ReportsController#current_ability (#72)
+- **api:** Resolve Brakeman warnings (#77)
 
 ### Build
 - **ui:** Migrate from Create React App to Vite
@@ -36,6 +38,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - Automate CHANGELOG.md from conventional commits (#39) (#64)
 - **api:** Baseline 8 pre-existing Brakeman warnings to unblock gate (#66)
 - **changelog:** Push via mercury-ci-bot App token (#79)
+- **claude:** Add the Claude Code mention and review workflows (#80)
 
 ### Chores
 - **ui:** Add prettier with eslint integration (#3)
@@ -93,15 +96,22 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
 - **sso:** Expose true Auth0 session expiration to consumers
 - **api:** Add staging Rails environment loading production config (#56)
 - **api:** Add brand_lift_benchmarks scope, drop retired Biometrics Access (#59)
+- **api:** Add Rollbar error reporting and deploy notifications (#76)
 
 ### Refactoring
 - **api:** Clarify implicit auth in UsersController + ReportAbility (#12, #15, #16) (#62)
+- **api:** Rename Client#authorizations to template_authorizations (#78)
 
 ### Tests
 - **api:** Add Auth0/JWT integration spec foundation

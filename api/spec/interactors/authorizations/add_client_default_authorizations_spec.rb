@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Authorizations::AddClientDefaultAuthorizations do
@@ -12,10 +14,10 @@ RSpec.describe Authorizations::AddClientDefaultAuthorizations do
   let!(:user) { create(:user, clients: [client]) }
   let(:no_auth) { 1 }
   let!(:client_authorizations) do
-    client.authorizations << create(:authorization, subject_class: 'Project', subject_id: project_1.id)
-    client.authorizations << create(:authorization, subject_class: 'Report', subject_id: report_1_p_1.id)
-    client.authorizations << create(:authorization, subject_class: 'Report', subject_id: report_1_p_2.id)
-    client.authorizations
+    client.template_authorizations << create(:authorization, subject_class: 'Project', subject_id: project_1.id)
+    client.template_authorizations << create(:authorization, subject_class: 'Report', subject_id: report_1_p_1.id)
+    client.template_authorizations << create(:authorization, subject_class: 'Report', subject_id: report_1_p_2.id)
+    client.template_authorizations
   end
 
   subject(:interactor) { described_class.call(user: user, no_auth: no_auth, client: client) }
@@ -25,14 +27,14 @@ RSpec.describe Authorizations::AddClientDefaultAuthorizations do
       before { client.destroy }
 
       it 'does nothing' do
-        expect { interactor }.to_not change { Authorization.count }
+        expect { interactor }.to_not(change { Authorization.count })
       end
     end
 
     context 'when no_auth is 0' do
       let(:no_auth) { 0 }
       it 'does nothing' do
-        expect { interactor }.to_not change { Authorization.count }
+        expect { interactor }.to_not(change { Authorization.count })
       end
     end
 
@@ -40,7 +42,7 @@ RSpec.describe Authorizations::AddClientDefaultAuthorizations do
       let(:default_template_enabled) { false }
 
       it 'does nothing' do
-        expect { interactor }.to_not change { Authorization.count }
+        expect { interactor }.to_not(change { Authorization.count })
       end
     end
   end
