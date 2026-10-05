@@ -38,6 +38,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - Automate CHANGELOG.md from conventional commits (#39) (#64)
 - **api:** Baseline 8 pre-existing Brakeman warnings to unblock gate (#66)
 - **changelog:** Push via mercury-ci-bot App token (#79)
+- **claude:** Add the Claude Code mention and review workflows (#80)
 
 ### Chores
 - **ui:** Add prettier with eslint integration (#3)
@@ -90,6 +91,7 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - Correct pipeline provenance and document staging resync (#71)
+- **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
