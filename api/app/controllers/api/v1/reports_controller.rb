@@ -67,7 +67,7 @@ module Api
       end
 
       def update
-        context = Reports::UpdateReportOrganizer.call(params: report_params, report: @report)
+        context = Reports::UpdateReportOrganizer.call(params: report_params.except(:project_id), report: @report)
 
         return json_response(context.report) if context.success?
 
@@ -144,10 +144,6 @@ module Api
           current_user,
           params[:project_id] || params.dig(:report, :project_id) || @report&.project_id
         )
-      end
-
-      def authorize_params
-        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
       end
     end
   end

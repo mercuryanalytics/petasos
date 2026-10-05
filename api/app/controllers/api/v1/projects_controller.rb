@@ -1,20 +1,26 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class ProjectsController < BaseController
-      before_action :set_project, only: [:show, :update, :destroy]
+      before_action :set_project, only: %i[show update destroy]
 
-      load_and_authorize_resource except: %i(create)
+      load_and_authorize_resource except: %i[create]
 
       def index
-        @projects = params[:client_id] ?
-                      Project.accessible_by(current_ability).where(domain_id: params[:client_id]).order(updated_at: :desc).all :
+        @projects = if params[:client_id]
+                      Project.accessible_by(current_ability).where(domain_id: params[:client_id]).order(updated_at: :desc).all
+                    else
                       Project.accessible_by(current_ability).order(updated_at: :desc).all
+                    end
 
-        if params[:user_id]
-          Authorizations::ChildrenAccess.call(collection: @projects, type: Project, user_id: params[:user_id])
-        end
+        Authorizations::ChildrenAccess.call(collection: @projects, type: Project, user_id: params[:user_id]) if params[:user_id]
 
         json_response(@projects)
+      end
+
+      def show
+        json_response(@project)
       end
 
       def create
@@ -29,7 +35,7 @@ module Api
       end
 
       def update
-        context = Projects::UpdateProjectOrganizer.call(params: project_params, project: @project)
+        context = Projects::UpdateProjectOrganizer.call(params: project_params.except(:domain_id), project: @project)
 
         return json_response(context.project) if context.success?
 
@@ -48,10 +54,6 @@ module Api
         error_response('Could not remove!')
       end
 
-      def show
-        json_response(@project)
-      end
-
       def orphans
         return json_response([]) if current_user.admin?
 
@@ -65,8 +67,8 @@ module Api
         project = Project.find(params[:id])
 
         options = {
-            params: authorize_params.to_h,
-            project: project
+          params: authorize_params.to_h,
+          project: project
         }
 
         options[:params].merge!({ access: params[:access] }) if params.key?(:access)
@@ -82,7 +84,6 @@ module Api
           subject_class: 'Project', subject_id: params[:id]
         ).pluck(:membership_id)
 
-
         users = if params[:client_id]
                   User.includes(:memberships).for_client(params[:client_id]).find_each.collect do |user|
                     user.authorized = (user.membership_ids & membership_ids).any?
@@ -90,13 +91,14 @@ module Api
                   end
                 else
                   User.includes(:memberships).find_each.collect do |user|
-                    user.authorized = (user.membership_ids & membership_ids).any? ?
-                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id) :
+                    user.authorized = if (user.membership_ids & membership_ids).any?
+                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id)
+                                      else
                                         []
+                                      end
                     user
                   end
                 end
-
 
         json_response(users)
       end
@@ -118,10 +120,6 @@ module Api
           current_user,
           params[:client_id] || params[:project]&.fetch(:domain_id, nil) || @project&.domain_id
         )
-      end
-
-      def authorize_params
-        params.permit(:user_id, :client_id, :authorize, :role, :role_state, :scope_id, :scope_state, :from_admin)
       end
     end
   end
