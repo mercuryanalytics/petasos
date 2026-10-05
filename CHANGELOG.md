@@ -95,12 +95,14 @@ Generated from [conventional commits](https://www.conventionalcommits.org).
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
 - **changelog:** Update [skip ci]
+- **changelog:** Update [skip ci]
 
 ### Features
 - Petasos staging backend support (#6)
 - **sso:** Expose true Auth0 session expiration to consumers
 - **api:** Add staging Rails environment loading production config (#56)
 - **api:** Add brand_lift_benchmarks scope, drop retired Biometrics Access (#59)
+- **api:** Add Rollbar error reporting and deploy notifications (#76)
 
 ### Refactoring
 - **api:** Clarify implicit auth in UsersController + ReportAbility (#12, #15, #16) (#62)
