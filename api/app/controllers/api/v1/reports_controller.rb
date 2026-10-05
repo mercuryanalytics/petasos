@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class ReportsController < BaseController
-      before_action :set_report, only: [:show, :update, :destroy]
+      before_action :set_report, only: %i[show update destroy]
 
       load_and_authorize_resource
 
@@ -20,13 +22,14 @@ module Api
           return json_response([]) if client_authorizations.include?(params[:client_id].to_i)
 
           json_response(
-              Report
-                  .includes(:project)
-                  .where(projects: { domain_id: params[:client_id]} )
-                  .order(updated_at: :desc)
-                  .where.not(projects: { id: project_authorizations })
-                  .where.not(projects: { domain_id: client_authorizations })
-                  .accessible_by(current_ability).all)
+            Report
+                .includes(:project)
+                .where(projects: { domain_id: params[:client_id] })
+                .order(updated_at: :desc)
+                .where.not(projects: { id: project_authorizations })
+                .where.not(projects: { domain_id: client_authorizations })
+                .accessible_by(current_ability).all
+          )
           return
         end
 
@@ -40,12 +43,16 @@ module Api
         project_authorizations = Project.authorized_for_user(current_user.membership_ids).pluck(:id)
 
         reports = Report.accessible_by(current_ability)
-                    .joins(:project)
-                    .where.not(project_id: project_authorizations)
-                    .where.not(projects: { domain_id: client_authorizations })
-                    .order(updated_at: :desc)
+                        .joins(:project)
+                        .where.not(project_id: project_authorizations)
+                        .where.not(projects: { domain_id: client_authorizations })
+                        .order(updated_at: :desc)
 
         json_response(reports)
+      end
+
+      def show
+        json_response(@report)
       end
 
       def create
@@ -79,16 +86,12 @@ module Api
         error_response(context.message)
       end
 
-      def show
-        json_response(@report)
-      end
-
       def authorize
         report = Report.find(params[:id])
 
         options = {
-            params: authorize_params.to_h,
-            report: report
+          params: authorize_params.to_h,
+          report: report
         }
 
         options[:params].merge!({ access: params[:access] }) if params.key?(:access)
@@ -112,9 +115,11 @@ module Api
                   end
                 else
                   User.includes(:memberships).find_each.collect do |user|
-                    user.authorized = (user.membership_ids & membership_ids).any? ?
-                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id) :
+                    user.authorized = if (user.membership_ids & membership_ids).any?
+                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id)
+                                      else
                                         []
+                                      end
                     user
                   end
                 end
@@ -137,7 +142,7 @@ module Api
       def current_ability
         @current_ability ||= ::ReportAbility.new(
           current_user,
-          params[:project_id] || params[:report].fetch(:project_id, nil) || @report&.project_id
+          params[:project_id] || params.dig(:report, :project_id) || @report&.project_id
         )
       end
 

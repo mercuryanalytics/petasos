@@ -18,13 +18,6 @@ require 'rails_helper'
 #   * valid token with insufficient scope (403),
 #   * validation failure (422).
 #
-# NOTE on ReportsController#current_ability: it reads
-# `params[:project_id] || params[:report].fetch(:project_id, nil) || ...`.
-# When neither `params[:project_id]` nor `params[:report]` is present this
-# raises NoMethodError on the nil `params[:report]`. The specs route
-# requests through forms that always supply `project_id` (URL or body) so
-# the current_ability builder succeeds — matching how the controller is
-# exercised in production and in the legacy controller spec.
 RSpec.describe 'Api::V1::Reports', type: :request do
   let!(:client) { create(:client) }
   let!(:project) { create(:project, client: client) }
@@ -376,15 +369,6 @@ RSpec.describe 'Api::V1::Reports', type: :request do
   describe 'GET /api/v1/reports/orphans' do
     let!(:report) { create(:report, project_id: project.id) }
 
-    # `orphans` is a non-RESTful collection action, so
-    # `load_and_authorize_resource` does not register a CanCan check for it
-    # — the action body runs directly after Secured authentication. The
-    # controller body's `current_ability` reference is only reached on the
-    # non-admin branch (via `accessible_by(current_ability)`); the admin
-    # path short-circuits before that. The `current_ability` builder
-    # itself succeeds in both cases because ActionController param-wrapping
-    # supplies an empty `:report` hash to satisfy the `.fetch` chain.
-
     context 'with a valid admin token (happy path)' do
       before { make_user_admin! }
 
@@ -422,6 +406,13 @@ RSpec.describe 'Api::V1::Reports', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.parsed_body).to eq('data' => [])
+      end
+
+      # Without a JSON Content-Type, wrap_parameters adds no `:report` key.
+      it 'returns 200 when the request has no Content-Type' do
+        get '/api/v1/reports/orphans', headers: auth_header(token)
+
+        expect(response).to have_http_status(:ok)
       end
     end
 
