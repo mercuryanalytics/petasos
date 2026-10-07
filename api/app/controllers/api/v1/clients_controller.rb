@@ -91,11 +91,7 @@ module Api
                   end
                 else
                   User.includes(:memberships).find_each.collect do |user|
-                    user.authorized = if (user.membership_ids & membership_ids).any?
-                                        Membership.where(id: (user.membership_ids & membership_ids)).pluck(:client_id)
-                                      else
-                                        []
-                                      end
+                    user.authorized = user.memberships.select {|m| membership_ids.include?(m.id) }.map(&:client_id)
                     user
                   end
                 end
